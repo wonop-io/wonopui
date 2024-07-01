@@ -1,9 +1,5 @@
 use crate::components::multicol_sidebar::{MultiColumnSidebar, SidebarColumn};
-use crate::{
-    components::layout_context::{LayoutContext, SidebarPosition},
-    LayoutAction,
-};
-use web_sys::HtmlInputElement;
+use crate::{components::layout_context::LayoutContext, LayoutAction};
 use yew::prelude::*; // Import LayoutContext and SidebarPosition
 
 #[derive(Properties, PartialEq)]

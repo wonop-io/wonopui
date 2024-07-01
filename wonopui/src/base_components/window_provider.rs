@@ -1,6 +1,5 @@
 use gloo::utils::window as gloo_window;
 use std::rc::Rc;
-use wasm_bindgen::JsCast;
 use web_sys::{HtmlIFrameElement, Window};
 use yew::context::ContextProvider;
 use yew::prelude::*;

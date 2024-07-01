@@ -2,7 +2,6 @@ use crate::{
     components::layout_context::{LayoutContext, SidebarPosition},
     LayoutAction,
 };
-use web_sys::HtmlInputElement;
 use yew::prelude::*; // Import LayoutContext and SidebarPosition
 
 #[derive(Properties, PartialEq)]

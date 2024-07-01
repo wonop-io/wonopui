@@ -63,7 +63,7 @@ pub fn select(props: &SelectProps) -> Html {
 
     html! {
         <ContextProvider<Rc<SelectState>> context={state}>
-            <div class={BRANDGUIDE.select_container.clone()}>
+            <div class={BRANDGUIDE.select_container}>
                 { for props.children.iter() }
             </div>
         </ContextProvider<Rc<SelectState>>>
@@ -80,9 +80,9 @@ pub fn select_trigger(props: &SelectTriggerProps) -> Html {
     };
 
     html! {
-        <button type="button" class={format!("{} {}", props.class, BRANDGUIDE.select_trigger.clone())} {onclick}>
-            <span class={BRANDGUIDE.select_trigger_placeholder.clone()}>{ &props.placeholder }</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={BRANDGUIDE.select_trigger_icon.clone()} aria-hidden="true">
+        <button type="button" class={format!("{} {}", props.class, BRANDGUIDE.select_trigger)} {onclick}>
+            <span class={BRANDGUIDE.select_trigger_placeholder}>{ &props.placeholder }</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={BRANDGUIDE.select_trigger_icon} aria-hidden="true">
                 <path d="m6 9 6 6 6-6"></path>
             </svg>
         </button>
@@ -98,8 +98,8 @@ pub fn select_content(props: &SelectContentProps) -> Html {
     }
 
     html! {
-        <div class={BRANDGUIDE.select_content_container.clone()}>
-            <ul class={BRANDGUIDE.select_content_list.clone()}>
+        <div class={BRANDGUIDE.select_content_container}>
+            <ul class={BRANDGUIDE.select_content_list}>
                 { for props.children.iter() }
             </ul>
         </div>
@@ -109,7 +109,7 @@ pub fn select_content(props: &SelectContentProps) -> Html {
 #[function_component(SelectGroup)]
 pub fn select_group(props: &SelectGroupProps) -> Html {
     html! {
-        <li class={BRANDGUIDE.select_group.clone()}>
+        <li class={BRANDGUIDE.select_group}>
             { for props.children.iter() }
         </li>
     }
@@ -118,7 +118,7 @@ pub fn select_group(props: &SelectGroupProps) -> Html {
 #[function_component(SelectLabel)]
 pub fn select_label(props: &SelectLabelProps) -> Html {
     html! {
-        <div class={BRANDGUIDE.select_label.clone()}>
+        <div class={BRANDGUIDE.select_label}>
             { &props.label }
         </div>
     }
@@ -127,7 +127,7 @@ pub fn select_label(props: &SelectLabelProps) -> Html {
 #[function_component(SelectItem)]
 pub fn select_item(props: &SelectItemProps) -> Html {
     html! {
-        <li class={BRANDGUIDE.select_item.clone()}>
+        <li class={BRANDGUIDE.select_item}>
             { &props.label }
         </li>
     }

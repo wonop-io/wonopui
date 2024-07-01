@@ -1,5 +1,4 @@
 use std::rc::Rc;
-use web_sys::js_sys::DataView;
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]

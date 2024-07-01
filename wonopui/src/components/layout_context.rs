@@ -1,6 +1,5 @@
 use std::rc::Rc;
 
-use yew::context::ContextProvider;
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]

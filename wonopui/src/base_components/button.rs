@@ -47,7 +47,7 @@ pub fn button(props: &ButtonProps) -> Html {
     };
 
     html! {
-        <button 
+        <button
             class={classes!(BRANDGUIDE.button_base, button_class, props.class.clone())}
             onclick={props.onclick.clone()}
             disabled={props.disabled}

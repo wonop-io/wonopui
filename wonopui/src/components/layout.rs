@@ -1,10 +1,5 @@
-use std::rc::Rc;
-
 use crate::base_components::use_media_query;
 use crate::components::layout_context::{LayoutContext, LayoutState, SidebarPosition};
-use gloo_console as console;
-use wasm_bindgen::closure::Closure;
-use wasm_bindgen::JsCast;
 use yew::context::ContextProvider;
 use yew::prelude::*;
 

@@ -1,69 +1,192 @@
 // build.rs
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::env;
+use std::fs;
 use std::fs::File;
 use std::io::Read;
 use std::io::Write;
-use tera::{Context, Result, Tera};
-use std::fs;
 use std::path::Path;
-use regex::Regex;
+use tera::{Context, Result, Tera};
 
 fn is_valid_tailwind_class(class: &str) -> bool {
     // Define a comprehensive list of Tailwind CSS prefixes and standalone classes
     let valid_prefixes = [
         // Layout
-        "container", "box-", "block", "inline", "flex", "grid", "table", "hidden",
+        "container",
+        "box-",
+        "block",
+        "inline",
+        "flex",
+        "grid",
+        "table",
+        "hidden",
         // Flexbox & Grid
-        "flex-", "grid-", "order-", "col-", "row-", "gap-", "justify-", "items-", "content-", "place-",
+        "flex-",
+        "grid-",
+        "order-",
+        "col-",
+        "row-",
+        "gap-",
+        "justify-",
+        "items-",
+        "content-",
+        "place-",
         // Spacing
-        "p-", "px-", "py-", "pt-", "pr-", "pb-", "pl-", 
-        "m-", "mx-", "my-", "mt-", "mr-", "mb-", "ml-",
+        "p-",
+        "px-",
+        "py-",
+        "pt-",
+        "pr-",
+        "pb-",
+        "pl-",
+        "m-",
+        "mx-",
+        "my-",
+        "mt-",
+        "mr-",
+        "mb-",
+        "ml-",
         "space-",
         // Sizing
-        "w-", "min-w-", "max-w-", "h-", "min-h-", "max-h-",
+        "w-",
+        "min-w-",
+        "max-w-",
+        "h-",
+        "min-h-",
+        "max-h-",
         // Typography
-        "font-", "text-", "leading-", "tracking-", "whitespace-", "break-", "truncate", "indent-",
-        "list-", "align-", "uppercase", "lowercase", "capitalize", "normal-case",
+        "font-",
+        "text-",
+        "leading-",
+        "tracking-",
+        "whitespace-",
+        "break-",
+        "truncate",
+        "indent-",
+        "list-",
+        "align-",
+        "uppercase",
+        "lowercase",
+        "capitalize",
+        "normal-case",
         // Backgrounds
-        "bg-", "from-", "via-", "to-", "gradient-",
+        "bg-",
+        "from-",
+        "via-",
+        "to-",
+        "gradient-",
         // Borders
-        "border", "border-", "rounded", "rounded-", "divide-", "ring-", "ring-offset-",
+        "border",
+        "border-",
+        "rounded",
+        "rounded-",
+        "divide-",
+        "ring-",
+        "ring-offset-",
         // Effects
-        "shadow-", "opacity-", "mix-blend-", "blur-", "brightness-", "contrast-", "grayscale-", "hue-rotate-", "invert-", "saturate-", "sepia-",
+        "shadow-",
+        "opacity-",
+        "mix-blend-",
+        "blur-",
+        "brightness-",
+        "contrast-",
+        "grayscale-",
+        "hue-rotate-",
+        "invert-",
+        "saturate-",
+        "sepia-",
         // Filters
-        "filter", "backdrop-",
+        "filter",
+        "backdrop-",
         // Tables
         "table-",
         // Transitions & Animation
-        "transition-", "duration-", "ease-", "delay-", "animate-",
+        "transition-",
+        "duration-",
+        "ease-",
+        "delay-",
+        "animate-",
         // Transforms
-        "scale-", "rotate-", "translate-", "skew-", "origin-", "transform",
+        "scale-",
+        "rotate-",
+        "translate-",
+        "skew-",
+        "origin-",
+        "transform",
         // Interactivity
-        "cursor-", "select-", "resize-", "scroll-", "snap-", "touch-", "user-", "pointer-events-",
-        "appearance-", "outline-", "caret-",
+        "cursor-",
+        "select-",
+        "resize-",
+        "scroll-",
+        "snap-",
+        "touch-",
+        "user-",
+        "pointer-events-",
+        "appearance-",
+        "outline-",
+        "caret-",
         // SVG
-        "fill-", "stroke-",
+        "fill-",
+        "stroke-",
         // Accessibility
-        "sr-", "not-sr-",
+        "sr-",
+        "not-sr-",
         // Variants
-        "hover:", "focus:", "active:", "group-hover:", "focus-within:", "focus-visible:", "disabled:",
-        "dark:", "sm:", "md:", "lg:", "xl:", "2xl:", "first:", "last:", "odd:", "even:", "visited:",
-        "checked:", "indeterminate:", "default:", "required:", "valid:", "invalid:", "in-range:", "out-of-range:",
-        "placeholder-shown:", "autofill:", "read-only:",
+        "hover:",
+        "focus:",
+        "active:",
+        "group-hover:",
+        "focus-within:",
+        "focus-visible:",
+        "disabled:",
+        "dark:",
+        "sm:",
+        "md:",
+        "lg:",
+        "xl:",
+        "2xl:",
+        "first:",
+        "last:",
+        "odd:",
+        "even:",
+        "visited:",
+        "checked:",
+        "indeterminate:",
+        "default:",
+        "required:",
+        "valid:",
+        "invalid:",
+        "in-range:",
+        "out-of-range:",
+        "placeholder-shown:",
+        "autofill:",
+        "read-only:",
         // Display
-        "inline-", "flow-",
+        "inline-",
+        "flow-",
         // Position
-        "static", "fixed", "absolute", "relative", "sticky", "top-", "right-", "bottom-", "left-", "inset-",
+        "static",
+        "fixed",
+        "absolute",
+        "relative",
+        "sticky",
+        "top-",
+        "right-",
+        "bottom-",
+        "left-",
+        "inset-",
         // Visibility
-        "visible", "invisible",
+        "visible",
+        "invisible",
         // Z-index
         "z-",
         // Overflow
         "overflow-",
         // Float
-        "float-", "clear-",
+        "float-",
+        "clear-",
         // Object fit
         "object-",
         // Aspect ratio
@@ -73,12 +196,26 @@ fn is_valid_tailwind_class(class: &str) -> bool {
         // Break
         "break-",
         // Additional cases
-        "prose", "prose-", "underline", "overline", "line-through", "no-underline",
-        "antialiased", "subpixel-antialiased",
-        "italic", "not-italic",
-        "ordinal", "slashed-zero", "lining-nums", "oldstyle-nums", "proportional-nums", "tabular-nums",
-        "diagonal-fractions", "stacked-fractions",
-        "overscroll-", "scroll-",
+        "prose",
+        "prose-",
+        "underline",
+        "overline",
+        "line-through",
+        "no-underline",
+        "antialiased",
+        "subpixel-antialiased",
+        "italic",
+        "not-italic",
+        "ordinal",
+        "slashed-zero",
+        "lining-nums",
+        "oldstyle-nums",
+        "proportional-nums",
+        "tabular-nums",
+        "diagonal-fractions",
+        "stacked-fractions",
+        "overscroll-",
+        "scroll-",
         "hyphens-",
         "write-",
         "accent-",
@@ -88,20 +225,68 @@ fn is_valid_tailwind_class(class: &str) -> bool {
         "will-change-",
         "content-",
         // Additional prefixes to cover all cases
-        "group", "peer", "motion-", "print:", "rtl:", "ltr:", "open:", "closed:", "file:", "dir:", "before:", "after:",
-        "marker:", "selection:", "first-of-type:", "last-of-type:", "only-of-type:", "only-child:", "empty:", "target:",
-        "enabled:", "focus-visible:", "optional:", "placeholder:", "read-write:", "landscape:", "portrait:", "motion-safe:",
-        "motion-reduce:", "contrast-more:", "contrast-less:", "3xl:", "4xl:", "5xl:", "6xl:", "7xl:", "8xl:", "9xl:",
-        "2xs:", "xs:", "supports-", "not-", "group-", "peer-", "all:", "children:", "siblings:", "sibling:",
+        "group",
+        "peer",
+        "motion-",
+        "print:",
+        "rtl:",
+        "ltr:",
+        "open:",
+        "closed:",
+        "file:",
+        "dir:",
+        "before:",
+        "after:",
+        "marker:",
+        "selection:",
+        "first-of-type:",
+        "last-of-type:",
+        "only-of-type:",
+        "only-child:",
+        "empty:",
+        "target:",
+        "enabled:",
+        "focus-visible:",
+        "optional:",
+        "placeholder:",
+        "read-write:",
+        "landscape:",
+        "portrait:",
+        "motion-safe:",
+        "motion-reduce:",
+        "contrast-more:",
+        "contrast-less:",
+        "3xl:",
+        "4xl:",
+        "5xl:",
+        "6xl:",
+        "7xl:",
+        "8xl:",
+        "9xl:",
+        "2xs:",
+        "xs:",
+        "supports-",
+        "not-",
+        "group-",
+        "peer-",
+        "all:",
+        "children:",
+        "siblings:",
+        "sibling:",
     ];
 
     // Check if the class starts with any valid prefix or is a valid standalone class
-    valid_prefixes.iter().any(|&prefix| class.starts_with(prefix) || class == prefix.trim_end_matches('-'))
+    valid_prefixes
+        .iter()
+        .any(|&prefix| class.starts_with(prefix) || class == prefix.trim_end_matches('-'))
 }
 
 fn create_baseclasses() {
     let out_dir = env::var("OUT_DIR").unwrap();
-    let target_dir = out_dir.split("target").next().expect("Failed to determine target directory");
+    let target_dir = out_dir
+        .split("target")
+        .next()
+        .expect("Failed to determine target directory");
     let target_dir = Path::new(target_dir).join("target");
     let baseclasses_path = target_dir.join("tailwindcss.txt");
 
@@ -121,11 +306,10 @@ fn create_baseclasses() {
                         classes.push(class_str);
                     }
                 }
-
-
             }
         }
-    }).expect("Error visiting directories");
+    })
+    .expect("Error visiting directories");
 
     classes.sort();
     classes.dedup();
@@ -134,7 +318,6 @@ fn create_baseclasses() {
     for class in &classes {
         writeln!(file, "{}", class).expect("Unable to write to file");
     }
-
 }
 
 // Function to recursively visit directories and apply a callback to each file
@@ -152,33 +335,6 @@ fn visit_dirs(dir: &Path, cb: &mut dyn FnMut(&Path)) -> std::io::Result<()> {
     }
     Ok(())
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 fn render_vec_to_hashmap(input: Vec<(String, String)>) -> Result<HashMap<String, String>> {
     let mut hashmap = HashMap::new();

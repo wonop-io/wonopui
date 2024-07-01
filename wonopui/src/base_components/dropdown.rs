@@ -1,6 +1,5 @@
 use super::popover::{Popover, PopoverContent, PopoverPosition, PopoverTrigger};
 use crate::config::BRANDGUIDE;
-use std::rc::Rc;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]

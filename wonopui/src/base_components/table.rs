@@ -13,7 +13,7 @@ pub struct TableProps {
 pub fn table(props: &TableProps) -> Html {
     html! {
         <div class={format!("{} {}", BRANDGUIDE.table_container, props.class)}>
-            <table class={BRANDGUIDE.table.clone()}>
+            <table class={BRANDGUIDE.table}>
                 { for props.children.iter() }
             </table>
         </div>

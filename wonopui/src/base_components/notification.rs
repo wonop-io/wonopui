@@ -1,6 +1,5 @@
 use gloo_console as console;
 use std::rc::Rc;
-use yew::html::ChildrenProps;
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]

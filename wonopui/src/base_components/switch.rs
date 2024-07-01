@@ -38,7 +38,7 @@ pub fn switch_button(props: &SwitchButtonProps) -> Html {
         let on_toggle = props.on_toggle.clone();
         let disabled = props.disabled;
         Callback::from(move |e: MouseEvent| {
-            if (!disabled) {
+            if !disabled {
                 checked.set(!*checked);
                 on_toggle.emit(e);
             }
