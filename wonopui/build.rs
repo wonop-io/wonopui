@@ -9,8 +9,14 @@ use std::io::Read;
 use std::io::Write;
 use std::path::Path;
 use tera::{Context, Result, Tera};
+use std::collections::HashSet;
+use std::time::Instant;
+
 
 fn is_valid_tailwind_class(class: &str) -> bool {
+    if class.ends_with(":") || class.ends_with("-") {
+        return false;
+    }
     // Define a comprehensive list of Tailwind CSS prefixes and standalone classes
     let valid_prefixes = [
         // Layout
@@ -288,32 +294,47 @@ fn create_baseclasses() {
         .next()
         .expect("Failed to determine target directory");
     let target_dir = Path::new(target_dir).join("target");
+    let target_dir = fs::canonicalize(&target_dir).unwrap_or_else(|_| target_dir.to_path_buf());
     let baseclasses_path = target_dir.join("tailwindcss.txt");
 
-    let mut classes = vec![];
+    let mut classes = HashSet::new();
 
     // Recursively find all .rs files and extract Tailwind CSS classes
+
     visit_dirs(Path::new("."), &mut |file_path| {
+        let absolute_path = fs::canonicalize(file_path).unwrap_or_else(|_| file_path.to_path_buf());
+
+        // Ignore the actual target folder
+        if absolute_path.starts_with(&target_dir) || file_path.starts_with("./target/") || file_path.starts_with("./target/") {
+            return;
+        }
         if file_path.extension().and_then(|s| s.to_str()) == Some("rs") {
+            let start = Instant::now();
+
             let content = fs::read_to_string(file_path).expect("Unable to read file");
-            let re = Regex::new(r#""([^"]*?)([^"\s]+:[^"\s]+)([^"]*?)""#).unwrap();
-            for cap in re.captures_iter(&content) {
-                let class_str = &cap[0];
-                let class_re = Regex::new(r"\b[a-zA-Z0-9_-]+\b").unwrap();
-                for class in class_re.find_iter(class_str) {
-                    let class_str = class.as_str().to_string();
-                    if is_valid_tailwind_class(&class_str) {
-                        classes.push(class_str);
+            let mut word = String::new();
+            for c in content.chars() {
+                if c.is_whitespace() || " ,._;(){}\"'`".contains(c) {
+                    if !classes.contains(&word) && !word.is_empty() && is_valid_tailwind_class(&word) {
+                        // println!("Adding {}", word);
+                        classes.insert(word.clone());
                     }
+                    word.clear();
+                } else {
+                    word.push(c);
                 }
             }
+            // Check the last word if the file doesn't end with a delimiter
+            if !word.is_empty() && is_valid_tailwind_class(&word) {
+                classes.insert(word);
+            }
+            let duration = start.elapsed();
         }
     })
     .expect("Error visiting directories");
 
+    let mut classes: Vec<_> = classes.into_iter().collect();
     classes.sort();
-    classes.dedup();
-
     let mut file = fs::File::create(baseclasses_path).expect("Unable to create file");
     for class in &classes {
         writeln!(file, "{}", class).expect("Unable to write to file");
