@@ -5,8 +5,180 @@ use std::env;
 use std::fs::File;
 use std::io::Read;
 use std::io::Write;
-use std::path::Path;
 use tera::{Context, Result, Tera};
+use std::fs;
+use std::path::Path;
+use regex::Regex;
+
+fn is_valid_tailwind_class(class: &str) -> bool {
+    // Define a comprehensive list of Tailwind CSS prefixes and standalone classes
+    let valid_prefixes = [
+        // Layout
+        "container", "box-", "block", "inline", "flex", "grid", "table", "hidden",
+        // Flexbox & Grid
+        "flex-", "grid-", "order-", "col-", "row-", "gap-", "justify-", "items-", "content-", "place-",
+        // Spacing
+        "p-", "px-", "py-", "pt-", "pr-", "pb-", "pl-", 
+        "m-", "mx-", "my-", "mt-", "mr-", "mb-", "ml-",
+        "space-",
+        // Sizing
+        "w-", "min-w-", "max-w-", "h-", "min-h-", "max-h-",
+        // Typography
+        "font-", "text-", "leading-", "tracking-", "whitespace-", "break-", "truncate", "indent-",
+        "list-", "align-", "uppercase", "lowercase", "capitalize", "normal-case",
+        // Backgrounds
+        "bg-", "from-", "via-", "to-", "gradient-",
+        // Borders
+        "border", "border-", "rounded", "rounded-", "divide-", "ring-", "ring-offset-",
+        // Effects
+        "shadow-", "opacity-", "mix-blend-", "blur-", "brightness-", "contrast-", "grayscale-", "hue-rotate-", "invert-", "saturate-", "sepia-",
+        // Filters
+        "filter", "backdrop-",
+        // Tables
+        "table-",
+        // Transitions & Animation
+        "transition-", "duration-", "ease-", "delay-", "animate-",
+        // Transforms
+        "scale-", "rotate-", "translate-", "skew-", "origin-", "transform",
+        // Interactivity
+        "cursor-", "select-", "resize-", "scroll-", "snap-", "touch-", "user-", "pointer-events-",
+        "appearance-", "outline-", "caret-",
+        // SVG
+        "fill-", "stroke-",
+        // Accessibility
+        "sr-", "not-sr-",
+        // Variants
+        "hover:", "focus:", "active:", "group-hover:", "focus-within:", "focus-visible:", "disabled:",
+        "dark:", "sm:", "md:", "lg:", "xl:", "2xl:", "first:", "last:", "odd:", "even:", "visited:",
+        "checked:", "indeterminate:", "default:", "required:", "valid:", "invalid:", "in-range:", "out-of-range:",
+        "placeholder-shown:", "autofill:", "read-only:",
+        // Display
+        "inline-", "flow-",
+        // Position
+        "static", "fixed", "absolute", "relative", "sticky", "top-", "right-", "bottom-", "left-", "inset-",
+        // Visibility
+        "visible", "invisible",
+        // Z-index
+        "z-",
+        // Overflow
+        "overflow-",
+        // Float
+        "float-", "clear-",
+        // Object fit
+        "object-",
+        // Aspect ratio
+        "aspect-",
+        // Columns
+        "columns-",
+        // Break
+        "break-",
+        // Additional cases
+        "prose", "prose-", "underline", "overline", "line-through", "no-underline",
+        "antialiased", "subpixel-antialiased",
+        "italic", "not-italic",
+        "ordinal", "slashed-zero", "lining-nums", "oldstyle-nums", "proportional-nums", "tabular-nums",
+        "diagonal-fractions", "stacked-fractions",
+        "overscroll-", "scroll-",
+        "hyphens-",
+        "write-",
+        "accent-",
+        "decoration-",
+        "placeholder-",
+        "backdrop-",
+        "will-change-",
+        "content-",
+        // Additional prefixes to cover all cases
+        "group", "peer", "motion-", "print:", "rtl:", "ltr:", "open:", "closed:", "file:", "dir:", "before:", "after:",
+        "marker:", "selection:", "first-of-type:", "last-of-type:", "only-of-type:", "only-child:", "empty:", "target:",
+        "enabled:", "focus-visible:", "optional:", "placeholder:", "read-write:", "landscape:", "portrait:", "motion-safe:",
+        "motion-reduce:", "contrast-more:", "contrast-less:", "3xl:", "4xl:", "5xl:", "6xl:", "7xl:", "8xl:", "9xl:",
+        "2xs:", "xs:", "supports-", "not-", "group-", "peer-", "all:", "children:", "siblings:", "sibling:",
+    ];
+
+    // Check if the class starts with any valid prefix or is a valid standalone class
+    valid_prefixes.iter().any(|&prefix| class.starts_with(prefix) || class == prefix.trim_end_matches('-'))
+}
+
+fn create_baseclasses() {
+    let out_dir = env::var("OUT_DIR").unwrap();
+    let target_dir = out_dir.split("target").next().expect("Failed to determine target directory");
+    let target_dir = Path::new(target_dir).join("target");
+    let baseclasses_path = target_dir.join("tailwindcss.txt");
+
+    let mut classes = vec![];
+
+    // Recursively find all .rs files and extract Tailwind CSS classes
+    visit_dirs(Path::new("."), &mut |file_path| {
+        if file_path.extension().and_then(|s| s.to_str()) == Some("rs") {
+            let content = fs::read_to_string(file_path).expect("Unable to read file");
+            let re = Regex::new(r#""([^"]*?)([^"\s]+:[^"\s]+)([^"]*?)""#).unwrap();
+            for cap in re.captures_iter(&content) {
+                let class_str = &cap[0];
+                let class_re = Regex::new(r"\b[a-zA-Z0-9_-]+\b").unwrap();
+                for class in class_re.find_iter(class_str) {
+                    let class_str = class.as_str().to_string();
+                    if is_valid_tailwind_class(&class_str) {
+                        classes.push(class_str);
+                    }
+                }
+
+
+            }
+        }
+    }).expect("Error visiting directories");
+
+    classes.sort();
+    classes.dedup();
+
+    let mut file = fs::File::create(baseclasses_path).expect("Unable to create file");
+    for class in &classes {
+        writeln!(file, "{}", class).expect("Unable to write to file");
+    }
+
+}
+
+// Function to recursively visit directories and apply a callback to each file
+fn visit_dirs(dir: &Path, cb: &mut dyn FnMut(&Path)) -> std::io::Result<()> {
+    if dir.is_dir() {
+        for entry in fs::read_dir(dir)? {
+            let entry = entry?;
+            let path = entry.path();
+            if path.is_dir() {
+                visit_dirs(&path, cb)?;
+            } else {
+                cb(&path);
+            }
+        }
+    }
+    Ok(())
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 fn render_vec_to_hashmap(input: Vec<(String, String)>) -> Result<HashMap<String, String>> {
     let mut hashmap = HashMap::new();
@@ -509,6 +681,8 @@ fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("config.rs");
     let mut f = File::create(&dest_path).unwrap();
+
+    create_baseclasses();
 
     // Default values if config file is not provided
     let default_config_hm =
