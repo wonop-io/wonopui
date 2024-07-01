@@ -17,6 +17,11 @@ fn is_valid_tailwind_class(class: &str) -> bool {
     if class.ends_with(":") || class.ends_with("-") {
         return false;
     }
+    let class = if class.starts_with("-") {
+        &class[1..]
+    } else {
+        class
+    };
     // Define a comprehensive list of Tailwind CSS prefixes and standalone classes
     let valid_prefixes = [
         // Layout
