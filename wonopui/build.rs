@@ -369,7 +369,7 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("text".to_string(), "{{ text_light }} dark:{{ text_dark }}".to_string()),
         ("text_inverted".to_string(), "dark:{{ text_light }} {{ text_dark }}".to_string()),
         ("text_muted".to_string(), "text-gray-500 dark:text-gray-400".to_string()),
-                
+
         ("text_container_small_padding".to_string(), "px-2 py-1".to_string()),
         ("text_container_medium_padding".to_string(), "px-3 py-2".to_string()),
         ("text_container_large_padding".to_string(), "px-4 py-3".to_string()),
@@ -396,7 +396,7 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("secondary_background_hover".to_string(), "hover:bg-{{ secondary_darker }}{{ default_opacity_addon_hover }} dark:hover:bg-{{ secondary_darker }}".to_string()),
         ("text_secondary".to_string(), "text-white".to_string()),
         ("border_secondary".to_string(), "border border-{{ secondary_light }} dark:border-{{ secondary_dark }}".to_string()),
-        
+
         ("default_light".to_string(), "gray-100".to_string()),
         ("default_dark".to_string(), "zinc-800".to_string()),
         ("default_darker".to_string(), "zinc-700".to_string()),
@@ -404,7 +404,7 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("default_background_hover".to_string(), "hover:bg-{{ default_darker }} dark:hover:bg-{{ default_darker }}".to_string()),
         ("text_default".to_string(), "text-gray-700 dark:text-gray-300".to_string()),
         ("border_default".to_string(), "border border-gray-300 dark:border-gray-600".to_string()),
-        
+
         ("error_light".to_string(), "red-{{default_shade}}".to_string()),
         ("error_dark".to_string(), "red-{{default_shade_darker}}".to_string()),
         ("error_darker".to_string(), "red-700".to_string()),
@@ -412,7 +412,7 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("error_background_hover".to_string(), "hover:bg-{{ error_darker }}{{ default_opacity_addon_hover }} dark:hover:bg-{{ error_darker }}".to_string()),
         ("text_danger".to_string(), "text-white".to_string()),
         ("border_danger".to_string(), "border border-{{ error_light }} dark:border-{{ error_dark }}".to_string()),
-        
+
         ("success_light".to_string(), "green-{{default_shade}}".to_string()),
         ("success_dark".to_string(), "green-{{default_shade_darker}}".to_string()),
         ("success_darker".to_string(), "green-700".to_string()),
@@ -420,7 +420,7 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("success_background_hover".to_string(), "hover:bg-{{ success_darker }}{{ default_opacity_addon_hover }} dark:hover:bg-{{ success_darker }}".to_string()),
         ("text_success".to_string(), "text-white".to_string()),
         ("border_success".to_string(), "border border-{{ success_light }} dark:border-{{ success_dark }}".to_string()),
-        
+
         ("warning_light".to_string(), "yellow-{{default_shade}}".to_string()),
         ("warning_dark".to_string(), "yellow-{{default_shade_darker}}".to_string()),
         ("warning_darker".to_string(), "yellow-700".to_string()),
@@ -428,7 +428,7 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("warning_background_hover".to_string(), "hover:bg-{{ warning_darker }}{{ default_opacity_addon_hover }} dark:hover:bg-{{ warning_darker }}".to_string()),
         ("text_warning".to_string(), "text-white".to_string()),
         ("border_warning".to_string(), "border border-{{ warning_light }} dark:border-{{ warning_dark }}".to_string()),
-        
+
         ("success_all".to_string(), "{{ success_background }} {{ success_darker }} {{ text_success }} {{ border_success }}".to_string()),
         ("warning_all".to_string(), "{{ warning_background }} {{ warning_darker }} {{ text_warning }} {{ border_warning }}".to_string()),
         ("error_all".to_string(), "{{ error_background }} {{ error_darker }} {{ text_danger }} {{ border_danger }}".to_string()),
