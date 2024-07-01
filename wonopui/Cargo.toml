@@ -1,0 +1,50 @@
+[package]
+name = "wonopui"
+version = "0.1.0"
+edition = '2021'
+build = "build.rs"
+
+[dependencies]
+yew = { version = "0.21", features = ["csr"] }
+web-sys = { version = "0.3.68", features = [
+  "HtmlDocument",
+  "Document",
+  "HtmlInputElement",
+  "HtmlIFrameElement",
+  "Element",
+  "DomRect",
+  "HtmlElement",
+  "HtmlInputElement",
+  "HtmlDivElement",
+  "HtmlImageElement",
+  "Navigator",
+  "Window",
+  "Clipboard",
+  "DragEvent",
+  "DataTransfer",
+  "HtmlStyleElement",
+  "HtmlLinkElement",
+  "ResizeObserver",
+  "IntersectionObserver",
+  "MutationObserver",
+  "CssStyleDeclaration",
+  "CustomEvent",
+  "CustomEventInit",
+  "PointerEvent",
+  "KeyboardEvent",
+  "KeyboardEventInit",
+  "MediaQueryList",
+  "MediaQueryListEvent",
+  "SvgElement",
+] }
+wasm-bindgen = { version = "0.2.90", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.40"
+chrono = { version = "0.4.23", features = ["serde", "wasmbind"] }
+gloo = "0.11.0"
+gloo-console = "0.3.0"
+gloo-utils = "0.2.0"
+
+[build-dependencies]
+serde = { version = "1.0.195", features = ["derive"] }
+serde_json = "1.0.111"
+tera = "1.20.0"
