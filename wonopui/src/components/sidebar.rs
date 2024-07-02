@@ -38,7 +38,7 @@ pub fn sidebar_item(props: &SidebarItemProps) -> Html {
         "justify-start"
     };
     html! {
-        <button class={format!("{} mx-3 hover:bg-zinc-200 hover:dark:bg-zinc-700  inline-flex space-x-2 items-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-1.5 py-1 text-zinc-700 dark:text-zinc-300", justify)}>
+        <button class={format!("{} flex-grow mx-3 hover:bg-zinc-200 hover:dark:bg-zinc-700  inline-flex space-x-2 items-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-1.5 py-1 text-zinc-700 dark:text-zinc-300", justify)}>
             {icon.clone()}
             if !folded {
                 <span>{label}</span>
@@ -56,7 +56,7 @@ pub struct SidebarMenuProps {
 pub fn sidebar_menu(props: &SidebarMenuProps) -> Html {
     let SidebarMenuProps { children } = props;
     html! {
-        <div class="space-y-1 my-6 flex flex-col">
+        <div class="space-y-1 my-6 flex flex-col items-stretch">
             {children}
         </div>
     }
