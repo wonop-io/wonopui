@@ -1421,8 +1421,8 @@ fn main() {
     };
 
     // Read the configuration file
+    println!("cargo:rerun-if-changed={}", config_path.display());    
     let config: Config = if Path::new(&config_path).exists() {
-        println!("cargo:rerun-if-changed={}", config_path.display());
         let mut config_file = File::open(config_path).unwrap();
         let mut config_content = String::new();
         config_file.read_to_string(&mut config_content).unwrap();
