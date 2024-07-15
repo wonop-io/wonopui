@@ -11,6 +11,9 @@ pub struct LayoutProps {
     pub topbar: Option<Html>, // TODO: Force to be Sidebar
 
     #[prop_or_default]
+    pub footer: Option<Html>, // TODO: Force to be Sidebar
+
+    #[prop_or_default]
     pub children: Children,
 }
 
@@ -50,6 +53,9 @@ pub fn layout(props: &LayoutProps) -> Html {
           <div class="flex-1 overflow-y-auto">
             {props.children.clone()}
           </div>
+          if layout_context.show_footer {
+              {props.footer.clone().unwrap_or_default()}
+          }
       </div>
     </div>
     }

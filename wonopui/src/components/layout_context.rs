@@ -16,6 +16,7 @@ pub struct LayoutState {
     pub standard_menu_size: i32,
     pub base_size: i32,
     pub show_topbar: bool,
+    pub show_footer: bool,
     pub sidebar_folded: bool,
     pub sidebar_position: SidebarPosition,
 }
@@ -35,6 +36,7 @@ impl Default for LayoutState {
             standard_menu_size: 288,
             base_size: 288,
             show_topbar: true,
+            show_footer: true,
             sidebar_folded: false,
             sidebar_position: SidebarPosition::Left,
         }
@@ -45,6 +47,7 @@ pub enum LayoutAction {
     SetMobileMenuOpen(bool),
     SetSizeMenuSize(i32), // Corrected type from String to i32
     SetShowTopbar(bool),
+    SetShowFooter(bool),
     SetSidebarFolded(bool),
     SetSidebarPosition(SidebarPosition), // Added action for setting sidebar position
 }
@@ -57,6 +60,7 @@ impl Reducible for LayoutState {
             LayoutAction::SetMobileMenuOpen(value) => state.mobile_menu_open = value,
             LayoutAction::SetSizeMenuSize(value) => state.standard_menu_size = value,
             LayoutAction::SetShowTopbar(value) => state.show_topbar = value,
+            LayoutAction::SetShowFooter(value) => state.show_footer = value,
             LayoutAction::SetSidebarFolded(value) => state.sidebar_folded = value,
             LayoutAction::SetSidebarPosition(position) => state.sidebar_position = position, // Handling new action
         }
