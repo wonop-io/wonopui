@@ -1,7 +1,7 @@
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
-pub struct PlaceholderScreenProps {
+pub struct PlaceholderProps {
     #[prop_or_default]
     pub class: Classes,
     #[prop_or("Content placeholder".to_string())]
