@@ -11,12 +11,15 @@ pub struct ContainerProps {
 
     #[prop_or(true)]
     pub expanding: bool,
-    #[prop_or(false)]
-    pub use_break_points: bool,
+
     #[prop_or(true)]
     pub padding_x: bool,
     #[prop_or(true)]
     pub padding_y: bool,
+    #[prop_or(true)]
+    pub responsive: bool,
+    #[prop_or(false)]
+    pub use_break_points: bool,    
     #[prop_or(false)]
     pub narrow: bool,
 }
@@ -34,22 +37,30 @@ pub fn container(props: &ContainerProps) -> Html {
     } else {
         classes!("")
     };
-    let breakpoints = if props.use_break_points {
-        classes!("container", "mx-auto")
-    } else {
-        classes!("mx-auto", "max-w-7xl")
-    };
+
     let expanding = if props.expanding {
         classes!("w-full")
     } else {
         classes!("")
     };
+
+    let breakpoints = if props.use_break_points {
+        classes!("container", "mx-auto")
+    } else {
+        classes!("mx-auto", "max-w-7xl")
+    };
+
     let narrow = if props.narrow {
         classes!("max-w-3xl", "mx-auto")
     } else {
         breakpoints
     };
-    let container_class = classes!(padding_x, padding_y, expanding, narrow);
+    let responsive = if props.responsive {
+        narrow
+    } else {
+        classes!("")
+    };
+    let container_class = classes!(padding_x, padding_y, expanding, responsive);
 
     html!(
         <@{props.tag.clone()} class={classes!(container_class, props.class.clone())}>{props.children.clone()}</@>
