@@ -33,6 +33,7 @@ pub mod textarea;
 pub mod toggle;
 pub mod typography;
 pub mod window_provider;
+pub mod placeholder;
 
 pub use accordion::Accordion;
 pub use alert::{Alert, AlertType};
@@ -57,6 +58,7 @@ pub use resizable::Resizable;
 pub use switch::SwitchButton;
 pub use textarea::Textarea;
 pub use window_provider::{use_window, WindowProvider};
+pub use placeholder::Placeholder;
 // pub use collapsible::{Collapsible, CollapsibleContent};
 pub use combobox::Combobox;
 pub use command::Command;
