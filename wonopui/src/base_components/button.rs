@@ -8,6 +8,8 @@ pub struct ButtonProps {
     #[prop_or_default]
     pub variant: ButtonVariant,
     #[prop_or_default]
+    pub size: ButtonSize,
+    #[prop_or_default]
     pub class: Classes,
     #[prop_or_default]
     pub children: Children,
@@ -28,9 +30,22 @@ pub enum ButtonVariant {
     Default,
 }
 
+#[derive(PartialEq)]
+pub enum ButtonSize {
+    Small,
+    Medium,
+    Large,
+}
+
 impl Default for ButtonVariant {
     fn default() -> Self {
         ButtonVariant::Default
+    }
+}
+
+impl Default for ButtonSize {
+    fn default() -> Self {
+        ButtonSize::Medium
     }
 }
 
@@ -46,9 +61,15 @@ pub fn button(props: &ButtonProps) -> Html {
         ButtonVariant::Default => BRANDGUIDE.button_default,
     };
 
+    let size_class = match props.size {
+        ButtonSize::Small => "text-xs",//BRANDGUIDE.button_small,
+        ButtonSize::Medium => "",//BRANDGUIDE.button_medium,
+        ButtonSize::Large => "text-lg",//BRANDGUIDE.button_large,
+    };
+
     html! {
         <button
-            class={classes!(BRANDGUIDE.button_base, button_class, props.class.clone())}
+            class={classes!(BRANDGUIDE.button_base, button_class, size_class, props.class.clone())}
             onclick={props.onclick.clone()}
             disabled={props.disabled}
             type={props.kind.clone().unwrap_or_else(|| "button".to_string())}

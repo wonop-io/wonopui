@@ -27,6 +27,8 @@ pub struct GroupButtonProps {
     pub class: Classes,
     #[prop_or(FlexDirection::Row)]
     pub direction: FlexDirection,
+    #[prop_or_default]
+    pub on_change: Callback<String>,
 }
 
 #[derive(Clone, PartialEq)]
@@ -41,8 +43,10 @@ pub fn group_button(props: &GroupButtonProps) -> Html {
 
     let set_active_button = {
         let active_button = active_button.clone();
+        let on_change = props.on_change.clone();
         Callback::from(move |new_button: String| {
-            active_button.set(new_button);
+            active_button.set(new_button.clone());
+            on_change.emit(new_button);
         })
     };
 
@@ -106,8 +110,12 @@ pub fn group_button_trigger(props: &GroupButtonTriggerProps) -> Html {
 
 #[function_component(GroupButtonDemo)]
 pub fn group_button_demo() -> Html {
+    let on_change = Callback::from(|value: String| {
+        // log::info!("Selected value: {}", value);
+    });
+
     html! {
-        <GroupButton default_value="option1" class="w-[400px]" direction={FlexDirection::Row}>
+        <GroupButton default_value="option1" class="w-[400px]" direction={FlexDirection::Row} on_change={on_change}>
             <GroupButtonTrigger value="option1" onclick={Callback::noop()}>{"Option 1"}</GroupButtonTrigger>
             <GroupButtonTrigger value="option2" onclick={Callback::noop()}>{"Option 2"}</GroupButtonTrigger>
         </GroupButton>

@@ -3,51 +3,24 @@ use std::rc::Rc;
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
-pub struct SelectState {
+pub struct SelectState<T: Clone + PartialEq + ToString + 'static> {
+    pub selected: Option<T>,
     pub is_open: bool,
     pub toggle: Callback<()>,
+    pub on_select: Callback<T>,
 }
 
 #[derive(Properties, PartialEq)]
-pub struct SelectProps {
-    #[prop_or_default]
-    pub children: Children,
-}
-
-#[derive(Properties, PartialEq)]
-pub struct SelectTriggerProps {
-    #[prop_or_default]
-    pub class: String,
-    #[prop_or_default]
-    pub placeholder: String,
-}
-
-#[derive(Properties, PartialEq)]
-pub struct SelectContentProps {
-    #[prop_or_default]
-    pub children: Children,
-}
-
-#[derive(Properties, PartialEq)]
-pub struct SelectGroupProps {
-    #[prop_or_default]
-    pub children: Children,
-}
-
-#[derive(Properties, PartialEq)]
-pub struct SelectLabelProps {
-    pub label: String,
-}
-
-#[derive(Properties, PartialEq)]
-pub struct SelectItemProps {
-    pub value: String,
-    pub label: String,
+pub struct SelectProps<T: Clone + PartialEq + ToString + 'static> {
+    pub options: Vec<T>,
+    pub selected: Option<T>,
+    pub onchange: Callback<T>,
 }
 
 #[function_component(Select)]
-pub fn select(props: &SelectProps) -> Html {
+pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>) -> Html {
     let is_open = use_state(|| false);
+    let selected = use_state(|| props.selected.clone());
 
     let toggle = {
         let is_open = is_open.clone();
@@ -56,80 +29,68 @@ pub fn select(props: &SelectProps) -> Html {
         })
     };
 
-    let state = Rc::new(SelectState {
-        is_open: *is_open,
-        toggle,
-    });
-
-    html! {
-        <ContextProvider<Rc<SelectState>> context={state}>
-            <div class={BRANDGUIDE.select_container}>
-                { for props.children.iter() }
-            </div>
-        </ContextProvider<Rc<SelectState>>>
-    }
-}
-
-#[function_component(SelectTrigger)]
-pub fn select_trigger(props: &SelectTriggerProps) -> Html {
-    let state = use_context::<Rc<SelectState>>().expect("no context found for SelectState");
-
-    let onclick = {
-        let toggle = state.toggle.clone();
-        Callback::from(move |_| toggle.emit(()))
+    let on_select = {
+        let selected = selected.clone();
+        let onchange = props.onchange.clone();
+        Callback::from(move |value: T| {
+            selected.set(Some(value.clone()));
+            onchange.emit(value);
+        })
     };
 
-    html! {
-        <button type="button" class={format!("{} {}", props.class, BRANDGUIDE.select_trigger)} {onclick}>
-            <span class={BRANDGUIDE.select_trigger_placeholder}>{ &props.placeholder }</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={BRANDGUIDE.select_trigger_icon} aria-hidden="true">
-                <path d="m6 9 6 6 6-6"></path>
-            </svg>
-        </button>
-    }
-}
+    let state = Rc::new(SelectState {
+        selected: (*selected).clone(),
+        is_open: *is_open,
+        toggle,
+        on_select,
+    });
 
-#[function_component(SelectContent)]
-pub fn select_content(props: &SelectContentProps) -> Html {
-    let state = use_context::<Rc<SelectState>>().expect("no context found for SelectState");
-
-    if !state.is_open {
-        return html! {};
-    }
+    let selected_label = props.options.iter()
+        .find(|value| Some(*value) == selected.as_ref())
+        .map(|value| value.to_string())
+        .unwrap_or_default();
 
     html! {
-        <div class={BRANDGUIDE.select_content_container}>
-            <ul class={BRANDGUIDE.select_content_list}>
-                { for props.children.iter() }
-            </ul>
+        <div class={BRANDGUIDE.select_container}>
+            <button 
+                type="button" 
+                class={BRANDGUIDE.select_trigger} 
+                onclick={{
+                    let toggle = state.toggle.clone();
+                    move |_| toggle.emit(())
+                }}
+            >
+                <span class={BRANDGUIDE.select_trigger_placeholder}>{ selected_label }</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={BRANDGUIDE.select_trigger_icon} aria-hidden="true">
+                    <path d="m6 9 6 6 6-6"></path>
+                </svg>
+            </button>
+            if *is_open {
+                <div class={BRANDGUIDE.select_content_container}>
+                    <ul class={BRANDGUIDE.select_content_list}>
+                        {for props.options.iter().map(|value| {
+                            let on_click = {
+                                let value = value.clone();
+                                let on_select = state.on_select.clone();
+                                let toggle = state.toggle.clone();
+                                Callback::from(move |_| {
+                                    on_select.emit(value.clone());
+                                    toggle.emit(());
+                                })
+                            };
+                            html! {
+                                <li 
+                                    class={BRANDGUIDE.select_item}
+                                    onclick={on_click}
+                                >
+                                    { value.to_string() }
+                                </li>
+                            }
+                        })}
+                    </ul>
+                </div>
+            }
         </div>
-    }
-}
-
-#[function_component(SelectGroup)]
-pub fn select_group(props: &SelectGroupProps) -> Html {
-    html! {
-        <li class={BRANDGUIDE.select_group}>
-            { for props.children.iter() }
-        </li>
-    }
-}
-
-#[function_component(SelectLabel)]
-pub fn select_label(props: &SelectLabelProps) -> Html {
-    html! {
-        <div class={BRANDGUIDE.select_label}>
-            { &props.label }
-        </div>
-    }
-}
-
-#[function_component(SelectItem)]
-pub fn select_item(props: &SelectItemProps) -> Html {
-    html! {
-        <li class={BRANDGUIDE.select_item}>
-            { &props.label }
-        </li>
     }
 }
 

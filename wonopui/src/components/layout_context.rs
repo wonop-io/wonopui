@@ -1,5 +1,5 @@
 use std::rc::Rc;
-
+use crate::components::multicol_sidebar::SidebarColumn;
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
@@ -19,6 +19,7 @@ pub struct LayoutState {
     pub show_footer: bool,
     pub sidebar_folded: bool,
     pub sidebar_position: SidebarPosition,
+    pub extra_sidebar: Option<Html>,
 }
 
 impl LayoutState {
@@ -39,6 +40,7 @@ impl Default for LayoutState {
             show_footer: true,
             sidebar_folded: false,
             sidebar_position: SidebarPosition::Left,
+            extra_sidebar: None,
         }
     }
 }
@@ -50,6 +52,7 @@ pub enum LayoutAction {
     SetShowFooter(bool),
     SetSidebarFolded(bool),
     SetSidebarPosition(SidebarPosition), // Added action for setting sidebar position
+    SetExtraSidebar(Option<Html>),
 }
 
 impl Reducible for LayoutState {
@@ -63,6 +66,7 @@ impl Reducible for LayoutState {
             LayoutAction::SetShowFooter(value) => state.show_footer = value,
             LayoutAction::SetSidebarFolded(value) => state.sidebar_folded = value,
             LayoutAction::SetSidebarPosition(position) => state.sidebar_position = position, // Handling new action
+            LayoutAction::SetExtraSidebar(value) => state.extra_sidebar = value,
         }
 
         state.into()

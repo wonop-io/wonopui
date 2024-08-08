@@ -3,6 +3,8 @@ use std::rc::Rc;
 use yew::function_component;
 use yew::html;
 use yew::prelude::*;
+use wasm_bindgen::JsCast;
+use gloo_console as console;
 
 #[derive(Clone, PartialEq)]
 pub struct PopoverState {
@@ -17,7 +19,6 @@ pub struct PopoverProps {
     #[prop_or_default]
     pub class: Classes,
 }
-
 #[function_component(Popover)]
 pub fn popover(props: &PopoverProps) -> Html {
     let is_open = use_state(|| false);
@@ -37,8 +38,18 @@ pub fn popover(props: &PopoverProps) -> Html {
     };
     let close = {
         let is_open = is_open.clone();
+        let div_ref = div_ref.clone();
         Callback::from(move |e: FocusEvent| {
-            is_open.set(false);
+            if let Some(related_target) = e.related_target() {
+                let related_element: web_sys::Element = related_target.unchecked_into();
+                if let Some(div_element) = div_ref.cast::<web_sys::Element>() {
+                    if !div_element.contains(Some(&related_element)) {
+                        is_open.set(false);
+                    }
+                }
+            } else {
+                is_open.set(false);
+            }
         })
     };
 
@@ -50,7 +61,7 @@ pub fn popover(props: &PopoverProps) -> Html {
 
     html! {
         <ContextProvider<Rc<PopoverState>> context={state}>
-            <div ref={div_ref} class={classes!(BRANDGUIDE.popover_container, props.class.clone())} tabindex="0" onblur={close}>
+            <div ref={div_ref} class={classes!(BRANDGUIDE.popover_container, props.class.clone())} tabindex="0" onfocusout={close}>
                 { for props.children.iter() }
             </div>
         </ContextProvider<Rc<PopoverState>>>

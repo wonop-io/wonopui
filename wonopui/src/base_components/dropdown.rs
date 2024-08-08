@@ -1,6 +1,7 @@
-use super::popover::{Popover, PopoverContent, PopoverPosition, PopoverTrigger};
+use super::popover::{Popover, PopoverContent, PopoverPosition, PopoverTrigger, PopoverState};
 use crate::config::BRANDGUIDE;
 use yew::prelude::*;
+use std::rc::Rc;
 
 #[derive(Properties, PartialEq)]
 pub struct DropdownProps {
@@ -14,7 +15,7 @@ pub struct DropdownProps {
     pub class: Classes,
 }
 
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Clone, Properties)]
 pub struct DropdownItemProps {
     pub label: String,
     pub icon: Option<Html>,
@@ -45,19 +46,44 @@ pub fn dropdown(props: &DropdownProps) -> Html {
                     if item.is_separator {
                         html! { <hr class={classes!(BRANDGUIDE.dropdown_separator)} /> }
                     } else {
+                        let item_onclick = item.onclick.clone();
                         html! {
-                            <div class={classes!(BRANDGUIDE.dropdown_item)} onclick={item.onclick.clone()}>
-                                { if let Some(icon) = &item.icon {
-                                    html! { <span class={classes!(BRANDGUIDE.dropdown_item_icon)}>{ icon.clone() }</span> }
-                                } else {
-                                    html! {}
-                                }}
-                                <span>{ &item.label }</span>
-                            </div>
+                            <DropdownItem
+                                label={item.label.clone()}
+                                icon={item.icon.clone()}
+                                onclick={item_onclick}
+                                is_separator={item.is_separator}
+                            />
                         }
                     }
                 }) }
             </PopoverContent>
         </Popover>
+    }
+}
+
+
+#[function_component(DropdownItem)]
+fn dropdown_item(props: &DropdownItemProps) -> Html {
+    let popover_state = use_context::<Rc<PopoverState>>().expect("no context found for PopoverState");
+    
+    let onclick = {
+        let onclick = props.onclick.clone();
+        let toggle = popover_state.toggle.clone();
+        Callback::from(move |e: MouseEvent| {
+            onclick.emit(e);
+            toggle.emit(());
+        })
+    };
+
+    html! {
+        <div class={classes!(BRANDGUIDE.dropdown_item)} onclick={onclick}>
+            { if let Some(icon) = &props.icon {
+                html! { <span class={classes!(BRANDGUIDE.dropdown_item_icon)}>{ icon.clone() }</span> }
+            } else {
+                html! {}
+            }}
+            <span>{ &props.label }</span>
+        </div>
     }
 }
