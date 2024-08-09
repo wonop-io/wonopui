@@ -7,12 +7,17 @@ pub struct CardProps {
     pub children: Children,
     #[prop_or_default]
     pub class: Classes,
+    #[prop_or_default]
+    pub onclick: Option<Callback<MouseEvent>>,
 }
 
 #[function_component(Card)]
 pub fn card(props: &CardProps) -> Html {
     html! {
-        <div class={classes!(BRANDGUIDE.card_container, props.class.clone())}>
+        <div 
+            class={classes!(BRANDGUIDE.card_container, props.class.clone())}
+            onclick={props.onclick.clone()}
+        >
             { for props.children.iter() }
         </div>
     }

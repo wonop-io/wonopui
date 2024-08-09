@@ -1,5 +1,15 @@
 use yew::prelude::*;
 
+#[derive(PartialEq)]
+pub enum ContainerVariant {
+    Small,
+    Narrow,
+    Large,
+    
+    Responsive,
+    None
+}
+
 #[derive(Properties, PartialEq)]
 pub struct ContainerProps {
     #[prop_or_default]
@@ -11,14 +21,15 @@ pub struct ContainerProps {
 
     #[prop_or(true)]
     pub expanding: bool,
-    #[prop_or(false)]
-    pub use_break_points: bool,
+
     #[prop_or(true)]
     pub padding_x: bool,
     #[prop_or(true)]
     pub padding_y: bool,
-    #[prop_or(false)]
-    pub narrow: bool,
+    #[prop_or(ContainerVariant::Responsive)]
+    pub variant: ContainerVariant,
+    #[prop_or_default]
+    pub style: Option<String>
 }
 
 #[function_component(Container)]
@@ -34,24 +45,24 @@ pub fn container(props: &ContainerProps) -> Html {
     } else {
         classes!("")
     };
-    let breakpoints = if props.use_break_points {
-        classes!("container", "mx-auto")
-    } else {
-        classes!("mx-auto", "max-w-7xl")
-    };
+
     let expanding = if props.expanding {
-        classes!("w-full")
+        classes!("grow-1")
     } else {
         classes!("")
     };
-    let narrow = if props.narrow {
-        classes!("max-w-3xl", "mx-auto")
-    } else {
-        breakpoints
+
+    let variant = match props.variant {
+        ContainerVariant::Small =>  classes!("mx-auto", "max-w-96"),
+        ContainerVariant::Narrow =>  classes!("mx-auto", "max-w-3xl"),
+        ContainerVariant::Large =>  classes!("mx-auto", "max-w-7xl"),
+        ContainerVariant::Responsive =>  classes!("mx-auto", "container"),
+        ContainerVariant::None => classes!("")
     };
-    let container_class = classes!(padding_x, padding_y, expanding, narrow);
+
+    let container_class = classes!(padding_x, padding_y, expanding, variant);
 
     html!(
-        <@{props.tag.clone()} class={classes!(container_class, props.class.clone())}>{props.children.clone()}</@>
+        <@{props.tag.clone()} class={classes!(container_class, props.class.clone())} style={props.style.clone()}>{props.children.clone()}</@>
     )
 }

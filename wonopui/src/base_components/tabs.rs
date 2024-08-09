@@ -70,11 +70,11 @@ pub struct TabsListProps {
 #[function_component(TabsList)]
 pub fn tabs_list(props: &TabsListProps) -> Html {
     html! {
-        // <div>
-            <div role="tablist" class={classes!(props.class.clone(), "inline-flex",  props.direction.to_string(), BRANDGUIDE.tabs_list)}>
+        <div>
+            <div class={classes!(props.class.clone(), "inline-flex",  props.direction.to_string(), BRANDGUIDE.tabs_list)}>
                 { for props.children.iter() }
             </div>
-        // </div>
+        </div>
     }
 }
 
@@ -132,7 +132,7 @@ pub fn tabs_content(props: &TabsContentProps) -> Html {
     }
 
     html! {
-        <div class={classes!(props.class.clone(), BRANDGUIDE.tabs_content)}>
+        <div class={classes!(props.class.clone(), BRANDGUIDE.tabs_content, "overflow-y-auto")}>
             { for props.children.iter() }
         </div>
     }

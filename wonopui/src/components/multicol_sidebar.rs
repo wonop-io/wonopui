@@ -80,7 +80,12 @@ pub fn multi_column_sidebar(props: &MultiColumnSidebarProps) -> Html {
     let folded = layout_context.sidebar_folded;
 
     {
-        let full_size = layout_context.base_size * (props.children.len() as i32);
+        let count = if layout_context.extra_sidebar.is_some() {
+            props.children.len() + 1
+        } else {
+            props.children.len()
+        };
+        let full_size = layout_context.base_size * (count as i32);
         let layout_context = layout_context.clone();
         use_effect_with((full_size,), move |(full_size,)| {
             layout_context.dispatch(LayoutAction::SetSizeMenuSize(*full_size));
@@ -132,6 +137,9 @@ pub fn multi_column_sidebar(props: &MultiColumnSidebarProps) -> Html {
             {for children.iter().map(|child| html! {
                 {child}
             })}
+            if let Some(extra_sidebar) = &layout_context.extra_sidebar {
+                {extra_sidebar.clone()}
+            }
          </div>
        </>
     }

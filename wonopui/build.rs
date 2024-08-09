@@ -383,7 +383,7 @@ fn render_vec_to_hashmap(input: Vec<(String, String)>) -> Result<HashMap<String,
 fn get_default_config() -> Result<HashMap<String, String>> {
     let elements = vec![
         // Base styles
-        ("border_light".to_string(), "border-gray-200".to_string()),
+        ("border_light".to_string(), "border-zinc-200".to_string()),
         ("border_dark".to_string(), "border-zinc-700".to_string()),
         ("border".to_string(), "border {{ border_light }} dark:{{ border_dark }}".to_string()),
 
@@ -391,11 +391,11 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("bg_dark".to_string(), "bg-zinc-900".to_string()),
         ("background".to_string(), "{{ bg_light }} dark:{{ bg_dark }}".to_string()),
 
-        ("text_light".to_string(), "text-gray-800".to_string()),
-        ("text_dark".to_string(), "text-gray-100".to_string()),
+        ("text_light".to_string(), "text-zinc-800".to_string()),
+        ("text_dark".to_string(), "text-zinc-100".to_string()),
         ("text".to_string(), "{{ text_light }} dark:{{ text_dark }}".to_string()),
         ("text_inverted".to_string(), "dark:{{ text_light }} {{ text_dark }}".to_string()),
-        ("text_muted".to_string(), "text-gray-500 dark:text-gray-400".to_string()),
+        ("text_muted".to_string(), "text-zinc-500 dark:text-zinc-400".to_string()),
 
         ("text_container_small_padding".to_string(), "px-2 py-1".to_string()),
         ("text_container_medium_padding".to_string(), "px-3 py-2".to_string()),
@@ -416,21 +416,22 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("text_primary".to_string(), "text-white".to_string()),
         ("border_primary".to_string(), "border border-{{ primary_light }} dark:border-{{ primary_dark }}".to_string()),
 
-        ("secondary_light".to_string(), "gray-{{default_shade}}".to_string()),
-        ("secondary_dark".to_string(), "gray-{{default_shade_darker}}".to_string()),
-        ("secondary_darker".to_string(), "gray-700".to_string()),
+        ("secondary_light".to_string(), "zinc-{{default_shade}}".to_string()),
+        ("secondary_dark".to_string(), "zinc-{{default_shade_darker}}".to_string()),
+        ("secondary_darker".to_string(), "zinc-700".to_string()),
         ("secondary_background".to_string(), "bg-{{ secondary_light }}{{ default_opacity_addon }} dark:bg-{{ secondary_dark }}".to_string()),
         ("secondary_background_hover".to_string(), "hover:bg-{{ secondary_darker }}{{ default_opacity_addon_hover }} dark:hover:bg-{{ secondary_darker }}".to_string()),
         ("text_secondary".to_string(), "text-white".to_string()),
         ("border_secondary".to_string(), "border border-{{ secondary_light }} dark:border-{{ secondary_dark }}".to_string()),
 
-        ("default_light".to_string(), "gray-100".to_string()),
+        ("default_lighter".to_string(), "zinc-200".to_string()),
+        ("default_light".to_string(), "zinc-300".to_string()),
         ("default_dark".to_string(), "zinc-800".to_string()),
-        ("default_darker".to_string(), "zinc-700".to_string()),
-        ("default_background".to_string(), "bg-{{ default_light }} dark:bg-{{ default_dark }}".to_string()),
-        ("default_background_hover".to_string(), "hover:bg-{{ default_darker }} dark:hover:bg-{{ default_darker }}".to_string()),
-        ("text_default".to_string(), "text-gray-700 dark:text-gray-300".to_string()),
-        ("border_default".to_string(), "border border-gray-300 dark:border-gray-600".to_string()),
+        ("default_darker".to_string(), "zinc-900".to_string()),
+        ("default_background".to_string(), "bg-{{ default_dark }} dark:bg-{{ default_light }}".to_string()),
+        ("default_background_hover".to_string(), "hover:bg-{{ default_darker }} dark:hover:bg-{{ default_lighter }}".to_string()),
+        ("text_default".to_string(), "text-zinc-700 dark:text-zinc-300".to_string()),
+        ("border_default".to_string(), "border border-zinc-300 dark:border-zinc-600".to_string()),
 
         ("error_light".to_string(), "red-{{default_shade}}".to_string()),
         ("error_dark".to_string(), "red-{{default_shade_darker}}".to_string()),
@@ -503,9 +504,9 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("typography_h6".to_string(), "mt-1 mb-0.5 {{ text }} {{ text_base }} {{ font_medium }} mb-2".to_string()),
         ("typography_p".to_string(), "my-2 {{ text }} {{ text_base }} {{ font_normal }} mb-4".to_string()),
 
-        ("input_base".to_string(), "{{ default_rounding }} {{ border }} {{ default_shadow }} {{ background }} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full px-3 py-2 transition duration-150 ease-in-out".to_string()),
+        ("input_base".to_string(), "{{ default_rounding }} {{ border }} {{ background }} w-full px-3 py-2".to_string()),
         ("label_base".to_string(), "block text-sm font-medium {{ text }} mb-1".to_string()),
-        ("textarea_base".to_string(), "{{ default_rounding }} {{ border }} {{ default_shadow }} {{ background }} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full px-3 py-2 transition duration-150 ease-in-out".to_string()),
+        ("textarea_base".to_string(), "{{ default_rounding }} {{ border }} {{ background }} w-full px-3 py-2".to_string()),
 
         ("default_separator".to_string(), "{{ border }}".to_string()),
         ("limit_width_content_size".to_string(), "max-w-4xl w-full".to_string()),
@@ -542,19 +543,6 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("breadcrumb_separator".to_string(), "[&>svg]:size-4".to_string()),
 
         // Button
-        ("button_base".to_string(), "{{ text_container_medium_padding }} {{ font_medium }} {{ default_rounding }} transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2".to_string()),
-        ("button_primary".to_string(), "{{ button_base }} {{ primary_all_hover }} focus:ring-blue-500 shadow-sm".to_string()),
-        ("button_secondary".to_string(), "{{ button_base }} {{ secondary_all_hover }} focus:ring-gray-500 shadow-sm".to_string()),
-        ("button_danger".to_string(), "{{ button_base }} {{ error_all_hover }} focus:ring-red-500 shadow-sm".to_string()),
-        ("button_success".to_string(), "{{ button_base }} {{ success_all_hover }} focus:ring-green-500 shadow-sm".to_string()),
-        ("button_warning".to_string(), "{{ button_base }} {{ warning_all_hover }} focus:ring-yellow-500 shadow-sm".to_string()),
-        ("button_ghost".to_string(), "{{ button_base }} {{ text }} hover:bg-gray-100 dark:hover:bg-zinc-800 focus:ring-gray-500".to_string()),
-        ("button_default".to_string(), "{{ button_base }} {{ default_all_hover }} focus:ring-gray-500 shadow-sm".to_string()),
-
-        // Calendar
-        ("calendar_base".to_string(), "p-3 {{ default_rounding }} {{ border }} {{ default_shadow }}".to_string()),
-        ("calendar_container".to_string(), "{{ calendar_base }}".to_string()),
-        ("calendar_header".to_string(), "flex justify-between items-center mb-4".to_string()),
         ("button_base".to_string(), "{{ text_container_medium_padding }} font-semibold {{ default_rounding }}  transition-colors".to_string()),
         ("button_primary".to_string(), "{{ button_base }} {{ primary_all_hover }}".to_string()),
         ("button_secondary".to_string(), "{{ button_base }} {{ secondary_all_hover }}".to_string()),
@@ -563,6 +551,11 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("button_warning".to_string(), "{{ button_base }} {{ warning_all_hover }}".to_string()),
         ("button_ghost".to_string(), "{{ button_base }} {{ text }} {{ border }}".to_string()),
         ("button_default".to_string(), "{{ button_base }} {{ default_all_hover }}".to_string()),
+
+        // Calendar
+        ("calendar_base".to_string(), "p-3 {{ default_rounding }} {{ border }} {{ default_shadow }}".to_string()),
+        ("calendar_container".to_string(), "{{ calendar_base }}".to_string()),
+        ("calendar_header".to_string(), "flex justify-between items-center mb-4".to_string()),
 
         // Calendar
         ("calendar_base".to_string(), "p-3 {{ default_rounding }} {{ border }} {{ border_dark }}".to_string()),
@@ -581,14 +574,14 @@ fn get_default_config() -> Result<HashMap<String, String>> {
 
         // Card
         ("card_container".to_string(), "{{ default_rounding_larger }} {{ border }} {{ default_shadow }} {{ background }} {{ text }} overflow-hidden".to_string()),
-        ("card_header".to_string(), "flex flex-row justify-between items-center p-6".to_string()),
+        ("card_header".to_string(), "p-6".to_string()),
         ("card_title".to_string(), "{{ text_xl }} {{ font_semibold }} leading-none tracking-tight".to_string()),
         ("card_body".to_string(), "p-6".to_string()),
 
         // Checkbox
         ("checkbox_base".to_string(), "h-4 w-4 shrink-0 {{ default_rounding_smaller }} border {{ border_dark }} ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500".to_string()),
         ("checkbox_checked".to_string(), "{{ primary_background }} {{ text_dark }} border-transparent".to_string()),
-        ("checkbox_unchecked".to_string(), "border-gray-300 dark:border-gray-600".to_string()),
+        ("checkbox_unchecked".to_string(), "border-zinc-300 dark:border-zinc-600".to_string()),
         ("checkbox_disabled".to_string(), "opacity-50 cursor-not-allowed".to_string()),
         ("checkbox_label".to_string(), "ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70".to_string()),
 
@@ -613,9 +606,9 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("command_container".to_string(), "flex h-full w-full flex-col overflow-hidden {{ background }} {{ text }} {{ default_rounding_larger }} {{ border }} {{ default_shadow }}".to_string()),
         ("command_input_wrapper".to_string(), "flex items-center border-b px-3 {{ border_dark }}".to_string()),
         ("command_icon".to_string(), "mr-2 h-4 w-4 shrink-0 opacity-50".to_string()),
-        ("command_input".to_string(), "flex h-11 w-full {{ default_rounding }} bg-transparent py-3 text-sm outline-none placeholder-gray-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder-zinc-400".to_string()),
+        ("command_input".to_string(), "flex h-11 w-full {{ default_rounding }} bg-transparent py-3 text-sm outline-none placeholder-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder-zinc-400".to_string()),
         ("command_list".to_string(), "max-h-[300px] overflow-y-auto overflow-x-hidden".to_string()),
-        ("command_item".to_string(), "relative flex cursor-default select-none items-center {{ default_rounding_smaller}} {{ text_container_small_padding }} text-sm outline-none hover:bg-gray-200 dark:hover:bg-zinc-700".to_string()),
+        ("command_item".to_string(), "relative flex cursor-default select-none items-center {{ default_rounding_smaller}} {{ text_container_small_padding }} text-sm outline-none hover:bg-zinc-200 dark:hover:bg-zinc-700".to_string()),
         ("command_item_icon".to_string(), "mr-2 h-4 w-4".to_string()),
 
         // Popover
@@ -627,44 +620,44 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("dropdown_content".to_string(), "mt-2 min-w-[200px] {{ border }} {{ text }} {{ default_rounding }} {{ default_shadow }} overflow-hidden".to_string()),
         ("dropdown_item".to_string(), "{{ text_container_medium_padding }} cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center".to_string()),
         ("dropdown_item_icon".to_string(), "mr-2 h-4 w-4".to_string()),
-        ("dropdown_separator".to_string(), "my-1 h-px bg-gray-200 dark:bg-zinc-600".to_string()),
+        ("dropdown_separator".to_string(), "my-1 h-px bg-zinc-200 dark:bg-zinc-600".to_string()),
 
         // Drawer
-        ("drawer_container".to_string(), "fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75 dark:bg-zinc-900 dark:bg-opacity-75".to_string()),
+        ("drawer_container".to_string(), "fixed inset-0 z-50 flex items-center justify-center bg-zinc-800 bg-opacity-75 dark:bg-zinc-900 dark:bg-opacity-75".to_string()),
         ("drawer_content".to_string(), "{{ background }} {{ default_rounding_larger }} {{ default_shadow }} {{ limit_width_drawer_size }}".to_string()),
         ("drawer_header".to_string(), "{{ padding_4 }} border-b {{ border }}".to_string()),
-        ("drawer_title".to_string(), "text-lg font-semibold text-gray-900 {{ text_dark }}".to_string()),
-        ("drawer_description".to_string(), "text-sm text-gray-600 dark:text-zinc-400".to_string()),
+        ("drawer_title".to_string(), "text-lg font-semibold text-zinc-900 {{ text_dark }}".to_string()),
+        ("drawer_description".to_string(), "text-sm text-zinc-600 dark:text-zinc-400".to_string()),
         ("drawer_footer".to_string(), "{{ padding_4 }} border-t {{ border }}".to_string()),
 
         // Dialog
-        ("dialog_container".to_string(), "fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75 dark:bg-zinc-900 dark:bg-opacity-75".to_string()),
+        ("dialog_container".to_string(), "fixed inset-0 z-50 flex items-center justify-center bg-zinc-800 bg-opacity-75 dark:bg-zinc-900 dark:bg-opacity-75".to_string()),
         ("dialog_content".to_string(), "{{ background }} {{ text }} {{ default_rounding_larger }} {{ default_shadow }} {{ limit_width_drawer_size }}".to_string()),
         ("dialog_header".to_string(), "{{ padding_4 }} border-b {{ border }}".to_string()),
-        ("dialog_title".to_string(), "text-lg font-semibold text-gray-900 {{ text_dark }}".to_string()),
-        ("dialog_description".to_string(), "text-sm text-gray-600 dark:text-zinc-400".to_string()),
+        ("dialog_title".to_string(), "text-lg font-semibold text-zinc-900 {{ text_dark }}".to_string()),
+        ("dialog_description".to_string(), "text-sm text-zinc-600 dark:text-zinc-400".to_string()),
         ("dialog_footer".to_string(), "{{ padding_4 }} border-t {{ border }}".to_string()),
 
         // Notification
         ("notification_container".to_string(), "fixed bottom-4 right-4 z-50 {{ limit_width_widget_size }} {{ background }} {{ default_shadow }} {{ default_rounding_larger }} {{ padding_4 }}".to_string()),
-        ("notification_title".to_string(), "text-lg font-semibold text-gray-900 {{ text_dark }}".to_string()),
-        ("notification_description".to_string(), "text-sm text-gray-600 dark:text-zinc-400".to_string()),
+        ("notification_title".to_string(), "text-lg font-semibold text-zinc-900 {{ text_dark }}".to_string()),
+        ("notification_description".to_string(), "text-sm text-zinc-600 dark:text-zinc-400".to_string()),
         ("notification_button".to_string(), "{{ border }} rounded {{ text_container_medium_padding }} {{ border_dark }}".to_string()),
         ("notification_action".to_string(), "{{ primary_background }}".to_string()),
 
         // Toggle
-        ("toggle_base".to_string(), "h-8 w-8 rounded-full border ring-offset-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-zinc-800".to_string()),
+        ("toggle_base".to_string(), "h-8 w-8 rounded-full border ring-offset-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-zinc-800".to_string()),
         ("toggle_checked".to_string(), "{{ primary_background }} {{ text_dark }}".to_string()),
         ("toggle_unchecked".to_string(), "border-blue-500 dark:border-blue-700".to_string()),
         ("toggle_disabled".to_string(), "disabled:cursor-not-allowed disabled:opacity-50".to_string()),
         ("toggle_label".to_string(), "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70".to_string()),
 
-        ("switch_base".to_string(), "flex-shrink-0 cursor-pointer rounded border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none dark:bg-gray-700 dark:border-gray-600".to_string()),
+        ("switch_base".to_string(), "flex-shrink-0 cursor-pointer rounded border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none dark:bg-zinc-700 dark:border-zinc-600".to_string()),
         ("switch_checked".to_string(), "bg-indigo-600 dark:bg-indigo-500".to_string()),
-        ("switch_unchecked".to_string(), "bg-gray-200 dark:bg-gray-500".to_string()),
-        ("switch_disabled".to_string(), "disabled:cursor-not-allowed disabled:opacity-50 dark:disabled:bg-gray-600".to_string()),
-        ("switch_label".to_string(), "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-gray-300".to_string()),
-        ("switch_thumb".to_string(), "pointer-events-none inline-block h-5 w-5 transform rounded bg-white shadow ring-0 transition duration-200 ease-in-out dark:bg-gray-300".to_string()),
+        ("switch_unchecked".to_string(), "bg-zinc-200 dark:bg-zinc-500".to_string()),
+        ("switch_disabled".to_string(), "disabled:cursor-not-allowed disabled:opacity-50 dark:disabled:bg-zinc-600".to_string()),
+        ("switch_label".to_string(), "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-zinc-300".to_string()),
+        ("switch_thumb".to_string(), "pointer-events-none inline-block h-5 w-5 transform rounded bg-white shadow ring-0 transition duration-200 ease-in-out dark:bg-zinc-300".to_string()),
 
         // Select
         ("select_container".to_string(), "relative inline-block text-left".to_string()),
@@ -673,23 +666,23 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("select_trigger_icon".to_string(), "lucide lucide-chevron-down h-4 w-4 opacity-50".to_string()),
         ("select_content_container".to_string(), "absolute mt-1 w-full {{ default_rounding }} {{ background }} {{ default_shadow }} z-10".to_string()),
         ("select_content_list".to_string(), "max-h-60 {{ default_rounding }} py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm dark:ring-zinc-700".to_string()),
-        ("select_group".to_string(), "text-gray-900 {{ text_dark }}".to_string()),
-        ("select_label".to_string(), "{{ text_container_medium_padding }} text-sm text-gray-700 dark:text-zinc-400".to_string()),
-        ("select_item".to_string(), "text-gray-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 dark:text-white dark:hover:bg-zinc-700".to_string()),
+        ("select_group".to_string(), "text-zinc-900 {{ text_dark }}".to_string()),
+        ("select_label".to_string(), "{{ text_container_medium_padding }} text-sm text-zinc-700 dark:text-zinc-400".to_string()),
+        ("select_item".to_string(), "text-zinc-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-700".to_string()),
 
         // Table
-        ("table_container".to_string(), "overflow-x-auto".to_string()),
+        ("table_container".to_string(), "".to_string()),
         ("table".to_string(), "min-w-full {{ text }} {{ background }} {{ border }} {{ default_rounding }}".to_string()),
-        ("table_head".to_string(), "bg-gray-50 dark:bg-zinc-800".to_string()),
-        ("table_row".to_string(), "hover:bg-gray-50 dark:hover:bg-zinc-700".to_string()),
+        ("table_head".to_string(), "bg-zinc-50 dark:bg-zinc-800".to_string()),
+        ("table_row".to_string(), "hover:bg-zinc-50 dark:hover:bg-zinc-700".to_string()),
         ("table_cell".to_string(), "py-3 px-4".to_string()),
         ("table_body".to_string(), "divide-y {{ border }}".to_string()),
-        ("table_footer".to_string(), "bg-gray-50 dark:bg-zinc-800".to_string()),
+        ("table_footer".to_string(), "bg-zinc-50 dark:bg-zinc-800".to_string()),
 
 
         // Tabs
         ("tabs_container".to_string(), "mt-4 space-y-4".to_string()),
-        ("tabs_list".to_string(), "flex p-1 space-x-1 bg-gray-100 {{ default_rounding }} dark:bg-zinc-800".to_string()),
+        ("tabs_list".to_string(), "flex p-1 lg:p-4 space-x-1 bg-zinc-100 {{ default_rounding }} dark:bg-zinc-800".to_string()),
         ("tabs_trigger".to_string(), "flex-1 inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium {{ default_rounding }} transition-all".to_string()),
         ("tabs_trigger_inactive".to_string(), "{{ text }} hover:bg-white dark:hover:bg-zinc-700".to_string()),
         ("tabs_trigger_active".to_string(), "{{ primary_background }} {{ text_dark }} shadow-sm".to_string()),
@@ -697,7 +690,7 @@ fn get_default_config() -> Result<HashMap<String, String>> {
         ("tabs_content".to_string(), "mt-2 p-4 {{ border }} {{ default_rounding }} {{ background }}".to_string()),
 
         // GroupButton
-        ("group_button_list".to_string(), "inline-flex h-10 items-center justify-center rounded-md bg-gray-100 p-1 dark:bg-zinc-800".to_string()),
+        ("group_button_list".to_string(), "inline-flex h-10 items-center justify-center rounded-md bg-zinc-100 p-1 dark:bg-zinc-800".to_string()),
         ("group_button_trigger".to_string(), "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50".to_string()),
 
     ];
@@ -1723,7 +1716,7 @@ fn main() {
 
 /*
 
-        default_separator: "border-b border-gray-200 dark:border-zinc-700".to_string(),
+        default_separator: "border-b border-zinc-200 dark:border-zinc-700".to_string(),
         typography_h1: "text-4xl font-bold".to_string(),
         typography_h2: "text-3xl font-semibold".to_string(),
         typography_h3: "text-2xl font-medium".to_string(),
@@ -1744,14 +1737,14 @@ fn main() {
         badge_warning: "bg-yellow-500 dark:bg-yellow-700".to_string(),
         badge_error: "bg-red-500 dark:bg-red-700".to_string(),
         badge_info: "bg-blue-500 dark:bg-blue-700".to_string(),
-        badge_default: "bg-gray-500 dark:bg-zinc-700".to_string(),
+        badge_default: "bg-zinc-500 dark:bg-zinc-700".to_string(),
         badge_base: "font-medium {{ text_container_small_padding }} inline-flex items-center rounded text-xs text-white text-center items-center".to_string(),
         breadcrumb_nav: "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5 dark:text-zinc-400".to_string(),
         breadcrumb_list: "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5 dark:text-zinc-400".to_string(),
         breadcrumb_item: "inline-flex items-center gap-1.5".to_string(),
         breadcrumb_separator: "[&>svg]:size-3.5".to_string(),
         button_primary: "bg-blue-500 text-white dark:bg-blue-700".to_string(),
-        button_secondary: "bg-gray-500 text-white dark:bg-zinc-700".to_string(),
+        button_secondary: "bg-zinc-500 text-white dark:bg-zinc-700".to_string(),
         button_danger: "bg-red-500 text-white dark:bg-red-700".to_string(),
         button_success: "bg-green-500 text-white dark:bg-green-700".to_string(),
         button_warning: "bg-yellow-500 text-white dark:bg-yellow-700".to_string(),
@@ -1771,7 +1764,7 @@ fn main() {
         card_header: "flex flex-col space-y-1.5 p-6".to_string(),
         card_title: "text-2xl font-semibold leading-none tracking-tight".to_string(),
         card_body: "p-6 pt-0".to_string(),
-        checkbox_base: "h-4 w-4 shrink-0 {{ default_rounding_smaller}} border ring-offset-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-zinc-800".to_string(),
+        checkbox_base: "h-4 w-4 shrink-0 {{ default_rounding_smaller}} border ring-offset-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-zinc-800".to_string(),
         checkbox_checked: "bg-blue-500 text-white dark:bg-blue-700".to_string(),
         checkbox_unchecked: "border-blue-500 dark:border-blue-700".to_string(),
         checkbox_disabled: "disabled:cursor-not-allowed disabled:opacity-50".to_string(),
@@ -1791,9 +1784,9 @@ fn main() {
         command_container: "flex h-full w-full flex-col overflow-hidden bg-white text-black rounded-lg border {{ default_shadoow dark:bg-zinc-800 dark:text-white".to_string(),
         command_input_wrapper: "flex items-center border-b px-3 dark:border-zinc-700".to_string(),
         command_icon: "mr-2 h-4 w-4 shrink-0 opacity-50".to_string(),
-        command_input: "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder-gray-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder-zinc-400".to_string(),
+        command_input: "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder-zinc-400".to_string(),
         command_list: "max-h-[300px] overflow-y-auto overflow-x-hidden".to_string(),
-        command_item: "relative flex cursor-default select-none items-center {{ default_rounding_smaller}} {{ text_container_small_padding }}.5 text-sm outline-none hover:bg-gray-200 dark:hover:bg-zinc-700".to_string(),
+        command_item: "relative flex cursor-default select-none items-center {{ default_rounding_smaller}} {{ text_container_small_padding }}.5 text-sm outline-none hover:bg-zinc-200 dark:hover:bg-zinc-700".to_string(),
         command_item_icon: "mr-2 h-4 w-4".to_string(),
         popover_container: "relative inline-block".to_string(),
         popover_trigger: "cursor-pointer".to_string(),
@@ -1801,24 +1794,24 @@ fn main() {
         dropdown_content: "mt-1 min-w-[200px] border rounded-md {{ default_shadow }}".to_string(),
         dropdown_item: "px-4 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground flex items-center".to_string(),
         dropdown_item_icon: "mr-2".to_string(),
-        drawer_container: "fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75 dark:bg-zinc-900 dark:bg-opacity-75".to_string(),
+        drawer_container: "fixed inset-0 z-50 flex items-center justify-center bg-zinc-800 bg-opacity-75 dark:bg-zinc-900 dark:bg-opacity-75".to_string(),
         drawer_content: "bg-white rounded-lg {{ default_shadow }} {{ limit_width_drawer_size }} w-full dark:bg-zinc-800".to_string(),
-        drawer_header: "p-4 border-b border-gray-200 dark:border-zinc-700".to_string(),
-        drawer_title: "text-lg font-semibold text-gray-900 dark:text-white".to_string(),
-        drawer_description: "text-sm text-gray-600 dark:text-zinc-400".to_string(),
-        drawer_footer: "p-4 border-t border-gray-200 dark:border-zinc-700".to_string(),
-        dialog_container: "fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75 dark:bg-zinc-900 dark:bg-opacity-75".to_string(),
+        drawer_header: "p-4 border-b border-zinc-200 dark:border-zinc-700".to_string(),
+        drawer_title: "text-lg font-semibold text-zinc-900 dark:text-white".to_string(),
+        drawer_description: "text-sm text-zinc-600 dark:text-zinc-400".to_string(),
+        drawer_footer: "p-4 border-t border-zinc-200 dark:border-zinc-700".to_string(),
+        dialog_container: "fixed inset-0 z-50 flex items-center justify-center bg-zinc-800 bg-opacity-75 dark:bg-zinc-900 dark:bg-opacity-75".to_string(),
         dialog_content: "bg-white rounded-lg {{ default_shadow }} {{ limit_width_drawer_size }} w-full dark:bg-zinc-800".to_string(),
-        dialog_header: "p-4 border-b border-gray-200 dark:border-zinc-700".to_string(),
-        dialog_title: "text-lg font-semibold text-gray-900 dark:text-white".to_string(),
-        dialog_description: "text-sm text-gray-600 dark:text-zinc-400".to_string(),
-        dialog_footer: "p-4 border-t border-gray-200 dark:border-zinc-700".to_string(),
+        dialog_header: "p-4 border-b border-zinc-200 dark:border-zinc-700".to_string(),
+        dialog_title: "text-lg font-semibold text-zinc-900 dark:text-white".to_string(),
+        dialog_description: "text-sm text-zinc-600 dark:text-zinc-400".to_string(),
+        dialog_footer: "p-4 border-t border-zinc-200 dark:border-zinc-700".to_string(),
         notification_container: "fixed bottom-4 right-4 z-50 smalli}} w-full bg-white {{ default_shadow }} rounded-lg p-4 dark:bg-zinc-800".to_string(),
-        notification_title: "text-lg font-semibold text-gray-900 dark:text-white".to_string(),
-        notification_description: "text-sm text-gray-600 dark:text-zinc-400".to_string(),
+        notification_title: "text-lg font-semibold text-zinc-900 dark:text-white".to_string(),
+        notification_description: "text-sm text-zinc-600 dark:text-zinc-400".to_string(),
         notification_button: "border {{ border }} rounded px-4 py-2 dark:border-zinc-700".to_string(),
         notification_action: "text-blue-500 dark:text-blue-700".to_string(),
-        toggle_base: "h-8 w-8 rounded-full border ring-offset-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-zinc-800".to_string(),
+        toggle_base: "h-8 w-8 rounded-full border ring-offset-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-zinc-800".to_string(),
         toggle_checked: "bg-blue-500 text-white dark:bg-blue-700".to_string(),
         toggle_unchecked: "border-blue-500 dark:border-blue-700".to_string(),
         toggle_disabled: "disabled:cursor-not-allowed disabled:opacity-50".to_string(),
@@ -1829,10 +1822,10 @@ fn main() {
         select_trigger_icon: "lucide lucide-chevron-down h-4 w-4 opacity-50".to_string(),
         select_content_container: "absolute mt-1 w-full rounded-md bg-white {{ default_shadow }} z-10 dark:bg-zinc-800".to_string(),
         select_content_list: "max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm dark:ring-zinc-700".to_string(),
-        select_group: "text-gray-900 dark:text-white".to_string(),
-        select_label: "px-4 py-2 text-sm text-gray-700 dark:text-zinc-400".to_string(),
-        select_item: "text-gray-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 dark:text-white dark:hover:bg-zinc-700".to_string(),
-        tabs_list: "p-1 bg-gray-100 flex flex-col gap-2 rounded-md dark:bg-zinc-800".to_string(),
-        tabs_trigger: "flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm transition-colors hover:bg-gray-100 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700".to_string(),
+        select_group: "text-zinc-900 dark:text-white".to_string(),
+        select_label: "px-4 py-2 text-sm text-zinc-700 dark:text-zinc-400".to_string(),
+        select_item: "text-zinc-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-700".to_string(),
+        tabs_list: "p-1 bg-zinc-100 flex flex-col gap-2 rounded-md dark:bg-zinc-800".to_string(),
+        tabs_trigger: "flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700".to_string(),
         tabs_content: "px-4 py-3 text-sm".to_string(),
 */

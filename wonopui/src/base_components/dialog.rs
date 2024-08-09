@@ -4,7 +4,8 @@ use yew::prelude::*;
 #[derive(Clone, PartialEq)]
 pub struct DialogContext {
     pub is_open: bool,
-    pub toggle: Callback<()>,
+    pub toggle: Callback<Vec<String>>,
+    pub open_id: Vec<String>,
 }
 
 #[derive(Properties, PartialEq)]
@@ -15,14 +16,20 @@ pub struct DialogProps {
 #[function_component(Dialog)]
 pub fn dialog(props: &DialogProps) -> Html {
     let is_open = use_state(|| false);
+    let open_id = use_state(|| Vec::new());
     let toggle = {
         let is_open = is_open.clone();
-        Callback::from(move |_| is_open.set(!*is_open))
+        let open_id = open_id.clone();
+        Callback::from(move |v| {
+            open_id.set(v);
+            is_open.set(!*is_open)
+        })
     };
 
     let context = Rc::new(DialogContext {
         is_open: *is_open,
         toggle: toggle.clone(),
+        open_id: (*open_id).clone(),
     });
 
     html! {
@@ -35,6 +42,7 @@ pub fn dialog(props: &DialogProps) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct DialogTriggerProps {
     pub children: Children,
+    pub id: String,
 }
 
 #[function_component(DialogTrigger)]
@@ -43,7 +51,20 @@ pub fn dialog_trigger(props: &DialogTriggerProps) -> Html {
 
     let onclick = {
         let toggle = context.toggle.clone();
-        Callback::from(move |_| toggle.emit(()))
+        let id = props.id.clone();
+        let open_id = context.open_id.clone();
+        Callback::from(move |_| {
+            let mut new_open_id = open_id.clone();
+            if new_open_id.is_empty() || new_open_id.last() != Some(&id) {
+                new_open_id.push(id.clone());
+            } else {
+                new_open_id.pop();
+            }
+            // Here we would need to update the context's open_id, but since it's in an Rc,
+            // we can't mutate it directly. In a real implementation, you might want to use
+            // a state management solution that allows updating the context.
+            toggle.emit(new_open_id)
+        })
     };
 
     html! {
@@ -56,13 +77,14 @@ pub fn dialog_trigger(props: &DialogTriggerProps) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct DialogContentProps {
     pub children: Children,
+    pub id: String,
 }
 
 #[function_component(DialogContent)]
 pub fn dialog_content(props: &DialogContentProps) -> Html {
     let context = use_context::<Rc<DialogContext>>().expect("no context found");
 
-    if !context.is_open {
+    if !context.is_open || context.open_id.last() != Some(&props.id) {
         return html! {};
     }
 
@@ -104,14 +126,14 @@ pub fn dialog_title(props: &DialogTitleProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct DialogDescriptionProps {
+pub struct DialogBodyProps {
     pub children: Children,
 }
 
-#[function_component(DialogDescription)]
-pub fn dialog_description(props: &DialogDescriptionProps) -> Html {
+#[function_component(DialogBody)]
+pub fn dialog_body(props: &DialogBodyProps) -> Html {
     html! {
-        <p class="text-sm text-gray-600">
+        <p class="text-sm text-gray-600 p-4">
             { for props.children.iter() }
         </p>
     }
@@ -125,7 +147,7 @@ pub struct DialogFooterProps {
 #[function_component(DialogFooter)]
 pub fn dialog_footer(props: &DialogFooterProps) -> Html {
     html! {
-        <div class="p-4 border-t border-gray-200">
+        <div class="p-4 border-t border-gray-200 flex flex-row">
             { for props.children.iter() }
         </div>
     }
@@ -142,7 +164,12 @@ pub fn dialog_close(props: &DialogCloseProps) -> Html {
 
     let onclick = {
         let toggle = context.toggle.clone();
-        Callback::from(move |_| toggle.emit(()))
+        let open_id = context.open_id.clone();
+        Callback::from(move |_| {
+            let mut new_open_id = open_id.clone();
+            new_open_id.pop();
+            toggle.emit(new_open_id)
+        })
     };
 
     html! {

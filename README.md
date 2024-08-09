@@ -13,7 +13,34 @@ Wonop UI is a parameterized UI framework that leverages Tailwind CSS for use wit
 
 To use Wonop UI in your Yew project, add the following to your `Cargo.toml`:
 
-TODO: To be written
+```toml
+[dependencies]
+wonopui = { git = "https://github.com/wonop-io/wonopui.git", branch="main" }
+```
+
+Then initialise Tailwind CSS:
+
+```bash
+npx tailwindcss init
+```
+
+Add the following to your `tailwind.config.js`:
+
+```js
+module.exports = {
+  content: ["./src/**/*.rs", "./target/wonopui.json", "./target/tailwindcss.txt"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+```
+
+Add the following to your `index.html`:
+
+```html
+<link data-trunk rel="tailwind-css" href="tailwind.css" />
+```
 
 ## Usage
 

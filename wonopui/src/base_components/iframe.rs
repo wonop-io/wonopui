@@ -246,7 +246,7 @@ pub fn iframe(props: &IframeProps) -> Html {
     html! {
         <WindowProvider iframe_ref={iframe_ref.clone()}>
         <iframe
-            class={classes!(props.class.clone(), "w-full", "h-full")}
+            class={props.class.clone()}
             ref={iframe_ref}
             onload={Callback::from(move |_e| {
                 console::log!("---->> Iframe loaded <<< -----");

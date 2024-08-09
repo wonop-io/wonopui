@@ -9,6 +9,7 @@ pub fn drag_point(props: &DragPointProps) -> Html {
         onstart,
         onstop,
         class,
+        tag
     } = props;
     let drag_point_ref = use_node_ref();
     let active_pointer = use_state(|| None);
@@ -64,7 +65,7 @@ pub fn drag_point(props: &DragPointProps) -> Html {
     }
 
     html! {
-        <div
+        <@{tag.clone()}
             ref={drag_point_ref}
             class={class.clone()}
             onpointerdown={onpointerdown}
@@ -78,4 +79,6 @@ pub struct DragPointProps {
     pub onstart: Callback<PointerEvent>,
     pub onstop: Callback<()>,
     pub class: Classes,
+    #[prop_or("div".to_string())]
+    pub tag: String,
 }

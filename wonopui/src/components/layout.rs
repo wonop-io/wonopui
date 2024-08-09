@@ -3,6 +3,13 @@ use crate::components::layout_context::{LayoutContext, LayoutState, SidebarPosit
 use yew::context::ContextProvider;
 use yew::prelude::*;
 
+#[derive(PartialEq, Clone)]
+pub enum LayoutDirection {
+    None,
+    Horizontal,
+    Vertical
+}
+
 #[derive(Properties, PartialEq)]
 pub struct LayoutProps {
     #[prop_or_default]
@@ -15,12 +22,19 @@ pub struct LayoutProps {
 
     #[prop_or_default]
     pub children: Children,
+
+    #[prop_or(LayoutDirection::None)]
+    pub direction: LayoutDirection,
+}
+
+#[hook]
+pub fn use_layout() -> LayoutContext {
+    use_context::<LayoutContext>().expect("LayoutContext not found")
 }
 
 #[function_component(Layout)]
 pub fn layout(props: &LayoutProps) -> Html {
-    //let window = use_window();
-    let layout_context = use_context::<LayoutContext>().expect("LayoutContext not found");
+    let layout_context = use_layout();
     let sidebar_size = if layout_context.sidebar_folded {
         layout_context.folded_menu_size
     } else {
@@ -41,6 +55,12 @@ pub fn layout(props: &LayoutProps) -> Html {
 
     let is_large_screen = use_media_query("(min-width: 1024px)");
 
+    let direction = match props.direction {
+        LayoutDirection::None => classes!("overflow-y-auto"),
+        LayoutDirection::Horizontal => classes!("flex", "flex-row", "overflow-hidden"),
+        LayoutDirection::Vertical => classes!("flex", "flex-col", "overflow-hidden"),
+    };
+
     html! {
       <div>
       {props.sidebar.clone().unwrap_or_default()}
@@ -50,7 +70,7 @@ pub fn layout(props: &LayoutProps) -> Html {
           if layout_context.show_topbar {
               {props.topbar.clone().unwrap_or_default()}
           }
-          <div class="flex-1 overflow-y-auto">
+          <div class={classes!("flex-1", direction)}>
             {props.children.clone()}
           </div>
           if layout_context.show_footer {
