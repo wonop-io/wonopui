@@ -294,11 +294,8 @@ fn is_valid_tailwind_class(class: &str) -> bool {
 
 fn create_baseclasses() {
     let out_dir = env::var("OUT_DIR").unwrap();
-    let target_dir = out_dir
-        .split("target")
-        .next()
-        .expect("Failed to determine target directory");
-    let target_dir = Path::new(target_dir).join("target");
+    let target_dir = env::var("CARGO_TARGET_DIR").expect("Failed to determine target directory");
+    // let target_dir = Path::new(&target_dir).join("target");
     let target_dir = fs::canonicalize(&target_dir).unwrap_or_else(|_| target_dir.to_path_buf());
     let baseclasses_path = target_dir.join("tailwindcss.txt");
 
