@@ -7,7 +7,7 @@ use std::fs;
 use std::fs::File;
 use std::io::Read;
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path,PathBuf};
 use tera::{Context, Result, Tera};
 use std::collections::HashSet;
 use std::time::Instant;
@@ -292,10 +292,10 @@ fn is_valid_tailwind_class(class: &str) -> bool {
         .any(|&prefix| class.starts_with(prefix) || class == prefix.trim_end_matches('-'))
 }
 
-fn create_baseclasses() {
+fn get_target_dir() -> PathBuf {
     let out_dir = env::var("OUT_DIR").unwrap();
 
-    let target_dir = if out_dir.contains("/debug/") {
+    if out_dir.contains("/debug/") {
         Path::new(&out_dir.split("/debug/").next().expect("Failed to determine target directory")).into()
     } else if out_dir.contains("/release/") {
         Path::new(&out_dir.split("/release/").next().expect("Failed to determine target directory")).into()
@@ -303,8 +303,12 @@ fn create_baseclasses() {
         Path::new(&out_dir.split("/target/").next().expect("Failed to determine target directory")).join("target")
     } else {
         Path::new(&out_dir).join("target")
-    };
+    }
 
+}
+
+fn create_baseclasses() {
+    let target_dir = get_target_dir();
 
     let target_dir = fs::canonicalize(&target_dir).unwrap_or_else(|_| target_dir.into());
     let baseclasses_path = target_dir.join("tailwindcss.txt");
@@ -1412,12 +1416,12 @@ fn main() {
             .clone(),
     };
 
-    let base_dir = out_dir.split("/target").next().unwrap();
+    let base_dir = get_target_dir();
     let fallback_path = Path::new(&base_dir).join("wonopui.json");
     // Path to the user's configuration file
     let config_path = match env::var("WONOPUI_CONFIG_PATH") {
         Ok(path) => Path::new(&path).join("wonopui.json"),
-        Err(_) => fallback_path,
+        Err(_) => fallback_path.clone(),
     };
 
     // Read the configuration file
@@ -1432,7 +1436,7 @@ fn main() {
     };
 
     // Write the configuration to [base_dir]/target/wonopui.json
-    let target_config_path = Path::new(&base_dir).join("target").join("wonopui.json");
+    let target_config_path = fallback_path;
     let mut target_config_file =
         File::create(&target_config_path).expect("Failed to create target wonopui.json file");
     let config_content =
