@@ -340,9 +340,10 @@ fn create_baseclasses() {
 
     let mut classes: Vec<_> = classes.into_iter().collect();
     classes.sort();
-    let mut file = fs::File::create(baseclasses_path).expect("Unable to create file");
+    let filename = baseclasses_path.clone();
+    let mut file = fs::File::create(baseclasses_path).expect(&format!("Unable to create file {}", filename.display()));
     for class in &classes {
-        writeln!(file, "{}", class).expect("Unable to write to file");
+        writeln!(file, "{}", class).expect(&format!("Unable to write to file {}", filename.display()));
     }
 }
 
