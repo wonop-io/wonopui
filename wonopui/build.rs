@@ -294,11 +294,20 @@ fn is_valid_tailwind_class(class: &str) -> bool {
 
 fn create_baseclasses() {
     let out_dir = env::var("OUT_DIR").unwrap();
-    let target_dir = env::var("CARGO_TARGET_DIR").expect("Failed to determine target directory");
-    // let target_dir = Path::new(&target_dir).join("target");
-    let target_dir = fs::canonicalize(&target_dir).unwrap_or_else(|_| target_dir.to_path_buf());
-    let baseclasses_path = target_dir.join("tailwindcss.txt");
 
+    let target_dir = if out_dir.contains("/debug/") {
+        Path::new(&out_dir.split("/debug/").next().expect("Failed to determine target directory")).into()
+    } else if out_dir.contains("/release/") {
+        Path::new(&out_dir.split("/release/").next().expect("Failed to determine target directory")).into()
+    } else if out_dir.contains("/target/") {
+        Path::new(&out_dir.split("/target/").next().expect("Failed to determine target directory")).join("target")
+    } else {
+        Path::new(&out_dir).join("target")
+    };
+
+
+    let target_dir = fs::canonicalize(&target_dir).unwrap_or_else(|_| target_dir.into());
+    let baseclasses_path = target_dir.join("tailwindcss.txt");
     let mut classes = HashSet::new();
 
     // Recursively find all .rs files and extract Tailwind CSS classes
