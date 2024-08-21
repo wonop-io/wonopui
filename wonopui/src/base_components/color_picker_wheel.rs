@@ -32,10 +32,10 @@ pub struct ColorPickerWheel {
     indicator_context: Option<CanvasRenderingContext2d>,
     active_pointer: Option<(i32, usize)>, // (pointer_id, indicator_index)
     indicators: Vec<(f64, f64, f64)>,
-    move_closure: Closure<dyn FnMut(PointerEvent)>,
-    up_closure: Closure<dyn FnMut(PointerEvent)>,
+    move_closure: Option<Closure<dyn FnMut(PointerEvent)>>,
+    up_closure: Option<Closure<dyn FnMut(PointerEvent)>>,
     resize_observer: Option<ResizeObserver>,
-    resize_callback: Closure<dyn FnMut()>,
+    resize_callback: Option<Closure<dyn FnMut()>>,
 }
 
 pub enum Msg {
@@ -46,12 +46,29 @@ pub enum Msg {
     Resize,
 }
 
+impl Drop for ColorPickerWheel {
+    fn drop(&mut self) {
+        let window = web_sys::window().expect("no global `window` exists");
+        if let Some(move_closure) = &self.move_closure {
+            window.remove_event_listener_with_callback("pointermove", move_closure.as_ref().unchecked_ref()).unwrap();
+        }
+        if let Some(up_closure) = &self.up_closure {
+            window.remove_event_listener_with_callback("pointerup", up_closure.as_ref().unchecked_ref()).unwrap();
+        }
+        if let Some(resize_observer) = &self.resize_observer {
+            resize_observer.disconnect();
+        }
+        if let Some(resize_callback) = &self.resize_callback {
+            window.remove_event_listener_with_callback("resize", resize_callback.as_ref().unchecked_ref()).unwrap();
+        }
+    }
+}
+
 impl Component for ColorPickerWheel {
     type Message = Msg;
     type Properties = ColorPickerWheelProps;
 
     fn create(ctx: &Context<Self>) -> Self {
-        let link = ctx.link().clone();
         Self {
             wheel_canvas_ref: NodeRef::default(),
             indicator_canvas_ref: NodeRef::default(),
@@ -59,22 +76,10 @@ impl Component for ColorPickerWheel {
             indicator_context: None,
             active_pointer: None,
             indicators: ctx.props().indicators.clone(),
-            move_closure: {
-                let link = link.clone();
-                Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
-                    link.send_message(Msg::PointerMove(event));
-                }) as Box<dyn FnMut(_)>)
-            },
-            up_closure: {
-                let link = link.clone();
-                Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
-                    link.send_message(Msg::PointerUp(event));
-                }) as Box<dyn FnMut(_)>)
-            },
+            move_closure: None,
+            up_closure: None,
             resize_observer: None,
-            resize_callback: Closure::wrap(Box::new(move || {
-                link.send_message(Msg::Resize);
-            }) as Box<dyn FnMut()>),
+            resize_callback: None,
         }
     }
 
@@ -89,8 +94,22 @@ impl Component for ColorPickerWheel {
                         self.active_pointer = Some((event.pointer_id(), index));
 
                         let window = web_sys::window().expect("no global `window` exists");
-                        window.add_event_listener_with_callback("pointermove", self.move_closure.as_ref().unchecked_ref()).unwrap();
-                        window.add_event_listener_with_callback("pointerup", self.up_closure.as_ref().unchecked_ref()).unwrap();
+                        let link = ctx.link().clone();
+                        self.move_closure = {
+                            let link = link.clone();
+                            Some(Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
+                                link.send_message(Msg::PointerMove(event));
+                            }) as Box<dyn FnMut(_)>))
+                        };
+                        self.up_closure = {
+                            let link = link.clone();
+                            Some(Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
+                                link.send_message(Msg::PointerUp(event));
+                            }) as Box<dyn FnMut(_)>))
+                        };
+
+                        window.add_event_listener_with_callback("pointermove", self.move_closure.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
+                        window.add_event_listener_with_callback("pointerup", self.up_closure.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
 
                         self.update_color(ctx, event.offset_x() as f64, event.offset_y() as f64);
                         true
@@ -122,8 +141,14 @@ impl Component for ColorPickerWheel {
                         self.active_pointer = None;
 
                         let window = web_sys::window().expect("no global `window` exists");
-                        window.remove_event_listener_with_callback("pointermove", self.move_closure.as_ref().unchecked_ref()).unwrap();
-                        window.remove_event_listener_with_callback("pointerup", self.up_closure.as_ref().unchecked_ref()).unwrap();
+                        if let Some(move_closure) = &self.move_closure {
+                            window.remove_event_listener_with_callback("pointermove", move_closure.as_ref().unchecked_ref()).unwrap();
+                        }
+                        if let Some(up_closure) = &self.up_closure {
+                            window.remove_event_listener_with_callback("pointerup", up_closure.as_ref().unchecked_ref()).unwrap();
+                        }
+                        self.move_closure = None;
+                        self.up_closure = None;
 
                         // Trigger onchange here
                         self.update_color(ctx, event.offset_x() as f64, event.offset_y() as f64);
@@ -163,7 +188,7 @@ impl Component for ColorPickerWheel {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
-            <div style={format!("position:relative")} class="w-full h-full aspect-square" > //style={format!("position: relative; height: {}px; width: {}px;", ctx.props().size.to_string(), ctx.props().size.to_string())}>
+            <div style={format!("position:relative")} class="w-full h-full aspect-square" >
                 <canvas
                     class="w-full h-full aspect-square"
                     style={format!("margin: {}px;", ctx.props().indicator_radius.to_string())}
@@ -211,7 +236,12 @@ impl Component for ColorPickerWheel {
                 self.draw_indicators(ctx);
 
                 // Set up ResizeObserver
-                let resize_observer = ResizeObserver::new(self.resize_callback.as_ref().unchecked_ref()).unwrap();
+                let link = ctx.link().clone();
+                self.resize_callback = Some(Closure::wrap(Box::new(move || {
+                    link.send_message(Msg::Resize);
+                }) as Box<dyn FnMut()>));
+                
+                let resize_observer = ResizeObserver::new(self.resize_callback.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
                 resize_observer.observe(&wheel_canvas);
 
                 self.resize_observer = Some(resize_observer);

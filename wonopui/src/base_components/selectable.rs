@@ -71,8 +71,6 @@ pub struct SelectableProps {
     #[prop_or(false)]
     pub select_mode: bool,
     #[prop_or_default]
-    pub classes: Classes,
-    #[prop_or_default]
     pub style: String,
 }
 
@@ -206,7 +204,7 @@ pub fn selectable(props: &SelectableProps) -> Html {
     let state = use_context::<UseReducerHandle<SelectableState>>().expect("SelectableContext not found");
     if !state.select_mode {
         return html! {
-            <@{props.tag.clone()} class={props.classes.clone()} style={props.style.clone()} key="selectable">
+            <@{props.tag.clone()} class={props.class.clone()} style={props.style.clone()} key="selectable">
             { props.children.clone() }
             </@>
         }
@@ -261,6 +259,7 @@ pub fn selectable(props: &SelectableProps) -> Html {
         let state = state.clone();
         let id = props.id.clone();
         let node_ref = node_ref.clone();
+
         use_effect_with(
             (node_ref.clone(),),
             move |(node_ref,)| {
@@ -279,14 +278,16 @@ pub fn selectable(props: &SelectableProps) -> Html {
                     let callback = Closure::<dyn Fn()>::new(cb);
                     let resize_observer = MutationObserver::new(callback.as_ref().unchecked_ref()).unwrap();
                     resize_observer.observe(&element);
-                    
+                    callback.forget();
                     Some(resize_observer)
                 } else {
                     None
                 };
                 move || {
                     match rs_obs {
-                        Some(rs) => rs.disconnect(),
+                        Some(rs) => {
+                            rs.disconnect();
+                        },
                         None => (),
                     }
                 }
@@ -294,7 +295,7 @@ pub fn selectable(props: &SelectableProps) -> Html {
         );
     }
     
-    let mut classes = props.classes.clone();
+    let mut classes = props.class.clone();
     classes.push("hover:outline");
     classes.push("hover:outline-dashed");
     classes.push("hover:outline-2");

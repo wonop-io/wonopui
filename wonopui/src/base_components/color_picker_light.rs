@@ -27,10 +27,10 @@ pub struct ColorPickerLight {
     active_pointer: Option<i32>,
     current_light: f64,
     indicator_position: f64,
-    move_closure: Closure<dyn FnMut(PointerEvent)>,
-    up_closure: Closure<dyn FnMut(PointerEvent)>,
+    move_closure: Option<Closure<dyn FnMut(PointerEvent)>>,
+    up_closure: Option<Closure<dyn FnMut(PointerEvent)>>,
     resize_observer: Option<ResizeObserver>,
-    resize_callback: Closure<dyn FnMut()>,
+    resize_callback: Option<Closure<dyn FnMut()>>,
     hue: f64,
     saturation: f64,
 }
@@ -44,37 +44,39 @@ pub enum Msg {
     Resize,
 }
 
+impl Drop for ColorPickerLight {
+    fn drop(&mut self) {
+        let window = web_sys::window().expect("no global `window` exists");
+        if let Some(move_closure) = &self.move_closure {
+            window.remove_event_listener_with_callback("pointermove", move_closure.as_ref().unchecked_ref()).unwrap();
+        }
+        if let Some(up_closure) = &self.up_closure {
+            window.remove_event_listener_with_callback("pointerup", up_closure.as_ref().unchecked_ref()).unwrap();
+        }
+        if let Some(resize_observer) = &self.resize_observer {
+            resize_observer.disconnect();
+        }
+        if let Some(resize_callback) = &self.resize_callback {
+            window.remove_event_listener_with_callback("resize", resize_callback.as_ref().unchecked_ref()).unwrap();
+        }
+    }
+}
+
 impl Component for ColorPickerLight {
     type Message = Msg;
     type Properties = ColorPickerLightProps;
 
     fn create(ctx: &Context<Self>) -> Self {
-        let link = ctx.link().clone();
         Self {
             canvas_ref: NodeRef::default(),
             context: None,
             active_pointer: None,
             current_light: ctx.props().value,
             indicator_position: ctx.props().value,
-            move_closure: {
-                let link = link.clone();
-                Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
-                    link.send_message(Msg::PointerMove(event));
-                }) as Box<dyn FnMut(_)>)
-            },
-            up_closure: {
-                let link = link.clone();
-                Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
-                    link.send_message(Msg::PointerUp(event));
-                }) as Box<dyn FnMut(_)>)
-            },
+            move_closure: None,
+            up_closure: None,
             resize_observer: None,
-            resize_callback: {
-                let link = link.clone();
-                Closure::wrap(Box::new(move || {
-                    link.send_message(Msg::Resize);
-                }) as Box<dyn FnMut()>)
-            },
+            resize_callback: None,
             hue: ctx.props().hue,
             saturation: ctx.props().saturation,
         }
@@ -88,8 +90,22 @@ impl Component for ColorPickerLight {
                     self.active_pointer = Some(event.pointer_id());
 
                     let window = web_sys::window().expect("no global `window` exists");
-                    window.add_event_listener_with_callback("pointermove", self.move_closure.as_ref().unchecked_ref()).unwrap();
-                    window.add_event_listener_with_callback("pointerup", self.up_closure.as_ref().unchecked_ref()).unwrap();
+                    let link = ctx.link().clone();
+                    self.move_closure = {
+                        let link = link.clone();
+                        Some(Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
+                            link.send_message(Msg::PointerMove(event));
+                        }) as Box<dyn FnMut(_)>))
+                    };
+                    self.up_closure = {
+                        let link = link.clone();
+                        Some(Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
+                            link.send_message(Msg::PointerUp(event));
+                        }) as Box<dyn FnMut(_)>))
+                    };
+
+                    window.add_event_listener_with_callback("pointermove", self.move_closure.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
+                    window.add_event_listener_with_callback("pointerup", self.up_closure.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
                 }
                 self.update_light(ctx, event.offset_x() as f64);
                 true
@@ -108,15 +124,21 @@ impl Component for ColorPickerLight {
                     self.active_pointer = None;
 
                     let window = web_sys::window().expect("no global `window` exists");
-                    window.remove_event_listener_with_callback("pointermove", self.move_closure.as_ref().unchecked_ref()).unwrap();
-                    window.remove_event_listener_with_callback("pointerup", self.up_closure.as_ref().unchecked_ref()).unwrap();
+                    if let Some(move_closure) = &self.move_closure {
+                        window.remove_event_listener_with_callback("pointermove", move_closure.as_ref().unchecked_ref()).unwrap();
+                    }
+                    if let Some(up_closure) = &self.up_closure {
+                        window.remove_event_listener_with_callback("pointerup", up_closure.as_ref().unchecked_ref()).unwrap();
+                    }
+                    self.move_closure = None;
+                    self.up_closure = None;
+                    ctx.props().onchange.emit(self.current_light);
                 }
                 false
             }
             Msg::UpdateLight(light) => {
                 let update = self.current_light != light;
                 self.current_light = light;
-                ctx.props().onchange.emit(self.current_light);
                 update
             }
             Msg::UpdateIndicatorPosition(x) => {
@@ -165,9 +187,14 @@ impl Component for ColorPickerLight {
                 self.draw_gradient(ctx);
 
                 // Set up ResizeObserver
-                let resize_observer = ResizeObserver::new(self.resize_callback.as_ref().unchecked_ref()).unwrap();
+                let link = ctx.link().clone();
+                self.resize_callback = Some(Closure::wrap(Box::new(move || {
+                    link.send_message(Msg::Resize);
+                }) as Box<dyn FnMut()>));
+                
+                let resize_observer = ResizeObserver::new(self.resize_callback.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
                 resize_observer.observe(&canvas);
-
+                
                 self.resize_observer = Some(resize_observer);
             }
         } else {

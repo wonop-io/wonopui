@@ -13,6 +13,8 @@ pub struct DropdownProps {
     pub position: PopoverPosition,
     #[prop_or_default]
     pub class: Classes,
+    #[prop_or_default]
+    pub full_width: bool,
 }
 
 #[derive(PartialEq, Clone, Properties)]
@@ -36,23 +38,30 @@ impl Default for DropdownItemProps {
 
 #[function_component(Dropdown)]
 pub fn dropdown(props: &DropdownProps) -> Html {
+    let popover_content_class = if props.full_width {
+        classes!(BRANDGUIDE.dropdown_content, "w-full")
+    } else {
+        classes!(BRANDGUIDE.dropdown_content)
+    };
+
     html! {
         <Popover class={ props.class.clone()}>
             <PopoverTrigger>
                 { props.children.clone() }
             </PopoverTrigger>
-            <PopoverContent class={BRANDGUIDE.dropdown_content} position={props.position.clone()}>
+            <PopoverContent class={popover_content_class} position={props.position.clone()}>
                 { for props.items.iter().map(|item| {
                     if item.is_separator {
                         html! { <hr class={classes!(BRANDGUIDE.dropdown_separator)} /> }
                     } else {
                         let item_onclick = item.onclick.clone();
                         html! {
-                            <DropdownItem
+                            <DropdownItemComponent
                                 label={item.label.clone()}
                                 icon={item.icon.clone()}
                                 onclick={item_onclick}
                                 is_separator={item.is_separator}
+                                full_width={props.full_width}
                             />
                         }
                     }
@@ -62,9 +71,18 @@ pub fn dropdown(props: &DropdownProps) -> Html {
     }
 }
 
+#[derive(Properties, PartialEq)]
+pub struct DropdownItemComponentProps {
+    pub label: String,
+    pub icon: Option<Html>,
+    pub onclick: Callback<MouseEvent>,
+    pub is_separator: bool,
+    #[prop_or_default]
+    pub full_width: bool,
+}
 
-#[function_component(DropdownItem)]
-fn dropdown_item(props: &DropdownItemProps) -> Html {
+#[function_component(DropdownItemComponent)]
+fn dropdown_item_component(props: &DropdownItemComponentProps) -> Html {
     let popover_state = use_context::<Rc<PopoverState>>().expect("no context found for PopoverState");
     
     let onclick = {
@@ -76,8 +94,14 @@ fn dropdown_item(props: &DropdownItemProps) -> Html {
         })
     };
 
+    let item_class = if props.full_width {
+        classes!(BRANDGUIDE.dropdown_item, "w-full")
+    } else {
+        classes!(BRANDGUIDE.dropdown_item)
+    };
+
     html! {
-        <div class={classes!(BRANDGUIDE.dropdown_item)} onclick={onclick}>
+        <div class={item_class} onclick={onclick}>
             { if let Some(icon) = &props.icon {
                 html! { <span class={classes!(BRANDGUIDE.dropdown_item_icon)}>{ icon.clone() }</span> }
             } else {
