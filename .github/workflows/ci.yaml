@@ -35,9 +35,7 @@ jobs:
           mv ~/.cargo/bin/trunk ~/.cargo/bin/wasm-trunk
 
       - name: Testing wonopui
-        working-directory: wonopui
         run: cargo test
 
       - name: Building
-        working-directory: wonopui
         run: cargo build --release
