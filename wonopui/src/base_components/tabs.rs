@@ -1,22 +1,17 @@
-use crate::config::BRANDGUIDE;
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
 use std::rc::Rc;
 use yew::function_component;
 use yew::html;
 use yew::prelude::*;
 
-#[derive(PartialEq)]
-pub enum FlexDirection {
+#[derive(PartialEq, Clone)]
+pub enum TabsDirection {
     Row,
     Column,
-}
-
-impl ToString for FlexDirection {
-    fn to_string(&self) -> String {
-        match self {
-            FlexDirection::Row => "flex-row".to_string(),
-            FlexDirection::Column => "flex-col".to_string(),
-        }
-    }
+    Auto,
 }
 
 #[derive(Properties, PartialEq)]
@@ -25,16 +20,23 @@ pub struct TabsProps {
     pub default_value: String,
     #[prop_or_default]
     pub class: Classes,
+    #[prop_or(TabsDirection::Auto)]
+    pub direction: TabsDirection,
 }
 
 #[derive(Clone, PartialEq)]
 pub struct TabsState {
     pub active_tab: String,
     pub set_active_tab: Callback<String>,
+    pub direction: TabsDirection,
 }
 
 #[function_component(Tabs)]
 pub fn tabs(props: &TabsProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let active_tab = use_state(|| props.default_value.clone());
 
     let set_active_tab = {
@@ -47,11 +49,12 @@ pub fn tabs(props: &TabsProps) -> Html {
     let state = Rc::new(TabsState {
         active_tab: (*active_tab).clone(),
         set_active_tab,
+        direction: props.direction.clone(),
     });
 
     html! {
         <ContextProvider<Rc<TabsState>> context={state}>
-            <div class={classes!(props.class.clone(), "flex", "flex-col", BRANDGUIDE.tabs_container)}>
+            <div class={classes!(props.class.clone(), &brandguide.tabs_container)}>
                 { for props.children.iter() }
             </div>
         </ContextProvider<Rc<TabsState>>>
@@ -63,17 +66,22 @@ pub struct TabsListProps {
     pub children: Children,
     #[prop_or_default]
     pub class: Classes,
-    #[prop_or(FlexDirection::Row)]
-    pub direction: FlexDirection,
 }
 
 #[function_component(TabsList)]
 pub fn tabs_list(props: &TabsListProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    let state = use_context::<Rc<TabsState>>().expect("no context found for TabsState");
+    let class = match state.direction {
+        TabsDirection::Auto | TabsDirection::Row => &brandguide.tabs_list_row,
+        TabsDirection::Column => &brandguide.tabs_list_column,
+    };
     html! {
-        <div>
-            <div class={classes!(props.class.clone(), "inline-flex",  props.direction.to_string(), BRANDGUIDE.tabs_list)}>
-                { for props.children.iter() }
-            </div>
+        <div class={classes!(props.class.clone(), class, &brandguide.tabs_list)}>
+            { for props.children.iter() }
         </div>
     }
 }
@@ -88,6 +96,10 @@ pub struct TabsTriggerProps {
 
 #[function_component(TabsTrigger)]
 pub fn tabs_trigger(props: &TabsTriggerProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let state = use_context::<Rc<TabsState>>().expect("no context found for TabsState");
 
     let onclick = {
@@ -102,12 +114,11 @@ pub fn tabs_trigger(props: &TabsTriggerProps) -> Html {
         <button
             type="button"
             role="tab"
-            //aria-selected={is_active}
             onclick={onclick}
             class={classes!(
                 props.class.clone(),
-                if is_active { BRANDGUIDE.tabs_trigger_active } else { BRANDGUIDE.tabs_trigger_inactive },
-                BRANDGUIDE.tabs_trigger
+                if is_active { &brandguide.tabs_trigger_active } else { &brandguide.tabs_trigger_inactive },
+                &brandguide.tabs_trigger
             )}
         >
             { for props.children.iter() }
@@ -125,6 +136,10 @@ pub struct TabsContentProps {
 
 #[function_component(TabsContent)]
 pub fn tabs_content(props: &TabsContentProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let state = use_context::<Rc<TabsState>>().expect("no context found for TabsState");
 
     if state.active_tab != props.value {
@@ -132,67 +147,8 @@ pub fn tabs_content(props: &TabsContentProps) -> Html {
     }
 
     html! {
-        <div class={classes!(props.class.clone(), BRANDGUIDE.tabs_content, "overflow-y-auto")}>
+        <div class={classes!(props.class.clone(), &brandguide.tabs_content)}>
             { for props.children.iter() }
         </div>
-    }
-}
-
-// New entries in the brand guide:
-// tabs_list: "h-10 items-center justify-center rounded-md bg-gray-100 p-1 text-gray-600",
-// tabs_trigger: "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-// tabs_content: "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
-
-#[function_component(TabsDemo)]
-pub fn tabs_demo() -> Html {
-    html! {
-        <Tabs default_value="account" class="w-[400px]">
-            <TabsList class="flex w-full"  direction={FlexDirection::Row}>
-                <TabsTrigger value="account">{"Account"}</TabsTrigger>
-                <TabsTrigger value="password">{"Password"}</TabsTrigger>
-            </TabsList>
-            <TabsContent value="account">
-                <div class="rounded-lg border bg-white text-black shadow-sm">
-                    <div class="flex flex-col space-y-1.5 p-6">
-                        <h3 class="text-2xl font-semibold leading-none tracking-tight">{"Account"}</h3>
-                        <p class="text-sm text-gray-600">{"Make changes to your account here. Click save when you're done."}</p>
-                    </div>
-                    <div class="p-6 pt-0 space-y-2">
-                        <div class="space-y-1">
-                            <label class="text-sm font-medium leading-none" for="name">{"Name"}</label>
-                            <input class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" id="name" value="Pedro Duarte" />
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-sm font-medium leading-none" for="username">{"Username"}</label>
-                            <input class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" id="username" value="@peduarte" />
-                        </div>
-                    </div>
-                    <div class="flex items-center p-6 pt-0">
-                        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors bg-blue-500 text-white hover:bg-blue-600 h-10 px-4 py-2">{"Save changes"}</button>
-                    </div>
-                </div>
-            </TabsContent>
-            <TabsContent value="password">
-                <div class="rounded-lg border bg-white text-black shadow-sm">
-                    <div class="flex flex-col space-y-1.5 p-6">
-                        <h3 class="text-2xl font-semibold leading-none tracking-tight">{"Password"}</h3>
-                        <p class="text-sm text-gray-600">{"Change your password here. After saving, you'll be logged out."}</p>
-                    </div>
-                    <div class="p-6 pt-0 space-y-2">
-                        <div class="space-y-1">
-                            <label class="text-sm font-medium leading-none" for="current">{"Current password"}</label>
-                            <input class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" id="current" type="password" />
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-sm font-medium leading-none" for="new">{"New password"}</label>
-                            <input class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm" id="new" type="password" />
-                        </div>
-                    </div>
-                    <div class="flex items-center p-6 pt-0">
-                        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors bg-blue-500 text-white hover:bg-blue-600 h-10 px-4 py-2">{"Save password"}</button>
-                    </div>
-                </div>
-            </TabsContent>
-        </Tabs>
     }
 }

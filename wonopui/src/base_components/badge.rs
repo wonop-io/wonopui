@@ -1,4 +1,7 @@
-use crate::config::BRANDGUIDE;
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -26,16 +29,20 @@ impl Default for BadgeType {
 
 #[function_component(Badge)]
 pub fn badge(props: &BadgeProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let badge_class = match props.badge_type {
-        BadgeType::Success => BRANDGUIDE.badge_success,
-        BadgeType::Warning => BRANDGUIDE.badge_warning,
-        BadgeType::Error => BRANDGUIDE.badge_error, // TODO: Unconsistent with Button
-        BadgeType::Info => BRANDGUIDE.badge_info,
-        BadgeType::Default => BRANDGUIDE.badge_default,
+        BadgeType::Success => &brandguide.badge_success,
+        BadgeType::Warning => &brandguide.badge_warning,
+        BadgeType::Error => &brandguide.badge_error, // TODO: Unconsistent with Button
+        BadgeType::Info => &brandguide.badge_info,
+        BadgeType::Default => &brandguide.badge_default,
     };
 
     html! {
-        <span class={classes!(BRANDGUIDE.badge_base, badge_class)}>
+        <span class={classes!(&brandguide.badge_base, badge_class)}>
             { &props.label }
         </span>
     }

@@ -1,4 +1,7 @@
-use crate::config::BRANDGUIDE;
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -13,9 +16,13 @@ pub struct CardProps {
 
 #[function_component(Card)]
 pub fn card(props: &CardProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     html! {
-        <div 
-            class={classes!(BRANDGUIDE.card_container, props.class.clone())}
+        <div
+            class={classes!(&brandguide.card_container, props.class.clone())}
             onclick={props.onclick.clone()}
         >
             { for props.children.iter() }
@@ -33,8 +40,12 @@ pub struct CardHeaderProps {
 
 #[function_component(CardHeader)]
 pub fn card_header(props: &CardHeaderProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     html! {
-        <div class={classes!(BRANDGUIDE.card_header, props.class.clone())}>
+        <div class={classes!(&brandguide.card_header, props.class.clone())}>
             { for props.children.iter() }
         </div>
     }
@@ -48,8 +59,12 @@ pub struct CardTitleProps {
 
 #[function_component(CardTitle)]
 pub fn card_title(props: &CardTitleProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     html! {
-        <h2 class={BRANDGUIDE.card_title}>
+        <h2 class={&brandguide.card_title}>
             { for props.children.iter() }
         </h2>
     }
@@ -63,8 +78,12 @@ pub struct CardContentProps {
 
 #[function_component(CardContent)]
 pub fn card_content(props: &CardContentProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     html! {
-        <div class={BRANDGUIDE.card_body}>
+        <div class={&brandguide.card_body}>
             { for props.children.iter() }
         </div>
     }

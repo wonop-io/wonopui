@@ -52,7 +52,7 @@ pub fn sidebar_column(props: &SidebarColumnProps) -> Html {
             if let Some(header_content) = header {
                 {header_content.clone()}
             }
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-auto h-full">
                 {children}
             </div>
             if let Some(footer_content) = footer {
@@ -126,14 +126,14 @@ pub fn multi_column_sidebar(props: &MultiColumnSidebarProps) -> Html {
 
     html! {
       <>
-         <div class={classes!(show_mobile_class, "inset-0", "fixed", "lg:hidden")} style={curtain_style}>
+         <div key="curtain" class={classes!(show_mobile_class, "inset-0", "fixed", "lg:hidden")} style={curtain_style}>
             <div class="absolute w-full h-full inset-0 opacity-50 bg-black">
             </div>
             <div class="w-full h-full z-10 relative">
                {curtain_content.clone()}
             </div>
          </div>
-         <div class={classes!(order, mobile_menu_only_class, show_mobile_class,  sidebar_position_class,"h-screen", "inset-y-0", "absolute",  "flex", "bg-white",  "text-zinc-700", "dark:bg-zinc-900", "dark:text-zinc-300")} style={sidebar_style}>
+         <div key="sidebar" class={classes!(order, mobile_menu_only_class, show_mobile_class,  sidebar_position_class,"h-screen", "inset-y-0", "absolute",  "bg-white",  "text-zinc-700", "dark:bg-zinc-900", "dark:text-zinc-300")} style={sidebar_style}>
             {for children.iter().map(|child| html! {
                 {child}
             })}

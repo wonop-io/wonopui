@@ -1,6 +1,9 @@
-use crate::config::BRANDGUIDE;
-use yew::prelude::*;
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
 use web_sys::HtmlInputElement;
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct InputProps {
@@ -18,6 +21,10 @@ pub struct InputProps {
     pub onkeydown: Callback<KeyboardEvent>,
     #[prop_or_default]
     pub onkeyup: Callback<KeyboardEvent>,
+    #[prop_or_default]
+    pub onfocus: Callback<FocusEvent>,
+    #[prop_or_default]
+    pub onblur: Callback<FocusEvent>,
     #[prop_or_default]
     pub placeholder: String,
     #[prop_or_default]
@@ -40,10 +47,18 @@ pub struct InputProps {
     pub step: Option<String>,
     #[prop_or_default]
     pub node_ref: NodeRef,
+    #[prop_or_default]
+    pub disabled: bool,
+    #[prop_or_default]
+    pub required: bool,
 }
 
 #[function_component(Input)]
 pub fn input(props: &InputProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let ontext = use_callback(
         (props.ontext.clone(), props.oninput.clone()),
         |e: InputEvent, (ontext, oninput)| {
@@ -60,13 +75,15 @@ pub fn input(props: &InputProps) -> Html {
     html! {
         <input
             type={props.kind.clone()}
-            class={classes!(BRANDGUIDE.input_base, props.class.clone())}
+            class={classes!(&brandguide.input_base, props.class.clone())}
             value={props.value.clone()}
             oninput={ontext}
             onchange={onchange}
             onkeypress={props.onkeypress.clone()}
             onkeydown={props.onkeydown.clone()}
             onkeyup={props.onkeyup.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
             placeholder={props.placeholder.clone()}
             id={props.id.clone()}
             name={props.name.clone()}
@@ -79,6 +96,8 @@ pub fn input(props: &InputProps) -> Html {
             max={props.max.clone()}
             step={props.step.clone()}
             ref={props.node_ref.clone()}
+            disabled={props.disabled}
+            required={props.required}
         />
     }
 }

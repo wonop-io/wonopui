@@ -1,12 +1,12 @@
-use web_sys::{HtmlCanvasElement, CanvasRenderingContext2d, HtmlElement};
-use web_sys::wasm_bindgen::JsCast;
-use yew::prelude::*;
-use wasm_bindgen::closure::Closure;
-use yew::events::PointerEvent;
-use gloo_utils::window;
-use wasm_bindgen::prelude::*;
-use web_sys::ResizeObserver;
 use gloo_console as console;
+use gloo_utils::window;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::prelude::*;
+use web_sys::wasm_bindgen::JsCast;
+use web_sys::ResizeObserver;
+use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlElement};
+use yew::events::PointerEvent;
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct ColorPickerHueProps {
@@ -44,16 +44,31 @@ impl Drop for ColorPickerHue {
     fn drop(&mut self) {
         let window = web_sys::window().expect("no global `window` exists");
         if let Some(move_closure) = &self.move_closure {
-            window.remove_event_listener_with_callback("pointermove", move_closure.as_ref().unchecked_ref()).unwrap();
+            window
+                .remove_event_listener_with_callback(
+                    "pointermove",
+                    move_closure.as_ref().unchecked_ref(),
+                )
+                .unwrap();
         }
         if let Some(up_closure) = &self.up_closure {
-            window.remove_event_listener_with_callback("pointerup", up_closure.as_ref().unchecked_ref()).unwrap();
+            window
+                .remove_event_listener_with_callback(
+                    "pointerup",
+                    up_closure.as_ref().unchecked_ref(),
+                )
+                .unwrap();
         }
         if let Some(resize_observer) = &self.resize_observer {
             resize_observer.disconnect();
         }
         if let Some(resize_callback) = &self.resize_callback {
-            window.remove_event_listener_with_callback("resize", resize_callback.as_ref().unchecked_ref()).unwrap();
+            window
+                .remove_event_listener_with_callback(
+                    "resize",
+                    resize_callback.as_ref().unchecked_ref(),
+                )
+                .unwrap();
         }
     }
 }
@@ -88,17 +103,33 @@ impl Component for ColorPickerHue {
                     let link = ctx.link().clone();
                     self.move_closure = {
                         let link = link.clone();
-                        Some(Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
-                        link.send_message(Msg::PointerMove(event));
-                    }) as Box<dyn FnMut(_)>))};
+                        Some(Closure::wrap(
+                            Box::new(move |event: web_sys::PointerEvent| {
+                                link.send_message(Msg::PointerMove(event));
+                            }) as Box<dyn FnMut(_)>,
+                        ))
+                    };
                     self.up_closure = {
                         let link = link.clone();
-                        Some(Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
-                            link.send_message(Msg::PointerUp(event));
-                        }) as Box<dyn FnMut(_)>))};
+                        Some(Closure::wrap(
+                            Box::new(move |event: web_sys::PointerEvent| {
+                                link.send_message(Msg::PointerUp(event));
+                            }) as Box<dyn FnMut(_)>,
+                        ))
+                    };
 
-                    window.add_event_listener_with_callback("pointermove", self.move_closure.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
-                    window.add_event_listener_with_callback("pointerup", self.up_closure.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
+                    window
+                        .add_event_listener_with_callback(
+                            "pointermove",
+                            self.move_closure.as_ref().unwrap().as_ref().unchecked_ref(),
+                        )
+                        .unwrap();
+                    window
+                        .add_event_listener_with_callback(
+                            "pointerup",
+                            self.up_closure.as_ref().unwrap().as_ref().unchecked_ref(),
+                        )
+                        .unwrap();
                 }
                 self.update_hue(ctx, event.offset_x() as f64);
                 true
@@ -118,10 +149,20 @@ impl Component for ColorPickerHue {
 
                     let window = web_sys::window().expect("no global `window` exists");
                     if let Some(move_closure) = &self.move_closure {
-                        window.remove_event_listener_with_callback("pointermove", move_closure.as_ref().unchecked_ref()).unwrap();
+                        window
+                            .remove_event_listener_with_callback(
+                                "pointermove",
+                                move_closure.as_ref().unchecked_ref(),
+                            )
+                            .unwrap();
                     }
                     if let Some(up_closure) = &self.up_closure {
-                        window.remove_event_listener_with_callback("pointerup", up_closure.as_ref().unchecked_ref()).unwrap();
+                        window
+                            .remove_event_listener_with_callback(
+                                "pointerup",
+                                up_closure.as_ref().unchecked_ref(),
+                            )
+                            .unwrap();
                     }
                     self.move_closure = None;
                     self.up_closure = None;
@@ -155,7 +196,7 @@ impl Component for ColorPickerHue {
                     onpointerdown={ctx.link().callback(Msg::PointerDown)}
                     style="cursor: pointer; width: 100%;"
                 />
-                <div 
+                <div
                     class="absolute top-0 w-1 h-full bg-white pointer-events-none"
                     style={format!("left: {}%; transform: translateX(-50%);", self.indicator_position * 100.0)}
                 />
@@ -179,13 +220,29 @@ impl Component for ColorPickerHue {
 
                 // Set up ResizeObserver
                 let link = ctx.link().clone();
+                let cb = {
+                    let link = link.clone();
+
+                    Closure::wrap(Box::new(move || {
+                        link.send_message(Msg::Resize);
+                    }) as Box<dyn FnMut()>)
+                };
+
                 self.resize_callback = Some(Closure::wrap(Box::new(move || {
-                    link.send_message(Msg::Resize);
+                    let window = web_sys::window().expect("no global `window` exists");
+                    window.request_animation_frame(cb.as_ref().unchecked_ref());
                 }) as Box<dyn FnMut()>));
-                
-                let resize_observer = ResizeObserver::new(self.resize_callback.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
+
+                let resize_observer = ResizeObserver::new(
+                    self.resize_callback
+                        .as_ref()
+                        .unwrap()
+                        .as_ref()
+                        .unchecked_ref(),
+                )
+                .unwrap();
                 resize_observer.observe(&canvas);
-                
+
                 self.resize_observer = Some(resize_observer);
             }
         }
@@ -194,7 +251,8 @@ impl Component for ColorPickerHue {
         if (self.last_props_hue - ctx.props().value).abs() > f64::EPSILON {
             self.current_hue = ctx.props().value;
             self.last_props_hue = ctx.props().value;
-            ctx.link().send_message(Msg::UpdateIndicatorPosition(self.current_hue));
+            ctx.link()
+                .send_message(Msg::UpdateIndicatorPosition(self.current_hue));
             self.draw_gradient();
         }
     }
@@ -211,7 +269,9 @@ impl ColorPickerHue {
     }
 
     fn draw_gradient(&self) {
-        if let (Some(canvas), Some(context)) = (self.canvas_ref.cast::<HtmlCanvasElement>(), &self.context) {
+        if let (Some(canvas), Some(context)) =
+            (self.canvas_ref.cast::<HtmlCanvasElement>(), &self.context)
+        {
             let width = canvas.client_width() as f64;
             let height = canvas.client_height() as f64;
             canvas.set_width(width as u32);

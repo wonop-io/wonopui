@@ -1,23 +1,12 @@
-use crate::config::BRANDGUIDE;
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
+use crate::properties::FlexDirection;
 use std::rc::Rc;
 use yew::function_component;
 use yew::html;
 use yew::prelude::*;
-
-#[derive(PartialEq)]
-pub enum FlexDirection {
-    Row,
-    Column,
-}
-
-impl ToString for FlexDirection {
-    fn to_string(&self) -> String {
-        match self {
-            FlexDirection::Row => "flex-row".to_string(),
-            FlexDirection::Column => "flex-col".to_string(),
-        }
-    }
-}
 
 #[derive(Properties, PartialEq)]
 pub struct GroupButtonProps {
@@ -39,6 +28,10 @@ pub struct GroupButtonState {
 
 #[function_component(GroupButton)]
 pub fn group_button(props: &GroupButtonProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let active_button = use_state(|| props.default_value.clone());
 
     let set_active_button = {
@@ -57,7 +50,7 @@ pub fn group_button(props: &GroupButtonProps) -> Html {
 
     html! {
         <ContextProvider<Rc<GroupButtonState>> context={state}>
-            <div role="group" class={classes!(props.class.clone(), "flex", props.direction.to_string(), "w-full", BRANDGUIDE.group_button_list)}>
+            <div role="group" class={classes!(props.class.clone(), &brandguide.group_button_container, props.direction.to_string(), &brandguide.group_button_list)}>
                 { for props.children.iter() }
             </div>
         </ContextProvider<Rc<GroupButtonState>>>
@@ -76,6 +69,10 @@ pub struct GroupButtonTriggerProps {
 
 #[function_component(GroupButtonTrigger)]
 pub fn group_button_trigger(props: &GroupButtonTriggerProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let state =
         use_context::<Rc<GroupButtonState>>().expect("no context found for GroupButtonState");
 
@@ -98,9 +95,8 @@ pub fn group_button_trigger(props: &GroupButtonTriggerProps) -> Html {
             onclick={onclick}
             class={classes!(
                 props.class.clone(),
-                "inline-flex","items-center","justify-center","whitespace-nowrap","px-3","py-1.5","text-sm","font-medium","transition-all",
-                if is_active { "bg-white text-black shadow-sm" } else { "bg-gray-200 text-gray-600" },
-                BRANDGUIDE.group_button_trigger
+                &brandguide.group_button_trigger,
+                if is_active { &brandguide.group_button_trigger_active } else { &brandguide.group_button_trigger_inactive },
             )}
         >
             { for props.children.iter() }
@@ -108,20 +104,49 @@ pub fn group_button_trigger(props: &GroupButtonTriggerProps) -> Html {
     }
 }
 
-#[function_component(GroupButtonDemo)]
-pub fn group_button_demo() -> Html {
-    let on_change = Callback::from(|value: String| {
-        // log::info!("Selected value: {}", value);
-    });
-
-    html! {
-        <GroupButton default_value="option1" class="w-[400px]" direction={FlexDirection::Row} on_change={on_change}>
-            <GroupButtonTrigger value="option1" onclick={Callback::noop()}>{"Option 1"}</GroupButtonTrigger>
-            <GroupButtonTrigger value="option2" onclick={Callback::noop()}>{"Option 2"}</GroupButtonTrigger>
-        </GroupButton>
-    }
-}
-
-// New entries in the brand guide:
-// group_button_list: "h-10 items-center justify-center rounded-md bg-gray-100 p-1 text-gray-600",
-// group_button_trigger: "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+// Snippets to update brandguide:
+// ("group_button_container".to_string(), "flex w-full".to_string()),
+// ("group_button_list".to_string(), "h-10 items-center justify-center rounded-md bg-gray-100 p-1 text-gray-600".to_string()),
+// ("group_button_trigger".to_string(), "inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium transition-all ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50".to_string()),
+// ("group_button_trigger_active".to_string(), "bg-white text-black shadow-sm".to_string()),
+// ("group_button_trigger_inactive".to_string(), "bg-gray-200 text-gray-600".to_string()),
+// ("group_button_demo".to_string(), "w-[400px]".to_string()),
+//
+// pub group_button_container: ClassesContainer<T>,
+// pub group_button_list: ClassesContainer<T>,
+// pub group_button_trigger: ClassesContainer<T>,
+// pub group_button_trigger_active: ClassesContainer<T>,
+// pub group_button_trigger_inactive: ClassesContainer<T>,
+// pub group_button_demo: ClassesContainer<T>,
+//
+// group_button_container: self.group_button_container.to_owned(),
+// group_button_list: self.group_button_list.to_owned(),
+// group_button_trigger: self.group_button_trigger.to_owned(),
+// group_button_trigger_active: self.group_button_trigger_active.to_owned(),
+// group_button_trigger_inactive: self.group_button_trigger_inactive.to_owned(),
+// group_button_demo: self.group_button_demo.to_owned(),
+//
+// group_button_container: default_config_hm
+// .get("group_button_container")
+// .expect("Template parameter missing")
+// .clone(),
+// group_button_list: default_config_hm
+// .get("group_button_list")
+// .expect("Template parameter missing")
+// .clone(),
+// group_button_trigger: default_config_hm
+// .get("group_button_trigger")
+// .expect("Template parameter missing")
+// .clone(),
+// group_button_trigger_active: default_config_hm
+// .get("group_button_trigger_active")
+// .expect("Template parameter missing")
+// .clone(),
+// group_button_trigger_inactive: default_config_hm
+// .get("group_button_trigger_inactive")
+// .expect("Template parameter missing")
+// .clone(),
+// group_button_demo: default_config_hm
+// .get("group_button_demo")
+// .expect("Template parameter missing")
+// .clone(),

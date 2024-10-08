@@ -1,6 +1,21 @@
-use crate::config::BRANDGUIDE;
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
 use std::rc::Rc;
 use yew::prelude::*;
+
+#[derive(Clone, PartialEq)]
+pub struct SelectOption {
+    pub value: String,
+    pub label: String,
+}
+
+impl ToString for SelectOption {
+    fn to_string(&self) -> String {
+        self.label.clone()
+    }
+}
 
 #[derive(Clone, PartialEq)]
 pub struct SelectState<T: Clone + PartialEq + ToString + 'static> {
@@ -13,12 +28,20 @@ pub struct SelectState<T: Clone + PartialEq + ToString + 'static> {
 #[derive(Properties, PartialEq)]
 pub struct SelectProps<T: Clone + PartialEq + ToString + 'static> {
     pub options: Vec<T>,
+    #[prop_or_default]
     pub selected: Option<T>,
+    #[prop_or_default]
     pub onchange: Callback<T>,
+    #[prop_or_default]
+    pub id: Option<String>,
 }
 
 #[function_component(Select)]
 pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let is_open = use_state(|| false);
     let selected = use_state(|| props.selected.clone());
 
@@ -45,29 +68,31 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
         on_select,
     });
 
-    let selected_label = props.options.iter()
+    let selected_label = props
+        .options
+        .iter()
         .find(|value| Some(*value) == selected.as_ref())
         .map(|value| value.to_string())
         .unwrap_or_default();
 
     html! {
-        <div class={BRANDGUIDE.select_container}>
-            <button 
-                type="button" 
-                class={BRANDGUIDE.select_trigger} 
+        <div class={&brandguide.select_container} id={props.id.clone()}>
+            <button
+                type="button"
+                class={&brandguide.select_trigger}
                 onclick={{
                     let toggle = state.toggle.clone();
                     move |_| toggle.emit(())
                 }}
             >
-                <span class={BRANDGUIDE.select_trigger_placeholder}>{ selected_label }</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={BRANDGUIDE.select_trigger_icon} aria-hidden="true">
+                <span class={&brandguide.select_trigger_placeholder}>{ selected_label }</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={&brandguide.select_trigger_icon} aria-hidden="true">
                     <path d="m6 9 6 6 6-6"></path>
                 </svg>
             </button>
             if *is_open {
-                <div class={BRANDGUIDE.select_content_container}>
-                    <ul class={BRANDGUIDE.select_content_list}>
+                <div class={&brandguide.select_content_container}>
+                    <ul class={&brandguide.select_content_list}>
                         {for props.options.iter().map(|value| {
                             let on_click = {
                                 let value = value.clone();
@@ -79,8 +104,8 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
                                 })
                             };
                             html! {
-                                <li 
-                                    class={BRANDGUIDE.select_item}
+                                <li
+                                    class={&brandguide.select_item}
                                     onclick={on_click}
                                 >
                                     { value.to_string() }

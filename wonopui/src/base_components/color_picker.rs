@@ -1,9 +1,9 @@
-use web_sys::{HtmlCanvasElement, CanvasRenderingContext2d};
-use web_sys::wasm_bindgen::JsCast;
-use yew::prelude::*;
-use wasm_bindgen::closure::Closure;
-use yew::events::PointerEvent;
 use super::input::Input;
+use wasm_bindgen::closure::Closure;
+use web_sys::wasm_bindgen::JsCast;
+use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement};
+use yew::events::PointerEvent;
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct ColorPickerProps {
@@ -71,8 +71,18 @@ impl Component for ColorPicker {
                     self.active_pointer = Some(event.pointer_id());
 
                     let window = web_sys::window().expect("no global `window` exists");
-                    window.add_event_listener_with_callback("pointermove", self.move_closure.as_ref().unchecked_ref()).unwrap();
-                    window.add_event_listener_with_callback("pointerup", self.up_closure.as_ref().unchecked_ref()).unwrap();
+                    window
+                        .add_event_listener_with_callback(
+                            "pointermove",
+                            self.move_closure.as_ref().unchecked_ref(),
+                        )
+                        .unwrap();
+                    window
+                        .add_event_listener_with_callback(
+                            "pointerup",
+                            self.up_closure.as_ref().unchecked_ref(),
+                        )
+                        .unwrap();
                 }
                 self.update_color(ctx, event.offset_x() as f64, event.offset_y() as f64);
                 false
@@ -91,8 +101,18 @@ impl Component for ColorPicker {
                     self.active_pointer = None;
 
                     let window = web_sys::window().expect("no global `window` exists");
-                    window.remove_event_listener_with_callback("pointermove", self.move_closure.as_ref().unchecked_ref()).unwrap();
-                    window.remove_event_listener_with_callback("pointerup", self.up_closure.as_ref().unchecked_ref()).unwrap();
+                    window
+                        .remove_event_listener_with_callback(
+                            "pointermove",
+                            self.move_closure.as_ref().unchecked_ref(),
+                        )
+                        .unwrap();
+                    window
+                        .remove_event_listener_with_callback(
+                            "pointerup",
+                            self.up_closure.as_ref().unchecked_ref(),
+                        )
+                        .unwrap();
                 }
                 false
             }
@@ -130,7 +150,7 @@ impl Component for ColorPicker {
                     onpointerdown={ctx.link().callback(Msg::PointerDown)}
                     style="cursor: crosshair;"
                 />
-                <div 
+                <div
                     class="absolute w-4 h-4 border-2 border-white rounded-full pointer-events-none"
                     style={format!("left: {}px; top: {}px; transform: translate(-50%, -50%);", self.indicator_position.0, self.indicator_position.1)}
                 />
@@ -168,7 +188,12 @@ impl Component for ColorPicker {
                         let saturation = 1.0;
                         let lightness = 1.0 - (y as f64 / height);
 
-                        let color = format!("hsl({}, {}%, {}%)", hue, saturation * 100.0, lightness * 100.0);
+                        let color = format!(
+                            "hsl({}, {}%, {}%)",
+                            hue,
+                            saturation * 100.0,
+                            lightness * 100.0
+                        );
                         context.set_fill_style(&color.into());
                         context.fill_rect(x as f64, y as f64, 1.0, 1.0);
                     }
@@ -183,7 +208,8 @@ impl Component for ColorPicker {
 
 impl ColorPicker {
     fn update_color(&mut self, ctx: &Context<Self>, x: f64, y: f64) {
-        ctx.link().send_message(Msg::UpdateIndicatorPosition(x as i32, y as i32));
+        ctx.link()
+            .send_message(Msg::UpdateIndicatorPosition(x as i32, y as i32));
         if let Some(context) = &self.context {
             if let Ok(image_data) = context.get_image_data(x, y, 1.0, 1.0) {
                 let data = image_data.data();
@@ -194,7 +220,8 @@ impl ColorPicker {
                 };
                 ctx.link().send_message(Msg::UpdateColor(color));
             } else {
-                ctx.link().send_message(Msg::UpdateColor("#000000".to_string()));
+                ctx.link()
+                    .send_message(Msg::UpdateColor("#000000".to_string()));
             }
         }
     }
@@ -210,20 +237,25 @@ impl ColorPicker {
             u8::from_str_radix(&hex[5..7], 16),
         ) {
             let width = self.canvas_ref.cast::<HtmlCanvasElement>().unwrap().width() as f64;
-            let height = self.canvas_ref.cast::<HtmlCanvasElement>().unwrap().height() as f64;
+            let height = self
+                .canvas_ref
+                .cast::<HtmlCanvasElement>()
+                .unwrap()
+                .height() as f64;
             let mut closest_distance = f64::MAX;
             let mut closest_position = (0, 0);
 
             for x in 0..width as u32 {
                 for y in 0..height as u32 {
-                    let image_data = context.get_image_data(x as f64, y as f64, 1.0, 1.0).unwrap();
+                    let image_data = context
+                        .get_image_data(x as f64, y as f64, 1.0, 1.0)
+                        .unwrap();
                     let data = image_data.data();
                     if data.len() >= 3 {
-                        let distance = (
-                            (data[0] as i32 - r as i32).pow(2) +
-                            (data[1] as i32 - g as i32).pow(2) +
-                            (data[2] as i32 - b as i32).pow(2)
-                        ) as f64;
+                        let distance = ((data[0] as i32 - r as i32).pow(2)
+                            + (data[1] as i32 - g as i32).pow(2)
+                            + (data[2] as i32 - b as i32).pow(2))
+                            as f64;
 
                         if distance < closest_distance {
                             closest_distance = distance;

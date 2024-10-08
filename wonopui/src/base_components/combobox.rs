@@ -1,4 +1,8 @@
-use crate::config::BRANDGUIDE;
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
+use crate::config::ClassesStr;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -15,6 +19,10 @@ pub struct ComboboxProps {
 
 #[function_component(Combobox)]
 pub fn combobox(props: &ComboboxProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let open = use_state(|| false);
     let value = use_state(|| "".to_string());
 
@@ -46,9 +54,9 @@ pub fn combobox(props: &ComboboxProps) -> Html {
             <button
                 id={props.id.clone()}
                 class={classes!(
-                    BRANDGUIDE.combobox_button,
-                    if *open { BRANDGUIDE.combobox_button_open } else { "" },
-                    if props.disabled { BRANDGUIDE.combobox_button_disabled } else { "" },
+                    &brandguide.combobox_button,
+                    if *open { brandguide.combobox_button_open.clone() } else { ClassesStr::empty() },
+                    if props.disabled { brandguide.combobox_button_disabled.clone() } else { ClassesStr::empty() },
                 )}
                 role="combobox"
                 aria-expanded={open.to_string()}
@@ -64,15 +72,15 @@ pub fn combobox(props: &ComboboxProps) -> Html {
             {
                 if *open {
                     html! {
-                        <div class={BRANDGUIDE.combobox_list}>
+                        <div class={&brandguide.combobox_list}>
                             { for props.options.iter().map(|(val, label)| {
                                 let on_select = on_select.clone();
                                 let val = val.clone();
                                 html! {
                                     <div
                                         class={classes!(
-                                            BRANDGUIDE.combobox_item,
-                                            if *value == val { BRANDGUIDE.combobox_item_selected } else { "" },
+                                            &brandguide.combobox_item,
+                                            if *value == val { brandguide.combobox_item_selected.clone() } else { ClassesStr::empty() },
                                         )}
                                         onclick={Callback::from(move |_| on_select.emit(val.clone()))}
                                     >

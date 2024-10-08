@@ -1,12 +1,15 @@
-use super::popover::{Popover, PopoverContent, PopoverPosition, PopoverTrigger, PopoverState};
-use crate::config::BRANDGUIDE;
-use yew::prelude::*;
+use super::popover::{Popover, PopoverContent, PopoverPosition, PopoverState, PopoverTrigger};
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
 use std::rc::Rc;
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct DropdownProps {
     #[prop_or_default]
-    pub items: Vec<DropdownItemProps>,
+    pub items: Vec<DropdownItem>,
     #[prop_or_default]
     pub children: Children,
     #[prop_or(PopoverPosition::SouthMiddle)]
@@ -17,31 +20,28 @@ pub struct DropdownProps {
     pub full_width: bool,
 }
 
-#[derive(PartialEq, Clone, Properties)]
-pub struct DropdownItemProps {
-    pub label: String,
-    pub icon: Option<Html>,
-    pub onclick: Callback<MouseEvent>,
-    pub is_separator: bool,
-}
-
-impl Default for DropdownItemProps {
-    fn default() -> Self {
-        Self {
-            label: String::new(),
-            icon: None,
-            onclick: Callback::from(|_| {}),
-            is_separator: false,
-        }
-    }
+#[derive(PartialEq, Clone)]
+pub enum DropdownItem {
+    Action {
+        label: String,
+        icon: Option<Html>,
+        onclick: Callback<MouseEvent>,
+        disabled: bool,
+    },
+    Widget(Html),
+    Separator,
 }
 
 #[function_component(Dropdown)]
 pub fn dropdown(props: &DropdownProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let popover_content_class = if props.full_width {
-        classes!(BRANDGUIDE.dropdown_content, "w-full")
+        classes!(&brandguide.dropdown_content, "w-full")
     } else {
-        classes!(BRANDGUIDE.dropdown_content)
+        classes!(&brandguide.dropdown_content)
     };
 
     html! {
@@ -51,18 +51,17 @@ pub fn dropdown(props: &DropdownProps) -> Html {
             </PopoverTrigger>
             <PopoverContent class={popover_content_class} position={props.position.clone()}>
                 { for props.items.iter().map(|item| {
-                    if item.is_separator {
-                        html! { <hr class={classes!(BRANDGUIDE.dropdown_separator)} /> }
-                    } else {
-                        let item_onclick = item.onclick.clone();
-                        html! {
-                            <DropdownItemComponent
-                                label={item.label.clone()}
-                                icon={item.icon.clone()}
-                                onclick={item_onclick}
-                                is_separator={item.is_separator}
-                                full_width={props.full_width}
-                            />
+                    match item {
+                        DropdownItem::Separator => {
+                            html! { <hr class={classes!(&brandguide.dropdown_separator)} /> }
+                        },
+                        _ => {
+                            html! {
+                                <DropdownItemComponent
+                                    content={item.clone()}
+                                    full_width={props.full_width}
+                                />
+                            }
                         }
                     }
                 }) }
@@ -73,41 +72,70 @@ pub fn dropdown(props: &DropdownProps) -> Html {
 
 #[derive(Properties, PartialEq)]
 pub struct DropdownItemComponentProps {
-    pub label: String,
-    pub icon: Option<Html>,
-    pub onclick: Callback<MouseEvent>,
-    pub is_separator: bool,
+    pub content: DropdownItem,
     #[prop_or_default]
     pub full_width: bool,
 }
 
 #[function_component(DropdownItemComponent)]
 fn dropdown_item_component(props: &DropdownItemComponentProps) -> Html {
-    let popover_state = use_context::<Rc<PopoverState>>().expect("no context found for PopoverState");
-    
-    let onclick = {
-        let onclick = props.onclick.clone();
-        let toggle = popover_state.toggle.clone();
-        Callback::from(move |e: MouseEvent| {
-            onclick.emit(e);
-            toggle.emit(());
-        })
-    };
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    let popover_state =
+        use_context::<Rc<PopoverState>>().expect("no context found for PopoverState");
 
-    let item_class = if props.full_width {
-        classes!(BRANDGUIDE.dropdown_item, "w-full")
-    } else {
-        classes!(BRANDGUIDE.dropdown_item)
-    };
-
-    html! {
-        <div class={item_class} onclick={onclick}>
-            { if let Some(icon) = &props.icon {
-                html! { <span class={classes!(BRANDGUIDE.dropdown_item_icon)}>{ icon.clone() }</span> }
+    match &props.content {
+        DropdownItem::Action {
+            label,
+            icon,
+            onclick,
+            disabled,
+        } => {
+            let onclick = {
+                let onclick = onclick.clone();
+                let toggle = popover_state.toggle.clone();
+                if *disabled {
+                    Callback::from(|_| {})
+                } else {
+                    Callback::from(move |e: MouseEvent| {
+                        onclick.emit(e);
+                        toggle.emit(());
+                    })
+                }
+            };
+            let item_class = if props.full_width {
+                classes!(&brandguide.dropdown_item, "w-full")
             } else {
-                html! {}
-            }}
-            <span>{ &props.label }</span>
-        </div>
+                classes!(&brandguide.dropdown_item)
+            };
+
+            let class = if *disabled {
+                classes!(&brandguide.dropdown_item_disabled)
+            } else {
+                Classes::default()
+            };
+            html! {
+                <div class={classes!(class, item_class)} {onclick}>
+                    { if let Some(icon) = icon {
+                        html! { <span class={classes!(&brandguide.dropdown_item_icon)}>{ icon.clone() }</span> }
+                    } else {
+                        html! {}
+                    }}
+                    <span>{ label }</span>
+                </div>
+            }
+        }
+        DropdownItem::Widget(content) => {
+            html! {
+                <div class={classes!(&brandguide.dropdown_item_widget)}>
+                    { content.clone() }
+                </div>
+            }
+        }
+        DropdownItem::Separator => {
+            html! {}
+        }
     }
 }

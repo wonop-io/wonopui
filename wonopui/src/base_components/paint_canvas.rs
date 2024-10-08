@@ -1,5 +1,5 @@
-use web_sys::{HtmlCanvasElement, CanvasRenderingContext2d, MouseEvent, HtmlImageElement};
 use wasm_bindgen::JsCast;
+use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, MouseEvent};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq, Clone)]
@@ -92,7 +92,12 @@ pub fn paint_canvas(props: &PaintCanvasProps) -> Html {
     };
 
     use_effect_with(
-        (canvas_ref.clone(), context_ref.clone(), props.clone(), container_ref.clone()),
+        (
+            canvas_ref.clone(),
+            context_ref.clone(),
+            props.clone(),
+            container_ref.clone(),
+        ),
         move |(canvas_ref, context_ref, props, container_ref)| {
             if props.image_src.is_none() {
                 let canvas: HtmlCanvasElement = canvas_ref.cast().unwrap();

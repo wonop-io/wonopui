@@ -1,11 +1,15 @@
-use yew::prelude::*;
-use yew::virtual_dom::VNode;
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
 use std::rc::Rc;
-use yew::html::IntoPropValue;
-use web_sys::HtmlElement;
-use web_sys::{ResizeObserver,MutationObserver};
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
+use web_sys::HtmlElement;
+use web_sys::{MutationObserver, ResizeObserver};
+use yew::html::IntoPropValue;
+use yew::prelude::*;
+use yew::virtual_dom::VNode;
 use yew::virtual_dom::VTag;
 
 #[derive(Clone, PartialEq)]
@@ -13,7 +17,7 @@ pub struct SelectedArea {
     pub top: u64,
     pub left: u64,
     pub width: u64,
-    pub height: u64,    
+    pub height: u64,
 }
 
 #[derive(Clone, PartialEq)]
@@ -43,7 +47,7 @@ impl Reducible for SelectableState {
                     selected_id: id,
                     ..(*self).clone()
                 })
-            },
+            }
             SelectableAction::SetHoverId(id) => Rc::new(SelectableState {
                 hover_id: id,
                 ..(*self).clone()
@@ -82,7 +86,12 @@ pub struct SelectableIndicatorProps {
 
 #[function_component(SelectableIndicator)]
 pub fn selectable_indicator(props: &SelectableIndicatorProps) -> Html {
-    let state = use_context::<UseReducerHandle<SelectableState>>().expect("SelectableContext not found");
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    let state =
+        use_context::<UseReducerHandle<SelectableState>>().expect("SelectableContext not found");
 
     match &state.selected_area {
         Some(area) => {
@@ -90,14 +99,13 @@ pub fn selectable_indicator(props: &SelectableIndicatorProps) -> Html {
                 "position: fixed; top: {}px; left: {}px; width: {}px; height: {}px; z-index: 1000; pointer-events: none;",
                 area.top, area.left, area.width, area.height
             );
-            html! { <div style={style} class={classes!("outline","outline-2","outline-zinc-400", "outline-dashed", props.class.clone())} /> }
+            html! { <div style={style} class={classes!(&brandguide.selectable_indicator, props.class.clone())} /> }
         }
         None => {
             html! {}
         }
     }
 }
-
 
 #[derive(Properties, PartialEq)]
 pub struct SelectableAreaProps {
@@ -117,18 +125,15 @@ pub fn selectable_area(props: &SelectableAreaProps) -> Html {
         hover_id: None,
         onselect: props.onselect.clone(),
         selected_area: None,
-        select_mode
+        select_mode,
     });
 
     {
         let state = state.clone();
-        use_effect_with(
-            (select_mode,),
-            move |(select_mode,)| {
-                state.dispatch(SelectableAction::SetSelectMode(*select_mode));
-                || {}
-            },
-        );
+        use_effect_with((select_mode,), move |(select_mode,)| {
+            state.dispatch(SelectableAction::SetSelectMode(*select_mode));
+            || {}
+        });
     }
 
     html! {
@@ -166,7 +171,8 @@ pub struct SelectableVTagProps {
 
 #[function_component(SelectableVTag)]
 pub fn selectable_vtag(props: &SelectableVTagProps) -> Html {
-    let state = use_context::<UseReducerHandle<SelectableState>>().expect("SelectableContext not found");    
+    let state =
+        use_context::<UseReducerHandle<SelectableState>>().expect("SelectableContext not found");
     let mut node = props.node.clone();
     let node_ref = props.node_ref.clone();
     let onclick = props.onclick.clone();
@@ -179,15 +185,15 @@ pub fn selectable_vtag(props: &SelectableVTagProps) -> Html {
         let node_ref = node_ref.clone();
         use_effect_with(
             (node_ref.clone(), node.clone(), id.clone()),
-            move |(node_ref,node,id)| {
+            move |(node_ref, node, id)| {
                 if Some(id) == state.selected_id.as_ref() {
                     if let Some(element) = node_ref.cast::<HtmlElement>() {
                         let area = get_bounding_client_rect(&element);
                         state.dispatch(SelectableAction::SetSelectedArea(Some(area)));
-                    }                
+                    }
                 }
                 move || {}
-            }
+            },
         )
     }
 
@@ -201,13 +207,18 @@ pub fn selectable_vtag(props: &SelectableVTagProps) -> Html {
 
 #[function_component(Selectable)]
 pub fn selectable(props: &SelectableProps) -> Html {
-    let state = use_context::<UseReducerHandle<SelectableState>>().expect("SelectableContext not found");
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    let state =
+        use_context::<UseReducerHandle<SelectableState>>().expect("SelectableContext not found");
     if !state.select_mode {
         return html! {
             <@{props.tag.clone()} class={props.class.clone()} style={props.style.clone()} key="selectable">
             { props.children.clone() }
             </@>
-        }
+        };
     }
     let selected = state.selected_id == Some(props.id.clone());
     let hovered = state.hover_id == Some(props.id.clone());
@@ -242,7 +253,7 @@ pub fn selectable(props: &SelectableProps) -> Html {
             state.dispatch(SelectableAction::SetHoverId(Some(id.clone())));
         })
     };
-    
+
     let onmouseleave = {
         let state = state.clone();
         Callback::from(move |e: MouseEvent| {
@@ -254,58 +265,48 @@ pub fn selectable(props: &SelectableProps) -> Html {
         })
     };
 
-
     {
         let state = state.clone();
         let id = props.id.clone();
         let node_ref = node_ref.clone();
 
-        use_effect_with(
-            (node_ref.clone(),),
-            move |(node_ref,)| {
-                let node_ref = node_ref.clone();
-                let node = node_ref.cast::<HtmlElement>();
-                let rs_obs =if let Some(element) = node {
-                    let state_clone = state.clone();
-                    let cb = {
-                        move || {
-                            if let Some(element) = node_ref.cast::<HtmlElement>() {
-                                let area = get_bounding_client_rect(&element);
-                                state_clone.dispatch(SelectableAction::SetSelectedArea(Some(area)));
-                            }
+        use_effect_with((node_ref.clone(),), move |(node_ref,)| {
+            let node_ref = node_ref.clone();
+            let node = node_ref.cast::<HtmlElement>();
+            let rs_obs = if let Some(element) = node {
+                let state_clone = state.clone();
+                let cb = {
+                    move || {
+                        if let Some(element) = node_ref.cast::<HtmlElement>() {
+                            let area = get_bounding_client_rect(&element);
+                            state_clone.dispatch(SelectableAction::SetSelectedArea(Some(area)));
                         }
-                    };                    
-                    let callback = Closure::<dyn Fn()>::new(cb);
-                    let resize_observer = MutationObserver::new(callback.as_ref().unchecked_ref()).unwrap();
-                    resize_observer.observe(&element);
-                    callback.forget();
-                    Some(resize_observer)
-                } else {
-                    None
-                };
-                move || {
-                    match rs_obs {
-                        Some(rs) => {
-                            rs.disconnect();
-                        },
-                        None => (),
                     }
+                };
+                let callback = Closure::<dyn Fn()>::new(cb);
+                let resize_observer =
+                    MutationObserver::new(callback.as_ref().unchecked_ref()).unwrap();
+                resize_observer.observe(&element);
+                callback.forget();
+                Some(resize_observer)
+            } else {
+                None
+            };
+            move || match rs_obs {
+                Some(rs) => {
+                    rs.disconnect();
                 }
-            },
-        );
+                None => (),
+            }
+        });
     }
-    
+
     let mut classes = props.class.clone();
-    classes.push("hover:outline");
-    classes.push("hover:outline-dashed");
-    classes.push("hover:outline-2");
-    classes.push("hover:outline-blue-500");    
+    classes.extend(classes!(brandguide.selectable_hover.clone()));
     if selected {
-        classes.push("outline");
-        classes.push("outline-2");
-        classes.push("outline-blue-500");
+        classes.extend(classes!(brandguide.selectable_selected.clone()));
     }
-    classes.push("cursor-pointer");
+    classes.extend(classes!(brandguide.selectable_cursor.clone()));
 
     html! {
         <@{props.tag.clone()} class={classes} style={props.style.clone()} {onclick} {onmouseenter} {onmouseleave} ref={node_ref}  key="selectable">
@@ -313,10 +314,43 @@ pub fn selectable(props: &SelectableProps) -> Html {
         </@>
     }
 }
- 
+
 /*
 #[hook]
 pub fn use_selectable_context() -> UseReducerHandle<SelectableState> {
     use_context::<UseReducerHandle<SelectableState>>().expect("SelectableContext not found")
 }
 */
+
+// Snippets to update brandguide:
+// ("selectable_indicator".to_string(), "outline outline-2 outline-zinc-400 outline-dashed".to_string()),
+// ("selectable_hover".to_string(), "hover:outline hover:outline-dashed hover:outline-2 hover:outline-blue-500".to_string()),
+// ("selectable_selected".to_string(), "outline outline-2 outline-blue-500".to_string()),
+// ("selectable_cursor".to_string(), "cursor-pointer".to_string()),
+//
+// pub selectable_indicator: ClassesContainer<T>,
+// pub selectable_hover: ClassesContainer<T>,
+// pub selectable_selected: ClassesContainer<T>,
+// pub selectable_cursor: ClassesContainer<T>,
+//
+// selectable_indicator: self.selectable_indicator.to_owned(),
+// selectable_hover: self.selectable_hover.to_owned(),
+// selectable_selected: self.selectable_selected.to_owned(),
+// selectable_cursor: self.selectable_cursor.to_owned(),
+//
+// selectable_indicator: default_config_hm
+// .get("selectable_indicator")
+// .expect("Template parameter missing")
+// .clone(),
+// selectable_hover: default_config_hm
+// .get("selectable_hover")
+// .expect("Template parameter missing")
+// .clone(),
+// selectable_selected: default_config_hm
+// .get("selectable_selected")
+// .expect("Template parameter missing")
+// .clone(),
+// selectable_cursor: default_config_hm
+// .get("selectable_cursor")
+// .expect("Template parameter missing")
+// .clone(),

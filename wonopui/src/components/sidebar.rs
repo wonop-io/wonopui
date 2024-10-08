@@ -1,31 +1,35 @@
 use crate::components::multicol_sidebar::{MultiColumnSidebar, SidebarColumn};
 use crate::{components::layout_context::LayoutContext, LayoutAction};
+use gloo_console as console;
 use yew::prelude::*; // Import LayoutContext and SidebarPosition
+use yew_router::prelude::use_location;
+use yew_router::prelude::use_navigator;
 use yew_router::prelude::Link;
 use yew_router::Routable;
-use yew_router::prelude::use_location;
-use gloo_console as console;
 
 #[derive(Properties, PartialEq)]
 pub struct SidebarHeadingProps {
-    pub title: String,
+    #[prop_or_default]
+    pub children: Children,
 }
 
 #[function_component(SidebarHeading)]
 pub fn sidebar_heading(props: &SidebarHeadingProps) -> Html {
-    let SidebarHeadingProps { title } = props;
+    let SidebarHeadingProps { children } = props;
     let layout_context = use_context::<LayoutContext>().expect("LayoutContext not found");
     let folded = layout_context.sidebar_folded; // Use sidebar_folded from LayoutContext
     if folded {
         return html! {};
     }
     html! {
-        <h2 class="mt-4 mb-1 px-4 text-lg font-semibold tracking-tight text-zinc-700 dark:text-zinc-300">{title}</h2>
+        <h2 class="flex flex-row justify-between items-center mt-4 mb-2 mx-3 px-2 py-1 text-zinc-900 dark:text-zinc-100 leading-6 text-xs font-semibold tracking-tight text-zinc-700 dark:text-zinc-300">
+            {children}
+        </h2>
     }
 }
 
 #[derive(Properties, PartialEq)]
-pub struct SidebarLinkProps<R: Routable+'static> {
+pub struct SidebarLinkProps<R: Routable + 'static> {
     pub label: String,
     #[prop_or_default]
     pub icon: Html,
@@ -33,22 +37,55 @@ pub struct SidebarLinkProps<R: Routable+'static> {
 }
 
 #[function_component]
-pub fn SidebarLink<R: Routable+'static>(props: &SidebarLinkProps<R>) -> Html {
+pub fn SidebarLink<R: Routable + 'static>(props: &SidebarLinkProps<R>) -> Html {
     let SidebarLinkProps { label, icon, to } = props;
     let layout_context = use_context::<LayoutContext>().expect("LayoutContext not found");
     let folded = layout_context.sidebar_folded;
-    let justify = if folded { "justify-center" } else { "justify-start" };
-    
+    let justify = if folded {
+        "justify-center"
+    } else {
+        "justify-start"
+    };
+
+    let navigator = use_navigator().unwrap();
+    let onclick = {
+        let layout_context = layout_context.clone();
+        let to = to.clone();
+        Callback::from(move |e: MouseEvent| {
+            layout_context.dispatch(LayoutAction::SetMobileMenuOpen(false));
+            navigator.push(&to)
+        })
+    };
+
     let location = use_location().expect("Failed to get location");
     let is_active = location.path() == to.to_path();
 
     let mut class = classes!(
-        "flex-grow", "mx-3", "px-2", "hover:bg-zinc-200", "hover:dark:bg-zinc-700",
-        "inline-flex", "space-x-2", "items-center", "whitespace-nowrap", "rounded-md",
-        "text-sm", "font-medium", "transition-colors", "focus-visible:outline-none",
-        "focus-visible:ring-1", "focus-visible:ring-ring", "disabled:pointer-events-none",
-        "disabled:opacity-50", "hover:bg-accent", "hover:text-accent-foreground",
-        "h-9", "px-1.5", "py-1", "text-zinc-700", "dark:text-zinc-300", justify
+        "flex-grow",
+        "mx-3",
+        "px-2",
+        "hover:bg-zinc-200",
+        "hover:dark:bg-zinc-700",
+        "inline-flex",
+        "space-x-2",
+        "items-center",
+        "whitespace-nowrap",
+        "rounded-md",
+        "text-sm",
+        "font-medium",
+        "transition-colors",
+        "focus-visible:outline-none",
+        "focus-visible:ring-1",
+        "focus-visible:ring-ring",
+        "disabled:pointer-events-none",
+        "disabled:opacity-50",
+        "hover:bg-accent",
+        "hover:text-accent-foreground",
+        "h-9",
+        "py-1",
+        "text-zinc-700",
+        "dark:text-zinc-300",
+        justify
     );
 
     if is_active {
@@ -56,12 +93,12 @@ pub fn SidebarLink<R: Routable+'static>(props: &SidebarLinkProps<R>) -> Html {
     }
 
     html! {
-        <Link<R> to={to.clone()} classes={class}>
+        <button class={class} onclick={onclick.clone()}>
             {icon.clone()}
             if !folded {
                 <span>{label}</span>
             }
-        </Link<R>>
+        </button>
     }
 }
 
@@ -83,18 +120,55 @@ pub struct SidebarItemProps {
 
 #[function_component(SidebarItem)]
 pub fn sidebar_item(props: &SidebarItemProps) -> Html {
-    let SidebarItemProps { label, icon, href, onclick, active, children } = props;
+    let SidebarItemProps {
+        label,
+        icon,
+        href,
+        onclick,
+        active,
+        children,
+    } = props;
     let layout_context = use_context::<LayoutContext>().expect("LayoutContext not found");
     let folded = layout_context.sidebar_folded;
-    let justify = if folded { "justify-center" } else { "justify-start" };
+    let justify = if folded {
+        "justify-center"
+    } else {
+        "justify-start"
+    };
     let has_action = label.is_some() || onclick.is_some();
+
+    let orig_onclick = onclick.clone();
+    let onclick = {
+        let layout_context = layout_context.clone();
+        Callback::from(move |e: MouseEvent| {
+            layout_context.dispatch(LayoutAction::SetMobileMenuOpen(false));
+            if let Some(onclick) = &orig_onclick {
+                onclick.emit(e);
+            }
+        })
+    };
     let mut class = classes!(
-        "flex-grow", "mx-3", "px-2", 
-        "inline-flex", "space-x-2", "items-center", "whitespace-nowrap", "rounded-md",
-        "text-sm", "font-medium", "transition-colors", "focus-visible:outline-none",
-        "focus-visible:ring-1", "focus-visible:ring-ring", "disabled:pointer-events-none",
-        "disabled:opacity-50", 
-        "h-9", "px-1.5", "py-1", "text-zinc-700", "dark:text-zinc-300", justify
+        "flex-grow",
+        "mx-3",
+        "px-2",
+        "inline-flex",
+        "space-x-2",
+        "items-center",
+        "whitespace-nowrap",
+        "rounded-md",
+        "text-sm",
+        "font-medium",
+        "transition-colors",
+        "focus-visible:outline-none",
+        "focus-visible:ring-1",
+        "focus-visible:ring-ring",
+        "disabled:pointer-events-none",
+        "disabled:opacity-50",
+        "h-9",
+        "py-1",
+        "text-zinc-700",
+        "dark:text-zinc-300",
+        justify
     );
 
     if has_action {
@@ -135,8 +209,6 @@ pub fn sidebar_item(props: &SidebarItemProps) -> Html {
         },
     }
 }
-
-
 
 #[derive(Properties, PartialEq)]
 pub struct SidebarMenuProps {
@@ -201,17 +273,35 @@ pub fn mobile_menu_button(props: &MobileMenuButtonProps) -> Html {
         </button>
     }
 }
-
 #[derive(Properties, PartialEq)]
 pub struct SidebarHeaderProps {
     #[prop_or_default]
     pub children: Children,
+    #[prop_or_default]
+    pub onclick: Option<Callback<MouseEvent>>,
+    #[prop_or_default]
+    pub class: Classes,
 }
 
 #[function_component(SidebarHeader)]
 pub fn sidebar_header(props: &SidebarHeaderProps) -> Html {
+    let default_classes = classes!(
+        "h-16",
+        "shrink-0",
+        "border-b",
+        "border-zinc-200",
+        "dark:border-zinc-800",
+        "bg-white",
+        "dark:bg-zinc-900"
+    );
+
+    let combined_classes = classes!(default_classes, props.class.clone());
+
     html! {
-        <div class="h-16 shrink-0 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+        <div
+            class={combined_classes}
+            onclick={props.onclick.clone()}
+        >
             {for props.children.iter()}
         </div>
     }
