@@ -3,6 +3,14 @@ name = "wonopui"
 version = "0.0.1"
 edition = '2021'
 build = "build/main.rs"
+authors = ["Troels F. Rønnow <troels@wonop.com>"]
+description = "Rush Deployment: A tool to bring the development experience as close to the production experience as possible."
+license = "MIT"
+repository = "https://github.com/wonop-io/wonopui"
+homepage = "https://github.com/wonop-io/wonopui"
+readme = "README.md"
+keywords = ["yew", "tailwindcss", "ui"]
+categories = ["web-programming"]
 
 [features]
 default = []
