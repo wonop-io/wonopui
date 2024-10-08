@@ -10,7 +10,9 @@ pub struct SwitchButtonProps {
     #[prop_or_default]
     pub id: String,
     #[prop_or_default]
-    pub checked: bool,
+    pub checked: Option<bool>,
+    #[prop_or_default]
+    pub default_value: bool,
     #[prop_or_default]
     pub on_toggle: Callback<MouseEvent>,
     #[prop_or_default]
@@ -27,13 +29,15 @@ pub fn switch_button(props: &SwitchButtonProps) -> Html {
     let brandguide = use_brandguide();
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
-    let checked = use_state(|| props.checked);
+    let checked = use_state(|| props.checked.unwrap_or(props.default_value));
 
     use_effect_with(
         (checked.clone(), props.checked),
         |(checked, prop_checked)| {
-            if (**checked) != *prop_checked {
-                checked.set(*prop_checked);
+            if let Some(prop_checked) = prop_checked {
+                if (**checked) != *prop_checked {
+                    checked.set(*prop_checked);
+                }
             }
         },
     );
