@@ -1,11 +1,16 @@
 use crate::base_components::drag_point::DragPoint;
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::{get_brandguide, BrandGuideType};
+#[cfg(feature = "ThemeProvider")]
+use crate::config::{use_brandguide, BrandGuideType};
+use std::rc::Rc;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
 use web_sys::HtmlDivElement;
 use yew::events::PointerEvent;
 use yew::prelude::*;
 
-#[derive(Properties, PartialEq)]
+#[derive(Properties, PartialEq, Clone)]
 pub struct ResizableProps {
     #[prop_or((0.,0.,600.,600.))]
     pub coordinates: (f64, f64, f64, f64), // (start_x, start_y, end_x, end_y)
@@ -32,6 +37,12 @@ pub struct ResizableProps {
     pub west: bool,
 }
 
+#[derive(Properties, PartialEq)]
+pub struct ResizableInnerProps {
+    pub brandguide: Rc<BrandGuideType>,
+    pub props: ResizableProps,
+}
+
 #[derive(PartialEq, Clone, Debug)]
 enum Mode {
     View,
@@ -45,7 +56,7 @@ enum Mode {
     ResizeRight,
 }
 
-pub struct Resizable {
+pub struct ResizableInner {
     container_ref: NodeRef,
     div_ref: NodeRef,
 
@@ -57,7 +68,7 @@ pub struct Resizable {
     move_closure: Closure<dyn FnMut(PointerEvent)>,
 }
 
-impl Drop for Resizable {
+impl Drop for ResizableInner {
     fn drop(&mut self) {
         let container = self.container_ref.cast::<HtmlDivElement>();
         if let Some(container) = container {
@@ -79,9 +90,9 @@ pub enum Msg {
     PointerMoveEnd,
 }
 
-impl Component for Resizable {
+impl Component for ResizableInner {
     type Message = Msg;
-    type Properties = ResizableProps;
+    type Properties = ResizableInnerProps;
 
     fn create(ctx: &Context<Self>) -> Self {
         Self {
@@ -103,7 +114,7 @@ impl Component for Resizable {
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
-        let mut coordinates = self.coordinates.unwrap_or(ctx.props().coordinates);
+        let mut coordinates = self.coordinates.unwrap_or(ctx.props().props.coordinates);
         let rect = self
             .container_ref
             .cast::<HtmlDivElement>()
@@ -175,7 +186,7 @@ impl Component for Resizable {
                 }
 
                 self.coordinates = Some(coordinates.clone());
-                ctx.props().on_coordinates_change.emit(coordinates);
+                ctx.props().props.on_coordinates_change.emit(coordinates);
             }
             Msg::PointerMoveEnd => {
                 self.mode = Mode::View;
@@ -193,8 +204,10 @@ impl Component for Resizable {
         true
     }
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let bg_color = "bg-blue-500";
-        let (start_x, start_y, end_x, end_y) = self.coordinates.unwrap_or(ctx.props().coordinates);
+        let brandguide = &ctx.props().brandguide;
+        let props = &ctx.props().props;
+
+        let (start_x, start_y, end_x, end_y) = self.coordinates.unwrap_or(props.coordinates);
         let start_x = (start_x * self.scale) as i32;
         let start_y = (start_y * self.scale) as i32;
         let end_x = (end_x * self.scale) as i32;
@@ -208,51 +221,51 @@ impl Component for Resizable {
         html! {
             <div
                 ref={self.container_ref.clone()}
-                class="container relative"
+                class={classes!(&brandguide.resizable_container)}
             >
                 <div
                     ref={self.div_ref.clone()}
-                    class="border-2 border-blue-500 border-dashed absolute bg-gray-500"
+                    class={classes!(&brandguide.resizable_box)}
                     style={format!("position: absolute; left: {}px; top: {}px; width: {}px; height: {}px; ", x, y, width, height )}
                 >
-                    { for ctx.props().children.iter() }
+                    { for props.children.iter() }
                     <DragPoint
-                        class={classes!(if ctx.props().north_west { "block" } else { "hidden" }, "h-4","w-4","absolute","rounded-full",bg_color,"transform", "top-0","left-0","-translate-x-2","-translate-y-2", "cursor-nw-resize")}
+                        class={classes!(if props.north_west { &brandguide.resizable_handle_visible } else { &brandguide.resizable_handle_hidden }, &brandguide.resizable_handle_nw)}
                         onstart={ctx.link().callback(|e| Msg::PointerMoveStart(Mode::ResizeTopLeft, e))}
                         onstop={ctx.link().callback(|_| Msg::PointerMoveEnd )}
                     />
                     <DragPoint
-                        class={classes!(if ctx.props().north_east { "block" } else { "hidden" }, "h-4","w-4","absolute","rounded-full",bg_color,"transform", "top-0","right-0","translate-x-2","-translate-y-2", "cursor-ne-resize")}
+                        class={classes!(if props.north_east { &brandguide.resizable_handle_visible } else { &brandguide.resizable_handle_hidden }, &brandguide.resizable_handle_ne)}
                         onstart={ctx.link().callback(|e| Msg::PointerMoveStart(Mode::ResizeTopRight, e))}
                         onstop={ctx.link().callback(|_| Msg::PointerMoveEnd)}
                     />
                     <DragPoint
-                        class={classes!(if ctx.props().south_west { "block" } else { "hidden" }, "h-4","w-4","absolute","rounded-full",bg_color,"transform", "bottom-0","left-0","-translate-x-2","translate-y-2", "cursor-sw-resize")}
+                        class={classes!(if props.south_west { &brandguide.resizable_handle_visible } else { &brandguide.resizable_handle_hidden }, &brandguide.resizable_handle_sw)}
                         onstart={ctx.link().callback(|e| Msg::PointerMoveStart(Mode::ResizeBottomLeft, e))}
                         onstop={ctx.link().callback(|_| Msg::PointerMoveEnd)}
                     />
                     <DragPoint
-                        class={classes!(if ctx.props().south_east { "block" } else { "hidden" }, "h-4","w-4","absolute","rounded-full",bg_color,"transform", "bottom-0","right-0","translate-x-2","translate-y-2", "cursor-se-resize")}
+                        class={classes!(if props.south_east { &brandguide.resizable_handle_visible } else { &brandguide.resizable_handle_hidden }, &brandguide.resizable_handle_se)}
                         onstart={ctx.link().callback(|e| Msg::PointerMoveStart(Mode::ResizeBottomRight,e ))}
                         onstop={ctx.link().callback(|_| Msg::PointerMoveEnd)}
                     />
                     <DragPoint
-                        class={classes!(if ctx.props().north { "block" } else { "hidden" }, "h-4","w-4","absolute","rounded-full",bg_color,"transform", "top-0","left-1/2","-translate-x-1/2","-translate-y-2", "cursor-n-resize")}
+                        class={classes!(if props.north { &brandguide.resizable_handle_visible } else { &brandguide.resizable_handle_hidden }, &brandguide.resizable_handle_n)}
                         onstart={ctx.link().callback(|e| Msg::PointerMoveStart(Mode::ResizeTop,e))}
                         onstop={ctx.link().callback(|_| Msg::PointerMoveEnd)}
                     />
                     <DragPoint
-                        class={classes!(if ctx.props().south { "block" } else { "hidden" }, "h-4","w-4","absolute","rounded-full",bg_color,"transform", "bottom-0","left-1/2","-translate-x-1/2","translate-y-2", "cursor-s-resize")}
+                        class={classes!(if props.south { &brandguide.resizable_handle_visible } else { &brandguide.resizable_handle_hidden }, &brandguide.resizable_handle_s)}
                         onstart={ctx.link().callback(|e| Msg::PointerMoveStart(Mode::ResizeBottom,e))}
                         onstop={ctx.link().callback(|_| Msg::PointerMoveEnd)}
                     />
                     <DragPoint
-                        class={classes!(if ctx.props().west { "block" } else { "hidden" }, "h-4","w-4","absolute","rounded-full",bg_color,"transform", "left-0","top-1/2","-translate-y-1/2","-translate-x-2", "cursor-w-resize")}
+                        class={classes!(if props.west { &brandguide.resizable_handle_visible } else { &brandguide.resizable_handle_hidden }, &brandguide.resizable_handle_w)}
                         onstart={ctx.link().callback(|e| Msg::PointerMoveStart(Mode::ResizeLeft,e))}
                         onstop={ctx.link().callback(|_| Msg::PointerMoveEnd)}
                     />
                     <DragPoint
-                        class={classes!(if ctx.props().east { "block" } else { "hidden" }, "h-4","w-4","absolute","rounded-full",bg_color,"transform", "right-0","top-1/2","-translate-y-1/2","translate-x-2", "cursor-e-resize")}
+                        class={classes!(if props.east { &brandguide.resizable_handle_visible } else { &brandguide.resizable_handle_hidden }, &brandguide.resizable_handle_e)}
                         onstart={ctx.link().callback(|e| Msg::PointerMoveStart(Mode::ResizeRight,e))}
                         onstop={ctx.link().callback(|_| Msg::PointerMoveEnd)}
                     />
@@ -261,3 +274,104 @@ impl Component for Resizable {
         }
     }
 }
+
+#[function_component(Resizable)]
+pub fn resizable(props: &ResizableProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = Rc::new(get_brandguide());
+
+    html! {
+        <ResizableInner brandguide={brandguide} props={props.clone()} />
+    }
+}
+
+// Snippets to update brandguide:
+// ("resizable_container".to_string(), "container relative".to_string()),
+// ("resizable_box".to_string(), "border-2 border-blue-500 border-dashed absolute bg-gray-500".to_string()),
+// ("resizable_handle_visible".to_string(), "block".to_string()),
+// ("resizable_handle_hidden".to_string(), "hidden".to_string()),
+// ("resizable_handle_nw".to_string(), "h-4 w-4 absolute rounded-full bg-blue-500 transform top-0 left-0 -translate-x-2 -translate-y-2 cursor-nw-resize".to_string()),
+// ("resizable_handle_ne".to_string(), "h-4 w-4 absolute rounded-full bg-blue-500 transform top-0 right-0 translate-x-2 -translate-y-2 cursor-ne-resize".to_string()),
+// ("resizable_handle_sw".to_string(), "h-4 w-4 absolute rounded-full bg-blue-500 transform bottom-0 left-0 -translate-x-2 translate-y-2 cursor-sw-resize".to_string()),
+// ("resizable_handle_se".to_string(), "h-4 w-4 absolute rounded-full bg-blue-500 transform bottom-0 right-0 translate-x-2 translate-y-2 cursor-se-resize".to_string()),
+// ("resizable_handle_n".to_string(), "h-4 w-4 absolute rounded-full bg-blue-500 transform top-0 left-1/2 -translate-x-1/2 -translate-y-2 cursor-n-resize".to_string()),
+// ("resizable_handle_s".to_string(), "h-4 w-4 absolute rounded-full bg-blue-500 transform bottom-0 left-1/2 -translate-x-1/2 translate-y-2 cursor-s-resize".to_string()),
+// ("resizable_handle_w".to_string(), "h-4 w-4 absolute rounded-full bg-blue-500 transform left-0 top-1/2 -translate-y-1/2 -translate-x-2 cursor-w-resize".to_string()),
+// ("resizable_handle_e".to_string(), "h-4 w-4 absolute rounded-full bg-blue-500 transform right-0 top-1/2 -translate-y-1/2 translate-x-2 cursor-e-resize".to_string()),
+//
+// pub resizable_container: ClassesContainer<T>,
+// pub resizable_box: ClassesContainer<T>,
+// pub resizable_handle_visible: ClassesContainer<T>,
+// pub resizable_handle_hidden: ClassesContainer<T>,
+// pub resizable_handle_nw: ClassesContainer<T>,
+// pub resizable_handle_ne: ClassesContainer<T>,
+// pub resizable_handle_sw: ClassesContainer<T>,
+// pub resizable_handle_se: ClassesContainer<T>,
+// pub resizable_handle_n: ClassesContainer<T>,
+// pub resizable_handle_s: ClassesContainer<T>,
+// pub resizable_handle_w: ClassesContainer<T>,
+// pub resizable_handle_e: ClassesContainer<T>,
+//
+// resizable_container: self.resizable_container.to_owned(),
+// resizable_box: self.resizable_box.to_owned(),
+// resizable_handle_visible: self.resizable_handle_visible.to_owned(),
+// resizable_handle_hidden: self.resizable_handle_hidden.to_owned(),
+// resizable_handle_nw: self.resizable_handle_nw.to_owned(),
+// resizable_handle_ne: self.resizable_handle_ne.to_owned(),
+// resizable_handle_sw: self.resizable_handle_sw.to_owned(),
+// resizable_handle_se: self.resizable_handle_se.to_owned(),
+// resizable_handle_n: self.resizable_handle_n.to_owned(),
+// resizable_handle_s: self.resizable_handle_s.to_owned(),
+// resizable_handle_w: self.resizable_handle_w.to_owned(),
+// resizable_handle_e: self.resizable_handle_e.to_owned(),
+//
+// resizable_container: default_config_hm
+// .get("resizable_container")
+// .expect("Template parameter missing")
+// .clone(),
+// resizable_box: default_config_hm
+// .get("resizable_box")
+// .expect("Template parameter missing")
+// .clone(),
+// resizable_handle_visible: default_config_hm
+// .get("resizable_handle_visible")
+// .expect("Template parameter missing")
+// .clone(),
+// resizable_handle_hidden: default_config_hm
+// .get("resizable_handle_hidden")
+// .expect("Template parameter missing")
+// .clone(),
+// resizable_handle_nw: default_config_hm
+// .get("resizable_handle_nw")
+// .expect("Template parameter missing")
+// .clone(),
+// resizable_handle_ne: default_config_hm
+// .get("resizable_handle_ne")
+// .expect("Template parameter missing")
+// .clone(),
+// resizable_handle_sw: default_config_hm
+// .get("resizable_handle_sw")
+// .expect("Template parameter missing")
+// .clone(),
+// resizable_handle_se: default_config_hm
+// .get("resizable_handle_se")
+// .expect("Template parameter missing")
+// .clone(),
+// resizable_handle_n: default_config_hm
+// .get("resizable_handle_n")
+// .expect("Template parameter missing")
+// .clone(),
+// resizable_handle_s: default_config_hm
+// .get("resizable_handle_s")
+// .expect("Template parameter missing")
+// .clone(),
+// resizable_handle_w: default_config_hm
+// .get("resizable_handle_w")
+// .expect("Template parameter missing")
+// .clone(),
+// resizable_handle_e: default_config_hm
+// .get("resizable_handle_e")
+// .expect("Template parameter missing")
+// .clone(),

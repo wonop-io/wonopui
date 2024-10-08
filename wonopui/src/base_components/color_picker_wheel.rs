@@ -1,15 +1,15 @@
-use web_sys::{HtmlCanvasElement, CanvasRenderingContext2d, HtmlElement};
-use web_sys::wasm_bindgen::JsCast;
-use yew::prelude::*;
-use wasm_bindgen::closure::Closure;
-use yew::events::PointerEvent;
-use gloo_utils::window;
-use wasm_bindgen::prelude::*;
-use web_sys::ResizeObserver;
-use std::f64::consts::PI;
-use wasm_bindgen::Clamped;
-use web_sys::ImageData;
 use gloo_console as console;
+use gloo_utils::window;
+use std::f64::consts::PI;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::prelude::*;
+use wasm_bindgen::Clamped;
+use web_sys::wasm_bindgen::JsCast;
+use web_sys::ImageData;
+use web_sys::ResizeObserver;
+use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlElement};
+use yew::events::PointerEvent;
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq, Clone)]
 pub struct ColorPickerWheelProps {
@@ -50,16 +50,31 @@ impl Drop for ColorPickerWheel {
     fn drop(&mut self) {
         let window = web_sys::window().expect("no global `window` exists");
         if let Some(move_closure) = &self.move_closure {
-            window.remove_event_listener_with_callback("pointermove", move_closure.as_ref().unchecked_ref()).unwrap();
+            window
+                .remove_event_listener_with_callback(
+                    "pointermove",
+                    move_closure.as_ref().unchecked_ref(),
+                )
+                .unwrap();
         }
         if let Some(up_closure) = &self.up_closure {
-            window.remove_event_listener_with_callback("pointerup", up_closure.as_ref().unchecked_ref()).unwrap();
+            window
+                .remove_event_listener_with_callback(
+                    "pointerup",
+                    up_closure.as_ref().unchecked_ref(),
+                )
+                .unwrap();
         }
         if let Some(resize_observer) = &self.resize_observer {
             resize_observer.disconnect();
         }
         if let Some(resize_callback) = &self.resize_callback {
-            window.remove_event_listener_with_callback("resize", resize_callback.as_ref().unchecked_ref()).unwrap();
+            window
+                .remove_event_listener_with_callback(
+                    "resize",
+                    resize_callback.as_ref().unchecked_ref(),
+                )
+                .unwrap();
         }
     }
 }
@@ -87,7 +102,8 @@ impl Component for ColorPickerWheel {
         match msg {
             Msg::PointerDown(event) => {
                 if let Some(element) = self.indicator_canvas_ref.cast::<web_sys::Element>() {
-                    let (index, distance) = self.find_closest_indicator(event.offset_x() as f64, event.offset_y() as f64);
+                    let (index, distance) = self
+                        .find_closest_indicator(event.offset_x() as f64, event.offset_y() as f64);
 
                     if distance <= ctx.props().indicator_radius {
                         element.set_pointer_capture(event.pointer_id()).unwrap();
@@ -97,19 +113,33 @@ impl Component for ColorPickerWheel {
                         let link = ctx.link().clone();
                         self.move_closure = {
                             let link = link.clone();
-                            Some(Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
-                                link.send_message(Msg::PointerMove(event));
-                            }) as Box<dyn FnMut(_)>))
+                            Some(Closure::wrap(
+                                Box::new(move |event: web_sys::PointerEvent| {
+                                    link.send_message(Msg::PointerMove(event));
+                                }) as Box<dyn FnMut(_)>,
+                            ))
                         };
                         self.up_closure = {
                             let link = link.clone();
-                            Some(Closure::wrap(Box::new(move |event: web_sys::PointerEvent| {
-                                link.send_message(Msg::PointerUp(event));
-                            }) as Box<dyn FnMut(_)>))
+                            Some(Closure::wrap(
+                                Box::new(move |event: web_sys::PointerEvent| {
+                                    link.send_message(Msg::PointerUp(event));
+                                }) as Box<dyn FnMut(_)>,
+                            ))
                         };
 
-                        window.add_event_listener_with_callback("pointermove", self.move_closure.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
-                        window.add_event_listener_with_callback("pointerup", self.up_closure.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
+                        window
+                            .add_event_listener_with_callback(
+                                "pointermove",
+                                self.move_closure.as_ref().unwrap().as_ref().unchecked_ref(),
+                            )
+                            .unwrap();
+                        window
+                            .add_event_listener_with_callback(
+                                "pointerup",
+                                self.up_closure.as_ref().unwrap().as_ref().unchecked_ref(),
+                            )
+                            .unwrap();
 
                         self.update_color(ctx, event.offset_x() as f64, event.offset_y() as f64);
                         true
@@ -135,17 +165,28 @@ impl Component for ColorPickerWheel {
             Msg::PointerUp(event) => {
                 if let Some((pointer_id, _)) = self.active_pointer {
                     if event.pointer_id() == pointer_id {
-                        if let Some(element) = self.indicator_canvas_ref.cast::<web_sys::Element>() {
+                        if let Some(element) = self.indicator_canvas_ref.cast::<web_sys::Element>()
+                        {
                             element.release_pointer_capture(event.pointer_id()).unwrap();
                         }
                         self.active_pointer = None;
 
                         let window = web_sys::window().expect("no global `window` exists");
                         if let Some(move_closure) = &self.move_closure {
-                            window.remove_event_listener_with_callback("pointermove", move_closure.as_ref().unchecked_ref()).unwrap();
+                            window
+                                .remove_event_listener_with_callback(
+                                    "pointermove",
+                                    move_closure.as_ref().unchecked_ref(),
+                                )
+                                .unwrap();
                         }
                         if let Some(up_closure) = &self.up_closure {
-                            window.remove_event_listener_with_callback("pointerup", up_closure.as_ref().unchecked_ref()).unwrap();
+                            window
+                                .remove_event_listener_with_callback(
+                                    "pointerup",
+                                    up_closure.as_ref().unchecked_ref(),
+                                )
+                                .unwrap();
                         }
                         self.move_closure = None;
                         self.up_closure = None;
@@ -161,7 +202,7 @@ impl Component for ColorPickerWheel {
             Msg::UpdateColor(index, hue, saturation, value) => {
                 let old_hue = self.indicators[index].0;
                 self.indicators[index] = (hue, saturation, value);
-                
+
                 // Rotate other indicators if hue changed
                 if (hue - old_hue).abs() > 1e-6 {
                     let hue_diff = hue - old_hue;
@@ -214,7 +255,7 @@ impl Component for ColorPickerWheel {
         if first_render {
             if let (Some(wheel_canvas), Some(indicator_canvas)) = (
                 self.wheel_canvas_ref.cast::<HtmlCanvasElement>(),
-                self.indicator_canvas_ref.cast::<HtmlCanvasElement>()
+                self.indicator_canvas_ref.cast::<HtmlCanvasElement>(),
             ) {
                 let wheel_context = wheel_canvas
                     .get_context("2d")
@@ -237,11 +278,27 @@ impl Component for ColorPickerWheel {
 
                 // Set up ResizeObserver
                 let link = ctx.link().clone();
+                let cb = {
+                    let link = link.clone();
+
+                    Closure::wrap(Box::new(move || {
+                        link.send_message(Msg::Resize);
+                    }) as Box<dyn FnMut()>)
+                };
+
                 self.resize_callback = Some(Closure::wrap(Box::new(move || {
-                    link.send_message(Msg::Resize);
+                    let window = web_sys::window().expect("no global `window` exists");
+                    window.request_animation_frame(cb.as_ref().unchecked_ref());
                 }) as Box<dyn FnMut()>));
-                
-                let resize_observer = ResizeObserver::new(self.resize_callback.as_ref().unwrap().as_ref().unchecked_ref()).unwrap();
+
+                let resize_observer = ResizeObserver::new(
+                    self.resize_callback
+                        .as_ref()
+                        .unwrap()
+                        .as_ref()
+                        .unchecked_ref(),
+                )
+                .unwrap();
                 resize_observer.observe(&wheel_canvas);
 
                 self.resize_observer = Some(resize_observer);
@@ -250,7 +307,11 @@ impl Component for ColorPickerWheel {
     }
 
     fn changed(&mut self, ctx: &Context<Self>, old_props: &Self::Properties) -> bool {
-        if ctx.props().size != old_props.size || ctx.props().value != old_props.value || ctx.props().indicators != old_props.indicators || ctx.props().indicator_radius != old_props.indicator_radius {
+        if ctx.props().size != old_props.size
+            || ctx.props().value != old_props.value
+            || ctx.props().indicators != old_props.indicators
+            || ctx.props().indicator_radius != old_props.indicator_radius
+        {
             self.indicators = ctx.props().indicators.clone();
             self.draw_wheel(ctx);
             self.draw_indicators(ctx);
@@ -262,22 +323,24 @@ impl Component for ColorPickerWheel {
 }
 
 impl ColorPickerWheel {
-
     fn update_color(&mut self, ctx: &Context<Self>, x: f64, y: f64) {
-        if let (Some(canvas), Some((_, index))) = (self.wheel_canvas_ref.cast::<HtmlCanvasElement>(), self.active_pointer) {
+        if let (Some(canvas), Some((_, index))) = (
+            self.wheel_canvas_ref.cast::<HtmlCanvasElement>(),
+            self.active_pointer,
+        ) {
             let rect = canvas.get_bounding_client_rect();
             let center_x = rect.width() / 2.0;
             let center_y = rect.height() / 2.0;
             let dx = x - center_x;
             let dy = y - center_y;
-            
+
             let radius = (dx * dx + dy * dy).sqrt();
             let max_radius = rect.width().min(rect.height()) / 2.0;
-            
+
             let mut hue = (dy.atan2(dx) + PI) / (2.0 * PI);
             let saturation = (radius / max_radius).min(1.0);
             let value = self.indicators[index].2;
-            
+
             // Adjust hue to maintain relative positions
             let hue_diff = hue - self.indicators[index].0;
             for indicator in self.indicators.iter_mut() {
@@ -286,20 +349,26 @@ impl ColorPickerWheel {
                     indicator.0 += 1.0;
                 }
             }
-            
-            ctx.link().send_message(Msg::UpdateColor(index, hue, saturation, value));
+
+            ctx.link()
+                .send_message(Msg::UpdateColor(index, hue, saturation, value));
         }
     }
 
     fn draw_wheel(&self, ctx: &Context<Self>) {
-        if let (Some(canvas), Some(context)) = (self.wheel_canvas_ref.cast::<HtmlCanvasElement>(), &self.wheel_context) {
+        if let (Some(canvas), Some(context)) = (
+            self.wheel_canvas_ref.cast::<HtmlCanvasElement>(),
+            &self.wheel_context,
+        ) {
             let width = canvas.width() as u32;
             let height = canvas.height() as u32;
             let center_x = width as f64 / 2.0;
             let center_y = height as f64 / 2.0;
             let radius = (width.min(height) / 2) as f64;
 
-            let mut image_data = context.get_image_data(0.0, 0.0, width as f64, height as f64).unwrap();
+            let mut image_data = context
+                .get_image_data(0.0, 0.0, width as f64, height as f64)
+                .unwrap();
             let mut data = image_data.data();
 
             for x in 0..width {
@@ -307,12 +376,12 @@ impl ColorPickerWheel {
                     let dx = x as f64 - center_x;
                     let dy = y as f64 - center_y;
                     let distance = (dx * dx + dy * dy).sqrt();
-                    
+
                     if distance <= radius {
                         let hue = (dy.atan2(dx) + PI) / (2.0 * PI);
                         let saturation = distance / radius;
                         let (r, g, b) = hsv_to_rgb(hue * 360.0, saturation, ctx.props().value);
-                        
+
                         let index = ((y * width + x) * 4) as usize;
                         data[index] = r;
                         data[index + 1] = g;
@@ -321,13 +390,21 @@ impl ColorPickerWheel {
                     }
                 }
             }
-            let imdata = ImageData::new_with_u8_clamped_array_and_sh(Clamped(data.as_slice()), width, height).unwrap();
+            let imdata = ImageData::new_with_u8_clamped_array_and_sh(
+                Clamped(data.as_slice()),
+                width,
+                height,
+            )
+            .unwrap();
             context.put_image_data(&imdata, 0.0, 0.0).unwrap();
         }
     }
 
     fn draw_indicators(&self, ctx: &Context<Self>) {
-        if let (Some(canvas), Some(context)) = (self.indicator_canvas_ref.cast::<HtmlCanvasElement>(), &self.indicator_context) {
+        if let (Some(canvas), Some(context)) = (
+            self.indicator_canvas_ref.cast::<HtmlCanvasElement>(),
+            &self.indicator_context,
+        ) {
             let width = canvas.width() as f64;
             let height = canvas.height() as f64;
             let center_x = width / 2.0;
@@ -337,7 +414,6 @@ impl ColorPickerWheel {
             context.clear_rect(0.0, 0.0, width, height);
 
             for (hue, saturation, value) in &self.indicators {
-
                 let indicator_angle = hue * 2.0 * PI - PI;
                 let indicator_distance = saturation * radius;
                 let indicator_x = center_x + indicator_distance * indicator_angle.cos();
@@ -355,7 +431,15 @@ impl ColorPickerWheel {
                 let color = format!("rgb({}, {}, {})", r, g, b);
 
                 context.begin_path();
-                context.arc(indicator_x, indicator_y, ctx.props().indicator_radius, 0.0, 2.0 * PI).unwrap();
+                context
+                    .arc(
+                        indicator_x,
+                        indicator_y,
+                        ctx.props().indicator_radius,
+                        0.0,
+                        2.0 * PI,
+                    )
+                    .unwrap();
                 context.set_fill_style(&color.into());
                 context.fill();
                 context.set_stroke_style(&"#FFFFFF".into());
@@ -363,7 +447,9 @@ impl ColorPickerWheel {
                 context.stroke();
 
                 context.begin_path();
-                context.arc(indicator_x, indicator_y, 6.0, 0.0, 2.0 * PI).unwrap();
+                context
+                    .arc(indicator_x, indicator_y, 6.0, 0.0, 2.0 * PI)
+                    .unwrap();
                 context.set_stroke_style(&"#000000".into());
                 context.set_line_width(1.0);
                 context.stroke();
@@ -378,14 +464,15 @@ impl ColorPickerWheel {
             let center_y = rect.height() / 2.0;
             let radius = rect.width().min(rect.height()) / 2.0;
 
-            self.indicators.iter()
+            self.indicators
+                .iter()
                 .enumerate()
                 .map(|(index, &(h, s, _))| {
                     let indicator_angle = h * 2.0 * PI - PI;
                     let indicator_distance = s * radius;
                     let indicator_x = center_x + indicator_distance * indicator_angle.cos();
                     let indicator_y = center_y + indicator_distance * indicator_angle.sin();
-                    
+
                     let dx = x - indicator_x;
                     let dy = y - indicator_y;
                     let distance = (dx * dx + dy * dy).sqrt();

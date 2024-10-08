@@ -1,8 +1,13 @@
-use gloo_console as console;
-use std::rc::Rc;
 use chrono::{DateTime, Utc};
 use chrono_humanize::HumanTime;
+use gloo_console as console;
+use std::rc::Rc;
 use yew::prelude::*;
+
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
 
 #[derive(Clone, PartialEq)]
 pub struct NotificationContext {
@@ -22,6 +27,11 @@ pub struct NotificationProps {
 
 #[function_component(Notification)]
 pub fn notification(props: &NotificationProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+
     let on_close = {
         let id = props.id;
         let on_close = props.on_close.clone();
@@ -33,21 +43,21 @@ pub fn notification(props: &NotificationProps) -> Html {
     let human_time = HumanTime::from(props.timestamp);
 
     html! {
-        <div class="max-w-sm w-full bg-white shadow-lg rounded-lg p-3 sm:p-4 md:p-6 relative">
-            <div class="flex justify-between items-start">
+        <div class={classes!(&brandguide.notification_container)}>
+            <div class={classes!(&brandguide.notification_content)}>
                 <div>
-                    <h2 class="text-lg font-semibold text-gray-900">{ &props.title }</h2>
-                    <p class="text-sm text-gray-600">{ &props.description }</p>
-                    <p class="text-xs text-gray-400">{ human_time.to_string() }</p>
+                    <h2 class={classes!(&brandguide.notification_title)}>{ &props.title }</h2>
+                    <p class={classes!(&brandguide.notification_description)}>{ &props.description }</p>
+                    <p class={classes!(&brandguide.notification_timestamp)}>{ human_time.to_string() }</p>
                 </div>
-                <button onclick={on_close} class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <button onclick={on_close} class={classes!(&brandguide.notification_close_button)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" class={classes!(&brandguide.notification_close_icon)} viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
                 </button>
             </div>
             { if let Some(action) = &props.action {
-                html! { <div class="mt-2">{ action.clone() }</div> }
+                html! { <div class={classes!(&brandguide.notification_action_container)}>{ action.clone() }</div> }
             } else {
                 html! {}
             }}
@@ -62,6 +72,11 @@ pub struct NotificationProviderProps {
 
 #[function_component(NotificationProvider)]
 pub fn notification_provider(props: &NotificationProviderProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+
     let notifications = use_state(|| Vec::new());
     let next_id = use_state(|| 0usize);
 
@@ -80,14 +95,26 @@ pub fn notification_provider(props: &NotificationProviderProps) -> Html {
                 timestamp: Utc::now(),
                 on_close: Callback::noop(), // This will be set later
             };
-            notifications.set((*notifications).clone().into_iter().chain(std::iter::once(notification)).collect());
+            notifications.set(
+                (*notifications)
+                    .clone()
+                    .into_iter()
+                    .chain(std::iter::once(notification))
+                    .collect(),
+            );
         })
     };
 
     let remove_notification = {
         let notifications = notifications.clone();
         Callback::from(move |id: usize| {
-            notifications.set((*notifications).clone().into_iter().filter(|n| n.id != id).collect());
+            notifications.set(
+                (*notifications)
+                    .clone()
+                    .into_iter()
+                    .filter(|n| n.id != id)
+                    .collect(),
+            );
         })
     };
 
@@ -99,7 +126,7 @@ pub fn notification_provider(props: &NotificationProviderProps) -> Html {
     html! {
         <ContextProvider<Rc<NotificationContext>> context={context}>
             { for props.children.iter() }
-            <div class="fixed bottom-4 right-4 z-50 space-y-4 flex flex-col">
+            <div class={classes!(&brandguide.notification_list_container)}>
                 { for notifications.iter().rev().map(|notification| {
                     let on_close = remove_notification.clone();
                     html! { <Notification
@@ -116,14 +143,6 @@ pub fn notification_provider(props: &NotificationProviderProps) -> Html {
     }
 }
 
-// New entries in the brand guide (to be added in config.rs):
-// notification_container: "fixed bottom-4 right-4 z-50 max-w-sm w-full bg-white shadow-lg rounded-lg p-4",
-// notification_title: "text-lg font-semibold text-gray-900",
-// notification_description: "text-sm text-gray-600",
-// notification_timestamp: "text-xs text-gray-400",
-// notification_button: "border border-gray-300 rounded px-4 py-2",
-// notification_action: "text-blue-500"
-
 #[hook]
 pub fn use_notify() -> Callback<(String, String, Option<Html>)> {
     use_context::<Rc<NotificationContext>>()
@@ -131,38 +150,3 @@ pub fn use_notify() -> Callback<(String, String, Option<Html>)> {
         .show_notification
         .clone()
 }
-
-/*
-// Example usage:
-
-#[function_component(ExampleComponent)]
-pub fn example_component() -> Html {
-    let show_notification = use_notify();
-
-    let on_click = Callback::from(move |_| {
-        show_notification.emit((
-            "Example Notification".to_string(),
-            "This is an example of using the notification system.".to_string(),
-            Some(html! {
-                <button class="text-blue-500">{"Action"}</button>
-            })
-        ));
-    });
-
-    html! {
-        <div>
-            <button onclick={on_click}>{"Show Notification"}</button>
-        </div>
-    }
-}
-
-#[function_component(App)]
-pub fn app() -> Html {
-    html! {
-        <NotificationProvider>
-            <ExampleComponent />
-            // Other components...
-        </NotificationProvider>
-    }
-}
-*/

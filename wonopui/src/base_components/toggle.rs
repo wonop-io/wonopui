@@ -1,4 +1,8 @@
-use crate::config::BRANDGUIDE;
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
+use crate::config::ClassesStr;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -17,18 +21,22 @@ pub struct ToggleProps {
 
 #[function_component(Toggle)]
 pub fn toggle(props: &ToggleProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let checked = use_state(|| props.checked);
 
     let state_class = if *checked {
-        BRANDGUIDE.toggle_checked
+        &brandguide.toggle_checked
     } else {
-        BRANDGUIDE.toggle_unchecked
+        &brandguide.toggle_unchecked
     };
 
     let disabled_class = if props.disabled {
-        BRANDGUIDE.toggle_disabled
+        brandguide.toggle_disabled.clone()
     } else {
-        ""
+        ClassesStr::empty()
     };
 
     let on_click = {
@@ -45,10 +53,9 @@ pub fn toggle(props: &ToggleProps) -> Html {
             type="button"
             role="switch"
             aria-checked={checked.to_string()}
-            data-state={state_class}
             class={classes!(
-                "inline-flex","items-center","justify-center",
-                BRANDGUIDE.toggle_base,
+                &brandguide.toggle_container,
+                &brandguide.toggle_base,
                 state_class,
                 disabled_class,
             )}
@@ -60,39 +67,3 @@ pub fn toggle(props: &ToggleProps) -> Html {
         </button>
     }
 }
-
-#[function_component(ToggleDemo)]
-pub fn toggle_demo() -> Html {
-    let checked = use_state(|| false);
-
-    let on_toggle = {
-        let checked = checked.clone();
-        Callback::from(move |_| {
-            checked.set(!*checked);
-        })
-    };
-
-    html! {
-        <div class={"flex items-center space-x-2"}>
-            <Toggle id="bold-toggle" checked={*checked} on_toggle={on_toggle}>
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M6 4h8a4 4 0 0 1 0 8H6z"></path>
-                    <path d="M6 12h8a4 4 0 0 1 0 8H6z"></path>
-                </svg>
-            </Toggle>
-            <label
-                for="bold-toggle"
-                class={BRANDGUIDE.toggle_label}
-            >
-                { "Toggle bold" }
-            </label>
-        </div>
-    }
-}
-
-// New entries in the brand guide:
-// toggle_base: "h-8 w-8 rounded-full border ring-offset-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-// toggle_checked: "bg-blue-500 text-white", // Standard colors
-// toggle_unchecked: "border-blue-500", // Standard color
-// toggle_disabled: "disabled:cursor-not-allowed disabled:opacity-50",
-// toggle_label: "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",

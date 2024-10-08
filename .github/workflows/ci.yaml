@@ -1,0 +1,43 @@
+name: Rust
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions: read-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Installing trunk
+        run: |
+          rustup target add wasm32-unknown-unknown
+          cargo install --locked trunk
+          mv ~/.cargo/bin/trunk ~/.cargo/bin/wasm-trunk
+
+      - name: Testing wonopui
+        working-directory: wonopui
+        run: cargo test
+
+      - name: Building
+        working-directory: wonopui
+        run: cargo build --release

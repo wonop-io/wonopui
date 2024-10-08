@@ -15,7 +15,7 @@ pub struct TopbarProps {
     #[prop_or(TopbarStyle::Sticky)]
     pub style: TopbarStyle,
     #[prop_or_default]
-    pub class: Classes
+    pub class: Classes,
 }
 
 #[function_component(Topbar)]

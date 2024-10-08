@@ -1,5 +1,5 @@
-use std::rc::Rc;
 use crate::components::multicol_sidebar::SidebarColumn;
+use std::rc::Rc;
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]

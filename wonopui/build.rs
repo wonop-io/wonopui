@@ -301,7 +301,8 @@ fn create_baseclasses() {
     let target_dir = Path::new(target_dir).join("target");
     let target_dir = fs::canonicalize(&target_dir).unwrap_or_else(|_| target_dir.to_path_buf());
     let baseclasses_path = target_dir.join("tailwindcss.txt");
-
+    println!("Baseclasses path: {:?}", baseclasses_path);
+    println!("Out dir: {:?}", out_dir);
     let mut classes = HashSet::new();
 
     // Recursively find all .rs files and extract Tailwind CSS classes
@@ -1711,6 +1712,7 @@ fn main() {
         group_button_trigger = config.group_button_trigger,
     )
     .unwrap();
+    //panic!("Failing for the sake of failing");
 }
 
 /*

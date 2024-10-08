@@ -9,7 +9,7 @@ pub fn drag_point(props: &DragPointProps) -> Html {
         onstart,
         onstop,
         class,
-        tag
+        tag,
     } = props;
     let drag_point_ref = use_node_ref();
     let active_pointer = use_state(|| None);

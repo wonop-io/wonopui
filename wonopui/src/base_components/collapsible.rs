@@ -1,4 +1,7 @@
-use crate::config::BRANDGUIDE;
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -15,12 +18,16 @@ pub struct CollapsibleProps {
 
 #[function_component(Collapsible)]
 pub fn collapsible(props: &CollapsibleProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     let is_open = use_state(|| props.open);
 
     let toggle_open = {
         let is_open = is_open.clone();
         let on_open_change = props.on_open_change.clone();
-        Callback::from(move |_| {
+        Callback::from(move |_: MouseEvent| {
             let new_state = !*is_open;
             is_open.set(new_state);
             on_open_change.emit(new_state);
@@ -28,7 +35,7 @@ pub fn collapsible(props: &CollapsibleProps) -> Html {
     };
 
     html! {
-        <div onclick={toggle_open} class={classes!(props.class.clone(), if *is_open { "open" } else { "closed" })}>
+        <div class={classes!(&brandguide.collapsible_container, props.class.clone())}>
             { for props.children.iter() }
         </div>
     }
@@ -40,12 +47,18 @@ pub struct CollapsibleTriggerProps {
     pub as_child: bool,
     #[prop_or_default]
     pub children: Children,
+    #[prop_or_default]
+    pub onclick: Callback<MouseEvent>,
 }
 
 #[function_component(CollapsibleTrigger)]
 pub fn collapsible_trigger(props: &CollapsibleTriggerProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     html! {
-        <div>
+        <div onclick={&props.onclick} class={&brandguide.collapsible_button}>
             { for props.children.iter() }
         </div>
     }
@@ -57,57 +70,84 @@ pub struct CollapsibleContentProps {
     pub class: String,
     #[prop_or_default]
     pub children: Children,
+    #[prop_or_default]
+    pub is_open: bool,
 }
 
 #[function_component(CollapsibleContent)]
 pub fn collapsible_content(props: &CollapsibleContentProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     html! {
-        <div class={props.class.clone()}>
+        if props.is_open {
+            <div class={classes!(&brandguide.collapsible_content, props.class.clone())}>
+                { for props.children.iter() }
+            </div>
+        }
+    }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct CollapsibleHeaderProps {
+    #[prop_or_default]
+    pub class: String,
+    #[prop_or_default]
+    pub children: Children,
+}
+
+#[function_component(CollapsibleHeader)]
+pub fn collapsible_header(props: &CollapsibleHeaderProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    html! {
+        <div class={classes!(&brandguide.collapsible_header, props.class.clone())}>
             { for props.children.iter() }
         </div>
     }
 }
 
-#[function_component(CollapsibleDemo)]
-pub fn collapsible_demo() -> Html {
-    let is_open = use_state(|| false);
+#[derive(Properties, PartialEq)]
+pub struct CollapsibleTitleProps {
+    #[prop_or_default]
+    pub class: String,
+    #[prop_or_default]
+    pub children: Children,
+}
 
-    let on_open_change = {
-        let is_open = is_open.clone();
-        Callback::from(move |new_state: bool| {
-            is_open.set(new_state);
-        })
-    };
-
+#[function_component(CollapsibleTitle)]
+pub fn collapsible_title(props: &CollapsibleTitleProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
     html! {
-        <Collapsible open={*is_open} on_open_change={on_open_change} class="w-[350px] space-y-2">
-            <div class="flex items-center justify-between space-x-4 px-4">
-                <h4 class="text-sm font-semibold">{"@peduarte starred 3 repositories"}</h4>
-                <CollapsibleTrigger as_child=true>
-                    <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md w-9 p-0" onclick={on_open_change.reform(|_| !*is_open)}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-up-down h-4 w-4">
-                            <path d="m7 15 5 5 5-5"></path>
-                            <path d="m7 9 5-5 5 5"></path>
-                        </svg>
-                        <span class="sr-only">{"Toggle"}</span>
-                    </button>
-                </CollapsibleTrigger>
-            </div>
-            <div class="rounded-md border px-4 py-3 font-mono text-sm">
-                {"@radix-ui/primitives"}
-            </div>
-            <CollapsibleContent class="rounded-md border px-4 py-3 font-mono text-sm">
-                <div class="rounded-md border px-4 py-3 font-mono text-sm">{"@radix-ui/colors"}</div>
-                <div class="rounded-md border px-4 py-3 font-mono text-sm">{"@stitches/react"}</div>
-            </CollapsibleContent>
-        </Collapsible>
+        <h4 class={classes!(&brandguide.collapsible_title, props.class.clone())}>
+            { for props.children.iter() }
+        </h4>
     }
 }
 
-// New entries in the brand guide:
-// collapsible_container: "w-[350px] space-y-2",
-// collapsible_header: "flex items-center justify-between space-x-4 px-4",
-// collapsible_title: "text-sm font-semibold",
-// collapsible_button: "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md w-9 p-0",
-// collapsible_content: "rounded-md border px-4 py-3 font-mono text-sm",
-// collapsible_item: "rounded-md border px-4 py-3 font-mono text-sm",
+#[derive(Properties, PartialEq)]
+pub struct CollapsibleItemProps {
+    #[prop_or_default]
+    pub class: String,
+    #[prop_or_default]
+    pub children: Children,
+}
+
+#[function_component(CollapsibleItem)]
+pub fn collapsible_item(props: &CollapsibleItemProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    html! {
+        <div class={classes!(&brandguide.collapsible_item, props.class.clone())}>
+            { for props.children.iter() }
+        </div>
+    }
+}

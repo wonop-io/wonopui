@@ -1,45 +1,164 @@
 [package]
 name = "wonopui"
-version = "0.1.0"
+version = "0.0.1"
 edition = '2021'
-build = "build.rs"
+build = "build/main.rs"
+
+[features]
+default = []
+ThemeProvider = []
+Accordion = []
+Alert = []
+Avatar = []
+Badge = []
+Breadcrumb = []
+Button = []
+Calendar = []
+Card = []
+Carousel = []
+Checkbox = []
+Col = []
+Collapsible = []
+ColorPicker = []
+ColorPickerHue = []
+ColorPickerLight = []
+ColorPickerSaturation = []
+ColorPickerWheel = []
+Combobox = []
+Command = []
+Container = []
+Content = []
+ContextMenu = []
+DarkModeProvider = []
+Dialog = []
+Divider = []
+DragPoint = []
+Drawer = []
+Dropdown = []
+GroupButton = []
+Iframe = []
+Input = []
+Label = []
+MediaQuery = ["WindowProvider"]
+Notification = []
+PageHeader = []
+Pagination = []
+PaintCanvas = []
+Placeholder = []
+Popover = []
+Resizable = []
+Select = []
+Selectable = []
+Switch = []
+Table = []
+Tabs = []
+TagInput = []
+TailwindColorPicker = []
+Textarea = []
+Toggle = []
+Typography = []
+WindowProvider = []
+Layout = []
+MulticolSidebar = []
+PageContent = []
+Sidebar = []
+Topbar = []
+everything = [
+    "ThemeProvider",
+    "Accordion",
+    "Alert",
+    "Avatar",
+    "Badge",
+    "Breadcrumb",
+    "Button",
+    "Calendar",
+    "Card",
+    "Carousel",
+    "Checkbox",
+    "Col",
+    "Collapsible",
+    "ColorPicker",
+    "ColorPickerHue",
+    "ColorPickerLight",
+    "ColorPickerSaturation",
+    "ColorPickerWheel",
+    "Combobox",
+    "Command",
+    "Container",
+    "Content",
+    "ContextMenu",
+    "DarkModeProvider",
+    "Dialog",
+    "Divider",
+    "DragPoint",
+    "Drawer",
+    "Dropdown",
+    "GroupButton",
+    "Iframe",
+    "Input",
+    "Label",
+    "MediaQuery",
+    "Notification",
+    "PageHeader",
+    "Pagination",
+    "PaintCanvas",
+    "Placeholder",
+    "Popover",
+    "Resizable",
+    "Select",
+    "Selectable",
+    "Switch",
+    "Table",
+    "Tabs",
+    "TagInput",
+    "TailwindColorPicker",
+    "Textarea",
+    "Toggle",
+    "Typography",
+    "WindowProvider",
+    "Layout",
+    "MulticolSidebar",
+    "PageContent",
+    "Sidebar",
+    "Topbar",
+]
 
 [dependencies]
 yew = { version = "0.21", features = ["csr"] }
 web-sys = { version = "0.3.68", features = [
-  "HtmlDocument",
-  "Document",
-  "HtmlInputElement",
-  "HtmlIFrameElement",
-  "Element",
-  "DomRect",
-  "HtmlElement",
-  "HtmlInputElement",
-  "HtmlDivElement",
-  "HtmlImageElement",
-  "CanvasRenderingContext2d",
-  "CanvasGradient",
-  "ImageData", 
-  "HtmlCanvasElement",
-  "Navigator",
-  "Window",
-  "Clipboard",
-  "DragEvent",
-  "DataTransfer",
-  "HtmlStyleElement",
-  "HtmlLinkElement",
-  "ResizeObserver",
-  "IntersectionObserver",
-  "MutationObserver",
-  "CssStyleDeclaration",
-  "CustomEvent",
-  "CustomEventInit",
-  "PointerEvent",
-  "KeyboardEvent",
-  "KeyboardEventInit",
-  "MediaQueryList",
-  "MediaQueryListEvent",
-  "SvgElement",
+    "HtmlDocument",
+    "Document",
+    "HtmlInputElement",
+    "HtmlIFrameElement",
+    "Element",
+    "DomRect",
+    "HtmlElement",
+    "HtmlInputElement",
+    "HtmlDivElement",
+    "HtmlImageElement",
+    "CanvasRenderingContext2d",
+    "CanvasGradient",
+    "ImageData",
+    "HtmlCanvasElement",
+    "Navigator",
+    "Window",
+    "Clipboard",
+    "DragEvent",
+    "DataTransfer",
+    "HtmlStyleElement",
+    "HtmlLinkElement",
+    "ResizeObserver",
+    "IntersectionObserver",
+    "MutationObserver",
+    "CssStyleDeclaration",
+    "CustomEvent",
+    "CustomEventInit",
+    "PointerEvent",
+    "KeyboardEvent",
+    "KeyboardEventInit",
+    "MediaQueryList",
+    "MediaQueryListEvent",
+    "SvgElement",
 ] }
 yew-router = "0.18.0"
 wasm-bindgen = { version = "0.2.90", features = ["serde-serialize"] }
