@@ -6,8 +6,6 @@ use default_config::get_default_config;
 use valid_classes::is_valid_tailwind_class;
 
 // build.rs
-use regex::Regex;
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::env;
@@ -17,10 +15,9 @@ use std::io::Read;
 use std::io::Write;
 use std::path::Path;
 use std::time::Instant;
-use tera::{Context, Result, Tera};
 
 fn create_baseclasses() {
-    let out_dir = env::var("OUT_DIR").unwrap();
+    let out_dir = env::var("OUT_DIR").expect("Failed to get OUT_DIR environment variable");
     let target_dir = out_dir
         .split("target")
         .next()
@@ -66,7 +63,7 @@ fn create_baseclasses() {
             if !word.is_empty() && is_valid_tailwind_class(&word) {
                 classes.insert(word);
             }
-            let duration = start.elapsed();
+            let _duration = start.elapsed();
         }
     })
     .expect("Error visiting directories");
@@ -102,7 +99,7 @@ fn get_default_value(key: &str, map: &HashMap<String, String>) -> String {
 }
 
 fn main() {
-    let out_dir = env::var("OUT_DIR").unwrap();
+    let out_dir = env::var("OUT_DIR").expect("Failed to get OUT_DIR environment variable");
     let dest_path = Path::new(&out_dir).join("config.rs");
 
     create_baseclasses();
@@ -437,7 +434,10 @@ fn main() {
         accordion_content: get_default_value("accordion_content", &default_config_hm),
     };
 
-    let base_dir = out_dir.split("/target").next().unwrap();
+    let base_dir = out_dir
+        .split("/target")
+        .next()
+        .expect("Failed to determine base directory");
     let fallback_path = Path::new(&base_dir).join("wonopui.json");
     // Path to the user's configuration file
     let config_path = match env::var("WONOPUI_CONFIG_PATH") {
@@ -448,9 +448,11 @@ fn main() {
     // Read the configuration file
     println!("cargo:rerun-if-changed={}", config_path.display());
     let config: Config = if Path::new(&config_path).exists() {
-        let mut config_file = File::open(config_path).unwrap();
+        let mut config_file = File::open(config_path).expect("Failed to open config file");
         let mut config_content = String::new();
-        config_file.read_to_string(&mut config_content).unwrap();
+        config_file
+            .read_to_string(&mut config_content)
+            .expect("Failed to read config file");
         serde_json::from_str(&config_content).expect("Failed to parse wonopui.json config file")
     } else {
         default_config
@@ -467,5 +469,7 @@ fn main() {
         .expect("Failed to write config to target wonopui.json file");
 
     // Write the configuration to config.rs
-    config.write_config_to_file(&dest_path).unwrap();
+    config
+        .write_config_to_file(&dest_path)
+        .expect("Failed to write config to file");
 }
