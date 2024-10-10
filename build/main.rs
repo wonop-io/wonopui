@@ -14,9 +14,10 @@ use std::fs::File;
 use std::io::Read;
 use std::io::Write;
 use std::path::Path;
+use std::path::PathBuf;
 use std::time::Instant;
 
-fn create_baseclasses() {
+fn get_base_dir() -> PathBuf {
     let out_dir = env::var("OUT_DIR")
         .expect("Failed to get OUT_DIR environment variable in create_baseclasses()");
     let target_dir = if out_dir.contains("/target/") {
@@ -43,7 +44,13 @@ fn create_baseclasses() {
         let next_slash = remaining.find('/').unwrap_or(remaining.len());
         Path::new(&out_dir[..target_pos + next_slash]).to_path_buf()
     };
-    let target_dir = fs::canonicalize(&target_dir).unwrap_or_else(|_| target_dir.to_path_buf());
+    fs::canonicalize(&target_dir).unwrap_or_else(|_| target_dir.to_path_buf())
+}
+
+fn create_baseclasses() {
+    let target_dir = get_base_dir();
+    println!("Target dir: {:#?}", target_dir);
+
     let baseclasses_path = target_dir.join("tailwindcss.txt");
 
     let mut classes = HashSet::new();
@@ -461,11 +468,8 @@ fn main() {
         accordion_content: get_default_value("accordion_content", &default_config_hm),
     };
 
-    let base_dir = out_dir
-        .split("/target")
-        .next()
-        .expect("Failed to determine base directory in main()");
-    let fallback_path = Path::new(&base_dir).join("wonopui.json");
+    let base_dir = get_base_dir();
+    let fallback_path = base_dir.join("wonopui.json");
     // Path to the user's configuration file
     let config_path = match env::var("WONOPUI_CONFIG_PATH") {
         Ok(path) => Path::new(&path).join("wonopui.json"),
@@ -490,7 +494,7 @@ fn main() {
     };
 
     // Write the configuration to [base_dir]/target/wonopui.json
-    let target_config_path = Path::new(&base_dir).join("target").join("wonopui.json");
+    let target_config_path = Path::new(&base_dir).join("wonopui.json");
     let mut target_config_file = File::create(&target_config_path).expect(&format!(
         "Failed to create target wonopui.json file: {:?}",
         target_config_path
