@@ -1,4 +1,4 @@
-use crate::MainContent;
+use crate::base_components::MainContent;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq, Clone)]

@@ -1,15 +1,3 @@
-// build.rs
-use regex::Regex;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::collections::HashSet;
-use std::env;
-use std::fs;
-use std::fs::File;
-use std::io::Read;
-use std::io::Write;
-use std::path::Path;
-
 pub fn is_valid_tailwind_class(class: &str) -> bool {
     if class.ends_with(":") || class.ends_with("-") {
         return false;
