@@ -471,14 +471,16 @@ fn main() {
     let base_dir = get_base_dir();
     let fallback_path = base_dir.join("wonopui.json");
     // Path to the user's configuration file
-    let config_path = match env::var("WONOPUI_CONFIG_PATH") {
-        Ok(path) => Path::new(&path).join("wonopui.json"),
-        Err(_) => fallback_path,
+    let (using_custom_config, config_path) = match env::var("WONOPUI_CONFIG_PATH") {
+        Ok(path) => (true, Path::new(&path).join("wonopui.json")),
+        Err(_) => (false, fallback_path),
     };
 
     // Read the configuration file
     println!("cargo:rerun-if-changed={}", config_path.display());
-    let config: Config = if Path::new(&config_path).exists() {
+    let config: Config = if !using_custom_config {
+        default_config
+    } else {
         let mut config_file = File::open(&config_path)
             .expect(&format!("Failed to open config file: {:?}", config_path));
         let mut config_content = String::new();
@@ -489,8 +491,6 @@ fn main() {
             "Failed to parse wonopui.json config file: {:?}",
             config_path
         ))
-    } else {
-        default_config
     };
 
     // Write the configuration to [base_dir]/target/wonopui.json
