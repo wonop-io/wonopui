@@ -20,17 +20,22 @@ fn create_baseclasses() {
     let out_dir = env::var("OUT_DIR")
         .expect("Failed to get OUT_DIR environment variable in create_baseclasses()");
     let target_dir = if out_dir.contains("/target/") {
+        println!("Found '/target/' in OUT_DIR: {}", out_dir);
         let parts: Vec<&str> = out_dir.split("/target/").collect();
         Path::new(parts[0]).join("target")
     } else if out_dir.contains("/release/") || out_dir.contains("/debug/") {
         let parts: Vec<&str> = out_dir.split("/release/").collect();
         let parts = if parts.len() == 1 {
+            println!("Found '/debug/' in OUT_DIR: {}", out_dir);
             out_dir.split("/debug/").collect()
         } else {
+            println!("Found '/release/' in OUT_DIR: {}", out_dir);
             parts
         };
         Path::new(parts[0]).to_path_buf()
     } else {
+        println!("Found 'target' in OUT_DIR: {}", out_dir);
+
         let target_pos = out_dir
             .find("target")
             .expect("Failed to find 'target' in OUT_DIR");
