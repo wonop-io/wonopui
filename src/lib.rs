@@ -5,6 +5,8 @@ mod components;
 mod config;
 mod properties;
 
+pub use base_components::*;
+pub use components::*;
 pub use config::BRANDGUIDE;
 pub use properties::*;
 

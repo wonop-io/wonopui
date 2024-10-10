@@ -37,7 +37,7 @@ Command = []
 Container = []
 Content = []
 ContextMenu = []
-DarkModeProvider = []
+DarkModeProvider = ["MediaQuery"]
 Dialog = []
 Divider = []
 DragPoint = []
@@ -67,12 +67,11 @@ Toggle = []
 Typography = []
 WindowProvider = []
 Layout = []
-MulticolSidebar = []
+MulticolSidebar = ["Layout"]
 PageContent = []
 Sidebar = []
 Topbar = []
 everything = [
-    "ThemeProvider",
     "Accordion",
     "Alert",
     "Avatar",
