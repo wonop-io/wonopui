@@ -133,7 +133,7 @@ pub fn multi_column_sidebar(props: &MultiColumnSidebarProps) -> Html {
                {curtain_content.clone()}
             </div>
          </div>
-         <div key="sidebar" class={classes!(order, mobile_menu_only_class, show_mobile_class,  sidebar_position_class,"h-screen", "inset-y-0", "absolute",  "bg-white",  "text-zinc-700", "dark:bg-zinc-900", "dark:text-zinc-300")} style={sidebar_style}>
+         <div key="sidebar" class={classes!(order, mobile_menu_only_class, show_mobile_class,  sidebar_position_class,"h-dvh", "inset-y-0", "absolute",  "bg-white",  "text-zinc-700", "dark:bg-zinc-900", "dark:text-zinc-300")} style={sidebar_style}>
             {for children.iter().map(|child| html! {
                 {child}
             })}

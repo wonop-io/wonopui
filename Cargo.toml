@@ -72,7 +72,6 @@ PageContent = []
 Sidebar = []
 Topbar = []
 everything = [
-    "ThemeProvider",
     "Accordion",
     "Alert",
     "Avatar",
