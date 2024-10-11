@@ -332,7 +332,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("notification_list_container".to_string(), "fixed bottom-4 right-4 z-50 space-y-4 flex flex-col".to_string()),
 
         // Page Header
-        ("page_header_container".to_string(), "flex justify-between items-end mb-8 border-b border-zinc-200 dark:border-zinc-700 pb-4".to_string()),
+        ("page_header_container".to_string(), "flex justify-between items-center mb-8 border-b border-zinc-200 dark:border-zinc-700 pb-4".to_string()),
         ("page_header_title".to_string(), "text-3xl font-bold text-zinc-900 dark:text-zinc-100".to_string()),
         ("page_header_actions".to_string(), "flex space-x-2".to_string()),
 

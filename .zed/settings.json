@@ -1,0 +1,25 @@
+// Folder-specific settings
+//
+// For a full list of overridable settings, and general information on folder-specific settings,
+// see the documentation: https://zed.dev/docs/configuring-zed#settings-files
+{
+  "inlay_hints": {
+    // Global switch to toggle hints on and off, switched off by default.
+    "enabled": true,
+    // Toggle certain types of hints on and off, all switched on by default.
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+    // Corresponds to null/None LSP hint type value.
+    "show_other_hints": true,
+    // Whether to show a background for inlay hints.
+    //
+    // If set to `true`, the background will use the `hint.background` color from the current theme.
+    "show_background": true,
+    // Time to wait after editing the buffer, before requesting the hints,
+    // set to 0 to disable debouncing.
+    "edit_debounce_ms": 700,
+    // Time to wait after scrolling the buffer, before requesting the hints,
+    // set to 0 to disable debouncing.
+    "scroll_debounce_ms": 50
+  }
+}
