@@ -66,7 +66,7 @@ pub fn layout(props: &LayoutProps) -> Html {
       {props.sidebar.clone().unwrap_or_default()}
 
       // Keep this comment to ensure that lg:pl-72 lg:pr-72 lg:pl-20 lg:pr-20 is added to the final CSS. Don't comma separate
-      <div class="h-screen w-screen flex flex-col bg-white text-black dark:bg-zinc-900 dark:text-zinc-100" style={if is_large_screen { sidebar_style.clone() } else { String::new() }}>
+      <div class="h-dvh w-screen flex flex-col bg-white text-black dark:bg-zinc-900 dark:text-zinc-100" style={if is_large_screen { sidebar_style.clone() } else { String::new() }}>
           if layout_context.show_topbar {
               {props.topbar.clone().unwrap_or_default()}
           }
