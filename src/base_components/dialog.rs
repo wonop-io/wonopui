@@ -51,6 +51,10 @@ pub fn dialog(props: &DialogProps) -> Html {
 pub struct DialogTriggerProps {
     pub children: Children,
     pub id: String,
+    #[prop_or_default]
+    pub class: Classes,
+    #[prop_or("div".to_string())]
+    pub tag: String,
 }
 
 #[function_component(DialogTrigger)]
@@ -73,9 +77,9 @@ pub fn dialog_trigger(props: &DialogTriggerProps) -> Html {
     };
 
     html! {
-        <div {onclick}>
+        <@{props.tag.clone()} class={props.class.clone()} {onclick}>
             { for props.children.iter() }
-        </div>
+        </@>
     }
 }
 

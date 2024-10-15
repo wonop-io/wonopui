@@ -6,8 +6,6 @@ use default_config::get_default_config;
 use valid_classes::is_valid_tailwind_class;
 
 // build.rs
-use regex::Regex;
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::env;
@@ -16,17 +14,43 @@ use std::fs::File;
 use std::io::Read;
 use std::io::Write;
 use std::path::Path;
+use std::path::PathBuf;
 use std::time::Instant;
-use tera::{Context, Result, Tera};
+
+fn get_base_dir() -> PathBuf {
+    let out_dir = env::var("OUT_DIR")
+        .expect("Failed to get OUT_DIR environment variable in create_baseclasses()");
+    let target_dir = if out_dir.contains("/target/") {
+        println!("Found '/target/' in OUT_DIR: {}", out_dir);
+        let parts: Vec<&str> = out_dir.split("/target/").collect();
+        Path::new(parts[0]).join("target")
+    } else if out_dir.contains("/release/") || out_dir.contains("/debug/") {
+        let parts: Vec<&str> = out_dir.split("/release/").collect();
+        let parts = if parts.len() == 1 {
+            println!("Found '/debug/' in OUT_DIR: {}", out_dir);
+            out_dir.split("/debug/").collect()
+        } else {
+            println!("Found '/release/' in OUT_DIR: {}", out_dir);
+            parts
+        };
+        Path::new(parts[0]).to_path_buf()
+    } else {
+        println!("Found 'target' in OUT_DIR: {}", out_dir);
+
+        let target_pos = out_dir
+            .find("target")
+            .expect("Failed to find 'target' in OUT_DIR");
+        let remaining = &out_dir[target_pos..];
+        let next_slash = remaining.find('/').unwrap_or(remaining.len());
+        Path::new(&out_dir[..target_pos + next_slash]).to_path_buf()
+    };
+    fs::canonicalize(&target_dir).unwrap_or_else(|_| target_dir.to_path_buf())
+}
 
 fn create_baseclasses() {
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let target_dir = out_dir
-        .split("target")
-        .next()
-        .expect("Failed to determine target directory");
-    let target_dir = Path::new(target_dir).join("target");
-    let target_dir = fs::canonicalize(&target_dir).unwrap_or_else(|_| target_dir.to_path_buf());
+    let target_dir = get_base_dir();
+    println!("Target dir: {:#?}", target_dir);
+
     let baseclasses_path = target_dir.join("tailwindcss.txt");
 
     let mut classes = HashSet::new();
@@ -46,7 +70,8 @@ fn create_baseclasses() {
         if file_path.extension().and_then(|s| s.to_str()) == Some("rs") {
             let start = Instant::now();
 
-            let content = fs::read_to_string(file_path).expect("Unable to read file");
+            let content = fs::read_to_string(file_path)
+                .expect(&format!("Unable to read file: {:?}", file_path));
             let mut word = String::new();
             for c in content.chars() {
                 if c.is_whitespace() || " ,._;(){}\"'`".contains(c) {
@@ -66,16 +91,18 @@ fn create_baseclasses() {
             if !word.is_empty() && is_valid_tailwind_class(&word) {
                 classes.insert(word);
             }
-            let duration = start.elapsed();
+            let _duration = start.elapsed();
         }
     })
-    .expect("Error visiting directories");
+    .expect("Error visiting directories in create_baseclasses()");
 
     let mut classes: Vec<_> = classes.into_iter().collect();
     classes.sort();
-    let mut file = fs::File::create(baseclasses_path).expect("Unable to create file");
+    let mut file = fs::File::create(&baseclasses_path)
+        .expect(&format!("Unable to create file: {:?}", baseclasses_path));
     for class in &classes {
-        writeln!(file, "{}", class).expect("Unable to write to file");
+        writeln!(file, "{}", class)
+            .expect(&format!("Unable to write to file: {:?}", baseclasses_path));
     }
 }
 
@@ -97,19 +124,23 @@ fn visit_dirs(dir: &Path, cb: &mut dyn FnMut(&Path)) -> std::io::Result<()> {
 
 fn get_default_value(key: &str, map: &HashMap<String, String>) -> String {
     map.get(key)
-        .expect(format!("Template parameter missing: {}", key).as_str())
+        .expect(&format!(
+            "Template parameter missing: {} in get_default_value()",
+            key
+        ))
         .clone()
 }
 
 fn main() {
-    let out_dir = env::var("OUT_DIR").unwrap();
+    let out_dir =
+        env::var("OUT_DIR").expect("Failed to get OUT_DIR environment variable in main()");
     let dest_path = Path::new(&out_dir).join("config.rs");
 
     create_baseclasses();
 
     // Default values if config file is not provided
     let default_config_hm =
-        get_default_config().expect("Unable to generate config - error in template");
+        get_default_config().expect("Unable to generate config - error in template in main()");
     let default_config = Config {
         default_separator: get_default_value("default_separator", &default_config_hm),
         typography_h1: get_default_value("typography_h1", &default_config_hm),
@@ -437,29 +468,37 @@ fn main() {
         accordion_content: get_default_value("accordion_content", &default_config_hm),
     };
 
-    let base_dir = out_dir.split("/target").next().unwrap();
-    let fallback_path = Path::new(&base_dir).join("wonopui.json");
+    let base_dir = get_base_dir();
+    let fallback_path = base_dir.join("wonopui.json");
     // Path to the user's configuration file
-    let config_path = match env::var("WONOPUI_CONFIG_PATH") {
-        Ok(path) => Path::new(&path).join("wonopui.json"),
-        Err(_) => fallback_path,
+    let (using_custom_config, config_path) = match env::var("WONOPUI_CONFIG_PATH") {
+        Ok(path) => (true, Path::new(&path).join("wonopui.json")),
+        Err(_) => (false, fallback_path),
     };
 
     // Read the configuration file
     println!("cargo:rerun-if-changed={}", config_path.display());
-    let config: Config = if Path::new(&config_path).exists() {
-        let mut config_file = File::open(config_path).unwrap();
-        let mut config_content = String::new();
-        config_file.read_to_string(&mut config_content).unwrap();
-        serde_json::from_str(&config_content).expect("Failed to parse wonopui.json config file")
-    } else {
+    let config: Config = if !using_custom_config {
         default_config
+    } else {
+        let mut config_file = File::open(&config_path)
+            .expect(&format!("Failed to open config file: {:?}", config_path));
+        let mut config_content = String::new();
+        config_file
+            .read_to_string(&mut config_content)
+            .expect(&format!("Failed to read config file: {:?}", config_path));
+        serde_json::from_str(&config_content).expect(&format!(
+            "Failed to parse wonopui.json config file: {:?}",
+            config_path
+        ))
     };
 
     // Write the configuration to [base_dir]/target/wonopui.json
-    let target_config_path = Path::new(&base_dir).join("target").join("wonopui.json");
-    let mut target_config_file =
-        File::create(&target_config_path).expect("Failed to create target wonopui.json file");
+    let target_config_path = Path::new(&base_dir).join("wonopui.json");
+    let mut target_config_file = File::create(&target_config_path).expect(&format!(
+        "Failed to create target wonopui.json file: {:?}",
+        target_config_path
+    ));
     let config_content =
         serde_json::to_string_pretty(&config).expect("Failed to serialize config to JSON");
     target_config_file
@@ -467,5 +506,7 @@ fn main() {
         .expect("Failed to write config to target wonopui.json file");
 
     // Write the configuration to config.rs
-    config.write_config_to_file(&dest_path).unwrap();
+    config
+        .write_config_to_file(&dest_path)
+        .expect("Failed to write config to file");
 }

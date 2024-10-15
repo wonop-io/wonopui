@@ -1,7 +1,4 @@
-use crate::{
-    components::layout_context::{LayoutContext, SidebarPosition},
-    LayoutAction,
-};
+use crate::components::layout_context::{LayoutAction, LayoutContext, SidebarPosition};
 use yew::prelude::*; // Import LayoutContext and SidebarPosition
 
 #[derive(Properties, PartialEq)]

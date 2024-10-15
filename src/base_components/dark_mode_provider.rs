@@ -1,4 +1,4 @@
-use crate::use_media_query;
+use crate::base_components::media_query::use_media_query;
 use std::rc::Rc;
 use web_sys::window;
 use yew::prelude::*;

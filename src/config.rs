@@ -1,6 +1,5 @@
 #[cfg(feature = "ThemeProvider")]
 use std::rc::Rc;
-use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
 pub struct ClassesContainer<T> {
