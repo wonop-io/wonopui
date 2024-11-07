@@ -30,7 +30,26 @@ pub fn pagination(props: &PaginationProps) -> Html {
         prev,
     } = props;
 
-    let page_range = (1..=*total_pages).collect::<Vec<_>>();
+    let page_range = if *total_pages <= 11 {
+        (1..=*total_pages).collect::<Vec<_>>()
+    } else if *current_page <= 5 {
+        let mut range = (1..=7).collect::<Vec<_>>();
+        range.push(0); // Placeholder for ellipsis
+        range.extend(*total_pages - 1..=*total_pages);
+        range
+    } else if *current_page >= *total_pages - 4 {
+        let mut range = vec![1, 2];
+        range.push(0); // Placeholder for ellipsis
+        range.extend(*total_pages - 6..=*total_pages);
+        range
+    } else {
+        let mut range = vec![1, 2];
+        range.push(0); // Placeholder for first ellipsis
+        range.extend(*current_page - 2..=*current_page + 2);
+        range.push(0); // Placeholder for second ellipsis
+        range.extend(*total_pages - 1..=*total_pages);
+        range
+    };
 
     html! {
         <nav class={classes!(&brandguide.pagination_container)} aria-label="Pagination">
@@ -49,25 +68,33 @@ pub fn pagination(props: &PaginationProps) -> Html {
                 </li>
                 {
                     page_range.iter().map(|&page| {
-                        let is_current = page == *current_page;
-                        let page_class = if is_current {
-                            classes!(&brandguide.pagination_item_current)
+                        if page == 0 {
+                            html! {
+                                <li>
+                                    <span class={classes!(&brandguide.pagination_item)}>{"..."}</span>
+                                </li>
+                            }
                         } else {
-                            classes!(&brandguide.pagination_item)
-                        };
+                            let is_current = page == *current_page;
+                            let page_class = if is_current {
+                                classes!(&brandguide.pagination_item_current)
+                            } else {
+                                classes!(&brandguide.pagination_item)
+                            };
 
-                        html! {
-                            <li key={page}>
-                                <button
-                                    class={page_class}
-                                    aria-current={if is_current { "page" } else { "false" }}
-                                    onclick={{
-                                        let on_page_change = on_page_change.clone();
-                                        on_page_change.reform(move |_| page)}}
-                                >
-                                    {page}
-                                </button>
-                            </li>
+                            html! {
+                                <li key={page}>
+                                    <button
+                                        class={page_class}
+                                        aria-current={if is_current { "page" } else { "false" }}
+                                        onclick={{
+                                            let on_page_change = on_page_change.clone();
+                                            on_page_change.reform(move |_| page)}}
+                                    >
+                                        {page}
+                                    </button>
+                                </li>
+                            }
                         }
                     }).collect::<Html>()
                 }
