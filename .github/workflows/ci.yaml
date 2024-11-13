@@ -37,5 +37,8 @@ jobs:
       - name: Testing wonopui
         run: cargo test
 
-      - name: Building
-        run: cargo build --release
+      - name: Building with native brand
+        run: cargo build --release --features everything
+
+      - name: Building with brand provider
+        run: cargo build --release --features everything,ThemeProvider
