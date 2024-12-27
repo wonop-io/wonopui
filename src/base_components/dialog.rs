@@ -13,12 +13,12 @@ pub struct DialogContext {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct DialogProps {
+pub struct DialogProviderProps {
     pub children: Children,
 }
 
-#[function_component(Dialog)]
-pub fn dialog(props: &DialogProps) -> Html {
+#[function_component(DialogProvider)]
+pub fn dialog_provider(props: &DialogProviderProps) -> Html {
     #[cfg(feature = "ThemeProvider")]
     let brandguide = use_brandguide();
     #[cfg(not(feature = "ThemeProvider"))]

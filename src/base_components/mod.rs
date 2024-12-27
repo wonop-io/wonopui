@@ -156,8 +156,8 @@ pub use context_menu::{
 pub use dark_mode_provider::{use_dark_mode, DarkModeColor, DarkModeProvider};
 #[cfg(feature = "Dialog")]
 pub use dialog::{
-    Dialog, DialogBody, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle,
-    DialogTrigger,
+    DialogBody, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogProvider,
+    DialogTitle, DialogTrigger,
 };
 #[cfg(feature = "Divider")]
 pub use divider::Divider;
