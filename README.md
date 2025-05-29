@@ -4,6 +4,20 @@ Wonop UI is a parameterized UI framework that leverages Tailwind CSS for use wit
 
 You can find more information in the [documentation](https://docs.wonopui.com/).
 
+## Project Structure Update
+
+**Note: The project structure has been reorganized for better maintainability and discoverability.** Components are now organized by category:
+
+- Core components (Button, Typography, Badge, etc.)
+- Data Display components (Avatar, Card, Table, etc.)
+- Feedback components (Alert, Notification)
+- Form components (Input, Checkbox, Select, etc.) 
+- Navigation components (Breadcrumb, Pagination, Tabs)
+- Overlay components (Dialog, Drawer, Popover, etc.)
+- Utility components (WindowProvider, MediaQuery, etc.)
+
+See the `docs/` directory for more information on each component category.
+
 ## Features
 
 - Seamless integration with Yew framework
@@ -18,7 +32,7 @@ To use Wonop UI in your Yew project, add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-wonopui = { version = "0.0.2", features = ["everything"] }
+wonopui = { version = "0.0.5", features = ["everything"] }
 ```
 
 Then initialise Tailwind CSS:
@@ -50,3 +64,7 @@ Add the following to your `index.html`:
 ```html
 <link data-trunk rel="tailwind-css" href="tailwind.css" />
 ```
+
+## Examples
+
+See the `examples/` directory for usage examples.

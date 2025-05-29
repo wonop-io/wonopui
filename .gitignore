@@ -12,6 +12,8 @@ node_modules
 **/*.pyc
 __pycachce__
 **/__pycachce__
+target/
+dist/
 
 .webpack
 .secrets.env

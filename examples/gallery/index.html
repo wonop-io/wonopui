@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+            name="description"
+            content="Documentation for Wonop UI, a parameterized UI framework for Yew in Rust"
+        />
+        <meta
+            name="keywords"
+            content="Wonop UI, Rust, Yew, UI framework, documentation"
+        />
+        <meta name="author" content="Wonopui.com" />
+        <meta name="robots" content="index, follow" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta property="og:title" content="Wonop UI Documentation" />
+        <meta
+            property="og:description"
+            content="Documentation for Wonop UI, a parameterized UI framework for Yew in Rust"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://docs.wonopui.com" />
+        <!-- meta property="og:image" content="https://docs.wonopui.com/assets/og-image.jpg" / -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Wonop UI Documentation" />
+        <meta
+            name="twitter:description"
+            content="Documentation for Wonop UI, a parameterized UI framework for Yew in Rust"
+        />
+        <meta
+            name="twitter:image"
+            content="https://docs.wonopui.com/assets/twitter-image.jpg"
+        />
+        <title>Wonop UI Documentation</title>
+        <link rel="canonical" href="https://docs.wonopui.com" />
+        <!-- link rel="icon" href="/favicon.ico" / -->
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link data-trunk rel="tailwind-css" href="tailwind.css" data-inline />
+        <link data-trunk rel="copy-dir" href="assets" />
+        <link
+            data-trunk
+            rel="rust"
+            href="Cargo.toml"
+            data-bin="main"
+            data-type="main"
+            data-weak-refs
+            data-inline
+        />
+
+        <style>
+            /* Code Editor Styles */
+            .wonopui-code-editor {
+                font-family: "Menlo", "Monaco", "Courier New", monospace;
+                font-size: 14px;
+                line-height: 1.5;
+                tab-size: 4;
+                -moz-tab-size: 4;
+                position: relative;
+                overflow: hidden;
+                box-sizing: border-box;
+                border-radius: 4px;
+            }
+
+            /* Theme styles */
+            .wonopui-code-editor-light {
+                background-color: #ffffff;
+                color: #333333;
+            }
+
+            .wonopui-code-editor-dark {
+                background-color: #1e1e1e;
+                color: #d4d4d4;
+            }
+
+            /* Line numbers */
+            .wonopui-code-editor .line-numbers {
+                user-select: none;
+                text-align: right;
+                padding: 0.5rem 0.5rem 0.5rem 0;
+                box-sizing: border-box;
+                border-right: 1px solid #e0e0e0;
+            }
+
+            .wonopui-code-editor-dark .line-numbers {
+                border-right-color: #555;
+            }
+
+            .wonopui-code-editor .line-number {
+                display: block;
+                font-size: 0.85em;
+                color: #999;
+                position: relative;
+            }
+
+            .wonopui-code-editor .line-number-added {
+                color: #2ecc71;
+            }
+
+            .wonopui-code-editor .line-number-removed {
+                color: #e74c3c;
+            }
+
+            .wonopui-code-editor .line-number-modified {
+                color: #f39c12;
+            }
+
+            .wonopui-code-editor .line-diff-indicator {
+                display: inline-block;
+                width: 3px;
+                height: 100%;
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+
+            .wonopui-code-editor .line-number-added .line-diff-indicator {
+                background-color: #2ecc71;
+            }
+
+            .wonopui-code-editor .line-number-removed .line-diff-indicator {
+                background-color: #e74c3c;
+            }
+
+            .wonopui-code-editor .line-number-modified .line-diff-indicator {
+                background-color: #f39c12;
+            }
+
+            /* Code display area */
+            .wonopui-code-editor .code-display {
+                white-space: pre;
+                padding: 0.5rem;
+                box-sizing: border-box;
+            }
+
+            .wonopui-code-editor .line {
+                display: block;
+                position: relative;
+                min-height: 1em;
+            }
+
+            .wonopui-code-editor .line-content {
+                display: inline-block;
+                min-height: 1em;
+                width: 100%;
+            }
+
+            /* Input textarea */
+            .wonopui-code-editor .code-input {
+                font: inherit;
+                border: none;
+                outline: none;
+                padding: 0.5rem;
+                box-sizing: border-box;
+            }
+
+            /* Cursor and Selection */
+            .wonopui-code-editor .cursor-element {
+                position: absolute;
+                width: 1px;
+                height: 1.2em;
+                background-color: #000;
+            }
+
+            .wonopui-code-editor .selection-highlight {
+                position: absolute;
+                background-color: rgba(100, 100, 255, 0.3);
+                pointer-events: none;
+                z-index: 5;
+            }
+
+            .wonopui-code-editor-dark .cursor-element {
+                background-color: #fff;
+            }
+
+            @keyframes blink {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0;
+                }
+            }
+
+            .wonopui-code-editor .cursor-element {
+                animation: blink 1s step-end infinite;
+            }
+
+            /* Diffs */
+            .wonopui-code-editor .diff-line {
+                position: absolute;
+                left: 0;
+                right: 0;
+            }
+
+            .wonopui-code-editor .diff-added {
+                background-color: rgba(0, 255, 0, 0.2);
+            }
+
+            .wonopui-code-editor .diff-removed {
+                background-color: rgba(255, 0, 0, 0.2);
+            }
+
+            .wonopui-code-editor .diff-modified {
+                background-color: rgba(255, 165, 0, 0.2);
+            }
+
+            .wonopui-code-editor .column-diff {
+                position: absolute;
+                height: 1.2em;
+                z-index: 5;
+                border-radius: 2px;
+            }
+
+            .wonopui-code-editor .column-diff.diff-added {
+                background-color: rgba(0, 255, 0, 0.3);
+            }
+
+            .wonopui-code-editor .column-diff.diff-removed {
+                background-color: rgba(255, 0, 0, 0.3);
+            }
+
+            .wonopui-code-editor .column-diff.diff-modified {
+                background-color: rgba(255, 165, 0, 0.3);
+            }
+
+            .wonopui-code-editor .diff-tooltip {
+                position: absolute;
+                background-color: #f8f8f8;
+                color: #333;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 12px;
+                white-space: nowrap;
+                z-index: 100;
+                top: -24px;
+                left: 0;
+                opacity: 0;
+                transition: opacity 0.2s;
+                pointer-events: none;
+            }
+
+            .wonopui-code-editor-dark .diff-tooltip {
+                background-color: #2d2d2d;
+                color: #d4d4d4;
+                border-color: #555;
+            }
+
+            .wonopui-code-editor .column-diff:hover .diff-tooltip {
+                opacity: 1;
+            }
+
+            /* Annotations */
+            .wonopui-code-editor .annotation {
+                position: absolute;
+                z-index: 10;
+                pointer-events: auto;
+            }
+
+            .wonopui-code-editor .annotation-marker {
+                display: inline-block;
+                font-size: 12px;
+                cursor: pointer;
+            }
+
+            .wonopui-code-editor
+                .annotation.annotation-error
+                .annotation-marker {
+                color: #e74c3c;
+            }
+
+            .wonopui-code-editor
+                .annotation.annotation-warning
+                .annotation-marker {
+                color: #f39c12;
+            }
+
+            .wonopui-code-editor
+                .annotation.annotation-info
+                .annotation-marker {
+                color: #3498db;
+            }
+
+            .wonopui-code-editor
+                .annotation.annotation-success
+                .annotation-marker {
+                color: #2ecc71;
+            }
+
+            .wonopui-code-editor .annotation-tooltip {
+                position: absolute;
+                background-color: #f8f8f8;
+                color: #333;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 12px;
+                white-space: nowrap;
+                z-index: 100;
+                left: 18px;
+                top: -4px;
+                opacity: 0;
+                transition: opacity 0.2s;
+                pointer-events: none;
+            }
+
+            .wonopui-code-editor-dark .annotation-tooltip {
+                background-color: #2d2d2d;
+                color: #d4d4d4;
+                border-color: #555;
+            }
+
+            .wonopui-code-editor .annotation:hover .annotation-tooltip {
+                opacity: 1;
+            }
+
+            .wonopui-code-editor .annotation.inline {
+                height: 1.5em;
+            }
+
+            .wonopui-code-editor .annotation.inline .annotation-text {
+                display: inline-block;
+                margin-left: 4px;
+                font-size: 12px;
+            }
+
+            .wonopui-code-editor .squiggly-underline {
+                position: absolute;
+                z-index: 6;
+                height: 3px;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 3' width='6' height='3'%3E%3Cpath d='M 0 2 C 2 0, 4 4, 6 2' fill='none' stroke-width='1' stroke='%23e74c3c'/%3E%3C/svg%3E");
+                background-repeat: repeat-x;
+                background-size: 6px 3px;
+            }
+
+            .wonopui-code-editor .squiggly-underline.annotation-warning {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 3' width='6' height='3'%3E%3Cpath d='M 0 2 C 2 0, 4 4, 6 2' fill='none' stroke-width='1' stroke='%23f39c12'/%3E%3C/svg%3E");
+            }
+
+            .wonopui-code-editor .squiggly-underline.annotation-info {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 3' width='6' height='3'%3E%3Cpath d='M 0 2 C 2 0, 4 4, 6 2' fill='none' stroke-width='1' stroke='%233498db'/%3E%3C/svg%3E");
+            }
+
+            /* Type Hints */
+            .wonopui-code-editor .type-hint {
+                position: absolute;
+                z-index: 11;
+                pointer-events: auto;
+            }
+
+            .wonopui-code-editor .type-hint.inline .hint-text {
+                display: inline-block;
+                color: #777;
+                font-style: italic;
+                font-size: 0.85em;
+                margin-left: 4px;
+            }
+
+            .wonopui-code-editor .type-hint.tooltip .hint-tooltip {
+                position: absolute;
+                background-color: #f8f8f8;
+                color: #333;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 12px;
+                z-index: 100;
+                top: -24px;
+                left: 0;
+                opacity: 0;
+                transition: opacity 0.2s;
+                pointer-events: none;
+            }
+
+            .wonopui-code-editor-dark .type-hint.tooltip .hint-tooltip {
+                background-color: #2d2d2d;
+                color: #d4d4d4;
+                border-color: #555;
+            }
+
+            .wonopui-code-editor .type-hint.tooltip:hover .hint-tooltip {
+                opacity: 1;
+            }
+
+            /* Syntax highlighting */
+            .wonopui-code-editor .token.keyword {
+                color: #569cd6;
+            }
+
+            .wonopui-code-editor .token.string {
+                color: #ce9178;
+            }
+
+            .wonopui-code-editor .token.comment {
+                color: #6a9955;
+            }
+
+            .wonopui-code-editor .token.number {
+                color: #b5cea8;
+            }
+
+            .wonopui-code-editor .token.punctuation {
+                color: #d4d4d4;
+            }
+
+            .wonopui-code-editor .token.operator {
+                color: #d4d4d4;
+            }
+
+            .wonopui-code-editor .token.ident {
+                color: #9cdcfe;
+            }
+
+            .wonopui-code-editor-light .token.keyword {
+                color: #0000ff;
+            }
+
+            .wonopui-code-editor-light .token.string {
+                color: #a31515;
+            }
+
+            .wonopui-code-editor-light .token.comment {
+                color: #008000;
+            }
+
+            .wonopui-code-editor-light .token.number {
+                color: #098658;
+            }
+
+            .wonopui-code-editor-light .token.punctuation {
+                color: #000000;
+            }
+
+            .wonopui-code-editor-light .token.operator {
+                color: #000000;
+            }
+
+            .wonopui-code-editor-light .token.ident {
+                color: #001080;
+            }
+        </style>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: "class",
+                mode: "jit",
+                content: ["./index.html", "./src/**/*.rs"],
+                theme: {},
+            };
+        </script>
+    </head>
+    <body></body>
+</html>

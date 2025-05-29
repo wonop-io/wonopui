@@ -1,0 +1,10 @@
+[dependencies]
+wonopui = { path = "../.." }
+web-sys = { version = "0.3", features = ["console"] }
+wasm-logger = "0.2"
+log = "0.4"
+yew = { version = "0.20" }
+
+[[bin]]
+name = "enhanced_code_editor"
+path = "main.rs"
