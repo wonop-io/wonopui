@@ -1,6 +1,6 @@
 [package]
 name = "wonopui"
-version = "0.0.5"
+version = "0.0.6"
 edition = '2021'
 build = "build/main.rs"
 authors = ["Troels F. Rønnow <troels@wonop.com>"]
@@ -32,12 +32,17 @@ ColorPickerHue = []
 ColorPickerLight = []
 ColorPickerSaturation = []
 ColorPickerWheel = []
+
 Combobox = []
+Kanban = []
 Command = []
 Container = []
 Content = []
 ContextMenu = []
+CopyButton = []
 DarkModeProvider = ["MediaQuery"]
+DataTable = []
+DatePicker = []
 Dialog = []
 Divider = []
 DragPoint = []
@@ -90,11 +95,15 @@ everything = [
     "ColorPickerSaturation",
     "ColorPickerWheel",
     "Combobox",
+    "Kanban",
     "Command",
     "Container",
     "Content",
     "ContextMenu",
+    "CopyButton",
     "DarkModeProvider",
+    "DataTable",
+    "DatePicker",
     "Dialog",
     "Divider",
     "DragPoint",
@@ -132,6 +141,7 @@ everything = [
 
 [dependencies]
 yew = { version = "0.21", features = ["csr"] }
+
 web-sys = { version = "0.3.68", features = [
     "HtmlDocument",
     "Document",
@@ -175,6 +185,26 @@ gloo = "0.11.0"
 gloo-console = "0.3.0"
 gloo-utils = "0.2.0"
 chrono-humanize = "0.2.3"
+syntect = { version = "5.2.0", default-features = false, features = [
+    "bincode",
+    "default-syntaxes",
+    "default-themes",
+    "dump-create",
+    "dump-load",
+    "flate2",
+    "fnv",
+    "html",
+    "parsing",
+    "plist",
+    "plist-load",
+    "regex-syntax",
+    "yaml-load",
+    "yaml-rust",
+    "default-fancy",
+    "fancy-regex",
+    "metadata",
+    "regex-fancy",
+] }
 
 [build-dependencies]
 serde = { version = "1.0.195", features = ["derive"] }

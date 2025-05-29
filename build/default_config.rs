@@ -151,6 +151,8 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("alert_warning".to_string(), "{{ alert_base }} {{ text }} border-l-amber-500 dark:border-l-amber-500".to_string()),
         ("alert_error".to_string(), "{{ alert_base }} {{ text }} border-l-red-500 dark:border-l-red-500".to_string()),
         ("alert_info".to_string(), "{{ alert_base }} {{ text }} border-l-indigo-500 dark:border-l-indigo-500".to_string()),
+        ("alert_title".to_string(), "font-semibold text-lg mb-2".to_string()),
+        ("alert_description".to_string(), "text-sm".to_string()),
 
         // Avatar
         ("rounded_full".to_string(), "rounded-full".to_string()),
@@ -319,6 +321,17 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("group_button_trigger_active".to_string(), "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-sm".to_string()),
         ("group_button_trigger_inactive".to_string(), "bg-zinc-200 dark:bg-zinc-600 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-500".to_string()),
         ("group_button_demo".to_string(), "w-[400px]".to_string()),
+
+        // Kanban
+        ("kanban_container".to_string(), "flex overflow-x-auto gap-6 p-6 {{ text }}".to_string()),
+        ("kanban_column".to_string(), "flex flex-col min-w-[300px] {{ border }} {{ default_rounding }} {{ background }} {{ default_shadow }}".to_string()),
+        ("kanban_column_header".to_string(), "p-4 {{ font_semibold }} border-b border-zinc-200 dark:border-zinc-700".to_string()),
+        ("kanban_column_body".to_string(), "p-3 flex-1 flex flex-col gap-3 min-h-[100px] overflow-y-auto".to_string()),
+        ("kanban_column_over".to_string(), "border-2 border-dashed border-indigo-400 dark:border-indigo-500".to_string()),
+        ("kanban_card".to_string(), "{{ border }} {{ default_rounding }} {{ background }} {{ default_shadow_larger }} p-4 cursor-grab active:cursor-grabbing".to_string()),
+        ("kanban_card_title".to_string(), "{{ font_medium }} pb-2".to_string()),
+        ("kanban_card_content".to_string(), "text-sm text-zinc-600 dark:text-zinc-400".to_string()),
+        ("kanban_card_dragging".to_string(), "opacity-50 {{ default_shadow }}".to_string()),
 
         // Notification
         ("notification_container".to_string(), "z-50 relative {{ limit_width_widget_size }} bg-white dark:bg-zinc-800 {{ default_shadow }} {{ default_rounding_larger }} {{ padding_4 }} border border-zinc-200 dark:border-zinc-700".to_string()),

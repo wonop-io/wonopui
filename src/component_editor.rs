@@ -1,4 +1,4 @@
-use crate::base_components::{Input, Label, TagInput};
+use crate::components::forms::{Input, Label, TagInput};
 use crate::config::{use_brandguide, use_set_brandguide};
 use crate::config::{BrandGuideType, ClassesStr};
 use crate::Select;

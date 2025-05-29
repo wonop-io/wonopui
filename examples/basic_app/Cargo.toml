@@ -1,0 +1,15 @@
+[package]
+name = "basic_app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+yew = { version = "0.21", features = ["csr"] }
+wonopui = { path = "../../", features = [
+    "Button",
+    "Typography",
+    "Card",
+    "Alert",
+    "ThemeProvider",
+] }
+web-sys = "0.3.68"
