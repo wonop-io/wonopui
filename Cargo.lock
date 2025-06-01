@@ -2003,7 +2003,7 @@ dependencies = [
 
 [[package]]
 name = "wonopui"
-version = "0.0.7"
+version = "0.0.8"
 dependencies = [
  "chrono",
  "chrono-humanize",

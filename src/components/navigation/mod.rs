@@ -8,7 +8,7 @@ mod pagination;
 mod tabs;
 
 #[cfg(feature = "Breadcrumb")]
-pub use breadcrumb::{Breadcrumb, BreadcrumbItem};
+pub use breadcrumb::{Breadcrumb, BreadcrumbItem, BreadcrumbRouteItemProps};
 #[cfg(feature = "Pagination")]
 pub use pagination::{Pagination, PaginationProps};
 #[cfg(feature = "Tabs")]
