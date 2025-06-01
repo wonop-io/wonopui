@@ -6,7 +6,8 @@ use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct AvatarProps {
-    pub src: String,
+    #[prop_or_default]
+    pub src: Option<String>,
     #[prop_or_default]
     pub alt: String,
     #[prop_or_default]
@@ -38,7 +39,32 @@ pub fn avatar(props: &AvatarProps) -> Html {
         AvatarSize::Large => &brandguide.avatar_large,
     };
 
-    html! {
-        <img class={format!("{} {}", brandguide.avatar_base, size_class)} src={props.src.clone()} alt={props.alt.clone()} />
+    match &props.src {
+        Some(src) => html! {
+            <img class={format!("{} {}", brandguide.avatar_base, size_class)} src={src.clone()} alt={props.alt.clone()} />
+        },
+        None => {
+            let initials = props
+                .alt
+                .split_whitespace()
+                .take(2)
+                .filter_map(|word| word.chars().next())
+                .map(|c| c.to_uppercase().to_string())
+                .collect::<Vec<_>>()
+                .join("");
+
+            let initials = if initials.is_empty() {
+                "?".to_string()
+            } else {
+                initials
+            };
+
+            html! {
+                <div class={format!("{} {} flex items-center justify-center bg-gray-200 dark:bg-gray-700",
+                                   brandguide.avatar_base, size_class)}>
+                    <span class="text-gray-700 dark:text-gray-200 font-medium">{initials}</span>
+                </div>
+            }
+        }
     }
 }
