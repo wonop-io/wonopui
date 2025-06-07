@@ -75,12 +75,11 @@ pub fn tabs_provider(props: &TabsProviderProps) -> Html {
 /// Returns a tuple containing:
 /// - The currently active tab value
 /// - A callback to set the active tab
+#[hook]
 pub fn use_tabs() -> (String, Callback<String>) {
-    let state = use_context::<Rc<TabsState>>();
-    match state {
-        Some(ctx) => (ctx.active_tab.clone(), ctx.set_active_tab.clone()),
-        None => panic!("use_tabs must be used within a TabsProvider"),
-    }
+    let state =
+        use_context::<Rc<TabsState>>().expect("use_tabs must be used within a TabsProvider");
+    (state.active_tab.clone(), state.set_active_tab.clone())
 }
 
 #[function_component(TabsLayout)]
@@ -121,11 +120,7 @@ pub fn tabs_list(props: &TabsListProps) -> Html {
     let brandguide = use_brandguide();
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
-    let state = use_context::<Rc<TabsState>>();
-    let state = match state {
-        Some(ctx) => ctx,
-        None => panic!("no context found for TabsState"),
-    };
+    let state = use_context::<Rc<TabsState>>().expect("no context found for TabsState");
     let class = match state.direction {
         TabsDirection::Auto | TabsDirection::Row => &brandguide.tabs_list_row,
         TabsDirection::Column => &brandguide.tabs_list_column,
@@ -151,11 +146,7 @@ pub fn tabs_trigger(props: &TabsTriggerProps) -> Html {
     let brandguide = use_brandguide();
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
-    let state = use_context::<Rc<TabsState>>();
-    let state = match state {
-        Some(ctx) => ctx,
-        None => panic!("no context found for TabsState"),
-    };
+    let state = use_context::<Rc<TabsState>>().expect("no context found for TabsState");
 
     let onclick = {
         let set_active_tab = state.set_active_tab.clone();
@@ -195,11 +186,7 @@ pub fn tabs_content(props: &TabsContentProps) -> Html {
     let brandguide = use_brandguide();
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
-    let state = use_context::<Rc<TabsState>>();
-    let state = match state {
-        Some(ctx) => ctx,
-        None => panic!("no context found for TabsState"),
-    };
+    let state = use_context::<Rc<TabsState>>().expect("no context found for TabsState");
 
     if state.active_tab != props.value {
         return html! {};
