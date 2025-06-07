@@ -12,6 +12,37 @@ pub struct DialogContext {
     pub open_id: Vec<String>,
 }
 
+/// Hook to manually open and close dialogs programmatically
+#[hook]
+pub fn use_dialog() -> (Callback<String>, Callback<()>) {
+    let context = use_context::<Rc<DialogContext>>()
+        .expect("DialogContext not found. Wrap your component with DialogProvider");
+
+    let open_dialog = {
+        let toggle = context.toggle.clone();
+        let open_id = context.open_id.clone();
+        Callback::from(move |id: String| {
+            let mut new_open_id = open_id.clone();
+            new_open_id.push(id);
+            toggle.emit(new_open_id);
+        })
+    };
+
+    let close_dialog = {
+        let toggle = context.toggle.clone();
+        let open_id = context.open_id.clone();
+        Callback::from(move |_| {
+            let mut new_open_id = open_id.clone();
+            if !new_open_id.is_empty() {
+                new_open_id.pop();
+            }
+            toggle.emit(new_open_id);
+        })
+    };
+
+    (open_dialog, close_dialog)
+}
+
 #[derive(Properties, PartialEq)]
 pub struct DialogProviderProps {
     pub children: Children,
