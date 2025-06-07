@@ -7,7 +7,6 @@ use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
 pub struct DialogContext {
-    pub is_open: bool,
     pub toggle: Callback<Vec<String>>,
     pub open_id: Vec<String>,
 }
@@ -54,19 +53,15 @@ pub fn dialog_provider(props: &DialogProviderProps) -> Html {
     let brandguide = use_brandguide();
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
-    let is_open = use_state(|| false);
     let open_id = use_state(|| Vec::new());
     let toggle = {
-        let is_open = is_open.clone();
         let open_id = open_id.clone();
         Callback::from(move |v| {
             open_id.set(v);
-            is_open.set(!*is_open)
         })
     };
 
     let context = Rc::new(DialogContext {
-        is_open: *is_open,
         toggle: toggle.clone(),
         open_id: (*open_id).clone(),
     });
@@ -130,7 +125,7 @@ pub fn dialog(props: &DialogProps) -> Html {
     let brandguide = get_brandguide();
     let context = use_context::<Rc<DialogContext>>().expect("no context found");
 
-    let extra_classes = if !context.is_open || context.open_id.last() != Some(&props.id) {
+    let extra_classes = if context.open_id.is_empty() || context.open_id.last() != Some(&props.id) {
         "hidden"
     } else {
         ""
