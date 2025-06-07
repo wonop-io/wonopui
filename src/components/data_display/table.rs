@@ -9,7 +9,7 @@ pub struct TableProps {
     #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
-    pub class: String,
+    pub class: Classes,
 }
 
 #[function_component(Table)]
@@ -19,7 +19,7 @@ pub fn table(props: &TableProps) -> Html {
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
     html! {
-        <div class={format!("{} {}", brandguide.table_container, props.class)}>
+        <div class={classes!(brandguide.table_container, props.class.clone())}>
             <table class={&brandguide.table}>
                 { for props.children.iter() }
             </table>
@@ -32,7 +32,7 @@ pub struct TableHeadProps {
     #[prop_or_default]
     pub children: ChildrenWithProps<TableRow>,
     #[prop_or_default]
-    pub class: String,
+    pub class: Classes,
 }
 
 #[function_component(TableHead)]
@@ -42,7 +42,7 @@ pub fn table_head(props: &TableHeadProps) -> Html {
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
     html! {
-        <thead class={format!("{} {}", brandguide.table_head, props.class)}>
+        <thead class={classes!(brandguide.table_head, props.class.clone())}>
             { for props.children.iter().map(|child| {
                 html! {
                     <TableRow
@@ -62,7 +62,7 @@ pub struct TableRowProps {
     #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
-    pub class: String,
+    pub class: Classes,
     #[prop_or_default]
     pub head: bool,
 }
@@ -79,7 +79,7 @@ pub fn table_row(props: &TableRowProps) -> Html {
         &brandguide.table_row
     };
     html! {
-        <tr class={format!("{} {}", class, props.class)}>
+        <tr class={classes!(class, props.class.clone())}>
             { for props.children.iter() }
         </tr>
     }
@@ -90,7 +90,7 @@ pub struct TableCellProps {
     #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
-    pub class: String,
+    pub class: Classes,
     #[prop_or_default]
     pub colspan: Option<u32>,
     #[prop_or_default]
@@ -107,7 +107,7 @@ pub fn table_cell(props: &TableCellProps) -> Html {
     let brandguide = get_brandguide();
     html! {
         <td
-            class={format!("{} {}", brandguide.table_cell, props.class)}
+            class={classes!(brandguide.table_cell, props.class.clone())}
             colspan={props.colspan.map(|c| c.to_string())}
             rowspan={props.rowspan.map(|r| r.to_string())}
             onclick={props.onclick.clone()}
@@ -122,7 +122,7 @@ pub struct TableBodyProps {
     #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
-    pub class: String,
+    pub class: Classes,
 }
 
 #[function_component(TableBody)]
@@ -132,7 +132,7 @@ pub fn table_body(props: &TableBodyProps) -> Html {
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
     html! {
-        <tbody class={format!("{} {}", brandguide.table_body, props.class)}>
+        <tbody class={classes!(brandguide.table_body, props.class.clone())}>
            { for props.children.iter() }
            /*
             { for props.children.iter().map(|child| {
@@ -155,7 +155,7 @@ pub struct TableFooterProps {
     #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
-    pub class: String,
+    pub class: Classes,
 }
 
 #[function_component(TableFooter)]
@@ -165,7 +165,7 @@ pub fn table_footer(props: &TableFooterProps) -> Html {
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
     html! {
-        <tfoot class={format!("{} {}", brandguide.table_footer, props.class)}>
+        <tfoot class={classes!(brandguide.table_footer, props.class.clone())}>
             { for props.children.iter() }
         </tfoot>
     }
