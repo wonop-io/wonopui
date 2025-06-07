@@ -136,7 +136,7 @@ pub fn dialog(props: &DialogProps) -> Html {
 
     html! {
         <div class={&brandguide.dialog_container}>
-            <div class={&brandguide.dialog_content} ref={node_ref}>
+            <div class={&brandguide.dialog_content} ref={props.node_ref.clone()}>
                 { for props.children.iter() }
             </div>
         </div>
