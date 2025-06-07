@@ -13,7 +13,7 @@ pub struct DialogContext {
 
 /// Hook to manually open and close dialogs programmatically
 #[hook]
-pub fn use_dialog() -> (Callback<String>, Callback<()>) {
+pub fn use_dialog() -> (Callback<String>, Callback<()>, Option<String>) {
     let context = use_context::<Rc<DialogContext>>()
         .expect("DialogContext not found. Wrap your component with DialogProvider");
 
@@ -39,7 +39,9 @@ pub fn use_dialog() -> (Callback<String>, Callback<()>) {
         })
     };
 
-    (open_dialog, close_dialog)
+    let currently_open = context.open_id.last().cloned();
+
+    (open_dialog, close_dialog, currently_open)
 }
 
 #[derive(Properties, PartialEq)]
