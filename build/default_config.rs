@@ -431,7 +431,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("table_head".to_string(), "font-semibold".to_string()),
         ("table_row".to_string(), "".to_string()),
         ("table_head_row".to_string(), "".to_string()),
-        ("table_cell".to_string(), "py-3 px-4".to_string()),
+        ("table_cell".to_string(), "py-3 px-4 first:pl-6 last:pr-6".to_string()),
         ("table_body".to_string(), "divide-y divide-zinc-200 dark:divide-zinc-700 hidden [&:not(:empty)]:table-row-group border-t border-zinc-200 dark:border-zinc-700".to_string()),
         ("table_footer".to_string(), "border-t border-zinc-200 dark:border-zinc-700".to_string()),
 
