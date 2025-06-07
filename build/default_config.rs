@@ -426,14 +426,14 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("select_item".to_string(), "text-zinc-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-700 transition-colors duration-150".to_string()),
 
         // Table
-        ("table_container".to_string(), "overflow-x-auto {{ border }} {{ default_rounding }}".to_string()),
-        ("table".to_string(), "min-w-full {{ text }} {{ background }} border-zinc-200 dark:border-zinc-700 divide-zinc-200 dark:divide-zinc-700".to_string()),
-        ("table_head".to_string(), "bg-zinc-50 dark:bg-zinc-800".to_string()),
-        ("table_row".to_string(), "hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors duration-150".to_string()),
-        ("table_head_row".to_string(), "bg-zinc-50 dark:bg-zinc-800".to_string()),
+        ("table_container".to_string(), "overflow-x-auto".to_string()),
+        ("table".to_string(), "min-w-full {{ text }}".to_string()),
+        ("table_head".to_string(), "".to_string()),
+        ("table_row".to_string(), "".to_string()),
+        ("table_head_row".to_string(), "".to_string()),
         ("table_cell".to_string(), "py-3 px-4".to_string()),
         ("table_body".to_string(), "divide-y divide-zinc-200 dark:divide-zinc-700 hidden [&:not(:empty)]:table-row-group border-t border-zinc-200 dark:border-zinc-700".to_string()),
-        ("table_footer".to_string(), "bg-zinc-50 dark:bg-zinc-800 border-t border-zinc-200 dark:border-zinc-700".to_string()),
+        ("table_footer".to_string(), "border-t border-zinc-200 dark:border-zinc-700".to_string()),
 
         // Tailwind Color Picker
         ("tailwind_color_picker_container".to_string(), "relative".to_string()),
