@@ -15,6 +15,21 @@ pub enum TabsDirection {
 }
 
 #[derive(Properties, PartialEq)]
+pub struct TabsProviderProps {
+    pub children: Children,
+    pub default_value: String,
+    #[prop_or(TabsDirection::Auto)]
+    pub direction: TabsDirection,
+}
+
+#[derive(Properties, PartialEq)]
+pub struct TabsLayoutProps {
+    pub children: Children,
+    #[prop_or_default]
+    pub class: Classes,
+}
+
+#[derive(Properties, PartialEq)]
 pub struct TabsProps {
     pub children: Children,
     pub default_value: String,
@@ -31,12 +46,8 @@ pub struct TabsState {
     pub direction: TabsDirection,
 }
 
-#[function_component(Tabs)]
-pub fn tabs(props: &TabsProps) -> Html {
-    #[cfg(feature = "ThemeProvider")]
-    let brandguide = use_brandguide();
-    #[cfg(not(feature = "ThemeProvider"))]
-    let brandguide = get_brandguide();
+#[function_component(TabsProvider)]
+pub fn tabs_provider(props: &TabsProviderProps) -> Html {
     let active_tab = use_state(|| props.default_value.clone());
 
     let set_active_tab = {
@@ -54,10 +65,33 @@ pub fn tabs(props: &TabsProps) -> Html {
 
     html! {
         <ContextProvider<Rc<TabsState>> context={state}>
-            <div class={classes!(props.class.clone(), &brandguide.tabs_container)}>
-                { for props.children.iter() }
-            </div>
+            { for props.children.iter() }
         </ContextProvider<Rc<TabsState>>>
+    }
+}
+
+#[function_component(TabsLayout)]
+pub fn tabs_layout(props: &TabsLayoutProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+
+    html! {
+        <div class={classes!(props.class.clone(), &brandguide.tabs_container)}>
+            { for props.children.iter() }
+        </div>
+    }
+}
+
+#[function_component(Tabs)]
+pub fn tabs(props: &TabsProps) -> Html {
+    html! {
+        <TabsProvider default_value={props.default_value.clone()} direction={props.direction.clone()}>
+            <TabsLayout class={props.class.clone()}>
+                { for props.children.iter() }
+            </TabsLayout>
+        </TabsProvider>
     }
 }
 
