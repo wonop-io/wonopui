@@ -118,6 +118,8 @@ pub fn dialog_trigger(props: &DialogTriggerProps) -> Html {
 pub struct DialogProps {
     pub children: Children,
     pub id: String,
+    #[prop_or_default]
+    pub node_ref: NodeRef,
 }
 
 #[function_component(Dialog)]
@@ -134,7 +136,7 @@ pub fn dialog(props: &DialogProps) -> Html {
 
     html! {
         <div class={&brandguide.dialog_container}>
-            <div class={&brandguide.dialog_content}>
+            <div class={&brandguide.dialog_content} ref={node_ref}>
                 { for props.children.iter() }
             </div>
         </div>
