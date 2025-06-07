@@ -12,4 +12,6 @@ pub use breadcrumb::{Breadcrumb, BreadcrumbItem, BreadcrumbRouteItem};
 #[cfg(feature = "Pagination")]
 pub use pagination::{Pagination, PaginationProps};
 #[cfg(feature = "Tabs")]
-pub use tabs::{use_tabs, Tabs, TabsContent, TabsDirection, TabsList, TabsTrigger};
+pub use tabs::{
+    use_tabs, Tabs, TabsContent, TabsDirection, TabsLayout, TabsList, TabsProvider, TabsTrigger,
+};
