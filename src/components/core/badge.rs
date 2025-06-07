@@ -6,9 +6,12 @@ use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct BadgeProps {
-    pub label: String,
+    #[prop_or_default]
+    pub label: Option<String>,
     #[prop_or_default]
     pub badge_type: BadgeType,
+    #[prop_or_default]
+    pub children: Children,
 }
 
 #[derive(PartialEq)]
@@ -43,7 +46,11 @@ pub fn badge(props: &BadgeProps) -> Html {
 
     html! {
         <span class={classes!(&brandguide.badge_base, badge_class)}>
-            { &props.label }
+            if let Some(label) = &props.label {
+                { label }
+            } else {
+                { props.children.clone() }
+            }
         </span>
     }
 }
