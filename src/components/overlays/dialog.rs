@@ -130,12 +130,14 @@ pub fn dialog(props: &DialogProps) -> Html {
     let brandguide = get_brandguide();
     let context = use_context::<Rc<DialogContext>>().expect("no context found");
 
-    if !context.is_open || context.open_id.last() != Some(&props.id) {
-        return html! {};
+    let extra_classes = if !context.is_open || context.open_id.last() != Some(&props.id) {
+        "hidden"
+    } else {
+        ""
     }
 
     html! {
-        <div class={&brandguide.dialog_container}>
+        <div class={classes!(brandguide.dialog_container,extra_classes)}>
             <div class={&brandguide.dialog_content} ref={props.node_ref.clone()}>
                 { for props.children.iter() }
             </div>
