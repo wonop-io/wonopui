@@ -70,6 +70,17 @@ pub fn tabs_provider(props: &TabsProviderProps) -> Html {
     }
 }
 
+/// Hook to access the tabs state
+///
+/// Returns a tuple containing:
+/// - The currently active tab value
+/// - A callback to set the active tab
+pub fn use_tabs() -> (String, Callback<String>) {
+    let state =
+        use_context::<Rc<TabsState>>().expect("use_tabs must be used within a TabsProvider");
+    (state.active_tab.clone(), state.set_active_tab.clone())
+}
+
 #[function_component(TabsLayout)]
 pub fn tabs_layout(props: &TabsLayoutProps) -> Html {
     #[cfg(feature = "ThemeProvider")]
