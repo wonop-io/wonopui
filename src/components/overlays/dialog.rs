@@ -134,7 +134,7 @@ pub fn dialog(props: &DialogProps) -> Html {
         "hidden"
     } else {
         ""
-    }
+    };
 
     html! {
         <div class={classes!(brandguide.dialog_container,extra_classes)}>
