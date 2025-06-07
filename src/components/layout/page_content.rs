@@ -9,7 +9,7 @@ pub struct PageContentProps {
 #[function_component(PageContent)]
 pub fn page_content(props: &PageContentProps) -> Html {
     html! {
-        <MainContent class="bg-white dark:bg-zinc-900 overflow-y-auto h-full  min-h-full">
+        <MainContent class="bg-white dark:bg-zinc-900 overflow-y-auto h-full  min-h-full rounded-md">
             {props.children.clone()}
         </MainContent>
     }
