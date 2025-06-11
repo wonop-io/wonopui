@@ -20,7 +20,7 @@ pub struct ComboboxProps {
     #[prop_or_default]
     pub value: Option<String>,
     #[prop_or_default]
-    pub name: Option<Strin>,
+    pub name: Option<String>,
     #[prop_or_default]
     pub class: Classes,
     #[prop_or_default]
@@ -104,7 +104,7 @@ pub fn combobox(props: &ComboboxProps) -> Html {
                 required={props.required}
                 autofocus={props.autofocus}
                 tabindex={props.tabindex.map(|t| t.to_string())}
-                style={custom_style}
+                style={custom_style.clone()}
             >
                 { selected_label }
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-up-down ml-2 h-4 w-4 shrink-0 opacity-50">
