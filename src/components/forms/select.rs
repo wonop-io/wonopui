@@ -2,6 +2,7 @@
 use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
+use crate::config::BrandGuideType;
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
 use yew::prelude::*;
@@ -35,6 +36,22 @@ pub struct SelectProps<T: Clone + PartialEq + ToString + 'static> {
     pub onchange: Callback<T>,
     #[prop_or_default]
     pub id: Option<String>,
+    #[prop_or_default]
+    pub placeholder: Option<String>,
+    #[prop_or_default]
+    pub disabled: bool,
+    #[prop_or_default]
+    pub required: bool,
+    #[prop_or_default]
+    pub name: Option<String>,
+    #[prop_or_default]
+    pub class: Classes,
+    #[prop_or_default]
+    pub style: Option<String>,
+    #[prop_or_default]
+    pub aria_label: Option<String>,
+    #[prop_or_default]
+    pub width: Option<String>,
 }
 
 #[function_component(Select)]
@@ -49,8 +66,11 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
 
     let toggle = {
         let is_open = is_open.clone();
+        let disabled = props.disabled;
         Callback::from(move |_| {
-            is_open.set(!*is_open);
+            if !disabled {
+                is_open.set(!*is_open);
+            }
         })
     };
 
@@ -92,10 +112,41 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
         .iter()
         .find(|value| Some(*value) == selected.as_ref())
         .map(|value| value.to_string())
-        .unwrap_or_default();
+        .unwrap_or_else(|| props.placeholder.clone().unwrap_or_default());
+
+    let container_style = match &props.width {
+        Some(width) => format!("width: {};", width),
+        None => String::new(),
+    };
+
+    let custom_style = match &props.style {
+        Some(style) => format!("{} {}", container_style, style),
+        None => container_style,
+    };
+
+    let style_attr = if !custom_style.is_empty() {
+        Some(custom_style)
+    } else {
+        None
+    };
+
+    let container_class = classes!(
+        &brandguide.select_container,
+        props.class.clone(),
+        props.disabled.then_some("opacity-50 cursor-not-allowed")
+    );
 
     html! {
-        <div class={&brandguide.select_container} id={props.id.clone()} ref={select_ref} tabindex="0" onfocusout={close}>
+        <div
+            class={container_class}
+            id={props.id.clone()}
+            ref={select_ref}
+            tabindex="0"
+            onfocusout={close}
+            style={style_attr}
+            aria-disabled={props.disabled.to_string()}
+            aria-label={props.aria_label.clone()}
+        >
             <button
                 type="button"
                 class={&brandguide.select_trigger}
@@ -103,6 +154,10 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
                     let toggle = state.toggle.clone();
                     move |_| toggle.emit(())
                 }}
+                disabled={props.disabled}
+                aria-required={props.required.to_string()}
+                name={props.name.clone()}
+                aria-expanded={is_open.to_string()}
             >
                 <span class={&brandguide.select_trigger_placeholder}>{ selected_label }</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={&brandguide.select_trigger_icon} aria-hidden="true">
@@ -111,7 +166,7 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
             </button>
             if *is_open {
                 <div class={&brandguide.select_content_container}>
-                    <ul class={&brandguide.select_content_list}>
+                    <ul class={&brandguide.select_content_list} role="listbox">
                         {for props.options.iter().map(|value| {
                             let on_click = {
                                 let value = value.clone();
@@ -122,10 +177,13 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
                                     toggle.emit(());
                                 })
                             };
+                            let is_selected = Some(value) == selected.as_ref();
                             html! {
                                 <li
-                                    class={&brandguide.select_item}
+                                    class={classes!(&brandguide.select_item, is_selected.then_some("bg-blue-50 dark:bg-blue-900/20"))}
                                     onclick={on_click}
+                                    role="option"
+                                    aria-selected={is_selected.to_string()}
                                 >
                                     { value.to_string() }
                                 </li>
