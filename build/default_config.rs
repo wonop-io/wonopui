@@ -263,9 +263,10 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("combobox_button_open".to_string(), "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white".to_string()),
         ("combobox_button_disabled".to_string(), "disabled:pointer-events-none disabled:opacity-50".to_string()),
         ("combobox_list".to_string(), "absolute mt-1 w-[200px] bg-background border border-input {{ default_rounding }} {{ default_shadow }} {{ border_dark }} {{ background }}".to_string()),
-        ("combobox_item".to_string(), "{{ text_container_medium_padding }} cursor-pointer hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white".to_string()),
+        ("combobox_item".to_string(), "mx-8 px-4 cursor-pointer hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white".to_string()),
         ("combobox_item_selected".to_string(), "{{ combobox_item }} bg-indigo-100 text-indigo-900 dark:bg-indigo-800 dark:text-indigo-100".to_string()),
-        ("combobox_heading".to_string(), "px-4 py-1 text-xs font-semibold text-foreground/70 uppercase".to_string()),
+        ("combobox_heading".to_string(), "px-4 py-1 text-xs font-semibold text-foreground/70 uppercase [&:not(:first-child)]:mt-4".to_string()),
+
         // Command
         ("command_container".to_string(), "flex h-auto w-full flex-col overflow-hidden {{ background }} {{ text }} {{ default_rounding_larger }} {{ border }} {{ default_shadow }}".to_string()),
         ("command_input_wrapper".to_string(), "flex items-center [&:not(:last-child)]:border-b px-3 dark:border-zinc-700".to_string()),
