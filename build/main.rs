@@ -241,6 +241,7 @@ fn main() {
         combobox_list: get_default_value("combobox_list", &default_config_hm),
         combobox_item: get_default_value("combobox_item", &default_config_hm),
         combobox_item_selected: get_default_value("combobox_item_selected", &default_config_hm),
+        combobox_heading: get_default_value("combobox_heading", &default_config_hm),
         command_container: get_default_value("command_container", &default_config_hm),
         command_input_wrapper: get_default_value("command_input_wrapper", &default_config_hm),
         command_icon: get_default_value("command_icon", &default_config_hm),

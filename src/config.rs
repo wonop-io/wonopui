@@ -190,6 +190,7 @@ pub struct BrandGuide<T> {
     pub combobox_list: ClassesContainer<T>,
     pub combobox_item: ClassesContainer<T>,
     pub combobox_item_selected: ClassesContainer<T>,
+    pub combobox_heading: ClassesContainer<T>,
 
     pub command_container: ClassesContainer<T>,
     pub command_input_wrapper: ClassesContainer<T>,
@@ -472,6 +473,7 @@ impl BrandGuide<&'static str> {
             combobox_list: self.combobox_list.to_owned(),
             combobox_item: self.combobox_item.to_owned(),
             combobox_item_selected: self.combobox_item_selected.to_owned(),
+            combobox_heading: self.combobox_heading.to_owned(),
             command_container: self.command_container.to_owned(),
             command_input_wrapper: self.command_input_wrapper.to_owned(),
             command_icon: self.command_icon.to_owned(),

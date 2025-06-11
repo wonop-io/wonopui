@@ -100,6 +100,7 @@ pub struct BrandConfig {
     pub combobox_list: String,
     pub combobox_item: String,
     pub combobox_item_selected: String,
+    pub combobox_heading: String,
 
     pub command_container: String,
     pub command_input_wrapper: String,
@@ -396,6 +397,7 @@ impl BrandConfig {
             combobox_list,
             combobox_item,
             combobox_item_selected,
+            combobox_heading,
             command_container,
             command_input_wrapper,
             command_icon,

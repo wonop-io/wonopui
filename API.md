@@ -623,7 +623,7 @@ The Combobox component is a versatile dropdown component that combines the funct
 | combobox_list              | Styles for the dropdown list container                                 |
 | combobox_item              | Styles for individual items in the dropdown list                       |
 | combobox_item_selected     | Styles applied to the currently selected item                          |
-
+| combobox_heading           | TODO |
 
 ## Command
 

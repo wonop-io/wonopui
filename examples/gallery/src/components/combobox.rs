@@ -28,6 +28,10 @@ pub fn combobox_theme_editor() -> Html {
             "combobox_item_selected".to_string(),
             "Selected Item Style".to_string(),
         ),
+        (
+            "combobox_heading".to_string(),
+            "Selected Item Style".to_string(),
+        ),
     ];
 
     let preview = html! {
@@ -126,6 +130,8 @@ pub fn combobox_documentation() -> Html {
                     ("combobox_list".to_string(), "Styles for the dropdown list container. This affects the appearance of the option list when it's visible.".to_string()),
                     ("combobox_item".to_string(), "Styles for individual items in the dropdown list. This determines how each option looks.".to_string()),
                     ("combobox_item_selected".to_string(), "Styles applied to the currently selected item. This should make the selected option stand out from the others.".to_string()),
+                    ("combobox_heading".to_string(), "Styles applied to the currently selected item. This should make the selected option stand out from the others.".to_string()),
+
                 ]}
             />
         </Container>

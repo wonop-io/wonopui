@@ -194,6 +194,7 @@ impl BrandGuideValueAccessor for BrandGuideType {
             "combobox_list" => self.combobox_list.value.clone(),
             "combobox_item" => self.combobox_item.value.clone(),
             "combobox_item_selected" => self.combobox_item_selected.value.clone(),
+            "combobox_heading" => self.combobox_heading.value.clone(),
 
             "command_container" => self.command_container.value.clone(),
             "command_input_wrapper" => self.command_input_wrapper.value.clone(),
@@ -481,6 +482,7 @@ impl BrandGuideValueAccessor for BrandGuideType {
             "combobox_list" => self.combobox_list.value = value,
             "combobox_item" => self.combobox_item.value = value,
             "combobox_item_selected" => self.combobox_item_selected.value = value,
+            "combobox_heading" => self.combobox_heading.value = value,
 
             "command_container" => self.command_container.value = value,
             "command_input_wrapper" => self.command_input_wrapper.value = value,

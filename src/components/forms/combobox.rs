@@ -5,12 +5,18 @@ use crate::config::use_brandguide;
 use crate::config::ClassesStr;
 use yew::prelude::*;
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum ComboboxItem {
+    Option(String, String), // (value, label)
+    Heading(String),        // heading text
+}
+
 #[derive(Properties, PartialEq)]
 pub struct ComboboxProps {
     #[prop_or_default]
     pub id: String,
     #[prop_or_default]
-    pub options: Vec<(String, String)>, // (value, label)
+    pub options: Vec<ComboboxItem>,
     #[prop_or_default]
     pub on_select: Callback<String>,
     #[prop_or_default]
@@ -69,8 +75,17 @@ pub fn combobox(props: &ComboboxProps) -> Html {
     let selected_label = props
         .options
         .iter()
-        .find(|(val, _)| val == value.as_str())
-        .map(|(_, label)| label.clone())
+        .find_map(|item| {
+            if let ComboboxItem::Option(val, label) = item {
+                if val == value.as_str() {
+                    Some(label.clone())
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        })
         .unwrap_or_else(|| {
             props
                 .placeholder
@@ -116,19 +131,30 @@ pub fn combobox(props: &ComboboxProps) -> Html {
                 if *open {
                     html! {
                         <div class={&brandguide.combobox_list} style={custom_style}>
-                            { for props.options.iter().map(|(val, label)| {
-                                let on_select = on_select.clone();
-                                let val = val.clone();
-                                html! {
-                                    <div
-                                        class={classes!(
-                                            &brandguide.combobox_item,
-                                            if *value == val { brandguide.combobox_item_selected.clone() } else { ClassesStr::empty() },
-                                        )}
-                                        onclick={Callback::from(move |_| on_select.emit(val.clone()))}
-                                    >
-                                        { label }
-                                    </div>
+                            { for props.options.iter().map(|item| {
+                                match item {
+                                    ComboboxItem::Option(val, label) => {
+                                        let on_select = on_select.clone();
+                                        let val = val.clone();
+                                        html! {
+                                            <div
+                                                class={classes!(
+                                                    &brandguide.combobox_item,
+                                                    if *value == val { brandguide.combobox_item_selected.clone() } else { ClassesStr::empty() },
+                                                )}
+                                                onclick={Callback::from(move |_| on_select.emit(val.clone()))}
+                                            >
+                                                { label }
+                                            </div>
+                                        }
+                                    },
+                                    ComboboxItem::Heading(heading_text) => {
+                                        html! {
+                                            <div class={classes!(&brandguide.combobox_heading)}>
+                                                { heading_text }
+                                            </div>
+                                        }
+                                    }
                                 }
                             }) }
                         </div>
@@ -147,4 +173,5 @@ pub fn combobox(props: &ComboboxProps) -> Html {
 // combobox_button_disabled: "disabled:pointer-events-none disabled:opacity-50",
 // combobox_list: "absolute mt-1 w-[200px] bg-background border border-input rounded-md shadow-lg",
 // combobox_item: "px-4 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground",
-// combobox_item_selected: "bg-accent text-accent-foreground"
+// combobox_item_selected: "bg-accent text-accent-foreground",
+// combobox_heading: "px-4 py-1 text-xs font-semibold text-foreground/70 uppercase"
