@@ -16,11 +16,11 @@ pub struct ComboboxProps {
     #[prop_or_default]
     pub disabled: bool,
     #[prop_or_default]
-    pub placeholder: String,
+    pub placeholder: Option<String>,
     #[prop_or_default]
     pub value: Option<String>,
     #[prop_or_default]
-    pub name: String,
+    pub name: Option<Strin>g,
     #[prop_or_default]
     pub class: Classes,
     #[prop_or_default]
