@@ -20,7 +20,7 @@ pub struct ComboboxProps {
     #[prop_or_default]
     pub value: Option<String>,
     #[prop_or_default]
-    pub name: Option<Strin>g,
+    pub name: Option<Strin>,
     #[prop_or_default]
     pub class: Classes,
     #[prop_or_default]
@@ -103,7 +103,7 @@ pub fn combobox(props: &ComboboxProps) -> Html {
                 disabled={props.disabled}
                 required={props.required}
                 autofocus={props.autofocus}
-                tabindex={props.tabindex}
+                tabindex={props.tabindex.map(|t| t.to_string())}
                 style={custom_style}
             >
                 { selected_label }

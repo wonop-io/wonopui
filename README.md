@@ -79,7 +79,7 @@ If you wish to use Cargo directly, you can use the following commands:
 rustup target add wasm32-unknown-unknown
 
 # Build for wasm32 target
-cargo build --target wasm32-unknown-unknown --release
+cargo build --target wasm32-unknown-unknown --release --features everything
 ```
 
 After building, you'll need to process the resulting Wasm binary with `wasm-bindgen` to generate the JavaScript bindings:

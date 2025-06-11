@@ -143,6 +143,7 @@ everything = [
 yew = { version = "0.21", features = ["csr"] }
 
 web-sys = { version = "0.3.68", features = [
+    "DomTokenList",
     "HtmlDocument",
     "Document",
     "HtmlInputElement",

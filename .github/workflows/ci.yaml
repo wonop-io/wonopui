@@ -38,4 +38,4 @@ jobs:
         run: cargo test
 
       - name: Building
-        run: cargo build --release
+        run: cargo build --target wasm32-unknown-unknown --release --features everything
