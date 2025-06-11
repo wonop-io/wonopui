@@ -146,6 +146,7 @@ pub struct BrandConfig {
     pub dropdown_item_icon: String,
     pub dropdown_item_disabled: String,
     pub dropdown_item_widget: String,
+    pub dropdown_heading: String,
     pub dropdown_separator: String,
 
     pub drawer_provider: String,
@@ -436,6 +437,7 @@ impl BrandConfig {
             dropdown_item_icon,
             dropdown_item_disabled,
             dropdown_item_widget,
+            dropdown_heading,
             dropdown_separator,
             drawer_provider,
             drawer_container,

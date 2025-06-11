@@ -282,6 +282,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("dropdown_item_icon".to_string(), "mr-2 h-4 w-4 text-zinc-500 dark:text-zinc-400".to_string()),
         ("dropdown_item_disabled".to_string(), "opacity-50 cursor-not-allowed".to_string()),
         ("dropdown_item_widget".to_string(), "{{ text_container_medium_padding }} flex items-center".to_string()),
+        ("dropdown_heading".to_string(), "TODO:".to_string()),
         ("dropdown_separator".to_string(), "my-1 h-px bg-zinc-200 dark:bg-zinc-700 border-zinc-200 dark:border-zinc-700".to_string()),
 
         // Drawer

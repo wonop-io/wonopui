@@ -31,6 +31,10 @@ pub fn dropdown_theme_editor() -> Html {
             "dropdown_item_widget".to_string(),
             "Dropdown Item Widget".to_string(),
         ),
+        (
+            "dropdown_heading".to_string(),
+            "Dropdown Item Headfing".to_string(),
+        ),
     ];
 
     let preview = html! {
@@ -193,6 +197,8 @@ pub fn dropdown_documentation() -> Html {
                     ("dropdown_separator".to_string(), "Applied to separator items. Use this to style the appearance of separators between groups of items.".to_string()),
                     ("dropdown_item_disabled".to_string(), "Applied to disabled dropdown items. Use this to style the appearance of items that cannot be interacted with.".to_string()),
                     ("dropdown_item_widget".to_string(), "Applied to custom widget items. Use this to style the container of custom widgets within the dropdown.".to_string()),
+                    ("dropdown_heading".to_string(), "Applied to custom widget items. Use this to style the container of headings within the dropdown.".to_string()),
+
                 ]}
             />
         </Container>

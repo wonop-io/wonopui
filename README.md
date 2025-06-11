@@ -11,7 +11,7 @@ You can find more information in the [documentation](https://docs.wonopui.com/).
 - Core components (Button, Typography, Badge, etc.)
 - Data Display components (Avatar, Card, Table, etc.)
 - Feedback components (Alert, Notification)
-- Form components (Input, Checkbox, Select, etc.) 
+- Form components (Input, Checkbox, Select, etc.)
 - Navigation components (Breadcrumb, Pagination, Tabs)
 - Overlay components (Dialog, Drawer, Popover, etc.)
 - Utility components (WindowProvider, MediaQuery, etc.)
@@ -32,7 +32,7 @@ To use Wonop UI in your Yew project, add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-wonopui = { version = "0.0.5", features = ["everything"] }
+wonopui = { version = "0.0.8", features = ["everything"] }
 ```
 
 Then initialise Tailwind CSS:
@@ -68,3 +68,24 @@ Add the following to your `index.html`:
 ## Examples
 
 See the `examples/` directory for usage examples.
+
+
+## Building with cargo
+
+If you wish to use Cargo directly, you can use the following commands:
+
+```bash
+# Install the wasm32 target
+rustup target add wasm32-unknown-unknown
+
+# Build for wasm32 target
+cargo build --target wasm32-unknown-unknown --release
+```
+
+After building, you'll need to process the resulting Wasm binary with `wasm-bindgen` to generate the JavaScript bindings:
+
+```bash
+wasm-bindgen --target web --out-dir ./dist ./target/wasm32-unknown-unknown/release/your_app.wasm
+```
+
+Remember to replace `your_app.wasm` with the actual name of your application's wasm file.

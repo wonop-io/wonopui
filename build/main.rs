@@ -254,6 +254,7 @@ fn main() {
         dropdown_item_icon: get_default_value("dropdown_item_icon", &default_config_hm),
         dropdown_item_disabled: get_default_value("dropdown_item_disabled", &default_config_hm),
         dropdown_item_widget: get_default_value("dropdown_item_widget", &default_config_hm),
+        dropdown_heading: get_default_value("dropdown_heading", &default_config_hm),
         dropdown_separator: get_default_value("dropdown_separator", &default_config_hm),
         drawer_provider: get_default_value("drawer_provider", &default_config_hm),
         drawer_container: get_default_value("drawer_container", &default_config_hm),

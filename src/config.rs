@@ -146,7 +146,7 @@ pub struct BrandGuide<T> {
     pub card_header: ClassesContainer<T>,
     pub card_title: ClassesContainer<T>,
     pub card_body: ClassesContainer<T>,
-    
+
     pub kanban_container: ClassesContainer<T>,
     pub kanban_column: ClassesContainer<T>,
     pub kanban_column_header: ClassesContainer<T>,
@@ -212,6 +212,7 @@ pub struct BrandGuide<T> {
     pub dropdown_item_icon: ClassesContainer<T>,
     pub dropdown_item_disabled: ClassesContainer<T>,
     pub dropdown_item_widget: ClassesContainer<T>,
+    pub dropdown_heading: ClassesContainer<T>,
     pub dropdown_separator: ClassesContainer<T>,
 
     pub drawer_provider: ClassesContainer<T>,
@@ -440,7 +441,6 @@ impl BrandGuide<&'static str> {
             kanban_card_content: self.kanban_card_content.to_owned(),
             kanban_card_dragging: self.kanban_card_dragging.to_owned(),
 
-
             checkbox_base: self.checkbox_base.to_owned(),
             checkbox_checked: self.checkbox_checked.to_owned(),
             checkbox_unchecked: self.checkbox_unchecked.to_owned(),
@@ -531,6 +531,7 @@ impl BrandGuide<&'static str> {
             dropdown_item: self.dropdown_item.to_owned(),
             dropdown_item_icon: self.dropdown_item_icon.to_owned(),
             dropdown_item_widget: self.dropdown_item_widget.to_owned(),
+            dropdown_heading: self.dropdown_heading.to_owned(),
             dropdown_item_disabled: self.dropdown_item_disabled.to_owned(),
             dropdown_separator: self.dropdown_separator.to_owned(),
 

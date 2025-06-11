@@ -30,6 +30,9 @@ pub enum DropdownItem {
     },
     Widget(Html),
     Separator,
+    Heading {
+        label: String,
+    },
 }
 
 #[function_component(Dropdown)]
@@ -131,6 +134,13 @@ fn dropdown_item_component(props: &DropdownItemComponentProps) -> Html {
             html! {
                 <div class={classes!(&brandguide.dropdown_item_widget)}>
                     { content.clone() }
+                </div>
+            }
+        }
+        DropdownItem::Heading { label } => {
+            html! {
+                <div class={classes!(&brandguide.dropdown_heading)}>
+                    <span>{ label }</span>
                 </div>
             }
         }

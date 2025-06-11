@@ -216,6 +216,7 @@ impl BrandGuideValueAccessor for BrandGuideType {
             "dropdown_item_icon" => self.dropdown_item_icon.value.clone(),
             "dropdown_item_disabled" => self.dropdown_item_disabled.value.clone(),
             "dropdown_item_widget" => self.dropdown_item_widget.value.clone(),
+            "dropdown_heading" => self.dropdown_heading.value.clone(),
             "dropdown_separator" => self.dropdown_separator.value.clone(),
 
             "drawer_provider" => self.drawer_provider.value.clone(),
@@ -502,6 +503,7 @@ impl BrandGuideValueAccessor for BrandGuideType {
             "dropdown_item_icon" => self.dropdown_item_icon.value = value,
             "dropdown_item_disabled" => self.dropdown_item_disabled.value = value,
             "dropdown_item_widget" => self.dropdown_item_widget.value = value,
+            "dropdown_heading" => self.dropdown_heading.value = value,
             "dropdown_separator" => self.dropdown_separator.value = value,
 
             "drawer_provider" => self.drawer_provider.value = value,

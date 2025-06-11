@@ -3,6 +3,7 @@ use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
 use std::rc::Rc;
+use wasm_bindgen::JsCast;
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
@@ -44,6 +45,7 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
     let brandguide = get_brandguide();
     let is_open = use_state(|| false);
     let selected = use_state(|| props.selected.clone());
+    let select_ref = use_node_ref();
 
     let toggle = {
         let is_open = is_open.clone();
@@ -58,6 +60,23 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
         Callback::from(move |value: T| {
             selected.set(Some(value.clone()));
             onchange.emit(value);
+        })
+    };
+
+    let close = {
+        let is_open = is_open.clone();
+        let select_ref = select_ref.clone();
+        Callback::from(move |e: FocusEvent| {
+            if let Some(related_target) = e.related_target() {
+                let related_element: web_sys::Element = related_target.unchecked_into();
+                if let Some(select_element) = select_ref.cast::<web_sys::Element>() {
+                    if !select_element.contains(Some(&related_element)) {
+                        is_open.set(false);
+                    }
+                }
+            } else {
+                is_open.set(false);
+            }
         })
     };
 
@@ -76,7 +95,7 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
         .unwrap_or_default();
 
     html! {
-        <div class={&brandguide.select_container} id={props.id.clone()}>
+        <div class={&brandguide.select_container} id={props.id.clone()} ref={select_ref} tabindex="0" onfocusout={close}>
             <button
                 type="button"
                 class={&brandguide.select_trigger}
