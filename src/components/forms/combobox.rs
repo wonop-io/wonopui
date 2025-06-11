@@ -15,6 +15,24 @@ pub struct ComboboxProps {
     pub on_select: Callback<String>,
     #[prop_or_default]
     pub disabled: bool,
+    #[prop_or_default]
+    pub placeholder: String,
+    #[prop_or_default]
+    pub value: Option<String>,
+    #[prop_or_default]
+    pub name: String,
+    #[prop_or_default]
+    pub class: Classes,
+    #[prop_or_default]
+    pub width: Option<String>,
+    #[prop_or_default]
+    pub aria_label: Option<String>,
+    #[prop_or_default]
+    pub required: bool,
+    #[prop_or_default]
+    pub autofocus: bool,
+    #[prop_or_default]
+    pub tabindex: Option<i32>,
 }
 
 #[function_component(Combobox)]
@@ -24,7 +42,18 @@ pub fn combobox(props: &ComboboxProps) -> Html {
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
     let open = use_state(|| false);
-    let value = use_state(|| "".to_string());
+    let value = use_state(|| props.value.clone().unwrap_or_default());
+
+    // Update internal value when prop changes
+    use_effect_with(props.value.clone(), {
+        let value = value.clone();
+        move |prop_value: &Option<String>| {
+            if let Some(val) = prop_value {
+                value.set(val.clone());
+            }
+            || ()
+        }
+    });
 
     let on_select = {
         let value = value.clone();
@@ -42,17 +71,26 @@ pub fn combobox(props: &ComboboxProps) -> Html {
         .iter()
         .find(|(val, _)| val == value.as_str())
         .map(|(_, label)| label.clone())
-        .unwrap_or_else(|| "Select option...".to_string());
+        .unwrap_or_else(|| {
+            props
+                .placeholder
+                .clone()
+                .unwrap_or_else(|| "Select option...".to_string())
+        });
 
     let toggle_open = {
         let open = open.clone();
         Callback::from(move |_| open.set(!*open))
     };
 
+    // Custom style for width if specified
+    let custom_style = props.width.as_ref().map(|w| format!("width: {};", w));
+
     html! {
-        <div>
+        <div class={classes!("relative", props.class.clone())}>
             <button
                 id={props.id.clone()}
+                name={props.name.clone()}
                 class={classes!(
                     &brandguide.combobox_button,
                     if *open { brandguide.combobox_button_open.clone() } else { ClassesStr::empty() },
@@ -60,8 +98,13 @@ pub fn combobox(props: &ComboboxProps) -> Html {
                 )}
                 role="combobox"
                 aria-expanded={open.to_string()}
+                aria-label={props.aria_label.clone()}
                 onclick={toggle_open}
                 disabled={props.disabled}
+                required={props.required}
+                autofocus={props.autofocus}
+                tabindex={props.tabindex}
+                style={custom_style}
             >
                 { selected_label }
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-up-down ml-2 h-4 w-4 shrink-0 opacity-50">
@@ -72,7 +115,7 @@ pub fn combobox(props: &ComboboxProps) -> Html {
             {
                 if *open {
                     html! {
-                        <div class={&brandguide.combobox_list}>
+                        <div class={&brandguide.combobox_list} style={custom_style}>
                             { for props.options.iter().map(|(val, label)| {
                                 let on_select = on_select.clone();
                                 let val = val.clone();
