@@ -53,6 +53,7 @@ pub fn combobox(props: &ComboboxProps) -> Html {
     let open = use_state(|| false);
     let value = use_state(|| props.value.clone().unwrap_or_default());
     let container_ref = use_node_ref();
+    let is_mouse_down_inside = use_state(|| false);
 
     // Update internal value when prop changes
     use_effect_with(props.value.clone(), {
@@ -98,16 +99,34 @@ pub fn combobox(props: &ComboboxProps) -> Html {
         });
     }
 
-    // Close on blur
+    // Track mouse events inside the container
+    let on_mousedown = {
+        let is_mouse_down_inside = is_mouse_down_inside.clone();
+        Callback::from(move |_: MouseEvent| {
+            is_mouse_down_inside.set(true);
+        })
+    };
+
+    let on_mouseup = {
+        let is_mouse_down_inside = is_mouse_down_inside.clone();
+        Callback::from(move |_: MouseEvent| {
+            is_mouse_down_inside.set(false);
+        })
+    };
+
+    // Close on blur, but only if the mouse is not down inside the container
     let on_blur = {
         let open = open.clone();
+        let is_mouse_down_inside = is_mouse_down_inside.clone();
         Callback::from(move |_: FocusEvent| {
-            // Using a small timeout to allow for click events to be processed first
-            let open_clone = open.clone();
-            let timeout = gloo::timers::callback::Timeout::new(100, move || {
-                open_clone.set(false);
-            });
-            timeout.forget();
+            // Only close if mouse is not down inside container
+            if !*is_mouse_down_inside {
+                let open_clone = open.clone();
+                let timeout = gloo::timers::callback::Timeout::new(100, move || {
+                    open_clone.set(false);
+                });
+                timeout.forget();
+            }
         })
     };
 
@@ -152,7 +171,12 @@ pub fn combobox(props: &ComboboxProps) -> Html {
     let custom_style = props.width.as_ref().map(|w| format!("width: {};", w));
 
     html! {
-        <div class={classes!("relative", props.class.clone())} ref={container_ref}>
+        <div
+            class={classes!("relative", props.class.clone())}
+            ref={container_ref}
+            onmousedown={on_mousedown}
+            onmouseup={on_mouseup}
+        >
             <button
                 id={props.id.clone()}
                 name={props.name.clone()}
