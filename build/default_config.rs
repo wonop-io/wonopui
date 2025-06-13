@@ -262,7 +262,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("combobox_button".to_string(), "inline-flex items-center whitespace-nowrap {{ default_rounding }} text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-zinc-100 dark:hover:bg-zinc-800 h-10 px-4 py-2 w-[200px] justify-between {{ border_dark }} {{ background }}".to_string()),
         ("combobox_button_open".to_string(), "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white".to_string()),
         ("combobox_button_disabled".to_string(), "disabled:pointer-events-none disabled:opacity-50".to_string()),
-        ("combobox_list".to_string(), "py-4 absolute mt-1 w-[200px] bg-background border border-input {{ default_rounding }} {{ default_shadow }} {{ border_dark }} {{ background }}".to_string()),
+        ("combobox_list".to_string(), "py-4 absolute mt-1 w-[200px] max-h-[300px] overflow-y-auto bg-background border border-input {{ default_rounding }} {{ default_shadow }} {{ border_dark }} {{ background }}".to_string()),
         ("combobox_item".to_string(), "px-8 py-2 cursor-pointer hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white".to_string()),
         ("combobox_item_selected".to_string(), "{{ combobox_item }} bg-indigo-100 text-indigo-900 dark:bg-indigo-800 dark:text-indigo-100".to_string()),
         ("combobox_heading".to_string(), "px-4 py-2 text-xs font-semibold text-foreground/70 uppercase [&:not(:first-child)]:pt-4".to_string()),
