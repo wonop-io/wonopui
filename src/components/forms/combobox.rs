@@ -3,6 +3,9 @@ use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
 use crate::config::ClassesStr;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::JsCast;
+use web_sys::{Event, FocusEvent};
 use yew::prelude::*;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -49,6 +52,7 @@ pub fn combobox(props: &ComboboxProps) -> Html {
     let brandguide = get_brandguide();
     let open = use_state(|| false);
     let value = use_state(|| props.value.clone().unwrap_or_default());
+    let container_ref = use_node_ref();
 
     // Update internal value when prop changes
     use_effect_with(props.value.clone(), {
@@ -60,6 +64,52 @@ pub fn combobox(props: &ComboboxProps) -> Html {
             || ()
         }
     });
+
+    // Close dropdown when clicking outside
+    {
+        let open = open.clone();
+        let container_ref = container_ref.clone();
+
+        use_effect_with((), move |_| {
+            let document = web_sys::window().unwrap().document().unwrap();
+            let listener = Closure::wrap(Box::new(move |event: Event| {
+                if let Some(container) = container_ref.get() {
+                    let target = event.target().unwrap();
+                    if !container.contains(Some(&target.dyn_into::<web_sys::Node>().ok().unwrap()))
+                    {
+                        open.set(false);
+                    }
+                }
+            }) as Box<dyn FnMut(_)>);
+
+            document
+                .add_event_listener_with_callback("mousedown", listener.as_ref().unchecked_ref())
+                .unwrap();
+
+            // Cleanup function
+            move || {
+                document
+                    .remove_event_listener_with_callback(
+                        "mousedown",
+                        listener.as_ref().unchecked_ref(),
+                    )
+                    .unwrap();
+            }
+        });
+    }
+
+    // Close on blur
+    let on_blur = {
+        let open = open.clone();
+        Callback::from(move |_: FocusEvent| {
+            // Using a small timeout to allow for click events to be processed first
+            let open_clone = open.clone();
+            let timeout = gloo::timers::callback::Timeout::new(100, move || {
+                open_clone.set(false);
+            });
+            timeout.forget();
+        })
+    };
 
     let on_select = {
         let value = value.clone();
@@ -102,7 +152,7 @@ pub fn combobox(props: &ComboboxProps) -> Html {
     let custom_style = props.width.as_ref().map(|w| format!("width: {};", w));
 
     html! {
-        <div class={classes!("relative", props.class.clone())}>
+        <div class={classes!("relative", props.class.clone())} ref={container_ref}>
             <button
                 id={props.id.clone()}
                 name={props.name.clone()}
@@ -115,6 +165,7 @@ pub fn combobox(props: &ComboboxProps) -> Html {
                 aria-expanded={open.to_string()}
                 aria-label={props.aria_label.clone()}
                 onclick={toggle_open}
+                onblur={on_blur}
                 disabled={props.disabled}
                 required={props.required}
                 autofocus={props.autofocus}
