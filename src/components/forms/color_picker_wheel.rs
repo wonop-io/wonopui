@@ -1,12 +1,21 @@
+#[cfg(not(feature = "ssr"))]
 use gloo_console as console;
+#[cfg(not(feature = "ssr"))]
 use gloo_utils::window;
 use std::f64::consts::PI;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::closure::Closure;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::prelude::*;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::Clamped;
+#[cfg(not(feature = "ssr"))]
 use web_sys::wasm_bindgen::JsCast;
+#[cfg(not(feature = "ssr"))]
 use web_sys::ImageData;
+#[cfg(not(feature = "ssr"))]
 use web_sys::ResizeObserver;
+#[cfg(not(feature = "ssr"))]
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlElement};
 use yew::events::PointerEvent;
 use yew::prelude::*;
@@ -28,11 +37,15 @@ pub struct ColorPickerWheelProps {
 pub struct ColorPickerWheel {
     wheel_canvas_ref: NodeRef,
     indicator_canvas_ref: NodeRef,
+    #[cfg(not(feature = "ssr"))]
     wheel_context: Option<CanvasRenderingContext2d>,
+    #[cfg(not(feature = "ssr"))]
     indicator_context: Option<CanvasRenderingContext2d>,
     active_pointer: Option<(i32, usize)>, // (pointer_id, indicator_index)
     indicators: Vec<(f64, f64, f64)>,
+    #[cfg(not(feature = "ssr"))]
     resize_observer: Option<ResizeObserver>,
+    #[cfg(not(feature = "ssr"))]
     resize_callback: Option<Closure<dyn FnMut()>>,
 }
 
@@ -44,6 +57,7 @@ pub enum Msg {
     Resize,
 }
 
+#[cfg(not(feature = "ssr"))]
 impl Drop for ColorPickerWheel {
     fn drop(&mut self) {
         let window = web_sys::window().expect("no global `window` exists");
@@ -70,17 +84,22 @@ impl Component for ColorPickerWheel {
         Self {
             wheel_canvas_ref: NodeRef::default(),
             indicator_canvas_ref: NodeRef::default(),
+            #[cfg(not(feature = "ssr"))]
             wheel_context: None,
+            #[cfg(not(feature = "ssr"))]
             indicator_context: None,
             active_pointer: None,
             indicators: ctx.props().indicators.clone(),
+            #[cfg(not(feature = "ssr"))]
             resize_observer: None,
+            #[cfg(not(feature = "ssr"))]
             resize_callback: None,
         }
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
+            #[cfg(not(feature = "ssr"))]
             Msg::PointerDown(event) => {
                 if let Some(element) = self.indicator_canvas_ref.cast::<web_sys::Element>() {
                     let (index, distance) = self
@@ -131,6 +150,7 @@ impl Component for ColorPickerWheel {
                     false
                 }
             }
+            #[cfg(not(feature = "ssr"))]
             Msg::PointerMove(event) => {
                 if let Some((pointer_id, _)) = self.active_pointer {
                     if event.pointer_id() == pointer_id {
@@ -143,6 +163,7 @@ impl Component for ColorPickerWheel {
                     false
                 }
             }
+            #[cfg(not(feature = "ssr"))]
             Msg::PointerUp(event) => {
                 if let Some((pointer_id, _)) = self.active_pointer {
                     if event.pointer_id() == pointer_id {
@@ -179,14 +200,18 @@ impl Component for ColorPickerWheel {
                     }
                 }
 
+                #[cfg(not(feature = "ssr"))]
                 self.draw_indicators(ctx);
                 true
             }
+            #[cfg(not(feature = "ssr"))]
             Msg::Resize => {
                 self.draw_wheel(ctx);
                 self.draw_indicators(ctx);
                 true
             }
+            #[cfg(feature = "ssr")]
+            _ => false,
         }
     }
 
@@ -214,6 +239,7 @@ impl Component for ColorPickerWheel {
         }
     }
 
+    #[cfg(not(feature = "ssr"))]
     fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
         if first_render {
             if let (Some(wheel_canvas), Some(indicator_canvas)) = (
@@ -255,6 +281,11 @@ impl Component for ColorPickerWheel {
         }
     }
 
+    #[cfg(feature = "ssr")]
+    fn rendered(&mut self, _ctx: &Context<Self>, _first_render: bool) {
+        // No-op for SSR
+    }
+
     fn changed(&mut self, ctx: &Context<Self>, old_props: &Self::Properties) -> bool {
         if ctx.props().size != old_props.size
             || ctx.props().value != old_props.value
@@ -262,8 +293,13 @@ impl Component for ColorPickerWheel {
             || ctx.props().indicator_radius != old_props.indicator_radius
         {
             self.indicators = ctx.props().indicators.clone();
-            self.draw_wheel(ctx);
-            self.draw_indicators(ctx);
+
+            #[cfg(not(feature = "ssr"))]
+            {
+                self.draw_wheel(ctx);
+                self.draw_indicators(ctx);
+            }
+
             true
         } else {
             false
@@ -272,6 +308,7 @@ impl Component for ColorPickerWheel {
 }
 
 impl ColorPickerWheel {
+    #[cfg(not(feature = "ssr"))]
     fn update_color(&mut self, ctx: &Context<Self>, x: f64, y: f64) {
         if let (Some(canvas), Some((_, index))) = (
             self.wheel_canvas_ref.cast::<HtmlCanvasElement>(),
@@ -304,6 +341,12 @@ impl ColorPickerWheel {
         }
     }
 
+    #[cfg(feature = "ssr")]
+    fn update_color(&mut self, _ctx: &Context<Self>, _x: f64, _y: f64) {
+        // No-op for SSR
+    }
+
+    #[cfg(not(feature = "ssr"))]
     fn draw_wheel(&self, ctx: &Context<Self>) {
         if let (Some(canvas), Some(context)) = (
             self.wheel_canvas_ref.cast::<HtmlCanvasElement>(),
@@ -349,6 +392,7 @@ impl ColorPickerWheel {
         }
     }
 
+    #[cfg(not(feature = "ssr"))]
     fn draw_indicators(&self, ctx: &Context<Self>) {
         if let (Some(canvas), Some(context)) = (
             self.indicator_canvas_ref.cast::<HtmlCanvasElement>(),
@@ -406,6 +450,7 @@ impl ColorPickerWheel {
         }
     }
 
+    #[cfg(not(feature = "ssr"))]
     fn find_closest_indicator(&self, x: f64, y: f64) -> (usize, f64) {
         if let Some(canvas) = self.wheel_canvas_ref.cast::<HtmlCanvasElement>() {
             let rect = canvas.get_bounding_client_rect();
@@ -432,6 +477,11 @@ impl ColorPickerWheel {
         } else {
             (0, f64::MAX)
         }
+    }
+
+    #[cfg(feature = "ssr")]
+    fn find_closest_indicator(&self, _x: f64, _y: f64) -> (usize, f64) {
+        (0, f64::MAX)
     }
 }
 

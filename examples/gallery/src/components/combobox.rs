@@ -3,6 +3,7 @@ use crate::api_section::ApiSection;
 use crate::features_section::Features;
 use crate::notes_section::NotesSection;
 use crate::styling_section::StylingSection;
+use wonopui::combobox::ComboboxItem;
 use wonopui::prelude::{BrandGuideType as BrandGuide, ClassesStr, ComponentEditor};
 use wonopui::*;
 use yew::prelude::*;
@@ -37,9 +38,9 @@ pub fn combobox_theme_editor() -> Html {
     let preview = html! {
         <Combobox
             options={vec![
-                ("1".to_string(), "Option 1".to_string()),
-                ("2".to_string(), "Option 2".to_string()),
-                ("3".to_string(), "Option 3".to_string())
+                ComboboxItem::Option("1".to_string(), "Option 1".to_string()),
+                ComboboxItem::Option("2".to_string(), "Option 2".to_string()),
+                ComboboxItem::Option("3".to_string(), "Option 3".to_string())
             ]}
             on_select={Callback::from(|_| {})}
         />
@@ -65,9 +66,9 @@ pub fn combobox_documentation() -> Html {
                 preview={html! {
                     <Combobox
                         options={vec![
-                            ("1".to_string(), "Option 1".to_string()),
-                            ("2".to_string(), "Option 2".to_string()),
-                            ("3".to_string(), "Option 3".to_string())
+                            ComboboxItem::Option("1".to_string(), "Option 1".to_string()),
+                            ComboboxItem::Option("2".to_string(), "Option 2".to_string()),
+                            ComboboxItem::Option("3".to_string(), "Option 3".to_string())
                         ]}
                         on_select={Callback::from(|selected: String| {
                             // Handle selection
@@ -80,9 +81,9 @@ pub fn combobox_documentation() -> Html {
                 code={r#"
 <Combobox
     options={vec![
-        ("1".to_string(), "Option 1".to_string()),
-        ("2".to_string(), "Option 2".to_string()),
-        ("3".to_string(), "Option 3".to_string())
+        ComboboxItem::Option("1".to_string(), "Option 1".to_string()),
+        ComboboxItem::Option("2".to_string(), "Option 2".to_string()),
+        ComboboxItem::Option("3".to_string(), "Option 3".to_string())
     ]}
     on_select={Callback::from(|selected: String| {
         // Handle selection
@@ -101,7 +102,7 @@ pub fn combobox_documentation() -> Html {
                 description="Props for the Combobox component."
                 props={vec![
                     ("id", "String", "The unique identifier for the combobox."),
-                    ("options", "Vec<(String, String)>", "A list of options where each option is a tuple of (value, label)."),
+                    ("options", "Vec<ComboboxItem>", "A list of ComboboxItem objects containing value and label pairs."),
                     ("on_select", "Callback<String>", "The callback to be called when an option is selected."),
                     ("disabled", "bool", "Whether the combobox is disabled. Default is false."),
                 ]}

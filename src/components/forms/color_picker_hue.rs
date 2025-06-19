@@ -1,9 +1,15 @@
+#[cfg(not(feature = "ssr"))]
 use gloo_console as console;
+#[cfg(not(feature = "ssr"))]
 use gloo_utils::window;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::prelude::*;
+#[cfg(not(feature = "ssr"))]
 use web_sys::wasm_bindgen::JsCast;
+#[cfg(not(feature = "ssr"))]
 use web_sys::ResizeObserver;
+#[cfg(not(feature = "ssr"))]
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlElement};
 use yew::events::PointerEvent;
 use yew::prelude::*;
@@ -20,14 +26,19 @@ pub struct ColorPickerHueProps {
 
 pub struct ColorPickerHue {
     canvas_ref: NodeRef,
+    #[cfg(not(feature = "ssr"))]
     context: Option<CanvasRenderingContext2d>,
     active_pointer: Option<i32>,
     last_props_hue: f64,
     current_hue: f64,
     indicator_position: f64,
+    #[cfg(not(feature = "ssr"))]
     move_closure: Option<Closure<dyn FnMut(PointerEvent)>>,
+    #[cfg(not(feature = "ssr"))]
     up_closure: Option<Closure<dyn FnMut(PointerEvent)>>,
+    #[cfg(not(feature = "ssr"))]
     resize_observer: Option<ResizeObserver>,
+    #[cfg(not(feature = "ssr"))]
     resize_callback: Option<Closure<dyn FnMut()>>,
 }
 
@@ -40,6 +51,7 @@ pub enum Msg {
     Resize,
 }
 
+#[cfg(not(feature = "ssr"))]
 impl Drop for ColorPickerHue {
     fn drop(&mut self) {
         let window = web_sys::window().expect("no global `window` exists");
@@ -73,6 +85,13 @@ impl Drop for ColorPickerHue {
     }
 }
 
+#[cfg(feature = "ssr")]
+impl Drop for ColorPickerHue {
+    fn drop(&mut self) {
+        // No-op for SSR
+    }
+}
+
 impl Component for ColorPickerHue {
     type Message = Msg;
     type Properties = ColorPickerHueProps;
@@ -80,14 +99,19 @@ impl Component for ColorPickerHue {
     fn create(ctx: &Context<Self>) -> Self {
         Self {
             canvas_ref: NodeRef::default(),
+            #[cfg(not(feature = "ssr"))]
             context: None,
             active_pointer: None,
             last_props_hue: ctx.props().value,
             current_hue: ctx.props().value,
             indicator_position: ctx.props().value,
+            #[cfg(not(feature = "ssr"))]
             move_closure: None,
+            #[cfg(not(feature = "ssr"))]
             up_closure: None,
+            #[cfg(not(feature = "ssr"))]
             resize_observer: None,
+            #[cfg(not(feature = "ssr"))]
             resize_callback: None,
         }
     }
@@ -95,77 +119,91 @@ impl Component for ColorPickerHue {
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::PointerDown(event) => {
-                if let Some(element) = self.canvas_ref.cast::<web_sys::Element>() {
-                    element.set_pointer_capture(event.pointer_id()).unwrap();
-                    self.active_pointer = Some(event.pointer_id());
+                #[cfg(not(feature = "ssr"))]
+                {
+                    if let Some(element) = self.canvas_ref.cast::<web_sys::Element>() {
+                        element.set_pointer_capture(event.pointer_id()).unwrap();
+                        self.active_pointer = Some(event.pointer_id());
 
-                    let window = web_sys::window().expect("no global `window` exists");
-                    let link = ctx.link().clone();
-                    self.move_closure = {
-                        let link = link.clone();
-                        Some(Closure::wrap(
-                            Box::new(move |event: web_sys::PointerEvent| {
-                                link.send_message(Msg::PointerMove(event));
-                            }) as Box<dyn FnMut(_)>,
-                        ))
-                    };
-                    self.up_closure = {
-                        let link = link.clone();
-                        Some(Closure::wrap(
-                            Box::new(move |event: web_sys::PointerEvent| {
-                                link.send_message(Msg::PointerUp(event));
-                            }) as Box<dyn FnMut(_)>,
-                        ))
-                    };
+                        let window = web_sys::window().expect("no global `window` exists");
+                        let link = ctx.link().clone();
+                        self.move_closure = {
+                            let link = link.clone();
+                            Some(Closure::wrap(
+                                Box::new(move |event: web_sys::PointerEvent| {
+                                    link.send_message(Msg::PointerMove(event));
+                                }) as Box<dyn FnMut(_)>,
+                            ))
+                        };
+                        self.up_closure = {
+                            let link = link.clone();
+                            Some(Closure::wrap(
+                                Box::new(move |event: web_sys::PointerEvent| {
+                                    link.send_message(Msg::PointerUp(event));
+                                }) as Box<dyn FnMut(_)>,
+                            ))
+                        };
 
-                    window
-                        .add_event_listener_with_callback(
-                            "pointermove",
-                            self.move_closure.as_ref().unwrap().as_ref().unchecked_ref(),
-                        )
-                        .unwrap();
-                    window
-                        .add_event_listener_with_callback(
-                            "pointerup",
-                            self.up_closure.as_ref().unwrap().as_ref().unchecked_ref(),
-                        )
-                        .unwrap();
+                        window
+                            .add_event_listener_with_callback(
+                                "pointermove",
+                                self.move_closure.as_ref().unwrap().as_ref().unchecked_ref(),
+                            )
+                            .unwrap();
+                        window
+                            .add_event_listener_with_callback(
+                                "pointerup",
+                                self.up_closure.as_ref().unwrap().as_ref().unchecked_ref(),
+                            )
+                            .unwrap();
+                    }
+                    self.update_hue(ctx, event.offset_x() as f64);
                 }
-                self.update_hue(ctx, event.offset_x() as f64);
+
+                #[cfg(feature = "ssr")]
+                {
+                    self.active_pointer = Some(event.pointer_id());
+                }
+
                 true
             }
             Msg::PointerMove(event) => {
                 if Some(event.pointer_id()) == self.active_pointer {
+                    #[cfg(not(feature = "ssr"))]
                     self.update_hue(ctx, event.offset_x() as f64);
                 }
                 true
             }
             Msg::PointerUp(event) => {
                 if Some(event.pointer_id()) == self.active_pointer {
-                    if let Some(element) = self.canvas_ref.cast::<web_sys::Element>() {
-                        element.release_pointer_capture(event.pointer_id()).unwrap();
-                    }
-                    self.active_pointer = None;
+                    #[cfg(not(feature = "ssr"))]
+                    {
+                        if let Some(element) = self.canvas_ref.cast::<web_sys::Element>() {
+                            element.release_pointer_capture(event.pointer_id()).unwrap();
+                        }
 
-                    let window = web_sys::window().expect("no global `window` exists");
-                    if let Some(move_closure) = &self.move_closure {
-                        window
-                            .remove_event_listener_with_callback(
-                                "pointermove",
-                                move_closure.as_ref().unchecked_ref(),
-                            )
-                            .unwrap();
+                        let window = web_sys::window().expect("no global `window` exists");
+                        if let Some(move_closure) = &self.move_closure {
+                            window
+                                .remove_event_listener_with_callback(
+                                    "pointermove",
+                                    move_closure.as_ref().unchecked_ref(),
+                                )
+                                .unwrap();
+                        }
+                        if let Some(up_closure) = &self.up_closure {
+                            window
+                                .remove_event_listener_with_callback(
+                                    "pointerup",
+                                    up_closure.as_ref().unchecked_ref(),
+                                )
+                                .unwrap();
+                        }
+                        self.move_closure = None;
+                        self.up_closure = None;
                     }
-                    if let Some(up_closure) = &self.up_closure {
-                        window
-                            .remove_event_listener_with_callback(
-                                "pointerup",
-                                up_closure.as_ref().unchecked_ref(),
-                            )
-                            .unwrap();
-                    }
-                    self.move_closure = None;
-                    self.up_closure = None;
+
+                    self.active_pointer = None;
                     ctx.props().onchange.emit(self.current_hue);
                 }
                 false
@@ -181,6 +219,7 @@ impl Component for ColorPickerHue {
                 update
             }
             Msg::Resize => {
+                #[cfg(not(feature = "ssr"))]
                 self.draw_gradient();
                 true
             }
@@ -205,6 +244,7 @@ impl Component for ColorPickerHue {
     }
 
     fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
+        #[cfg(not(feature = "ssr"))]
         if first_render {
             if let Some(canvas) = self.canvas_ref.cast::<HtmlCanvasElement>() {
                 let context = canvas
@@ -253,12 +293,15 @@ impl Component for ColorPickerHue {
             self.last_props_hue = ctx.props().value;
             ctx.link()
                 .send_message(Msg::UpdateIndicatorPosition(self.current_hue));
+
+            #[cfg(not(feature = "ssr"))]
             self.draw_gradient();
         }
     }
 }
 
 impl ColorPickerHue {
+    #[cfg(not(feature = "ssr"))]
     fn update_hue(&mut self, ctx: &Context<Self>, x: f64) {
         if let Some(canvas) = self.canvas_ref.cast::<HtmlCanvasElement>() {
             let width = canvas.client_width() as f64;
@@ -268,6 +311,15 @@ impl ColorPickerHue {
         }
     }
 
+    #[cfg(feature = "ssr")]
+    fn update_hue(&mut self, ctx: &Context<Self>, x: f64) {
+        // Simplified version for SSR
+        let hue = (x / 100.0).clamp(0.0, 1.0); // Assume some default width
+        ctx.link().send_message(Msg::UpdateIndicatorPosition(hue));
+        ctx.link().send_message(Msg::UpdateHue(hue));
+    }
+
+    #[cfg(not(feature = "ssr"))]
     fn draw_gradient(&self) {
         if let (Some(canvas), Some(context)) =
             (self.canvas_ref.cast::<HtmlCanvasElement>(), &self.context)
@@ -284,5 +336,10 @@ impl ColorPickerHue {
                 context.fill_rect(x as f64, 0.0, 1.0, height);
             }
         }
+    }
+
+    #[cfg(feature = "ssr")]
+    fn draw_gradient(&self) {
+        // No-op for SSR
     }
 }

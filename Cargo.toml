@@ -13,6 +13,7 @@ keywords = ["yew", "tailwindcss", "ui"]
 categories = ["web-programming"]
 
 [features]
+ssr = []
 default = []
 ThemeProvider = []
 Accordion = []

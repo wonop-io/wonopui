@@ -1,11 +1,15 @@
 use crate::components::utils::drag_point::DragPoint;
 #[cfg(not(feature = "ThemeProvider"))]
-use crate::config::{get_brandguide, BrandGuideType};
+use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
-use crate::config::{use_brandguide, BrandGuideType};
+use crate::config::use_brandguide;
+use crate::config::BrandGuideType;
 use std::rc::Rc;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::closure::Closure;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
+#[cfg(not(feature = "ssr"))]
 use web_sys::HtmlDivElement;
 use yew::events::PointerEvent;
 use yew::prelude::*;
@@ -56,6 +60,7 @@ enum Mode {
     ResizeRight,
 }
 
+#[cfg(not(feature = "ssr"))]
 pub struct ResizableInner {
     container_ref: NodeRef,
     div_ref: NodeRef,
@@ -68,6 +73,18 @@ pub struct ResizableInner {
     move_closure: Closure<dyn FnMut(PointerEvent)>,
 }
 
+#[cfg(feature = "ssr")]
+pub struct ResizableInner {
+    container_ref: NodeRef,
+    div_ref: NodeRef,
+
+    mode: Mode,
+    mouse_position: (i32, i32),
+    coordinates: Option<(f64, f64, f64, f64)>,
+    scale: f64,
+}
+
+#[cfg(not(feature = "ssr"))]
 impl Drop for ResizableInner {
     fn drop(&mut self) {
         let container = self.container_ref.cast::<HtmlDivElement>();
@@ -90,6 +107,7 @@ pub enum Msg {
     PointerMoveEnd,
 }
 
+#[cfg(not(feature = "ssr"))]
 impl Component for ResizableInner {
     type Message = Msg;
     type Properties = ResizableInnerProps;
@@ -269,6 +287,46 @@ impl Component for ResizableInner {
                         onstart={ctx.link().callback(|e| Msg::PointerMoveStart(Mode::ResizeRight,e))}
                         onstop={ctx.link().callback(|_| Msg::PointerMoveEnd)}
                     />
+                </div>
+            </div>
+        }
+    }
+}
+
+#[cfg(feature = "ssr")]
+impl Component for ResizableInner {
+    type Message = Msg;
+    type Properties = ResizableInnerProps;
+
+    fn create(_ctx: &Context<Self>) -> Self {
+        Self {
+            container_ref: NodeRef::default(),
+            div_ref: NodeRef::default(),
+            mode: Mode::View,
+            mouse_position: (0, 0),
+            coordinates: None,
+            scale: 1.,
+        }
+    }
+
+    fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
+        false
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        let brandguide = &ctx.props().brandguide;
+        let props = &ctx.props().props;
+
+        html! {
+            <div
+                ref={self.container_ref.clone()}
+                class={classes!(&brandguide.resizable_container)}
+            >
+                <div
+                    ref={self.div_ref.clone()}
+                    class={classes!(&brandguide.resizable_box)}
+                >
+                    { for props.children.iter() }
                 </div>
             </div>
         }

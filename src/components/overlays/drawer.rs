@@ -41,10 +41,15 @@ pub struct DrawerProviderProps<T: Clone + PartialEq + 'static> {
     pub curtain_content: Html,
 }
 
+#[cfg_attr(feature = "ssr", allow(unused_variables))]
 #[function_component(DrawerProvider)]
 pub fn drawer_provider<T: Clone + PartialEq + 'static>(props: &DrawerProviderProps<T>) -> Html {
+    #[cfg(not(feature = "ssr"))]
     let is_open = use_state(|| false);
+    #[cfg(not(feature = "ssr"))]
     let open_drawer = use_state(|| None);
+
+    #[cfg(not(feature = "ssr"))]
     let toggle = {
         let is_open = is_open.clone();
         let open_drawer = open_drawer.clone();
@@ -59,6 +64,10 @@ pub fn drawer_provider<T: Clone + PartialEq + 'static>(props: &DrawerProviderPro
         })
     };
 
+    #[cfg(feature = "ssr")]
+    let toggle = Callback::from(|_: Option<T>| {});
+
+    #[cfg(not(feature = "ssr"))]
     let context = Rc::new(DrawerContext {
         is_open: *is_open,
         toggle: toggle.clone(),
@@ -68,12 +77,30 @@ pub fn drawer_provider<T: Clone + PartialEq + 'static>(props: &DrawerProviderPro
         curtain_content: props.curtain_content.clone(),
     });
 
+    #[cfg(feature = "ssr")]
+    let context = Rc::new(DrawerContext {
+        is_open: false,
+        toggle: toggle.clone(),
+        open_drawer: None,
+        side: props.side.clone(),
+        curtain: props.curtain,
+        curtain_content: props.curtain_content.clone(),
+    });
+
+    #[cfg(feature = "ssr")]
+    let is_open_html = html! {};
+
+    #[cfg(not(feature = "ssr"))]
+    let is_open_html = if *is_open {
+        props.render.emit((*open_drawer).clone().unwrap())
+    } else {
+        html! {}
+    };
+
     html! {
         <ContextProvider<Rc<DrawerContext<T>>> context={context}>
             { for props.children.iter() }
-            if *is_open {
-                {props.render.emit((*open_drawer).clone().unwrap())}
-            }
+            {is_open_html}
         </ContextProvider<Rc<DrawerContext<T>>>>
     }
 }

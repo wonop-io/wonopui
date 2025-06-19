@@ -11,7 +11,7 @@ pub enum AnnotationType {
     /// Information annotation (blue)
     Info,
     /// Success annotation (green)
-    Success
+    Success,
 }
 
 impl fmt::Display for AnnotationType {
@@ -30,18 +30,18 @@ impl fmt::Display for AnnotationType {
 pub struct Annotation {
     /// Line number where the annotation appears (1-indexed)
     pub line_number: usize,
-    
+
     /// Type of this annotation
     pub annotation_type: AnnotationType,
-    
+
     /// The message to display for this annotation
     pub message: String,
-    
+
     /// Optional column range where this annotation applies
     /// Format is (start_column, end_column)
     #[prop_or_default]
     pub column_range: Option<(usize, usize)>,
-    
+
     /// Whether this annotation should be displayed inline or as a popup
     #[prop_or(false)]
     pub inline: bool,
@@ -58,7 +58,7 @@ impl Annotation {
             inline: false,
         }
     }
-    
+
     /// Create a new warning annotation
     pub fn warning(line_number: usize, message: impl Into<String>) -> Self {
         Self {
@@ -69,7 +69,7 @@ impl Annotation {
             inline: false,
         }
     }
-    
+
     /// Create a new info annotation
     pub fn info(line_number: usize, message: impl Into<String>) -> Self {
         Self {
@@ -80,7 +80,7 @@ impl Annotation {
             inline: false,
         }
     }
-    
+
     /// Create a new success annotation
     pub fn success(line_number: usize, message: impl Into<String>) -> Self {
         Self {
@@ -91,13 +91,13 @@ impl Annotation {
             inline: false,
         }
     }
-    
+
     /// Make this annotation inline
     pub fn inline(mut self) -> Self {
         self.inline = true;
         self
     }
-    
+
     /// Add a column range to this annotation
     pub fn with_column_range(mut self, start: usize, end: usize) -> Self {
         self.column_range = Some((start, end));

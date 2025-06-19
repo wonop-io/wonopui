@@ -12,6 +12,7 @@ pub struct DialogContext {
 }
 
 /// Hook to manually open and close dialogs programmatically
+#[cfg_attr(feature = "ssr", allow(dead_code))]
 #[hook]
 pub fn use_dialog() -> (Callback<String>, Callback<()>, Option<String>) {
     let context = use_context::<Rc<DialogContext>>()
@@ -134,7 +135,7 @@ pub fn dialog(props: &DialogProps) -> Html {
     };
 
     html! {
-        <div class={classes!(brandguide.dialog_container,extra_classes)}>
+        <div class={classes!(brandguide.dialog_container.clone(),extra_classes)}>
             <div class={&brandguide.dialog_content} ref={props.node_ref.clone()}>
                 { for props.children.iter() }
             </div>

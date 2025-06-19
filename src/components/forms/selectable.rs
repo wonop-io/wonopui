@@ -3,9 +3,13 @@ use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
 use std::rc::Rc;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::closure::Closure;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
+#[cfg(not(feature = "ssr"))]
 use web_sys::HtmlElement;
+#[cfg(not(feature = "ssr"))]
 use web_sys::{MutationObserver, ResizeObserver};
 use yew::html::IntoPropValue;
 use yew::prelude::*;
@@ -143,6 +147,7 @@ pub fn selectable_area(props: &SelectableAreaProps) -> Html {
     }
 }
 
+#[cfg(not(feature = "ssr"))]
 fn get_bounding_client_rect(node: &HtmlElement) -> SelectedArea {
     let rect = node.get_bounding_client_rect();
 
@@ -156,6 +161,16 @@ fn get_bounding_client_rect(node: &HtmlElement) -> SelectedArea {
         left,
         width,
         height,
+    }
+}
+
+#[cfg(feature = "ssr")]
+fn get_bounding_client_rect(_node: &()) -> SelectedArea {
+    SelectedArea {
+        top: 0,
+        left: 0,
+        width: 0,
+        height: 0,
     }
 }
 
@@ -183,18 +198,21 @@ pub fn selectable_vtag(props: &SelectableVTagProps) -> Html {
         let state = state.clone();
         let id = props.id.clone();
         let node_ref = node_ref.clone();
-        use_effect_with(
-            (node_ref.clone(), node.clone(), id.clone()),
-            move |(node_ref, node, id)| {
-                if Some(id) == state.selected_id.as_ref() {
-                    if let Some(element) = node_ref.cast::<HtmlElement>() {
-                        let area = get_bounding_client_rect(&element);
-                        state.dispatch(SelectableAction::SetSelectedArea(Some(area)));
+        #[cfg(not(feature = "ssr"))]
+        {
+            use_effect_with(
+                (node_ref.clone(), node.clone(), id.clone()),
+                move |(node_ref, node, id)| {
+                    if Some(id) == state.selected_id.as_ref() {
+                        if let Some(element) = node_ref.cast::<HtmlElement>() {
+                            let area = get_bounding_client_rect(&element);
+                            state.dispatch(SelectableAction::SetSelectedArea(Some(area)));
+                        }
                     }
-                }
-                move || {}
-            },
-        )
+                    move || {}
+                },
+            )
+        }
     }
 
     node.add_listener(yew::html::onclick::Wrapper::__macro_new(onclick.clone()).unwrap());
@@ -236,6 +254,7 @@ pub fn selectable(props: &SelectableProps) -> Html {
                 state.dispatch(SelectableAction::SetSelectedArea(None));
             } else {
                 state.dispatch(SelectableAction::SetSelectedId(Some(id.clone())));
+                #[cfg(not(feature = "ssr"))]
                 if let Some(element) = node_ref.cast::<HtmlElement>() {
                     let area = get_bounding_client_rect(&element);
                     state.dispatch(SelectableAction::SetSelectedArea(Some(area)));
@@ -267,38 +286,40 @@ pub fn selectable(props: &SelectableProps) -> Html {
 
     {
         let state = state.clone();
-        let id = props.id.clone();
         let node_ref = node_ref.clone();
 
-        use_effect_with((node_ref.clone(),), move |(node_ref,)| {
-            let node_ref = node_ref.clone();
-            let node = node_ref.cast::<HtmlElement>();
-            let rs_obs = if let Some(element) = node {
-                let state_clone = state.clone();
-                let cb = {
-                    move || {
-                        if let Some(element) = node_ref.cast::<HtmlElement>() {
-                            let area = get_bounding_client_rect(&element);
-                            state_clone.dispatch(SelectableAction::SetSelectedArea(Some(area)));
+        #[cfg(not(feature = "ssr"))]
+        {
+            use_effect_with((node_ref.clone(),), move |(node_ref,)| {
+                let node_ref = node_ref.clone();
+                let node = node_ref.cast::<HtmlElement>();
+                let rs_obs = if let Some(element) = node {
+                    let state_clone = state.clone();
+                    let cb = {
+                        move || {
+                            if let Some(element) = node_ref.cast::<HtmlElement>() {
+                                let area = get_bounding_client_rect(&element);
+                                state_clone.dispatch(SelectableAction::SetSelectedArea(Some(area)));
+                            }
                         }
-                    }
+                    };
+                    let callback = Closure::<dyn Fn()>::new(cb);
+                    let resize_observer =
+                        MutationObserver::new(callback.as_ref().unchecked_ref()).unwrap();
+                    resize_observer.observe(&element);
+                    callback.forget();
+                    Some(resize_observer)
+                } else {
+                    None
                 };
-                let callback = Closure::<dyn Fn()>::new(cb);
-                let resize_observer =
-                    MutationObserver::new(callback.as_ref().unchecked_ref()).unwrap();
-                resize_observer.observe(&element);
-                callback.forget();
-                Some(resize_observer)
-            } else {
-                None
-            };
-            move || match rs_obs {
-                Some(rs) => {
-                    rs.disconnect();
+                move || match rs_obs {
+                    Some(rs) => {
+                        rs.disconnect();
+                    }
+                    None => (),
                 }
-                None => (),
-            }
-        });
+            });
+        }
     }
 
     let mut classes = props.class.clone();

@@ -1,8 +1,11 @@
+#[cfg(not(feature = "ssr"))]
 use crate::components::utils::window_provider::use_window;
+#[cfg(not(feature = "ssr"))]
 use gloo::events::EventListener;
 use yew::prelude::*;
 
 #[hook]
+#[cfg(not(feature = "ssr"))]
 pub fn use_media_query(query: &str) -> bool {
     let window = use_window();
     let query = query.to_string();
@@ -36,4 +39,10 @@ pub fn use_media_query(query: &str) -> bool {
     }
 
     *state
+}
+
+#[cfg(feature = "ssr")]
+#[hook]
+pub fn use_media_query(_query: &str) -> bool {
+    false
 }

@@ -1,5 +1,6 @@
 use crate::components::utils::media_query::use_media_query;
 use std::rc::Rc;
+#[cfg(not(feature = "ssr"))]
 use web_sys::window;
 use yew::prelude::*;
 
@@ -25,12 +26,16 @@ pub struct DarkModeProviderProps {
 #[function_component(DarkModeProvider)]
 pub fn dark_mode_provider(props: &DarkModeProviderProps) -> Html {
     let mode = use_state(|| DarkModeColor::System);
+
+    #[cfg(not(feature = "ssr"))]
     let document = window().unwrap().document().unwrap();
+
+    #[cfg(not(feature = "ssr"))]
     let body = document.body().unwrap();
 
     let mode_preference = use_media_query("(prefers-color-scheme: dark)");
 
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(not(feature = "ssr"))]
     {
         let body = body.clone();
         let mode = mode.clone();

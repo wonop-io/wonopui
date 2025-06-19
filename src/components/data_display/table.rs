@@ -33,12 +33,12 @@ pub fn table(props: &TableProps) -> Html {
 
     let container_class = if props.sticky_header {
         classes!(
-            brandguide.table_container,
+            brandguide.table_container.clone(),
             "sticky-header",
             props.class.clone()
         )
     } else {
-        classes!(brandguide.table_container, props.class.clone())
+        classes!(brandguide.table_container.clone(), props.class.clone())
     };
 
     html! {
@@ -75,9 +75,13 @@ pub fn table_head(props: &TableHeadProps) -> Html {
     let brandguide = get_brandguide();
 
     let head_class = if props.sticky {
-        classes!(brandguide.table_head, "sticky-top", props.class.clone())
+        classes!(
+            brandguide.table_head.clone(),
+            "sticky-top",
+            props.class.clone()
+        )
     } else {
-        classes!(brandguide.table_head, props.class.clone())
+        classes!(brandguide.table_head.clone(), props.class.clone())
     };
 
     html! {
@@ -171,7 +175,7 @@ pub fn table_cell(props: &TableCellProps) -> Html {
     let brandguide = get_brandguide();
     html! {
         <td
-            class={classes!(brandguide.table_cell, props.class.clone())}
+            class={classes!(brandguide.table_cell.clone(), props.class.clone())}
             colspan={props.colspan.map(|c| c.to_string())}
             rowspan={props.rowspan.map(|r| r.to_string())}
             width={props.width.clone()}
@@ -208,7 +212,7 @@ pub fn table_body(props: &TableBodyProps) -> Html {
     let brandguide = get_brandguide();
     html! {
         <tbody
-            class={classes!(brandguide.table_body, props.class.clone())}
+            class={classes!(brandguide.table_body.clone(), props.class.clone())}
             align={props.align.clone()}
             valign={props.valign.clone()}
         >
@@ -249,7 +253,7 @@ pub fn table_footer(props: &TableFooterProps) -> Html {
     let brandguide = get_brandguide();
     html! {
         <tfoot
-            class={classes!(brandguide.table_footer, props.class.clone())}
+            class={classes!(brandguide.table_footer.clone(), props.class.clone())}
             align={props.align.clone()}
             valign={props.valign.clone()}
         >

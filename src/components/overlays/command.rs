@@ -2,7 +2,9 @@
 use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
+#[cfg(not(feature = "ssr"))]
 use web_sys::KeyboardEvent;
 use yew::prelude::*;
 
@@ -45,6 +47,7 @@ where
         })
     };
 
+    #[cfg(not(feature = "ssr"))]
     let toggle = {
         let is_open = is_open.clone();
         let input_ref = input_ref.clone();
@@ -59,6 +62,16 @@ where
         })
     };
 
+    #[cfg(feature = "ssr")]
+    let toggle = {
+        let is_open = is_open.clone();
+        Callback::from(move |_| {
+            let new_value = !*is_open;
+            is_open.set(new_value);
+        })
+    };
+
+    #[cfg(not(feature = "ssr"))]
     let close = {
         let is_open = is_open.clone();
         let div_ref = div_ref.clone();
@@ -76,6 +89,15 @@ where
         })
     };
 
+    #[cfg(feature = "ssr")]
+    let close = {
+        let is_open = is_open.clone();
+        Callback::from(move |_: FocusEvent| {
+            is_open.set(false);
+        })
+    };
+
+    #[cfg(not(feature = "ssr"))]
     let oninput = {
         let is_open = is_open.clone();
         let value = value.clone();
@@ -102,6 +124,17 @@ where
         })
     };
 
+    #[cfg(feature = "ssr")]
+    let oninput = {
+        let is_open = is_open.clone();
+        Callback::from(move |_: InputEvent| {
+            if !*is_open {
+                is_open.set(true);
+            }
+        })
+    };
+
+    #[cfg(not(feature = "ssr"))]
     let onkeydown = {
         let is_open = is_open.clone();
         let filtered_options = filtered_options.clone();
@@ -138,6 +171,9 @@ where
             _ => {}
         })
     };
+
+    #[cfg(feature = "ssr")]
+    let onkeydown = Callback::from(|_| {});
 
     html! {
         <div ref={div_ref} class={classes!(&brandguide.command_container, props.class.clone())} tabindex="0" onfocusout={close}>

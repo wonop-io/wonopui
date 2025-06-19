@@ -1,6 +1,5 @@
+use crate::components::layout::layout_context::{LayoutAction, LayoutContext};
 use crate::components::layout::multicol_sidebar::{MultiColumnSidebar, SidebarColumn};
-use crate::components::layout::layout_context::{LayoutContext, LayoutAction};
-use gloo_console as console;
 use yew::prelude::*; // Import LayoutContext and SidebarPosition
 use yew_router::prelude::use_location;
 use yew_router::prelude::use_navigator;

@@ -35,6 +35,7 @@ pub enum DropdownItem {
     },
 }
 
+#[cfg_attr(feature = "ssr", allow(unused_variables))]
 #[function_component(Dropdown)]
 pub fn dropdown(props: &DropdownProps) -> Html {
     #[cfg(feature = "ThemeProvider")]
@@ -80,6 +81,7 @@ pub struct DropdownItemComponentProps {
     pub full_width: bool,
 }
 
+#[cfg_attr(feature = "ssr", allow(unused_variables))]
 #[function_component(DropdownItemComponent)]
 fn dropdown_item_component(props: &DropdownItemComponentProps) -> Html {
     #[cfg(feature = "ThemeProvider")]

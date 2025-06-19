@@ -5,8 +5,11 @@ use crate::config::use_brandguide;
 use crate::config::BrandGuideType;
 use std::cell::RefCell;
 use std::rc::Rc;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::closure::Closure;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
+#[cfg(not(feature = "ssr"))]
 use web_sys::{HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 
@@ -66,6 +69,7 @@ impl Component for TagInputInner {
                     onupdate.emit(self.tags.borrow().clone());
                 }
                 self.candidate_tags.borrow_mut().clear();
+                #[cfg(not(feature = "ssr"))]
                 if let Some(input) = self.input_ref.cast::<HtmlInputElement>() {
                     input.set_value("");
                 }
@@ -90,6 +94,7 @@ impl Component for TagInputInner {
                 true
             }
             Msg::FocusInput => {
+                #[cfg(not(feature = "ssr"))]
                 if let Some(input) = self.input_ref.cast::<HtmlInputElement>() {
                     let _ = input.focus();
                 }
@@ -102,23 +107,28 @@ impl Component for TagInputInner {
         let brandguide = &ctx.props().brandguide;
 
         let onkeypress = ctx.link().batch_callback(|e: KeyboardEvent| {
-            if e.key() == "Enter" {
-                let input: HtmlInputElement = e.target_unchecked_into();
-                let value = input.value();
-                if !value.is_empty() {
-                    input.set_value("");
-                    Some(Msg::AddTag(value))
-                } else {
-                    None
+            #[cfg(not(feature = "ssr"))]
+            {
+                if e.key() == "Enter" {
+                    let input: HtmlInputElement = e.target_unchecked_into();
+                    let value = input.value();
+                    if !value.is_empty() {
+                        input.set_value("");
+                        return Some(Msg::AddTag(value));
+                    }
                 }
-            } else {
-                None
             }
+            None
         });
 
         let oninput = ctx.link().callback(|e: InputEvent| {
-            let input: HtmlInputElement = e.target_unchecked_into();
-            Msg::UpdateInput(input.value())
+            #[cfg(not(feature = "ssr"))]
+            {
+                let input: HtmlInputElement = e.target_unchecked_into();
+                return Msg::UpdateInput(input.value());
+            }
+            #[cfg(feature = "ssr")]
+            Msg::UpdateInput(String::new())
         });
 
         let onfocus = ctx.link().callback(|_| Msg::FocusInput);
@@ -166,6 +176,7 @@ impl Component for TagInputInner {
     }
 
     fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
+        #[cfg(not(feature = "ssr"))]
         if first_render {
             if let Some(container) = self.container_ref.cast::<HtmlElement>() {
                 let link = ctx.link().clone();

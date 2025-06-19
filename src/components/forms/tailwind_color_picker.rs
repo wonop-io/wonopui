@@ -2,7 +2,9 @@
 use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
+#[cfg(not(feature = "ssr"))]
 use gloo_console as console;
+#[cfg(not(feature = "ssr"))]
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
@@ -33,6 +35,7 @@ pub fn tailwind_tailwind_color_picker(props: &ColorPickerProps) -> Html {
     let palette_visible = use_state(|| false);
     let dropdown_ref = use_node_ref();
 
+    #[cfg(not(feature = "ssr"))]
     {
         let palette_visible = *palette_visible;
         let dropdown_ref = dropdown_ref.clone();
@@ -52,6 +55,7 @@ pub fn tailwind_tailwind_color_picker(props: &ColorPickerProps) -> Html {
             e.prevent_default();
             let new_state = !*palette_visible;
             palette_visible.set(new_state);
+            #[cfg(not(feature = "ssr"))]
             if new_state {
                 if let Some(dropdown) = dropdown_ref.cast::<web_sys::HtmlElement>() {
                     console::log!("Focus!");
@@ -64,6 +68,7 @@ pub fn tailwind_tailwind_color_picker(props: &ColorPickerProps) -> Html {
     let on_blur = {
         let palette_visible = palette_visible.clone();
         Callback::from(move |_| {
+            #[cfg(not(feature = "ssr"))]
             console::log!("Blur!");
             palette_visible.set(false);
         })

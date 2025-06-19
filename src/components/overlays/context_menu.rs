@@ -1,8 +1,13 @@
 use crate::config::ClassesStr;
+#[cfg(not(feature = "ssr"))]
+use gloo::timers::callback::Timeout;
+#[cfg(not(feature = "ssr"))]
 use gloo_utils::document;
 use std::rc::Rc;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
-use web_sys::{Element, MouseEvent};
+#[cfg(not(feature = "ssr"))]
+use web_sys::{Element, FocusEvent, MouseEvent};
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
@@ -10,6 +15,7 @@ pub struct ContextMenuState {
     pub is_open: bool,
     pub position: (i32, i32),
     pub toggle: Callback<(i32, i32)>,
+    pub close: Callback<()>,
 }
 
 #[derive(Properties, PartialEq)]
@@ -32,10 +38,18 @@ pub fn context_menu(props: &ContextMenuProps) -> Html {
         })
     };
 
+    let close = {
+        let is_open = is_open.clone();
+        Callback::from(move |_| {
+            is_open.set(false);
+        })
+    };
+
     let state = Rc::new(ContextMenuState {
         is_open: *is_open,
         position: *position,
         toggle: toggle.clone(),
+        close: close.clone(),
     });
 
     html! {
@@ -59,6 +73,7 @@ pub struct ContextMenuTriggerProps {
 pub fn context_menu_trigger(props: &ContextMenuTriggerProps) -> Html {
     let state = use_context::<Rc<ContextMenuState>>().expect("no context found");
 
+    #[cfg(not(feature = "ssr"))]
     let oncontextmenu = {
         let toggle = state.toggle.clone();
         Callback::from(move |event: MouseEvent| {
@@ -66,6 +81,9 @@ pub fn context_menu_trigger(props: &ContextMenuTriggerProps) -> Html {
             toggle.emit((event.client_x(), event.client_y()));
         })
     };
+
+    #[cfg(feature = "ssr")]
+    let oncontextmenu = Callback::from(|_| {});
 
     html! {
         <div {oncontextmenu} class={classes!(props.class.clone(), "cursor-pointer")}>
@@ -85,6 +103,7 @@ pub struct ContextMenuContentProps {
 #[function_component(ContextMenuContent)]
 pub fn context_menu_content(props: &ContextMenuContentProps) -> Html {
     let state = use_context::<Rc<ContextMenuState>>().expect("no context found");
+    let menu_ref = use_node_ref();
 
     if !state.is_open {
         return html! {};
@@ -95,8 +114,47 @@ pub fn context_menu_content(props: &ContextMenuContentProps) -> Html {
         state.position.0, state.position.1
     );
 
+    #[cfg(not(feature = "ssr"))]
+    let onblur = {
+        let close = state.close.clone();
+        let menu_ref = menu_ref.clone();
+
+        Callback::from(move |e: FocusEvent| {
+            if let Some(related_target) = e.related_target() {
+                let related_element: web_sys::Element = related_target.unchecked_into();
+                if let Some(menu_element) = menu_ref.cast::<web_sys::Element>() {
+                    if !menu_element.contains(Some(&related_element)) {
+                        // Use a small timeout to allow click events on menu items to process
+                        let close_callback = close.clone();
+                        Timeout::new(50, move || {
+                            close_callback.emit(());
+                        })
+                        .forget();
+                    }
+                }
+            } else {
+                // Use a small timeout to allow click events on menu items to process
+                let close_callback = close.clone();
+                Timeout::new(50, move || {
+                    close_callback.emit(());
+                })
+                .forget();
+            }
+        })
+    };
+
+    #[cfg(feature = "ssr")]
+    let onblur = Callback::from(|_| {});
+
     html! {
-        <div class={classes!(props.class.clone(), "bg-white","dark:bg-zinc-800","border","border-gray-200","dark:border-gray-700","rounded-md","shadow-lg","p-1","z-50")} {style}>
+        <div
+            ref={menu_ref}
+            class={classes!(props.class.clone(), "bg-white","dark:bg-zinc-800","border","border-gray-200","dark:border-gray-700","rounded-md","shadow-lg","p-1","z-50")}
+            {style}
+            tabindex="0"
+            {onblur}
+            autofocus=true
+        >
             { for props.children.iter() }
         </div>
     }
@@ -110,10 +168,37 @@ pub struct ContextMenuItemProps {
     pub inset: bool,
     #[prop_or(false)]
     pub disabled: bool,
+    #[prop_or_default]
+    pub onclick: Callback<MouseEvent>,
 }
 
 #[function_component(ContextMenuItem)]
 pub fn context_menu_item(props: &ContextMenuItemProps) -> Html {
+    let state = use_context::<Rc<ContextMenuState>>().expect("no context found");
+
+    let onclick = {
+        let close = state.close.clone();
+        let disabled = props.disabled;
+        let user_onclick = props.onclick.clone();
+
+        Callback::from(move |e: MouseEvent| {
+            if !disabled {
+                user_onclick.emit(e);
+
+                // Close the menu after item click with a small delay
+                let close_callback = close.clone();
+                #[cfg(not(feature = "ssr"))]
+                Timeout::new(50, move || {
+                    close_callback.emit(());
+                })
+                .forget();
+
+                #[cfg(feature = "ssr")]
+                close_callback.emit(());
+            }
+        })
+    };
+
     let class = classes!(
         "flex",
         "items-center",
@@ -130,7 +215,7 @@ pub fn context_menu_item(props: &ContextMenuItemProps) -> Html {
     );
 
     html! {
-        <div {class} role="menuitem" tabindex="-1">
+        <div {class} role="menuitem" tabindex="-1" {onclick}>
             { for props.children.iter() }
         </div>
     }
@@ -157,6 +242,8 @@ pub struct ContextMenuSubTriggerProps {
     pub children: Children,
     #[prop_or(false)]
     pub inset: bool,
+    #[prop_or_default]
+    pub onclick: Callback<MouseEvent>,
 }
 
 #[function_component(ContextMenuSubTrigger)]
@@ -176,8 +263,10 @@ pub fn context_menu_sub_trigger(props: &ContextMenuSubTriggerProps) -> Html {
         if props.inset { "pl-8" } else { "" }
     );
 
+    let onclick = props.onclick.clone();
+
     html! {
-        <div {class} role="menuitem" tabindex="-1">
+        <div {class} role="menuitem" tabindex="-1" {onclick}>
             { for props.children.iter() }
             <span class="ml-auto pl-2">{ "▶" }</span>
         </div>
@@ -214,10 +303,34 @@ pub struct ContextMenuCheckboxItemProps {
     pub children: Children,
     #[prop_or(false)]
     pub checked: bool,
+    #[prop_or_default]
+    pub onclick: Callback<MouseEvent>,
 }
 
 #[function_component(ContextMenuCheckboxItem)]
 pub fn context_menu_checkbox_item(props: &ContextMenuCheckboxItemProps) -> Html {
+    let state = use_context::<Rc<ContextMenuState>>().expect("no context found");
+
+    let onclick = {
+        let close = state.close.clone();
+        let user_onclick = props.onclick.clone();
+
+        Callback::from(move |e: MouseEvent| {
+            user_onclick.emit(e);
+
+            // Close the menu after item click with a small delay
+            let close_callback = close.clone();
+            #[cfg(not(feature = "ssr"))]
+            Timeout::new(50, move || {
+                close_callback.emit(());
+            })
+            .forget();
+
+            #[cfg(feature = "ssr")]
+            close_callback.emit(());
+        })
+    };
+
     let class = classes!(
         "flex",
         "items-center",
@@ -233,7 +346,7 @@ pub fn context_menu_checkbox_item(props: &ContextMenuCheckboxItemProps) -> Html 
     );
 
     html! {
-        <div {class} role="menuitemcheckbox" aria-checked={props.checked.to_string()}>
+        <div {class} role="menuitemcheckbox" aria-checked={props.checked.to_string()} {onclick}>
             <span class="mr-2">
                 if props.checked {
                     { "✓" }
@@ -244,19 +357,26 @@ pub fn context_menu_checkbox_item(props: &ContextMenuCheckboxItemProps) -> Html 
     }
 }
 
-#[derive(Properties, PartialEq)]
+#[derive(Properties, Clone, PartialEq)]
 pub struct ContextMenuRadioGroupProps {
-    #[prop_or_default]
     pub children: Children,
     pub value: String,
 }
 
 #[function_component(ContextMenuRadioGroup)]
 pub fn context_menu_radio_group(props: &ContextMenuRadioGroupProps) -> Html {
+    let value = props.value.clone();
+    let group_props = Rc::new(ContextMenuRadioGroupProps {
+        children: props.children.clone(),
+        value,
+    });
+
     html! {
-        <div role="group">
-            { for props.children.iter() }
-        </div>
+        <ContextProvider<Rc<ContextMenuRadioGroupProps>> context={group_props}>
+            <div role="group">
+                { for props.children.iter() }
+            </div>
+        </ContextProvider<Rc<ContextMenuRadioGroupProps>>>
     }
 }
 
@@ -291,13 +411,40 @@ pub struct ContextMenuRadioItemProps {
     #[prop_or_default]
     pub children: Children,
     pub value: String,
+    #[prop_or_default]
+    pub onclick: Callback<MouseEvent>,
 }
 
 #[function_component(ContextMenuRadioItem)]
 pub fn context_menu_radio_item(props: &ContextMenuRadioItemProps) -> Html {
-    let radio_group =
-        use_context::<Rc<ContextMenuRadioGroupProps>>().expect("no radio group context found");
-    let is_selected = props.value == radio_group.value;
+    let radio_group = use_context::<Rc<ContextMenuRadioGroupProps>>();
+    let state = use_context::<Rc<ContextMenuState>>().expect("no context found");
+
+    let is_selected = if let Some(group) = radio_group {
+        props.value == group.value
+    } else {
+        false
+    };
+
+    let onclick = {
+        let close = state.close.clone();
+        let user_onclick = props.onclick.clone();
+
+        Callback::from(move |e: MouseEvent| {
+            user_onclick.emit(e);
+
+            // Close the menu after item click with a small delay
+            let close_callback = close.clone();
+            #[cfg(not(feature = "ssr"))]
+            Timeout::new(50, move || {
+                close_callback.emit(());
+            })
+            .forget();
+
+            #[cfg(feature = "ssr")]
+            close_callback.emit(());
+        })
+    };
 
     let class = classes!(
         "flex",
@@ -314,7 +461,7 @@ pub fn context_menu_radio_item(props: &ContextMenuRadioItemProps) -> Html {
     );
 
     html! {
-        <div {class} role="menuitemradio" aria-checked={is_selected.to_string()}>
+        <div {class} role="menuitemradio" aria-checked={is_selected.to_string()} {onclick}>
             <span class="mr-2">
                 if is_selected {
                     { "●" }

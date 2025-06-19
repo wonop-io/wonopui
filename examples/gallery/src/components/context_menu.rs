@@ -81,6 +81,16 @@ pub fn context_menu_theme_editor() -> Html {
 
 #[function_component(ContextMenuDocumentation)]
 pub fn context_menu_documentation() -> Html {
+    // State to track which menu item was clicked
+    let clicked_item = use_state(|| None::<String>);
+
+    let on_menu_item_click = {
+        let clicked_item = clicked_item.clone();
+        Callback::from(move |item: String| {
+            clicked_item.set(Some(item));
+        })
+    };
+
     html! {
         <Container variant={ContainerVariant::Large} class="bg-white dark:bg-zinc-900 min-h-screen">
             <h1 class="text-3xl font-bold mb-4 text-zinc-900 dark:text-white">
@@ -93,6 +103,16 @@ pub fn context_menu_documentation() -> Html {
             <h2 class="text-2xl font-semibold mb-4 text-zinc-900 dark:text-white">
                 { "Example" }
             </h2>
+
+            // Display the clicked item if any
+            if let Some(item) = (*clicked_item).clone() {
+                <div class="mb-4 p-3 bg-blue-100 dark:bg-blue-900 rounded">
+                    <p class="text-blue-800 dark:text-blue-100">
+                        { format!("Last clicked: {}", item) }
+                    </p>
+                </div>
+            }
+
             <ExampleCode
                 preview={html! {
                     <ContextMenu>
@@ -100,7 +120,7 @@ pub fn context_menu_documentation() -> Html {
                             { "Right click here" }
                         </ContextMenuTrigger>
                         <ContextMenuContent class="w-64">
-                            <ContextMenuItem inset=true>
+                            <ContextMenuItem inset=true onclick={on_menu_item_click.reform(|_| "Back".to_string())}>
                                 { "Back" }
                                 <ContextMenuShortcut>{ "⌘[" }</ContextMenuShortcut>
                             </ContextMenuItem>
@@ -108,37 +128,47 @@ pub fn context_menu_documentation() -> Html {
                                 { "Forward" }
                                 <ContextMenuShortcut>{ "⌘]" }</ContextMenuShortcut>
                             </ContextMenuItem>
-                            <ContextMenuItem inset=true>
+                            <ContextMenuItem inset=true onclick={on_menu_item_click.reform(|_| "Reload".to_string())}>
                                 { "Reload" }
                                 <ContextMenuShortcut>{ "⌘R" }</ContextMenuShortcut>
                             </ContextMenuItem>
                             <ContextMenuSub>
                                 <ContextMenuSubTrigger inset=true>{ "More Tools" }</ContextMenuSubTrigger>
                                 <ContextMenuSubContent class="w-48">
-                                    <ContextMenuItem>
+                                    <ContextMenuItem onclick={on_menu_item_click.reform(|_| "Save Page As...".to_string())}>
                                         { "Save Page As..." }
                                         <ContextMenuShortcut>{ "⇧⌘S" }</ContextMenuShortcut>
                                     </ContextMenuItem>
-                                    <ContextMenuItem>{ "Create Shortcut..." }</ContextMenuItem>
-                                    <ContextMenuItem>{ "Name Window..." }</ContextMenuItem>
+                                    <ContextMenuItem onclick={on_menu_item_click.reform(|_| "Create Shortcut...".to_string())}>
+                                        { "Create Shortcut..." }
+                                    </ContextMenuItem>
+                                    <ContextMenuItem onclick={on_menu_item_click.reform(|_| "Name Window...".to_string())}>
+                                        { "Name Window..." }
+                                    </ContextMenuItem>
                                     <ContextMenuSeparator />
-                                    <ContextMenuItem>{ "Developer Tools" }</ContextMenuItem>
+                                    <ContextMenuItem onclick={on_menu_item_click.reform(|_| "Developer Tools".to_string())}>
+                                        { "Developer Tools" }
+                                    </ContextMenuItem>
                                 </ContextMenuSubContent>
                             </ContextMenuSub>
                             <ContextMenuSeparator />
-                            <ContextMenuCheckboxItem checked=true>
+                            <ContextMenuCheckboxItem checked=true onclick={on_menu_item_click.reform(|_| "Show Bookmarks Bar".to_string())}>
                                 { "Show Bookmarks Bar" }
                                 <ContextMenuShortcut>{ "⌘⇧B" }</ContextMenuShortcut>
                             </ContextMenuCheckboxItem>
-                            <ContextMenuCheckboxItem>{ "Show Full URLs" }</ContextMenuCheckboxItem>
+                            <ContextMenuCheckboxItem onclick={on_menu_item_click.reform(|_| "Show Full URLs".to_string())}>
+                                { "Show Full URLs" }
+                            </ContextMenuCheckboxItem>
                             <ContextMenuSeparator />
                             <ContextMenuRadioGroup value="pedro">
                                 <ContextMenuLabel inset=true>{ "People" }</ContextMenuLabel>
                                 <ContextMenuSeparator />
-                                <ContextMenuRadioItem value="pedro">
+                                <ContextMenuRadioItem value="pedro" onclick={on_menu_item_click.reform(|_| "Pedro Duarte".to_string())}>
                                     { "Pedro Duarte" }
                                 </ContextMenuRadioItem>
-                                <ContextMenuRadioItem value="colm">{ "Colm Tuite" }</ContextMenuRadioItem>
+                                <ContextMenuRadioItem value="colm" onclick={on_menu_item_click.reform(|_| "Colm Tuite".to_string())}>
+                                    { "Colm Tuite" }
+                                </ContextMenuRadioItem>
                             </ContextMenuRadioGroup>
                         </ContextMenuContent>
                     </ContextMenu>
@@ -147,12 +177,21 @@ pub fn context_menu_documentation() -> Html {
                     <ContextMenuThemeEditor />
                 }}
                 code={r#"
+// Create a state to track which item was clicked
+let clicked_item = use_state(|| None::<String>);
+let on_menu_item_click = {
+    let clicked_item = clicked_item.clone();
+    Callback::from(move |item: String| {
+        clicked_item.set(Some(item));
+    })
+};
+
 <ContextMenu>
     <ContextMenuTrigger class="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm">
         { "Right click here" }
     </ContextMenuTrigger>
     <ContextMenuContent class="w-64">
-        <ContextMenuItem inset=true>
+        <ContextMenuItem inset=true onclick={on_menu_item_click.reform(|_| "Back".to_string())}>
             { "Back" }
             <ContextMenuShortcut>{ "⌘[" }</ContextMenuShortcut>
         </ContextMenuItem>
@@ -160,38 +199,29 @@ pub fn context_menu_documentation() -> Html {
             { "Forward" }
             <ContextMenuShortcut>{ "⌘]" }</ContextMenuShortcut>
         </ContextMenuItem>
-        <ContextMenuItem inset=true>
+        <ContextMenuItem inset=true onclick={on_menu_item_click.reform(|_| "Reload".to_string())}>
             { "Reload" }
             <ContextMenuShortcut>{ "⌘R" }</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuSub>
             <ContextMenuSubTrigger inset=true>{ "More Tools" }</ContextMenuSubTrigger>
             <ContextMenuSubContent class="w-48">
-                <ContextMenuItem>
+                <ContextMenuItem onclick={on_menu_item_click.reform(|_| "Save Page As...".to_string())}>
                     { "Save Page As..." }
                     <ContextMenuShortcut>{ "⇧⌘S" }</ContextMenuShortcut>
                 </ContextMenuItem>
-                <ContextMenuItem>{ "Create Shortcut..." }</ContextMenuItem>
-                <ContextMenuItem>{ "Name Window..." }</ContextMenuItem>
-                <ContextMenuSeparator />
-                <ContextMenuItem>{ "Developer Tools" }</ContextMenuItem>
+                <ContextMenuItem onclick={on_menu_item_click.reform(|_| "Create Shortcut...".to_string())}>
+                    { "Create Shortcut..." }
+                </ContextMenuItem>
+                <!-- Other menu items with onclick handlers -->
             </ContextMenuSubContent>
         </ContextMenuSub>
-        <ContextMenuSeparator />
-        <ContextMenuCheckboxItem checked=true>
-            { "Show Bookmarks Bar" }
-            <ContextMenuShortcut>{ "⌘⇧B" }</ContextMenuShortcut>
-        </ContextMenuCheckboxItem>
-        <ContextMenuCheckboxItem>{ "Show Full URLs" }</ContextMenuCheckboxItem>
-        <ContextMenuSeparator />
-        <ContextMenuRadioGroup value="pedro">
-            <ContextMenuLabel inset=true>{ "People" }</ContextMenuLabel>
-            <ContextMenuSeparator />
-            <ContextMenuRadioItem value="pedro">
-                { "Pedro Duarte" }
-            </ContextMenuRadioItem>
-            <ContextMenuRadioItem value="colm">{ "Colm Tuite" }</ContextMenuRadioItem>
-        </ContextMenuRadioGroup>
+        <!-- Display the clicked item if any -->
+        if let Some(item) = (*clicked_item).clone() {
+            <div class="mt-4 p-2 bg-blue-100 rounded">
+                <p>{ format!("Last clicked: {}", item) }</p>
+            </div>
+        }
     </ContextMenuContent>
 </ContextMenu>"#.to_string()}
             />
@@ -235,6 +265,7 @@ pub fn context_menu_documentation() -> Html {
                     ("children", "Children", "The child elements to be rendered inside the context menu item."),
                     ("inset", "bool", "Whether the item should be inset."),
                     ("disabled", "bool", "Whether the item is disabled."),
+                    ("onclick", "Callback<MouseEvent>", "Callback function triggered when the item is clicked."),
                 ]}
             />
 
@@ -276,6 +307,7 @@ pub fn context_menu_documentation() -> Html {
                 props={vec![
                     ("children", "Children", "The child elements to be rendered inside the checkbox item."),
                     ("checked", "bool", "Whether the checkbox is checked."),
+                    ("onclick", "Callback<MouseEvent>", "Callback function triggered when the checkbox item is clicked."),
                 ]}
             />
 
@@ -303,6 +335,7 @@ pub fn context_menu_documentation() -> Html {
                 props={vec![
                     ("children", "Children", "The child elements to be rendered inside the radio item."),
                     ("value", "String", "The value associated with this radio item."),
+                    ("onclick", "Callback<MouseEvent>", "Callback function triggered when the radio item is clicked."),
                 ]}
             />
 
@@ -323,6 +356,7 @@ pub fn context_menu_documentation() -> Html {
                     "Use ContextMenuSub for nested submenus.".to_string(),
                     "ContextMenuCheckboxItem and ContextMenuRadioItem can be used for selectable options.".to_string(),
                     "ContextMenuShortcut can be used to display keyboard shortcuts for menu items.".to_string(),
+                    "You can attach onclick handlers to menu items to perform actions when they are clicked.".to_string(),
                     "The component supports keyboard navigation for improved accessibility.".to_string(),
                     "Ensure that the context menu is positioned within the viewport to avoid overflow issues.".to_string(),
                 ]}

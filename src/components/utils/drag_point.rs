@@ -1,4 +1,6 @@
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::closure::Closure;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
 use yew::events::PointerEvent;
 use yew::prelude::*;
@@ -12,7 +14,11 @@ pub fn drag_point(props: &DragPointProps) -> Html {
         tag,
     } = props;
     let drag_point_ref = use_node_ref();
+
+    #[cfg(not(feature = "ssr"))]
     let active_pointer = use_state(|| None);
+
+    #[cfg(not(feature = "ssr"))]
     let onpointerdown = {
         let active_pointer = active_pointer.clone();
         let drag_point_ref = drag_point_ref.clone();
@@ -28,6 +34,15 @@ pub fn drag_point(props: &DragPointProps) -> Html {
         })
     };
 
+    #[cfg(feature = "ssr")]
+    let onpointerdown = {
+        let onstart = onstart.clone();
+        Callback::from(move |e: PointerEvent| {
+            onstart.emit(e);
+        })
+    };
+
+    #[cfg(not(feature = "ssr"))]
     {
         let onstop = onstop.clone();
         let drag_point_ref = drag_point_ref.clone();
@@ -69,7 +84,6 @@ pub fn drag_point(props: &DragPointProps) -> Html {
             ref={drag_point_ref}
             class={class.clone()}
             onpointerdown={onpointerdown}
-
         />
     }
 }

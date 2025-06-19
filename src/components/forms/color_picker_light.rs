@@ -1,8 +1,13 @@
+#[cfg(not(feature = "ssr"))]
 use gloo_utils::window;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::prelude::*;
+#[cfg(not(feature = "ssr"))]
 use web_sys::wasm_bindgen::JsCast;
+#[cfg(not(feature = "ssr"))]
 use web_sys::ResizeObserver;
+#[cfg(not(feature = "ssr"))]
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlElement};
 use yew::events::PointerEvent;
 use yew::prelude::*;
@@ -23,13 +28,18 @@ pub struct ColorPickerLightProps {
 
 pub struct ColorPickerLight {
     canvas_ref: NodeRef,
+    #[cfg(not(feature = "ssr"))]
     context: Option<CanvasRenderingContext2d>,
     active_pointer: Option<i32>,
     current_light: f64,
     indicator_position: f64,
+    #[cfg(not(feature = "ssr"))]
     move_closure: Option<Closure<dyn FnMut(PointerEvent)>>,
+    #[cfg(not(feature = "ssr"))]
     up_closure: Option<Closure<dyn FnMut(PointerEvent)>>,
+    #[cfg(not(feature = "ssr"))]
     resize_observer: Option<ResizeObserver>,
+    #[cfg(not(feature = "ssr"))]
     resize_callback: Option<Closure<dyn FnMut()>>,
     hue: f64,
     saturation: f64,
@@ -44,6 +54,7 @@ pub enum Msg {
     Resize,
 }
 
+#[cfg(not(feature = "ssr"))]
 impl Drop for ColorPickerLight {
     fn drop(&mut self) {
         let window = web_sys::window().expect("no global `window` exists");
@@ -77,6 +88,13 @@ impl Drop for ColorPickerLight {
     }
 }
 
+#[cfg(feature = "ssr")]
+impl Drop for ColorPickerLight {
+    fn drop(&mut self) {
+        // Empty implementation for SSR
+    }
+}
+
 impl Component for ColorPickerLight {
     type Message = Msg;
     type Properties = ColorPickerLightProps;
@@ -84,13 +102,18 @@ impl Component for ColorPickerLight {
     fn create(ctx: &Context<Self>) -> Self {
         Self {
             canvas_ref: NodeRef::default(),
+            #[cfg(not(feature = "ssr"))]
             context: None,
             active_pointer: None,
             current_light: ctx.props().value,
             indicator_position: ctx.props().value,
+            #[cfg(not(feature = "ssr"))]
             move_closure: None,
+            #[cfg(not(feature = "ssr"))]
             up_closure: None,
+            #[cfg(not(feature = "ssr"))]
             resize_observer: None,
+            #[cfg(not(feature = "ssr"))]
             resize_callback: None,
             hue: ctx.props().hue,
             saturation: ctx.props().saturation,
@@ -100,77 +123,91 @@ impl Component for ColorPickerLight {
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::PointerDown(event) => {
-                if let Some(element) = self.canvas_ref.cast::<web_sys::Element>() {
-                    element.set_pointer_capture(event.pointer_id()).unwrap();
-                    self.active_pointer = Some(event.pointer_id());
+                #[cfg(not(feature = "ssr"))]
+                {
+                    if let Some(element) = self.canvas_ref.cast::<web_sys::Element>() {
+                        element.set_pointer_capture(event.pointer_id()).unwrap();
+                        self.active_pointer = Some(event.pointer_id());
 
-                    let window = web_sys::window().expect("no global `window` exists");
-                    let link = ctx.link().clone();
-                    self.move_closure = {
-                        let link = link.clone();
-                        Some(Closure::wrap(
-                            Box::new(move |event: web_sys::PointerEvent| {
-                                link.send_message(Msg::PointerMove(event));
-                            }) as Box<dyn FnMut(_)>,
-                        ))
-                    };
-                    self.up_closure = {
-                        let link = link.clone();
-                        Some(Closure::wrap(
-                            Box::new(move |event: web_sys::PointerEvent| {
-                                link.send_message(Msg::PointerUp(event));
-                            }) as Box<dyn FnMut(_)>,
-                        ))
-                    };
+                        let window = web_sys::window().expect("no global `window` exists");
+                        let link = ctx.link().clone();
+                        self.move_closure = {
+                            let link = link.clone();
+                            Some(Closure::wrap(
+                                Box::new(move |event: web_sys::PointerEvent| {
+                                    link.send_message(Msg::PointerMove(event));
+                                }) as Box<dyn FnMut(_)>,
+                            ))
+                        };
+                        self.up_closure = {
+                            let link = link.clone();
+                            Some(Closure::wrap(
+                                Box::new(move |event: web_sys::PointerEvent| {
+                                    link.send_message(Msg::PointerUp(event));
+                                }) as Box<dyn FnMut(_)>,
+                            ))
+                        };
 
-                    window
-                        .add_event_listener_with_callback(
-                            "pointermove",
-                            self.move_closure.as_ref().unwrap().as_ref().unchecked_ref(),
-                        )
-                        .unwrap();
-                    window
-                        .add_event_listener_with_callback(
-                            "pointerup",
-                            self.up_closure.as_ref().unwrap().as_ref().unchecked_ref(),
-                        )
-                        .unwrap();
+                        window
+                            .add_event_listener_with_callback(
+                                "pointermove",
+                                self.move_closure.as_ref().unwrap().as_ref().unchecked_ref(),
+                            )
+                            .unwrap();
+                        window
+                            .add_event_listener_with_callback(
+                                "pointerup",
+                                self.up_closure.as_ref().unwrap().as_ref().unchecked_ref(),
+                            )
+                            .unwrap();
+                    }
+                    self.update_light(ctx, event.offset_x() as f64);
                 }
-                self.update_light(ctx, event.offset_x() as f64);
+
+                #[cfg(feature = "ssr")]
+                {
+                    self.active_pointer = Some(event.pointer_id());
+                }
                 true
             }
             Msg::PointerMove(event) => {
                 if Some(event.pointer_id()) == self.active_pointer {
-                    self.update_light(ctx, event.offset_x() as f64);
+                    #[cfg(not(feature = "ssr"))]
+                    {
+                        self.update_light(ctx, event.offset_x() as f64);
+                    }
                 }
                 true
             }
             Msg::PointerUp(event) => {
                 if Some(event.pointer_id()) == self.active_pointer {
-                    if let Some(element) = self.canvas_ref.cast::<web_sys::Element>() {
-                        element.release_pointer_capture(event.pointer_id()).unwrap();
+                    #[cfg(not(feature = "ssr"))]
+                    {
+                        if let Some(element) = self.canvas_ref.cast::<web_sys::Element>() {
+                            element.release_pointer_capture(event.pointer_id()).unwrap();
+                        }
+                        let window = web_sys::window().expect("no global `window` exists");
+                        if let Some(move_closure) = &self.move_closure {
+                            window
+                                .remove_event_listener_with_callback(
+                                    "pointermove",
+                                    move_closure.as_ref().unchecked_ref(),
+                                )
+                                .unwrap();
+                        }
+                        if let Some(up_closure) = &self.up_closure {
+                            window
+                                .remove_event_listener_with_callback(
+                                    "pointerup",
+                                    up_closure.as_ref().unchecked_ref(),
+                                )
+                                .unwrap();
+                        }
+                        self.move_closure = None;
+                        self.up_closure = None;
                     }
-                    self.active_pointer = None;
 
-                    let window = web_sys::window().expect("no global `window` exists");
-                    if let Some(move_closure) = &self.move_closure {
-                        window
-                            .remove_event_listener_with_callback(
-                                "pointermove",
-                                move_closure.as_ref().unchecked_ref(),
-                            )
-                            .unwrap();
-                    }
-                    if let Some(up_closure) = &self.up_closure {
-                        window
-                            .remove_event_listener_with_callback(
-                                "pointerup",
-                                up_closure.as_ref().unchecked_ref(),
-                            )
-                            .unwrap();
-                    }
-                    self.move_closure = None;
-                    self.up_closure = None;
+                    self.active_pointer = None;
                     ctx.props().onchange.emit(self.current_light);
                 }
                 false
@@ -186,7 +223,10 @@ impl Component for ColorPickerLight {
                 update
             }
             Msg::Resize => {
-                self.draw_gradient(ctx);
+                #[cfg(not(feature = "ssr"))]
+                {
+                    self.draw_gradient(ctx);
+                }
                 true
             }
         }
@@ -210,6 +250,7 @@ impl Component for ColorPickerLight {
     }
 
     fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
+        #[cfg(not(feature = "ssr"))]
         if first_render {
             if let Some(canvas) = self.canvas_ref.cast::<HtmlCanvasElement>() {
                 let context = canvas
@@ -253,23 +294,36 @@ impl Component for ColorPickerLight {
                 self.resize_observer = Some(resize_observer);
             }
         } else {
-            // Check if hue or saturation has changed
-            if self.hue != ctx.props().hue || self.saturation != ctx.props().saturation {
+            #[cfg(not(feature = "ssr"))]
+            {
+                // Check if hue or saturation has changed
+                if self.hue != ctx.props().hue || self.saturation != ctx.props().saturation {
+                    self.hue = ctx.props().hue;
+                    self.saturation = ctx.props().saturation;
+                    self.draw_gradient(ctx);
+                }
+            }
+
+            #[cfg(feature = "ssr")]
+            {
                 self.hue = ctx.props().hue;
                 self.saturation = ctx.props().saturation;
-                self.draw_gradient(ctx);
             }
         }
     }
 
     fn changed(&mut self, ctx: &Context<Self>, _old_props: &Self::Properties) -> bool {
         // Redraw gradient if hue or saturation has changed
-        self.draw_gradient(ctx);
+        #[cfg(not(feature = "ssr"))]
+        {
+            self.draw_gradient(ctx);
+        }
         true
     }
 }
 
 impl ColorPickerLight {
+    #[cfg(not(feature = "ssr"))]
     fn update_light(&mut self, ctx: &Context<Self>, x: f64) {
         if let Some(canvas) = self.canvas_ref.cast::<HtmlCanvasElement>() {
             let width = canvas.client_width() as f64;
@@ -281,6 +335,12 @@ impl ColorPickerLight {
         }
     }
 
+    #[cfg(feature = "ssr")]
+    fn update_light(&mut self, _ctx: &Context<Self>, _x: f64) {
+        // Empty implementation for SSR
+    }
+
+    #[cfg(not(feature = "ssr"))]
     fn draw_gradient(&self, ctx: &Context<Self>) {
         if let (Some(canvas), Some(context)) =
             (self.canvas_ref.cast::<HtmlCanvasElement>(), &self.context)
@@ -315,5 +375,10 @@ impl ColorPickerLight {
             context.set_fill_style(&gradient);
             context.fill_rect(0.0, 0.0, width, height);
         }
+    }
+
+    #[cfg(feature = "ssr")]
+    fn draw_gradient(&self, _ctx: &Context<Self>) {
+        // Empty implementation for SSR
     }
 }

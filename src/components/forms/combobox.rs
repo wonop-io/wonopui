@@ -3,8 +3,12 @@ use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
 use crate::config::ClassesStr;
+
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::closure::Closure;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
+#[cfg(not(feature = "ssr"))]
 use web_sys::{Event, FocusEvent};
 use yew::prelude::*;
 
@@ -67,6 +71,7 @@ pub fn combobox(props: &ComboboxProps) -> Html {
     });
 
     // Close dropdown when clicking outside
+    #[cfg(not(feature = "ssr"))]
     {
         let open = open.clone();
         let container_ref = container_ref.clone();
@@ -115,6 +120,7 @@ pub fn combobox(props: &ComboboxProps) -> Html {
     };
 
     // Close on blur, but only if the mouse is not down inside the container
+    #[cfg(not(feature = "ssr"))]
     let on_blur = {
         let open = open.clone();
         let is_mouse_down_inside = is_mouse_down_inside.clone();
@@ -129,6 +135,9 @@ pub fn combobox(props: &ComboboxProps) -> Html {
             }
         })
     };
+
+    #[cfg(feature = "ssr")]
+    let on_blur = Callback::from(move |_| {});
 
     let on_select = {
         let value = value.clone();

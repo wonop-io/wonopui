@@ -4,6 +4,7 @@ use crate::config::get_brandguide;
 use crate::config::use_brandguide;
 use crate::config::BrandGuideType;
 use std::rc::Rc;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
 use yew::prelude::*;
 
@@ -83,6 +84,7 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
         })
     };
 
+    #[cfg(not(feature = "ssr"))]
     let close = {
         let is_open = is_open.clone();
         let select_ref = select_ref.clone();
@@ -99,6 +101,9 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
             }
         })
     };
+
+    #[cfg(feature = "ssr")]
+    let close = Callback::from(move |_: FocusEvent| {});
 
     let state = Rc::new(SelectState {
         selected: (*selected).clone(),

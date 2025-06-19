@@ -3,8 +3,10 @@ use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
 use crate::config::{BrandGuideType, ClassesStr};
+#[cfg(not(feature = "ssr"))]
 use gloo_console as console;
 use std::rc::Rc;
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
 use yew::function_component;
 use yew::html;
@@ -37,6 +39,7 @@ pub fn popover(props: &PopoverProps) -> Html {
         Callback::from(move |_| {
             let new_value = !*is_open;
             is_open.set(new_value);
+            #[cfg(not(feature = "ssr"))]
             if new_value {
                 if let Some(element) = div_ref.cast::<web_sys::HtmlElement>() {
                     element.focus().unwrap();
@@ -44,6 +47,8 @@ pub fn popover(props: &PopoverProps) -> Html {
             }
         })
     };
+
+    #[cfg(not(feature = "ssr"))]
     let close = {
         let is_open = is_open.clone();
         let div_ref = div_ref.clone();
@@ -60,6 +65,9 @@ pub fn popover(props: &PopoverProps) -> Html {
             }
         })
     };
+
+    #[cfg(feature = "ssr")]
+    let close = Callback::from(|_| {});
 
     let state = Rc::new(PopoverState {
         is_open: *is_open,

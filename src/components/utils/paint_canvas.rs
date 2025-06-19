@@ -1,4 +1,6 @@
+#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
+#[cfg(not(feature = "ssr"))]
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, MouseEvent};
 use yew::prelude::*;
 
@@ -8,6 +10,7 @@ pub struct PaintCanvasProps {
     pub image_src: Option<String>,
 }
 
+#[cfg(not(feature = "ssr"))]
 #[function_component(PaintCanvas)]
 pub fn paint_canvas(props: &PaintCanvasProps) -> Html {
     let canvas_ref = use_node_ref();
@@ -141,6 +144,16 @@ pub fn paint_canvas(props: &PaintCanvasProps) -> Html {
                 onmouseup={on_mouse_up}
                 onmousemove={on_mouse_move}
             />
+        </div>
+    }
+}
+
+#[cfg(feature = "ssr")]
+#[function_component(PaintCanvas)]
+pub fn paint_canvas(_props: &PaintCanvasProps) -> Html {
+    html! {
+        <div class="relative mx-auto w-full h-full">
+            <p>{"Canvas painting is not available in SSR mode"}</p>
         </div>
     }
 }
