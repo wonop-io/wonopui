@@ -1,6 +1,5 @@
 use chrono::{DateTime, Utc};
 use chrono_humanize::HumanTime;
-#[cfg(not(feature = "ssr"))]
 use gloo_console as console;
 use std::rc::Rc;
 use yew::prelude::*;

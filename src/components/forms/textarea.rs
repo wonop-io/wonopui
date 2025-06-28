@@ -1,7 +1,4 @@
-#[cfg(not(feature = "ThemeProvider"))]
 use crate::config::get_brandguide;
-#[cfg(feature = "ThemeProvider")]
-use crate::config::use_brandguide;
 use crate::config::ClassesStr;
 use yew::prelude::*;
 
@@ -27,9 +24,6 @@ pub struct TextareaProps {
 
 #[function_component(Textarea)]
 pub fn textarea(props: &TextareaProps) -> Html {
-    #[cfg(feature = "ThemeProvider")]
-    let brandguide = use_brandguide();
-    #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
 
     let disabled_class = if props.disabled {

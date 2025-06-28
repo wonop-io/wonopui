@@ -1,7 +1,4 @@
-#[cfg(not(feature = "ThemeProvider"))]
 use crate::config::get_brandguide;
-#[cfg(feature = "ThemeProvider")]
-use crate::config::use_brandguide;
 use crate::config::ClassesStr;
 use yew::prelude::*;
 
@@ -21,9 +18,6 @@ pub struct ToggleProps {
 
 #[function_component(Toggle)]
 pub fn toggle(props: &ToggleProps) -> Html {
-    #[cfg(feature = "ThemeProvider")]
-    let brandguide = use_brandguide();
-    #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
     let checked = use_state(|| props.checked);
 

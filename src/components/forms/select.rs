@@ -4,7 +4,6 @@ use crate::config::get_brandguide;
 use crate::config::use_brandguide;
 use crate::config::BrandGuideType;
 use std::rc::Rc;
-#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
 use yew::prelude::*;
 
@@ -84,7 +83,6 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
         })
     };
 
-    #[cfg(not(feature = "ssr"))]
     let close = {
         let is_open = is_open.clone();
         let select_ref = select_ref.clone();
@@ -101,9 +99,6 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
             }
         })
     };
-
-    #[cfg(feature = "ssr")]
-    let close = Callback::from(move |_: FocusEvent| {});
 
     let state = Rc::new(SelectState {
         selected: (*selected).clone(),
@@ -200,14 +195,3 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
         </div>
     }
 }
-
-// New component names to add to BRANDGUIDE:
-// select_container: "relative inline-block text-left"
-// select_trigger: "flex h-10 items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[180px]"
-// select_trigger_placeholder: "pointer-events-none"
-// select_trigger_icon: "lucide lucide-chevron-down h-4 w-4 opacity-50"
-// select_content_container: "absolute mt-1 w-full rounded-md bg-white shadow-lg z-10"
-// select_content_list: "max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
-// select_group: "text-gray-900"
-// select_label: "px-4 py-2 text-sm text-gray-700"
-// select_item: "text-gray-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-gray-100"

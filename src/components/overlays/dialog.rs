@@ -12,7 +12,6 @@ pub struct DialogContext {
 }
 
 /// Hook to manually open and close dialogs programmatically
-#[cfg_attr(feature = "ssr", allow(dead_code))]
 #[hook]
 pub fn use_dialog() -> (Callback<String>, Callback<()>, Option<String>) {
     let context = use_context::<Rc<DialogContext>>()

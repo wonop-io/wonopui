@@ -1,6 +1,4 @@
-#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::closure::Closure;
-#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
 use yew::events::PointerEvent;
 use yew::prelude::*;
@@ -15,10 +13,8 @@ pub fn drag_point(props: &DragPointProps) -> Html {
     } = props;
     let drag_point_ref = use_node_ref();
 
-    #[cfg(not(feature = "ssr"))]
     let active_pointer = use_state(|| None);
 
-    #[cfg(not(feature = "ssr"))]
     let onpointerdown = {
         let active_pointer = active_pointer.clone();
         let drag_point_ref = drag_point_ref.clone();
@@ -34,21 +30,13 @@ pub fn drag_point(props: &DragPointProps) -> Html {
         })
     };
 
-    #[cfg(feature = "ssr")]
-    let onpointerdown = {
-        let onstart = onstart.clone();
-        Callback::from(move |e: PointerEvent| {
-            onstart.emit(e);
-        })
-    };
-
-    #[cfg(not(feature = "ssr"))]
     {
         let onstop = onstop.clone();
         let drag_point_ref = drag_point_ref.clone();
         let active_pointer = active_pointer.clone();
-        let onpointerup = {
-            Closure::wrap(Box::new(move |e: PointerEvent| {
+
+        use_effect_with((), move |_| {
+            let onpointerup = Closure::wrap(Box::new(move |e: PointerEvent| {
                 if Some(e.pointer_id()) == *active_pointer {
                     if let Some(element) = drag_point_ref.cast::<web_sys::Element>() {
                         element
@@ -58,9 +46,8 @@ pub fn drag_point(props: &DragPointProps) -> Html {
                 }
                 onstop.emit(());
                 active_pointer.set(None);
-            }) as Box<dyn FnMut(_)>)
-        };
-        use_effect_with((), move |_| {
+            }) as Box<dyn FnMut(_)>);
+
             let window = web_sys::window().expect("no global `window` exists");
 
             window

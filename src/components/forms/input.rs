@@ -2,7 +2,6 @@
 use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
-#[cfg(not(feature = "ssr"))]
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
@@ -61,21 +60,11 @@ pub fn input(props: &InputProps) -> Html {
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
 
-    #[cfg(not(feature = "ssr"))]
     let ontext = use_callback(
         (props.ontext.clone(), props.oninput.clone()),
         |e: InputEvent, (ontext, oninput)| {
             let input: HtmlInputElement = e.target_unchecked_into();
             ontext.emit(input.value());
-            oninput.emit(e);
-        },
-    );
-
-    #[cfg(feature = "ssr")]
-    let ontext = use_callback(
-        (props.ontext.clone(), props.oninput.clone()),
-        |e: InputEvent, (ontext, oninput)| {
-            // Empty mock implementation for SSR
             oninput.emit(e);
         },
     );

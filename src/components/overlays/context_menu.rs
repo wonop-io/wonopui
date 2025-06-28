@@ -1,12 +1,8 @@
 use crate::config::ClassesStr;
-#[cfg(not(feature = "ssr"))]
 use gloo::timers::callback::Timeout;
-#[cfg(not(feature = "ssr"))]
 use gloo_utils::document;
 use std::rc::Rc;
-#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
-#[cfg(not(feature = "ssr"))]
 use web_sys::{Element, FocusEvent, MouseEvent};
 use yew::prelude::*;
 
@@ -73,7 +69,6 @@ pub struct ContextMenuTriggerProps {
 pub fn context_menu_trigger(props: &ContextMenuTriggerProps) -> Html {
     let state = use_context::<Rc<ContextMenuState>>().expect("no context found");
 
-    #[cfg(not(feature = "ssr"))]
     let oncontextmenu = {
         let toggle = state.toggle.clone();
         Callback::from(move |event: MouseEvent| {
@@ -81,9 +76,6 @@ pub fn context_menu_trigger(props: &ContextMenuTriggerProps) -> Html {
             toggle.emit((event.client_x(), event.client_y()));
         })
     };
-
-    #[cfg(feature = "ssr")]
-    let oncontextmenu = Callback::from(|_| {});
 
     html! {
         <div {oncontextmenu} class={classes!(props.class.clone(), "cursor-pointer")}>
@@ -114,7 +106,6 @@ pub fn context_menu_content(props: &ContextMenuContentProps) -> Html {
         state.position.0, state.position.1
     );
 
-    #[cfg(not(feature = "ssr"))]
     let onblur = {
         let close = state.close.clone();
         let menu_ref = menu_ref.clone();
@@ -142,9 +133,6 @@ pub fn context_menu_content(props: &ContextMenuContentProps) -> Html {
             }
         })
     };
-
-    #[cfg(feature = "ssr")]
-    let onblur = Callback::from(|_| {});
 
     html! {
         <div
@@ -187,14 +175,10 @@ pub fn context_menu_item(props: &ContextMenuItemProps) -> Html {
 
                 // Close the menu after item click with a small delay
                 let close_callback = close.clone();
-                #[cfg(not(feature = "ssr"))]
                 Timeout::new(50, move || {
                     close_callback.emit(());
                 })
                 .forget();
-
-                #[cfg(feature = "ssr")]
-                close_callback.emit(());
             }
         })
     };
@@ -320,14 +304,10 @@ pub fn context_menu_checkbox_item(props: &ContextMenuCheckboxItemProps) -> Html 
 
             // Close the menu after item click with a small delay
             let close_callback = close.clone();
-            #[cfg(not(feature = "ssr"))]
             Timeout::new(50, move || {
                 close_callback.emit(());
             })
             .forget();
-
-            #[cfg(feature = "ssr")]
-            close_callback.emit(());
         })
     };
 
@@ -435,14 +415,10 @@ pub fn context_menu_radio_item(props: &ContextMenuRadioItemProps) -> Html {
 
             // Close the menu after item click with a small delay
             let close_callback = close.clone();
-            #[cfg(not(feature = "ssr"))]
             Timeout::new(50, move || {
                 close_callback.emit(());
             })
             .forget();
-
-            #[cfg(feature = "ssr")]
-            close_callback.emit(());
         })
     };
 

@@ -1,6 +1,5 @@
 use crate::components::utils::media_query::use_media_query;
 use std::rc::Rc;
-#[cfg(not(feature = "ssr"))]
 use web_sys::window;
 use yew::prelude::*;
 
@@ -26,24 +25,16 @@ pub struct DarkModeProviderProps {
 #[function_component(DarkModeProvider)]
 pub fn dark_mode_provider(props: &DarkModeProviderProps) -> Html {
     let mode = use_state(|| DarkModeColor::System);
-
-    #[cfg(not(feature = "ssr"))]
-    let document = window().unwrap().document().unwrap();
-
-    #[cfg(not(feature = "ssr"))]
-    let body = document.body().unwrap();
-
     let mode_preference = use_media_query("(prefers-color-scheme: dark)");
 
-    #[cfg(not(feature = "ssr"))]
-    {
-        let body = body.clone();
-        let mode = mode.clone();
-        let mode_preference = mode_preference.clone();
+    use_effect_with(
+        (mode.clone(), mode_preference.clone()),
+        move |(mode, mode_preference)| {
+            let window = window().unwrap();
+            let document = window.document().unwrap();
+            let body = document.body().unwrap();
 
-        use_effect_with(
-            (mode.clone(), mode_preference),
-            move |(mode, mode_preference)| match **mode {
+            match **mode {
                 DarkModeColor::Light => {
                     body.class_list().remove_1("dark").unwrap();
                 }
@@ -57,9 +48,9 @@ pub fn dark_mode_provider(props: &DarkModeProviderProps) -> Html {
                         body.class_list().remove_1("dark").unwrap();
                     }
                 }
-            },
-        );
-    }
+            }
+        },
+    );
 
     let context = DarkModeContext {
         mode: (*mode).clone(),

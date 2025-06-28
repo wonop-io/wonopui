@@ -2,9 +2,7 @@
 use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
-#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
-#[cfg(not(feature = "ssr"))]
 use web_sys::KeyboardEvent;
 use yew::prelude::*;
 
@@ -36,6 +34,23 @@ where
     let input_ref = use_node_ref();
     let selected_index = use_state(|| 0);
 
+    // Auto-focus logic with use_effect_with
+    {
+        let is_open = is_open.clone();
+        let input_ref = input_ref.clone();
+        use_effect_with(
+            (*is_open, input_ref.clone()),
+            move |(is_open, input_ref)| {
+                if *is_open {
+                    if let Some(input) = input_ref.cast::<web_sys::HtmlInputElement>() {
+                        let _ = input.focus();
+                    }
+                }
+                || {}
+            },
+        );
+    }
+
     let on_select = {
         let value = value.clone();
         let is_open = is_open.clone();
@@ -47,22 +62,6 @@ where
         })
     };
 
-    #[cfg(not(feature = "ssr"))]
-    let toggle = {
-        let is_open = is_open.clone();
-        let input_ref = input_ref.clone();
-        Callback::from(move |_| {
-            let new_value = !*is_open;
-            is_open.set(new_value);
-            if new_value {
-                if let Some(input) = input_ref.cast::<web_sys::HtmlInputElement>() {
-                    input.focus().unwrap();
-                }
-            }
-        })
-    };
-
-    #[cfg(feature = "ssr")]
     let toggle = {
         let is_open = is_open.clone();
         Callback::from(move |_| {
@@ -71,7 +70,6 @@ where
         })
     };
 
-    #[cfg(not(feature = "ssr"))]
     let close = {
         let is_open = is_open.clone();
         let div_ref = div_ref.clone();
@@ -89,15 +87,6 @@ where
         })
     };
 
-    #[cfg(feature = "ssr")]
-    let close = {
-        let is_open = is_open.clone();
-        Callback::from(move |_: FocusEvent| {
-            is_open.set(false);
-        })
-    };
-
-    #[cfg(not(feature = "ssr"))]
     let oninput = {
         let is_open = is_open.clone();
         let value = value.clone();
@@ -124,17 +113,6 @@ where
         })
     };
 
-    #[cfg(feature = "ssr")]
-    let oninput = {
-        let is_open = is_open.clone();
-        Callback::from(move |_: InputEvent| {
-            if !*is_open {
-                is_open.set(true);
-            }
-        })
-    };
-
-    #[cfg(not(feature = "ssr"))]
     let onkeydown = {
         let is_open = is_open.clone();
         let filtered_options = filtered_options.clone();
@@ -171,9 +149,6 @@ where
             _ => {}
         })
     };
-
-    #[cfg(feature = "ssr")]
-    let onkeydown = Callback::from(|_| {});
 
     html! {
         <div ref={div_ref} class={classes!(&brandguide.command_container, props.class.clone())} tabindex="0" onfocusout={close}>
@@ -238,57 +213,3 @@ where
         </div>
     }
 }
-
-// Snippets to update brandguide:
-// ("command_container".to_string(), "flex h-full w-full flex-col overflow-hidden bg-white text-black rounded-lg border shadow-md".to_string()),
-// ("command_input_wrapper".to_string(), "flex items-center border-b px-3".to_string()),
-// ("command_icon".to_string(), "mr-2 h-4 w-4 shrink-0 opacity-50".to_string()),
-// ("command_input".to_string(), "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder-gray-500 disabled:cursor-not-allowed disabled:opacity-50".to_string()),
-// ("command_list".to_string(), "max-h-[300px] overflow-y-auto overflow-x-hidden".to_string()),
-// ("command_item".to_string(), "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-gray-200".to_string()),
-// ("command_item_icon".to_string(), "mr-2 h-4 w-4".to_string()),
-//
-// pub command_container: ClassesContainer<T>,
-// pub command_input_wrapper: ClassesContainer<T>,
-// pub command_icon: ClassesContainer<T>,
-// pub command_input: ClassesContainer<T>,
-// pub command_list: ClassesContainer<T>,
-// pub command_item: ClassesContainer<T>,
-// pub command_item_icon: ClassesContainer<T>,
-//
-// command_container: self.command_container.to_owned(),
-// command_input_wrapper: self.command_input_wrapper.to_owned(),
-// command_icon: self.command_icon.to_owned(),
-// command_input: self.command_input.to_owned(),
-// command_list: self.command_list.to_owned(),
-// command_item: self.command_item.to_owned(),
-// command_item_icon: self.command_item_icon.to_owned(),
-//
-// command_container: default_config_hm
-// .get("command_container")
-// .expect("Template parameter missing")
-// .clone(),
-// command_input_wrapper: default_config_hm
-// .get("command_input_wrapper")
-// .expect("Template parameter missing")
-// .clone(),
-// command_icon: default_config_hm
-// .get("command_icon")
-// .expect("Template parameter missing")
-// .clone(),
-// command_input: default_config_hm
-// .get("command_input")
-// .expect("Template parameter missing")
-// .clone(),
-// command_list: default_config_hm
-// .get("command_list")
-// .expect("Template parameter missing")
-// .clone(),
-// command_item: default_config_hm
-// .get("command_item")
-// .expect("Template parameter missing")
-// .clone(),
-// command_item_icon: default_config_hm
-// .get("command_item_icon")
-// .expect("Template parameter missing")
-// .clone(),

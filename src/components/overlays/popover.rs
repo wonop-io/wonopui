@@ -3,10 +3,8 @@ use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
 use crate::config::{BrandGuideType, ClassesStr};
-#[cfg(not(feature = "ssr"))]
 use gloo_console as console;
 use std::rc::Rc;
-#[cfg(not(feature = "ssr"))]
 use wasm_bindgen::JsCast;
 use yew::function_component;
 use yew::html;
@@ -33,22 +31,29 @@ pub fn popover(props: &PopoverProps) -> Html {
     let brandguide = get_brandguide();
     let is_open = use_state(|| false);
     let div_ref = use_node_ref();
-    let toggle = {
+
+    // Handle focus when state changes
+    {
         let is_open = is_open.clone();
         let div_ref = div_ref.clone();
+        use_effect_with((*is_open, div_ref.clone()), move |(is_open, div_ref)| {
+            if *is_open {
+                if let Some(element) = div_ref.cast::<web_sys::HtmlElement>() {
+                    let _ = element.focus();
+                }
+            }
+            || {}
+        });
+    }
+
+    let toggle = {
+        let is_open = is_open.clone();
         Callback::from(move |_| {
             let new_value = !*is_open;
             is_open.set(new_value);
-            #[cfg(not(feature = "ssr"))]
-            if new_value {
-                if let Some(element) = div_ref.cast::<web_sys::HtmlElement>() {
-                    element.focus().unwrap();
-                }
-            }
         })
     };
 
-    #[cfg(not(feature = "ssr"))]
     let close = {
         let is_open = is_open.clone();
         let div_ref = div_ref.clone();
@@ -65,9 +70,6 @@ pub fn popover(props: &PopoverProps) -> Html {
             }
         })
     };
-
-    #[cfg(feature = "ssr")]
-    let close = Callback::from(|_| {});
 
     let state = Rc::new(PopoverState {
         is_open: *is_open,
@@ -176,113 +178,3 @@ pub fn popover_content(props: &PopoverContentProps) -> Html {
         </div>
     }
 }
-
-// Snippets to update brandguide:
-// ("popover_container".to_string(), "relative".to_string()),
-// ("popover_trigger".to_string(), "cursor-pointer".to_string()),
-// ("popover_content".to_string(), "absolute bg-white border border-gray-300 rounded-md shadow-lg p-4 z-10 dark:bg-zinc-800 dark:border-zinc-700".to_string()),
-// ("popover_position_north_start".to_string(), "bottom-full left-0 transform translate-x-0".to_string()),
-// ("popover_position_north_middle".to_string(), "bottom-full left-1/2 transform -translate-x-1/2".to_string()),
-// ("popover_position_north_end".to_string(), "bottom-full right-0 transform translate-x-0".to_string()),
-// ("popover_position_south_start".to_string(), "top-full left-0 transform translate-x-0".to_string()),
-// ("popover_position_south_middle".to_string(), "top-full left-1/2 transform -translate-x-1/2".to_string()),
-// ("popover_position_south_end".to_string(), "top-full right-0 transform".to_string()),
-// ("popover_position_east_start".to_string(), "top-0 left-full transform translate-y-0".to_string()),
-// ("popover_position_east_middle".to_string(), "top-1/2 left-full transform -translate-y-1/2".to_string()),
-// ("popover_position_east_end".to_string(), "bottom-0 left-full transform".to_string()),
-// ("popover_position_west_start".to_string(), "top-0 right-full transform translate-y-0".to_string()),
-// ("popover_position_west_middle".to_string(), "top-1/2 right-full transform -translate-y-1/2".to_string()),
-// ("popover_position_west_end".to_string(), "bottom-0 right-full transform".to_string()),
-//
-// pub popover_container: ClassesContainer<T>,
-// pub popover_trigger: ClassesContainer<T>,
-// pub popover_content: ClassesContainer<T>,
-// pub popover_position_north_start: ClassesContainer<T>,
-// pub popover_position_north_middle: ClassesContainer<T>,
-// pub popover_position_north_end: ClassesContainer<T>,
-// pub popover_position_south_start: ClassesContainer<T>,
-// pub popover_position_south_middle: ClassesContainer<T>,
-// pub popover_position_south_end: ClassesContainer<T>,
-// pub popover_position_east_start: ClassesContainer<T>,
-// pub popover_position_east_middle: ClassesContainer<T>,
-// pub popover_position_east_end: ClassesContainer<T>,
-// pub popover_position_west_start: ClassesContainer<T>,
-// pub popover_position_west_middle: ClassesContainer<T>,
-// pub popover_position_west_end: ClassesContainer<T>,
-//
-// popover_container: self.popover_container.to_owned(),
-// popover_trigger: self.popover_trigger.to_owned(),
-// popover_content: self.popover_content.to_owned(),
-// popover_position_north_start: self.popover_position_north_start.to_owned(),
-// popover_position_north_middle: self.popover_position_north_middle.to_owned(),
-// popover_position_north_end: self.popover_position_north_end.to_owned(),
-// popover_position_south_start: self.popover_position_south_start.to_owned(),
-// popover_position_south_middle: self.popover_position_south_middle.to_owned(),
-// popover_position_south_end: self.popover_position_south_end.to_owned(),
-// popover_position_east_start: self.popover_position_east_start.to_owned(),
-// popover_position_east_middle: self.popover_position_east_middle.to_owned(),
-// popover_position_east_end: self.popover_position_east_end.to_owned(),
-// popover_position_west_start: self.popover_position_west_start.to_owned(),
-// popover_position_west_middle: self.popover_position_west_middle.to_owned(),
-// popover_position_west_end: self.popover_position_west_end.to_owned(),
-//
-// popover_container: default_config_hm
-// .get("popover_container")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_trigger: default_config_hm
-// .get("popover_trigger")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_content: default_config_hm
-// .get("popover_content")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_north_start: default_config_hm
-// .get("popover_position_north_start")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_north_middle: default_config_hm
-// .get("popover_position_north_middle")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_north_end: default_config_hm
-// .get("popover_position_north_end")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_south_start: default_config_hm
-// .get("popover_position_south_start")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_south_middle: default_config_hm
-// .get("popover_position_south_middle")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_south_end: default_config_hm
-// .get("popover_position_south_end")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_east_start: default_config_hm
-// .get("popover_position_east_start")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_east_middle: default_config_hm
-// .get("popover_position_east_middle")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_east_end: default_config_hm
-// .get("popover_position_east_end")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_west_start: default_config_hm
-// .get("popover_position_west_start")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_west_middle: default_config_hm
-// .get("popover_position_west_middle")
-// .expect("Template parameter missing")
-// .clone(),
-// popover_position_west_end: default_config_hm
-// .get("popover_position_west_end")
-// .expect("Template parameter missing")
-// .clone(),
