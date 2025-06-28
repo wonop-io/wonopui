@@ -33,12 +33,8 @@ pub fn group_button(props: &GroupButtonProps) -> Html {
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
 
-    #[cfg(not(feature = "ssr"))]
     let active_button = use_state(|| props.default_value.clone());
-    #[cfg(feature = "ssr")]
-    let active_button_value = props.default_value.clone();
 
-    #[cfg(not(feature = "ssr"))]
     let set_active_button = {
         let active_button = active_button.clone();
         let on_change = props.on_change.clone();
@@ -47,19 +43,9 @@ pub fn group_button(props: &GroupButtonProps) -> Html {
             on_change.emit(new_button);
         })
     };
-    #[cfg(feature = "ssr")]
-    let set_active_button = {
-        let on_change = props.on_change.clone();
-        Callback::from(move |new_button: String| {
-            on_change.emit(new_button);
-        })
-    };
 
     let state = Rc::new(GroupButtonState {
-        #[cfg(not(feature = "ssr"))]
         active_button: (*active_button).clone(),
-        #[cfg(feature = "ssr")]
-        active_button: active_button_value,
         set_active_button,
     });
 
