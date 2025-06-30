@@ -55,6 +55,8 @@ pub fn card_header(props: &CardHeaderProps) -> Html {
 pub struct CardTitleProps {
     #[prop_or_default]
     pub children: Children,
+    #[prop_or_default]
+    pub class: Classes,
 }
 
 #[function_component(CardTitle)]
@@ -64,7 +66,7 @@ pub fn card_title(props: &CardTitleProps) -> Html {
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
     html! {
-        <h2 class={&brandguide.card_title}>
+        <h2 class={classes!(&brandguide.card_title, props.class.clone())}>
             { for props.children.iter() }
         </h2>
     }
