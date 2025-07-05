@@ -86,7 +86,7 @@ pub fn create_search_index() -> Vec<(Route, String, String, Option<Html>)> {
         (
             Route::CodeEditorExample,
             "code editor, syntax, highlighting, diff, annotations".to_string(),
-            "Code Editor".to_string(), 
+            "Code Editor".to_string(),
             None,
         ),
         (
@@ -193,6 +193,12 @@ pub fn create_search_index() -> Vec<(Route, String, String, Option<Html>)> {
         ),
         (
             Route::KanbanExample,
+            "kanban, board, cards, columns, drag, drop, tasks".to_string(),
+            "Kanban".to_string(),
+            None,
+        ),
+        (
+            Route::MarkdownEditorExample,
             "kanban, board, cards, columns, drag, drop, tasks".to_string(),
             "Kanban".to_string(),
             None,

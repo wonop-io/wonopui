@@ -64,42 +64,30 @@ pub fn paint_canvas(props: &PaintCanvasProps) -> Html {
         let context_ref = context_ref.clone();
         let image_loaded = image_loaded.clone();
         Callback::from(move |_| {
-            let image_loaded = image_loaded.clone();
-            use_effect_with(
-                (
-                    canvas_ref.clone(),
-                    image_ref.clone(),
-                    container_ref.clone(),
-                    context_ref.clone(),
-                ),
-                move |(canvas_ref, image_ref, container_ref, context_ref)| {
-                    let canvas: HtmlCanvasElement = canvas_ref.cast().unwrap();
-                    let image: HtmlImageElement = image_ref.cast().unwrap();
-                    let container = container_ref.cast::<web_sys::HtmlElement>().unwrap();
+            let canvas: HtmlCanvasElement = canvas_ref.cast().unwrap();
+            let image: HtmlImageElement = image_ref.cast().unwrap();
+            let container = container_ref.cast::<web_sys::HtmlElement>().unwrap();
 
-                    let container_width = container.client_width() as u32;
-                    let container_height = container.client_height() as u32;
+            let container_width = container.client_width() as u32;
+            let container_height = container.client_height() as u32;
 
-                    canvas.set_width(container_width);
-                    canvas.set_height(container_height);
-                    image.set_width(container_width);
-                    image.set_height(container_height);
+            canvas.set_width(container_width);
+            canvas.set_height(container_height);
+            image.set_width(container_width);
+            image.set_height(container_height);
 
-                    let context = canvas
-                        .get_context("2d")
-                        .unwrap()
-                        .unwrap()
-                        .dyn_into::<CanvasRenderingContext2d>()
-                        .unwrap();
+            let context = canvas
+                .get_context("2d")
+                .unwrap()
+                .unwrap()
+                .dyn_into::<CanvasRenderingContext2d>()
+                .unwrap();
 
-                    context.set_stroke_style(&"#000000".into());
-                    context.set_line_width(10.0);
-                    *context_ref.borrow_mut() = Some(context);
+            context.set_stroke_style(&"#000000".into());
+            context.set_line_width(10.0);
+            *context_ref.borrow_mut() = Some(context);
 
-                    image_loaded.set(true);
-                    || ()
-                },
-            )
+            image_loaded.set(true);
         })
     };
 

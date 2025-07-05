@@ -1,4 +1,7 @@
+#[cfg(not(feature = "ThemeProvider"))]
 use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
 use crate::config::ClassesStr;
 use yew::prelude::*;
 
@@ -22,7 +25,11 @@ pub struct SwitchButtonProps {
 
 #[function_component(SwitchButton)]
 pub fn switch_button(props: &SwitchButtonProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
+
     let checked = use_state(|| props.checked.unwrap_or(props.default_value));
 
     use_effect_with(

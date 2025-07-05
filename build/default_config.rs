@@ -335,6 +335,23 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("kanban_card_content".to_string(), "text-sm text-zinc-600 dark:text-zinc-400".to_string()),
         ("kanban_card_dragging".to_string(), "opacity-50 {{ default_shadow }}".to_string()),
 
+        // Markdown Editor
+        ("markdown_editor_container".to_string(), "flex flex-col w-full border border-zinc-200 dark:border-zinc-700 {{ default_rounding_larger }} {{ background }} {{ text }} overflow-hidden".to_string()),
+        ("markdown_editor_blocks_container".to_string(), "w-full min-h-[200px] p-4 space-y-2 focus:outline-none".to_string()),
+        ("markdown_editor_block".to_string(), "relative w-full rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors duration-150".to_string()),
+        ("markdown_editor_block_active".to_string(), "bg-zinc-50 dark:bg-zinc-800/50".to_string()),
+        ("markdown_editor_paragraph".to_string(), "p-2 min-h-[1.5em] w-full outline-none focus:outline-none".to_string()),
+        ("markdown_editor_heading1".to_string(), "p-2 min-h-[1.5em] w-full text-3xl font-bold outline-none focus:outline-none".to_string()),
+        ("markdown_editor_heading2".to_string(), "p-2 min-h-[1.5em] w-full text-2xl font-bold outline-none focus:outline-none".to_string()),
+        ("markdown_editor_heading3".to_string(), "p-2 min-h-[1.5em] w-full text-xl font-bold outline-none focus:outline-none".to_string()),
+        ("markdown_editor_bullet_list".to_string(), "p-2 min-h-[1.5em] w-full pl-8 list-disc outline-none focus:outline-none".to_string()),
+        ("markdown_editor_numbered_list".to_string(), "p-2 min-h-[1.5em] w-full pl-8 list-decimal outline-none focus:outline-none".to_string()),
+        ("markdown_editor_quote".to_string(), "p-2 min-h-[1.5em] w-full pl-4 border-l-4 border-zinc-300 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-800/50 italic outline-none focus:outline-none".to_string()),
+        ("markdown_editor_code".to_string(), "p-2 min-h-[1.5em] w-full font-mono text-sm bg-zinc-100 dark:bg-zinc-800 {{ default_rounding_smaller }} outline-none focus:outline-none".to_string()),
+        ("markdown_editor_divider".to_string(), "w-full border-t-2 border-zinc-200 dark:border-zinc-700 my-4".to_string()),
+        ("markdown_editor_divider_block".to_string(), "py-2 flex items-center justify-center".to_string()),
+        ("markdown_command_menu_container".to_string(), "z-50 w-64 bg-white dark:bg-zinc-800 {{ default_rounding }} {{ default_shadow }} {{ border }}".to_string()),
+
         // Notification
         ("notification_container".to_string(), "z-50 relative {{ limit_width_widget_size }} bg-white dark:bg-zinc-800 {{ default_shadow }} {{ default_rounding_larger }} {{ padding_4 }} border border-zinc-200 dark:border-zinc-700".to_string()),
         ("notification_title".to_string(), "text-lg font-semibold text-zinc-900 dark:text-zinc-100".to_string()),

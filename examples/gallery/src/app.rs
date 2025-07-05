@@ -206,6 +206,9 @@ pub fn app() -> Html {
         Route::KanbanExample => {
             html! { <KanbanDocumentation /> }
         }
+        Route::MarkdownEditorExample => {
+            html! { <MarkdownEditorDocumentation /> }
+        }
     };
 
     return html! {

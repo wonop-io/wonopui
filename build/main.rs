@@ -294,6 +294,45 @@ fn main() {
         kanban_card_title: get_default_value("kanban_card_title", &default_config_hm),
         kanban_card_content: get_default_value("kanban_card_content", &default_config_hm),
         kanban_card_dragging: get_default_value("kanban_card_dragging", &default_config_hm),
+        markdown_editor_container: get_default_value(
+            "markdown_editor_container",
+            &default_config_hm,
+        ),
+        markdown_editor_blocks_container: get_default_value(
+            "markdown_editor_blocks_container",
+            &default_config_hm,
+        ),
+        markdown_editor_block: get_default_value("markdown_editor_block", &default_config_hm),
+        markdown_editor_block_active: get_default_value(
+            "markdown_editor_block_active",
+            &default_config_hm,
+        ),
+        markdown_editor_paragraph: get_default_value(
+            "markdown_editor_paragraph",
+            &default_config_hm,
+        ),
+        markdown_editor_heading1: get_default_value("markdown_editor_heading1", &default_config_hm),
+        markdown_editor_heading2: get_default_value("markdown_editor_heading2", &default_config_hm),
+        markdown_editor_heading3: get_default_value("markdown_editor_heading3", &default_config_hm),
+        markdown_editor_bullet_list: get_default_value(
+            "markdown_editor_bullet_list",
+            &default_config_hm,
+        ),
+        markdown_editor_numbered_list: get_default_value(
+            "markdown_editor_numbered_list",
+            &default_config_hm,
+        ),
+        markdown_editor_quote: get_default_value("markdown_editor_quote", &default_config_hm),
+        markdown_editor_code: get_default_value("markdown_editor_code", &default_config_hm),
+        markdown_editor_divider: get_default_value("markdown_editor_divider", &default_config_hm),
+        markdown_editor_divider_block: get_default_value(
+            "markdown_editor_divider_block",
+            &default_config_hm,
+        ),
+        markdown_command_menu_container: get_default_value(
+            "markdown_command_menu_container",
+            &default_config_hm,
+        ),
         notification_container: get_default_value("notification_container", &default_config_hm),
         notification_content: get_default_value("notification_content", &default_config_hm),
         notification_title: get_default_value("notification_title", &default_config_hm),

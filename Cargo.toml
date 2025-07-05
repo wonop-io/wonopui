@@ -33,7 +33,7 @@ ColorPickerHue = []
 ColorPickerLight = []
 ColorPickerSaturation = []
 ColorPickerWheel = []
-
+MarkdownEditor = []
 Combobox = []
 Kanban = []
 Command = []
@@ -114,6 +114,7 @@ everything = [
     "Iframe",
     "Input",
     "Label",
+    "MarkdownEditor",
     "MediaQuery",
     "Notification",
     "PageHeader",
@@ -146,6 +147,8 @@ yew = { version = "0.21", features = ["csr"] }
 web-sys = { version = "0.3.68", features = [
     "DomTokenList",
     "HtmlDocument",
+    "Selection",
+    "Range",
     "Document",
     "HtmlInputElement",
     "HtmlIFrameElement",
