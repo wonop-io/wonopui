@@ -49,9 +49,8 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
     // State for blocks
     let blocks = use_state(|| {
         if props.initial_content.is_empty() {
-            // We need a default block type, but since we removed BlockType enum,
-            // this will need to be provided by the consumer
-            Vec::<Block<T>>::new()
+            // Create a default initial block if initial_content is empty
+            vec![Block::new(T::new_block())]
         } else {
             props.initial_content.clone()
         }
@@ -76,9 +75,6 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
 
     // State for selected command option
     let selected_option_index = use_state(|| 0);
-
-    // State for focused block element
-    let focused_element = use_state(|| None::<NodeRef>);
 
     // State to track if we're currently processing a command
     let processing_command = use_state(|| false);

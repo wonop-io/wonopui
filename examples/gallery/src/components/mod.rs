@@ -34,6 +34,7 @@ mod iframe;
 mod kanban;
 mod label;
 mod markdown_editor;
+// pub mod markdown_editor_showcase; // Assuming the renamed file is the main one now
 mod media_query;
 mod mention_input;
 mod multicol_sidebar;
