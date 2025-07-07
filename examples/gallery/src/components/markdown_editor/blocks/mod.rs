@@ -1,0 +1,735 @@
+use std::str::FromStr;
+use wasm_bindgen::JsCast;
+use web_sys::{HtmlElement, KeyboardEvent};
+use wonopui::prelude::*;
+use wonopui::*;
+use yew::prelude::*;
+
+// Icon components for each block type
+#[function_component(ParagraphIcon)]
+pub fn paragraph_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="17" y1="10" x2="3" y2="10"></line>
+            <line x1="21" y1="6" x2="3" y2="6"></line>
+            <line x1="21" y1="14" x2="3" y2="14"></line>
+            <line x1="17" y1="18" x2="3" y2="18"></line>
+        </svg>
+    }
+}
+
+#[function_component(Heading1Icon)]
+pub fn heading1_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12h8"></path>
+            <path d="M4 18V6"></path>
+            <path d="M12 18V6"></path>
+            <path d="m17 12 3 4"></path>
+            <path d="m20 12-3 4"></path>
+        </svg>
+    }
+}
+
+#[function_component(Heading2Icon)]
+pub fn heading2_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12h8"></path>
+            <path d="M4 18V6"></path>
+            <path d="M12 18V6"></path>
+            <path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1"></path>
+        </svg>
+    }
+}
+
+#[function_component(Heading3Icon)]
+pub fn heading3_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12h8"></path>
+            <path d="M4 18V6"></path>
+            <path d="M12 18V6"></path>
+            <path d="M17.5 10.5c1.7-1 3.5 0 3.5 1.5a2 2 0 0 1-2 2"></path>
+            <path d="M17 17.5c2 1.5 4 .3 4-1.5a2 2 0 0 0-2-2"></path>
+        </svg>
+    }
+}
+
+#[function_component(BulletListIcon)]
+pub fn bullet_list_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="9" y1="6" x2="20" y2="6"></line>
+            <line x1="9" y1="12" x2="20" y2="12"></line>
+            <line x1="9" y1="18" x2="20" y2="18"></line>
+            <circle cx="4" cy="6" r="2"></circle>
+            <circle cx="4" cy="12" r="2"></circle>
+            <circle cx="4" cy="18" r="2"></circle>
+        </svg>
+    }
+}
+
+#[function_component(NumberedListIcon)]
+pub fn numbered_list_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="10" y1="6" x2="21" y2="6"></line>
+            <line x1="10" y1="12" x2="21" y2="12"></line>
+            <line x1="10" y1="18" x2="21" y2="18"></line>
+            <path d="M4 6h1v4"></path>
+            <path d="M4 10h2"></path>
+            <path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path>
+        </svg>
+    }
+}
+
+#[function_component(QuoteIcon)]
+pub fn quote_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path>
+            <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"></path>
+        </svg>
+    }
+}
+
+#[function_component(CodeBlockIcon)]
+pub fn code_block_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+    }
+}
+
+#[function_component(DividerIcon)]
+pub fn divider_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+        </svg>
+    }
+}
+
+#[function_component(FileBlockIcon)]
+pub fn file_block_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+        </svg>
+    }
+}
+
+#[function_component(UrlBlockIcon)]
+pub fn url_block_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+    }
+}
+
+#[function_component(SystemRoleIcon)]
+pub fn system_role_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+            <line x1="6" y1="6" x2="6.01" y2="6"></line>
+            <line x1="6" y1="18" x2="6.01" y2="18"></line>
+        </svg>
+    }
+}
+
+#[function_component(AssistantRoleIcon)]
+pub fn assistant_role_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a8 8 0 0 1 8 8v1a7 7 0 0 1-7 7h-1a7 7 0 0 1-7-7v-1a8 8 0 0 1 8-8Z"></path>
+            <path d="M19.07 19.07a8 8 0 0 1-11.31 0"></path>
+            <path d="M9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
+            <path d="M17 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
+        </svg>
+    }
+}
+
+#[function_component(UserRoleIcon)]
+pub fn user_role_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+    }
+}
+
+// Define RoleType enum
+#[derive(Clone, PartialEq)]
+pub enum RoleType {
+    System,
+    Assistant,
+    User,
+}
+impl ToString for RoleType {
+    fn to_string(&self) -> String {
+        match self {
+            RoleType::System => "System".to_string(),
+            RoleType::Assistant => "Assistant".to_string(),
+            RoleType::User => "User".to_string(),
+        }
+    }
+}
+
+impl FromStr for RoleType {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "System" => Ok(RoleType::System),
+            "Assistant" => Ok(RoleType::Assistant),
+            "User" => Ok(RoleType::User),
+            _ => Err(()),
+        }
+    }
+}
+
+// Generic Block Component for editable blocks
+#[derive(Properties, PartialEq)]
+pub struct GenericBlockProps {
+    pub tag: &'static str,
+    #[prop_or_default]
+    pub content: String,
+    #[prop_or_default]
+    pub classes: Classes,
+    #[prop_or_default]
+    pub on_input: Option<Callback<InputEvent>>,
+    #[prop_or_default]
+    pub onkeydown: Callback<KeyboardEvent>,
+    #[prop_or_default]
+    pub onfocus: Callback<FocusEvent>,
+    #[prop_or_default]
+    pub onblur: Callback<FocusEvent>,
+    #[prop_or_default]
+    pub has_focus: bool,
+    #[prop_or(true)]
+    pub contenteditable: bool,
+    #[prop_or_default]
+    pub children: Children,
+}
+
+#[function_component(GenericBlock)]
+pub fn generic_block(props: &GenericBlockProps) -> Html {
+    let node_ref = use_node_ref();
+    log::info!("Content rendered: {}", props.content);
+    log::info!("Children rendered: {:#?}", props.children);
+
+    // This effect handles focus and also updates the content
+    use_effect_with(
+        (props.has_focus, node_ref.clone(), props.content.clone()),
+        |(has_focus, node_ref, content)| {
+            if let Some(element) = node_ref.cast::<HtmlElement>() {
+                // Instead of using set_text_content which doesn't preserve newlines,
+                // use innerHTML to preserve formatting
+                element.set_inner_html(&content.replace("\n", "<br>"));
+
+                if *has_focus {
+                    let _ = element.focus();
+                } else {
+                    let _ = element.blur();
+                }
+            }
+
+            || ()
+        },
+    );
+
+    html! {
+        <@{props.tag}
+            ref={node_ref}
+            key="editable"
+            class={props.classes.clone()}
+            contenteditable={props.contenteditable.to_string()}
+            oninput={props.on_input.clone().unwrap_or_else(|| Callback::noop())}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+        />
+    }
+}
+
+// Component for paragraph block rendering
+#[derive(Properties, PartialEq)]
+pub struct ParagraphProps {
+    pub content: String,
+    pub on_input: Callback<InputEvent>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(ParagraphBlock)]
+pub fn paragraph_block(props: &ParagraphProps) -> Html {
+    html! {
+        <GenericBlock
+            tag="div"
+            content={props.content.clone()}
+            classes={classes!(
+                "p-2",
+                "min-h-[1.5em]",
+                "w-full",
+                "outline-none",
+                "focus:outline-none"
+            )}
+            on_input={Some(props.on_input.clone())}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+            has_focus={props.has_focus}
+        />
+    }
+}
+
+// Component for heading1 block rendering
+#[derive(Properties, PartialEq)]
+pub struct Heading1Props {
+    pub content: String,
+    pub on_input: Callback<InputEvent>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(Heading1Block)]
+pub fn heading1_block(props: &Heading1Props) -> Html {
+    html! {
+        <GenericBlock
+            tag="div"
+            content={props.content.clone()}
+            classes={classes!(
+                "p-2",
+                "min-h-[1.5em]",
+                "w-full",
+                "text-3xl",
+                "font-bold",
+                "outline-none",
+                "focus:outline-none"
+            )}
+            on_input={Some(props.on_input.clone())}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+            has_focus={props.has_focus}
+        />
+    }
+}
+
+// Component for heading2 block rendering
+#[derive(Properties, PartialEq)]
+pub struct Heading2Props {
+    pub content: String,
+    pub on_input: Callback<InputEvent>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(Heading2Block)]
+pub fn heading2_block(props: &Heading2Props) -> Html {
+    html! {
+        <GenericBlock
+            tag="div"
+            content={props.content.clone()}
+            classes={classes!(
+                "p-2",
+                "min-h-[1.5em]",
+                "w-full",
+                "text-2xl",
+                "font-bold",
+                "outline-none",
+                "focus:outline-none"
+            )}
+            on_input={Some(props.on_input.clone())}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+            has_focus={props.has_focus}
+        />
+    }
+}
+
+// Component for heading3 block rendering
+#[derive(Properties, PartialEq)]
+pub struct Heading3Props {
+    pub content: String,
+    pub on_input: Callback<InputEvent>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(Heading3Block)]
+pub fn heading3_block(props: &Heading3Props) -> Html {
+    html! {
+        <GenericBlock
+            tag="div"
+            content={props.content.clone()}
+            classes={classes!(
+                "p-2",
+                "min-h-[1.5em]",
+                "w-full",
+                "text-xl",
+                "font-bold",
+                "outline-none",
+                "focus:outline-none"
+            )}
+            on_input={Some(props.on_input.clone())}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+            has_focus={props.has_focus}
+        />
+    }
+}
+
+// Component for bullet list block rendering
+#[derive(Properties, PartialEq)]
+pub struct BulletListProps {
+    pub content: String,
+    pub on_input: Callback<InputEvent>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(BulletListBlock)]
+pub fn bullet_list_block(props: &BulletListProps) -> Html {
+    html! {
+        <GenericBlock
+            tag="div"
+            content={props.content.clone()}
+            classes={classes!(
+                "p-2",
+                "min-h-[1.5em]",
+                "w-full",
+                "pl-8",
+                "list-disc",
+                "outline-none",
+                "focus:outline-none"
+            )}
+            on_input={Some(props.on_input.clone())}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+            has_focus={props.has_focus}
+        />
+    }
+}
+
+// Component for numbered list block rendering
+#[derive(Properties, PartialEq)]
+pub struct NumberedListProps {
+    pub content: String,
+    pub on_input: Callback<InputEvent>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(NumberedListBlock)]
+pub fn numbered_list_block(props: &NumberedListProps) -> Html {
+    html! {
+        <GenericBlock
+            tag="div"
+            content={props.content.clone()}
+            classes={classes!(
+                "p-2",
+                "min-h-[1.5em]",
+                "w-full",
+                "pl-8",
+                "list-decimal",
+                "outline-none",
+                "focus:outline-none"
+            )}
+            on_input={Some(props.on_input.clone())}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+            has_focus={props.has_focus}
+        />
+    }
+}
+
+// Component for quote block rendering
+#[derive(Properties, PartialEq)]
+pub struct QuoteProps {
+    pub content: String,
+    pub on_input: Callback<InputEvent>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(QuoteBlock)]
+pub fn quote_block(props: &QuoteProps) -> Html {
+    html! {
+        <GenericBlock
+            tag="div"
+            content={props.content.clone()}
+            classes={classes!(
+                "p-2",
+                "min-h-[1.5em]",
+                "w-full",
+                "pl-4",
+                "border-l-4",
+                "border-zinc-300",
+                "dark:border-zinc-600",
+                "bg-zinc-50",
+                "dark:bg-zinc-800/50",
+                "italic",
+                "outline-none",
+                "focus:outline-none"
+            )}
+            on_input={Some(props.on_input.clone())}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+            has_focus={props.has_focus}
+        />
+    }
+}
+
+// Component for code block rendering
+#[derive(Properties, PartialEq)]
+pub struct CodeBlockProps {
+    pub content: String,
+    pub on_input: Callback<InputEvent>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(CodeBlockBlock)]
+pub fn code_block_block(props: &CodeBlockProps) -> Html {
+    html! {
+        <GenericBlock
+            tag="div"
+            content={props.content.clone()}
+            classes={classes!(
+                "p-2",
+                "min-h-[1.5em]",
+                "w-full",
+                "font-mono",
+                "text-sm",
+                "bg-zinc-100",
+                "dark:bg-zinc-800",
+                "rounded-md",
+                "outline-none",
+                "focus:outline-none"
+            )}
+            on_input={Some(props.on_input.clone())}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+            has_focus={props.has_focus}
+        />
+    }
+}
+
+// Component for divider block
+#[derive(Properties, PartialEq)]
+pub struct DividerProps {
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(DividerBlock)]
+pub fn divider_block(props: &DividerProps) -> Html {
+    html! {
+        <GenericBlock
+            tag="hr"
+            content={"".to_string()}
+            classes={classes!(
+                "w-full",
+                "border-t-2",
+                "border-zinc-200",
+                "dark:border-zinc-700",
+                "my-4"
+            )}
+            contenteditable={false}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+            has_focus={props.has_focus}
+        />
+    }
+}
+
+// Component for file block rendering
+#[derive(Properties, PartialEq)]
+pub struct FileBlockProps {
+    pub content: String,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(FileBlockBlock)]
+pub fn file_block_block(props: &FileBlockProps) -> Html {
+    html! {
+        <div
+            content={"".to_string()}
+            classes={classes!(
+                "p-2",
+                "min-h-[1.5em]",
+                "w-full",
+                "border-2",
+                "border-dashed",
+                "border-zinc-300",
+                "dark:border-zinc-600",
+                "bg-zinc-50",
+                "dark:bg-zinc-800/50",
+                "rounded-md",
+                "flex",
+                "items-center",
+                "gap-2",
+                "outline-none",
+                "focus:outline-none"
+            )}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="12" y1="18" x2="12" y2="12"></line>
+                <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+            <div>
+                if props.content.is_empty() {
+                    <span>{"Click to upload a file"}</span>
+                } else {
+                    <span>{props.content.clone()}</span>
+                }
+            </div>
+        </div>
+    }
+}
+
+// Component for URL block rendering
+#[derive(Properties, PartialEq)]
+pub struct UrlBlockProps {
+    pub content: String,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(UrlBlockBlock)]
+pub fn url_block_block(props: &UrlBlockProps) -> Html {
+    let url = if props.content.is_empty() {
+        "https://".to_string()
+    } else {
+        props.content.clone()
+    };
+
+    html! {
+        <div
+            classes={classes!(
+                "p-2",
+                "min-h-[1.5em]",
+                "w-full",
+                "border",
+                "border-zinc-300",
+                "dark:border-zinc-600",
+                "bg-zinc-50",
+                "dark:bg-zinc-800/50",
+                "rounded-md",
+                "flex",
+                "items-center",
+                "gap-2",
+                "outline-none",
+                "focus:outline-none"
+            )}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <a href={url.clone()} target="_blank" class="text-blue-500 hover:underline">
+                {url}
+            </a>
+        </div>
+    }
+}
+
+// Component for role block rendering
+#[derive(Properties, PartialEq)]
+pub struct RoleProps {
+    pub role_type: RoleType,
+    pub content: String,
+    pub onclick: Callback<MouseEvent>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(RoleBlock)]
+pub fn role_block(props: &RoleProps) -> Html {
+    let badge_color = match props.role_type {
+        RoleType::System => {
+            "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
+        }
+        RoleType::Assistant => {
+            "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+        }
+        RoleType::User => "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+    };
+
+    html! {
+        <div
+            class={classes!(
+                "inline-flex",
+                "items-center",
+                "justify-center",
+                "px-2.5",
+                "py-1",
+                "rounded-md",
+                "text-sm",
+                "font-medium",
+                "cursor-pointer",
+                "mb-3",
+                badge_color
+            )}
+            data-role={props.role_type.to_string()}
+            onclick={props.onclick.clone()}
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+        >
+            {props.role_type.to_string()}
+        </div>
+    }
+}

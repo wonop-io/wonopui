@@ -52,6 +52,7 @@ Dropdown = []
 GroupButton = []
 Iframe = []
 Input = []
+MentionInput = []
 Label = []
 MediaQuery = ["WindowProvider"]
 Notification = []
@@ -115,6 +116,7 @@ everything = [
     "Input",
     "Label",
     "MarkdownEditor",
+    "MentionInput",
     "MediaQuery",
     "Notification",
     "PageHeader",
@@ -124,6 +126,7 @@ everything = [
     "Popover",
     "Resizable",
     "Select",
+
     "Selectable",
     "Switch",
     "Table",
@@ -143,13 +146,14 @@ everything = [
 
 [dependencies]
 yew = { version = "0.21", features = ["csr"] }
-
+log = "0.4.20"
 web-sys = { version = "0.3.68", features = [
     "DomTokenList",
     "HtmlDocument",
     "Selection",
     "Range",
     "Document",
+    "CompositionEvent",
     "HtmlInputElement",
     "HtmlIFrameElement",
     "Element",

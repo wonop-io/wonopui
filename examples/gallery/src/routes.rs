@@ -106,6 +106,8 @@ pub enum Route {
     TabsExample,
     #[at("/tag-input")]
     TagInputExample,
+    #[at("/mention-input")]
+    MentionInputExample,
     #[at("/tailwind-color-picker")]
     TailwindColorPickerExample,
     #[at("/textarea")]

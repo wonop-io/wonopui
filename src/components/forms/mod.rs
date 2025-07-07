@@ -1,25 +1,7 @@
 // Form input components
 
-#[cfg(feature = "Input")]
-pub mod input;
-#[cfg(feature = "Textarea")]
-pub mod textarea;
-#[cfg(feature = "Select")]
-pub mod select;
 #[cfg(feature = "Checkbox")]
 pub mod checkbox;
-#[cfg(feature = "Switch")]
-pub mod switch;
-#[cfg(feature = "Toggle")]
-pub mod toggle;
-#[cfg(feature = "Label")]
-pub mod label;
-#[cfg(feature = "TagInput")]
-pub mod tag_input;
-#[cfg(feature = "Combobox")]
-pub mod combobox;
-#[cfg(feature = "Selectable")]
-pub mod selectable;
 #[cfg(feature = "ColorPicker")]
 pub mod color_picker;
 #[cfg(feature = "ColorPickerHue")]
@@ -30,29 +12,31 @@ pub mod color_picker_light;
 pub mod color_picker_saturation;
 #[cfg(feature = "ColorPickerWheel")]
 pub mod color_picker_wheel;
+#[cfg(feature = "Combobox")]
+pub mod combobox;
+#[cfg(feature = "Input")]
+pub mod input;
+#[cfg(feature = "Label")]
+pub mod label;
+#[cfg(feature = "MentionInput")]
+pub mod mention_input;
+#[cfg(feature = "Select")]
+pub mod select;
+#[cfg(feature = "Selectable")]
+pub mod selectable;
+#[cfg(feature = "Switch")]
+pub mod switch;
+#[cfg(feature = "TagInput")]
+pub mod tag_input;
 #[cfg(feature = "TailwindColorPicker")]
 pub mod tailwind_color_picker;
-
-#[cfg(feature = "Input")]
-pub use input::Input;
 #[cfg(feature = "Textarea")]
-pub use textarea::Textarea;
-#[cfg(feature = "Select")]
-pub use select::{Select, SelectOption};
+pub mod textarea;
+#[cfg(feature = "Toggle")]
+pub mod toggle;
+
 #[cfg(feature = "Checkbox")]
 pub use checkbox::Checkbox;
-#[cfg(feature = "Switch")]
-pub use switch::SwitchButton;
-#[cfg(feature = "Toggle")]
-pub use toggle::Toggle;
-#[cfg(feature = "Label")]
-pub use label::Label;
-#[cfg(feature = "TagInput")]
-pub use tag_input::TagInput;
-#[cfg(feature = "Combobox")]
-pub use combobox::Combobox;
-#[cfg(feature = "Selectable")]
-pub use selectable::{Selectable, SelectableArea, SelectableIndicator};
 #[cfg(feature = "ColorPicker")]
 pub use color_picker::ColorPicker;
 #[cfg(feature = "ColorPickerHue")]
@@ -63,5 +47,25 @@ pub use color_picker_light::ColorPickerLight;
 pub use color_picker_saturation::ColorPickerSaturation;
 #[cfg(feature = "ColorPickerWheel")]
 pub use color_picker_wheel::ColorPickerWheel;
+#[cfg(feature = "Combobox")]
+pub use combobox::Combobox;
+#[cfg(feature = "Input")]
+pub use input::Input;
+#[cfg(feature = "Label")]
+pub use label::Label;
+#[cfg(feature = "MentionInput")]
+pub use mention_input::MentionInput;
+#[cfg(feature = "Select")]
+pub use select::{Select, SelectOption};
+#[cfg(feature = "Selectable")]
+pub use selectable::{Selectable, SelectableArea, SelectableIndicator};
+#[cfg(feature = "Switch")]
+pub use switch::SwitchButton;
+#[cfg(feature = "TagInput")]
+pub use tag_input::TagInput;
 #[cfg(feature = "TailwindColorPicker")]
 pub use tailwind_color_picker::TailwindColorPicker;
+#[cfg(feature = "Textarea")]
+pub use textarea::Textarea;
+#[cfg(feature = "Toggle")]
+pub use toggle::Toggle;

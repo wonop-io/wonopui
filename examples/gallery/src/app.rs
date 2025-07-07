@@ -185,6 +185,9 @@ pub fn app() -> Html {
         Route::TagInputExample => {
             html! { <TagInputDocumentation /> }
         }
+        Route::MentionInputExample => {
+            html! { <MentionInputDocumentation /> }
+        }
         Route::TailwindColorPickerExample => {
             html! { <TailwindColorPickerDocumentation /> }
         }

@@ -3,8 +3,8 @@ use crate::routes::Route;
 use gloo_console as console;
 use wonopui::prelude::*;
 use yew::prelude::*;
-use yew_router::prelude::*;
 use yew::prelude::*;
+use yew_router::prelude::*;
 use yew_router::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -180,6 +180,7 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
                 <SidebarLink<Route> label="Table" to={Route::TableExample} />
                 <SidebarLink<Route> label="Tabs" to={Route::TabsExample} />
                 <SidebarLink<Route> label="Tag Input" to={Route::TagInputExample} />
+                <SidebarLink<Route> label="Mention Input" to={Route::MentionInputExample} />
                 <SidebarLink<Route> label="Tailwind Color Picker" to={Route::TailwindColorPickerExample} />
                 <SidebarLink<Route> label="Textarea" to={Route::TextareaExample} />
                 <SidebarLink<Route> label="Toggle" to={Route::ToggleExample} />

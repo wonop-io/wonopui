@@ -3,7 +3,6 @@ use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
 use crate::config::BrandGuideType;
-use std::cell::RefCell;
 use std::rc::Rc;
 #[cfg(not(feature = "ssr"))]
 use wasm_bindgen::closure::Closure;
@@ -27,171 +26,6 @@ pub struct TagInputProps {
     pub placeholder: String,
 }
 
-pub struct TagInputInner {
-    tags: Rc<RefCell<Vec<String>>>,
-    input_ref: NodeRef,
-    container_ref: NodeRef,
-    candidate_tags: Rc<RefCell<Vec<String>>>,
-}
-
-pub enum Msg {
-    AddTag(String),
-    RemoveTag(usize),
-    UpdateInput(String),
-    UpdateCandidates(Vec<String>),
-    FocusInput,
-}
-
-#[derive(Properties, PartialEq)]
-pub struct TagInputInnerProps {
-    pub brandguide: Rc<BrandGuideType>,
-    pub props: TagInputProps,
-}
-
-impl Component for TagInputInner {
-    type Message = Msg;
-    type Properties = TagInputInnerProps;
-
-    fn create(ctx: &Context<Self>) -> Self {
-        Self {
-            tags: Rc::new(RefCell::new(ctx.props().props.default_value.clone())),
-            input_ref: NodeRef::default(),
-            container_ref: NodeRef::default(),
-            candidate_tags: Rc::new(RefCell::new(Vec::new())),
-        }
-    }
-
-    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
-        match msg {
-            Msg::AddTag(tag) => {
-                self.tags.borrow_mut().push(tag);
-                if let Some(ref onupdate) = ctx.props().props.onupdate {
-                    onupdate.emit(self.tags.borrow().clone());
-                }
-                self.candidate_tags.borrow_mut().clear();
-                #[cfg(not(feature = "ssr"))]
-                if let Some(input) = self.input_ref.cast::<HtmlInputElement>() {
-                    input.set_value("");
-                }
-                true
-            }
-            Msg::RemoveTag(index) => {
-                self.tags.borrow_mut().remove(index);
-                if let Some(ref onupdate) = ctx.props().props.onupdate {
-                    onupdate.emit(self.tags.borrow().clone());
-                }
-                true
-            }
-            Msg::UpdateInput(value) => {
-                if let Some(ref candidates) = ctx.props().props.candidates {
-                    let callback = ctx.link().callback(Msg::UpdateCandidates);
-                    callback.emit(candidates.emit(value));
-                }
-                false
-            }
-            Msg::UpdateCandidates(candidates) => {
-                *self.candidate_tags.borrow_mut() = candidates;
-                true
-            }
-            Msg::FocusInput => {
-                #[cfg(not(feature = "ssr"))]
-                if let Some(input) = self.input_ref.cast::<HtmlInputElement>() {
-                    let _ = input.focus();
-                }
-                false
-            }
-        }
-    }
-
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        let brandguide = &ctx.props().brandguide;
-
-        let onkeypress = ctx.link().batch_callback(|e: KeyboardEvent| {
-            #[cfg(not(feature = "ssr"))]
-            {
-                if e.key() == "Enter" {
-                    let input: HtmlInputElement = e.target_unchecked_into();
-                    let value = input.value();
-                    if !value.is_empty() {
-                        input.set_value("");
-                        return Some(Msg::AddTag(value));
-                    }
-                }
-            }
-            None
-        });
-
-        let oninput = ctx.link().callback(|e: InputEvent| {
-            #[cfg(not(feature = "ssr"))]
-            {
-                let input: HtmlInputElement = e.target_unchecked_into();
-                return Msg::UpdateInput(input.value());
-            }
-            #[cfg(feature = "ssr")]
-            Msg::UpdateInput(String::new())
-        });
-
-        let onfocus = ctx.link().callback(|_| Msg::FocusInput);
-
-        let candidate_tags = self.candidate_tags.borrow();
-
-        html! {
-            <div
-                ref={self.container_ref.clone()}
-                {onfocus}
-                tabindex="0"
-                class={classes!(&brandguide.tag_input_container)}
-            >
-                <div class={classes!(&brandguide.tag_input_tags_container)}>
-                    {for self.tags.borrow().iter().enumerate().map(|(index, tag)| {
-                        let onclick = ctx.link().callback(move |_| Msg::RemoveTag(index));
-                        html! {
-                            <span class={classes!(&brandguide.tag_input_tag)}>
-                                {tag}
-                                <button onclick={onclick} class={classes!(&brandguide.tag_input_remove_button)}>{"×"}</button>
-                            </span>
-                        }
-                    })}
-                </div>
-                <input
-                    type="text"
-                    ref={self.input_ref.clone()}
-                    id={ctx.props().props.id.clone()}
-                    {onkeypress}
-                    {oninput}
-                    placeholder={ctx.props().props.placeholder.clone()}
-                    class={classes!(&brandguide.tag_input_input)}
-                />
-                <div class={classes!(&brandguide.tag_input_candidates_container)}>
-                    {for candidate_tags.iter().map(|candidate| {
-                        let candidate_clone = candidate.clone();
-                        let onclick = ctx.link().callback(move |_| Msg::AddTag(candidate_clone.clone()));
-                        html! {
-                            <button onclick={onclick} class={classes!(&brandguide.tag_input_candidate_button)}>{candidate}</button>
-                        }
-                    })}
-                </div>
-            </div>
-        }
-    }
-
-    fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
-        #[cfg(not(feature = "ssr"))]
-        if first_render {
-            if let Some(container) = self.container_ref.cast::<HtmlElement>() {
-                let link = ctx.link().clone();
-                let closure = Closure::wrap(Box::new(move |_: web_sys::FocusEvent| {
-                    link.send_message(Msg::FocusInput);
-                }) as Box<dyn FnMut(_)>);
-                container
-                    .add_event_listener_with_callback("focus", closure.as_ref().unchecked_ref())
-                    .unwrap();
-                closure.forget();
-            }
-        }
-    }
-}
-
 #[function_component(TagInput)]
 pub fn tag_input(props: &TagInputProps) -> Html {
     #[cfg(feature = "ThemeProvider")]
@@ -199,8 +33,167 @@ pub fn tag_input(props: &TagInputProps) -> Html {
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = Rc::new(get_brandguide());
 
+    let tags = use_state(|| props.default_value.clone());
+    let candidate_tags = use_state(Vec::<String>::new);
+    let input_ref = use_node_ref();
+    let container_ref = use_node_ref();
+
+    // Effect for setting up focus event listener
+    {
+        let container_ref = container_ref.clone();
+        let input_ref = input_ref.clone();
+        use_effect_with((), move |_| {
+            let mut cleanup_needed = false;
+            let mut event_closure = None;
+
+            if let Some(container) = container_ref.cast::<HtmlElement>() {
+                let input_ref = input_ref.clone();
+                let closure = Closure::wrap(Box::new(move |_: web_sys::FocusEvent| {
+                    if let Some(input) = input_ref.cast::<HtmlInputElement>() {
+                        let _ = input.focus();
+                    }
+                }) as Box<dyn FnMut(_)>);
+
+                container
+                    .add_event_listener_with_callback("focus", closure.as_ref().unchecked_ref())
+                    .unwrap();
+
+                cleanup_needed = true;
+                event_closure = Some(closure);
+            }
+
+            move || {
+                if cleanup_needed {
+                    if let Some(closure) = event_closure {
+                        drop(closure);
+                    }
+                }
+            }
+        });
+    }
+
+    let add_tag = {
+        let tags = tags.clone();
+        let candidate_tags = candidate_tags.clone();
+        let props_onupdate = props.onupdate.clone();
+
+        Callback::from(move |tag: String| {
+            let mut new_tags = (*tags).clone();
+            new_tags.push(tag);
+            tags.set(new_tags.clone());
+            candidate_tags.set(Vec::new());
+
+            if let Some(ref onupdate) = props_onupdate {
+                onupdate.emit(new_tags);
+            }
+        })
+    };
+
+    let remove_tag = {
+        let tags = tags.clone();
+        let props_onupdate = props.onupdate.clone();
+
+        Callback::from(move |index: usize| {
+            let mut new_tags = (*tags).clone();
+            new_tags.remove(index);
+            tags.set(new_tags.clone());
+
+            if let Some(ref onupdate) = props_onupdate {
+                onupdate.emit(new_tags);
+            }
+        })
+    };
+
+    let update_input = {
+        let candidate_tags = candidate_tags.clone();
+        let props_candidates = props.candidates.clone();
+
+        Callback::from(move |value: String| {
+            if let Some(ref candidates) = props_candidates {
+                // Only show candidates if the input is not empty
+                if value.is_empty() {
+                    candidate_tags.set(Vec::new());
+                } else {
+                    let candidate_results = candidates.emit(value);
+                    candidate_tags.set(candidate_results);
+                }
+            }
+        })
+    };
+
+    let onkeypress = {
+        let add_tag = add_tag.clone();
+
+        Callback::from(move |e: KeyboardEvent| {
+            #[cfg(not(feature = "ssr"))]
+            {
+                if e.key() == "Enter" {
+                    let input: HtmlInputElement = e.target_unchecked_into();
+                    let value = input.value();
+                    if !value.is_empty() {
+                        input.set_value("");
+                        add_tag.emit(value);
+                    }
+                }
+            }
+        })
+    };
+
+    let oninput = {
+        let update_input = update_input.clone();
+
+        Callback::from(move |e: InputEvent| {
+            #[cfg(not(feature = "ssr"))]
+            {
+                let input: HtmlInputElement = e.target_unchecked_into();
+                update_input.emit(input.value());
+            }
+            #[cfg(feature = "ssr")]
+            update_input.emit(String::new());
+        })
+    };
+
     html! {
-        <TagInputInner brandguide={brandguide} props={props.clone()} />
+        <div
+            ref={container_ref}
+            tabindex="0"
+            class={classes!(&brandguide.tag_input_container)}
+        >
+            <div class={classes!(&brandguide.tag_input_tags_container)}>
+                {for (*tags).iter().enumerate().map(|(index, tag)| {
+                    let onclick = {
+                        let remove_tag = remove_tag.clone();
+                        let index = index;
+                        Callback::from(move |_| remove_tag.emit(index))
+                    };
+                    html! {
+                        <span class={classes!(&brandguide.tag_input_tag)}>
+                            {tag}
+                            <button onclick={onclick} class={classes!(&brandguide.tag_input_remove_button)}>{"×"}</button>
+                        </span>
+                    }
+                })}
+            </div>
+            <input
+                type="text"
+                ref={input_ref}
+                id={props.id.clone()}
+                onkeypress={onkeypress}
+                oninput={oninput}
+                placeholder={props.placeholder.clone()}
+                class={classes!(&brandguide.tag_input_input)}
+            />
+            <div class={classes!(&brandguide.tag_input_candidates_container)}>
+                {for (*candidate_tags).iter().map(|candidate| {
+                    let candidate_clone = candidate.clone();
+                    let add_tag = add_tag.clone();
+                    let onclick = Callback::from(move |_| add_tag.emit(candidate_clone.clone()));
+                    html! {
+                        <button onclick={onclick} class={classes!(&brandguide.tag_input_candidate_button)}>{candidate}</button>
+                    }
+                })}
+            </div>
+        </div>
     }
 }
 

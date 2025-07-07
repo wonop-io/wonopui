@@ -312,6 +312,12 @@ pub fn create_search_index() -> Vec<(Route, String, String, Option<Html>)> {
             None,
         ),
         (
+            Route::MentionInputExample,
+            "mention input, mentions, keywords".to_string(),
+            "Mention Input".to_string(),
+            None,
+        ),
+        (
             Route::TailwindColorPickerExample,
             "tailwind color picker, palette, choose".to_string(),
             "Tailwind Color Picker".to_string(),
