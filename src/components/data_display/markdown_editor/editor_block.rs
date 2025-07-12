@@ -1,17 +1,17 @@
 // editor_block.rs
+use crate::components::data_display::contenteditable_commands::ContentEditableWithCommands;
 #[cfg(not(feature = "ThemeProvider"))]
 use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
 use crate::config::BrandGuideType;
 use wasm_bindgen::JsCast;
-use web_sys::FocusEvent;
+use web_sys::HtmlElement;
 use yew::prelude::*;
 
 use super::block::{Block, BlockTrait};
 use super::utils::{document, window};
 
-// Properties for a single editor block
 #[derive(Properties, PartialEq)]
 pub struct EditorBlockProps<T: BlockTrait> {
     pub id: String,
@@ -23,15 +23,27 @@ pub struct EditorBlockProps<T: BlockTrait> {
     pub on_keydown: Callback<KeyboardEvent>,
     pub on_update_block_type: Callback<(usize, T)>,
     pub on_blur: Callback<FocusEvent>,
+    #[prop_or_default]
+    pub on_insert_block: Callback<usize>,
 }
 
-// Component for a single editor block
 #[function_component(EditorBlock)]
 pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
     #[cfg(feature = "ThemeProvider")]
     let brandguide = use_brandguide();
     #[cfg(not(feature = "ThemeProvider"))]
     let brandguide = get_brandguide();
+
+    let node_ref = use_node_ref();
+
+    // Create callbacks for the ContentEditableWithCommands component
+    let on_input = {
+        let on_input = props.on_input.clone();
+        let index = props.index;
+        Callback::from(move |content: String| {
+            on_input.emit((index, content));
+        })
+    };
 
     // Create callback for updating block type
     let update_block_callback = {
@@ -42,7 +54,7 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
         })
     };
 
-    // Create callbacks for events that will be passed to the rendered block
+    // Create focus callback
     let on_focus = {
         let on_focus = props.on_focus.clone();
         let index = props.index;
@@ -51,55 +63,59 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
         })
     };
 
-    let on_input = {
-        let on_input = props.on_input.clone();
+    // Create callback for inserting a new block
+    let on_insert_block = {
+        let on_insert_block = props.on_insert_block.clone();
         let index = props.index;
-        Callback::from(move |content: String| {
-            on_input.emit((index, content));
+        Callback::from(move |_| {
+            on_insert_block.emit(index + 1); // Insert after current block
         })
     };
 
-    let on_keydown = props.on_keydown.clone();
-    let on_blur = props.on_blur.clone();
+    // Get command options for this block type
+    let command_options = {
+        // Get block types that can be used as options
+        let block_types = T::search(None);
 
-    // Create child focus callback
-    let on_child_focus = {
-        let on_focus = on_focus.clone();
-        Callback::from(move |e: FocusEvent| {
-            on_focus.emit(e);
-        })
+        // Convert to command options format
+        block_types
+            .into_iter()
+            .map(|block_type| {
+                let name = block_type.name();
+                let keywords = name.to_lowercase();
+                let icon = Some(block_type.icon());
+                (block_type, keywords, name, icon)
+            })
+            .collect::<Vec<_>>()
     };
 
-    // Create child blur callback
-    let on_child_blur = {
-        let on_blur = on_blur.clone();
-        Callback::from(move |e: FocusEvent| {
-            on_blur.emit(e);
-        })
-    };
-
-    // Render the block using the BlockTrait's render method
+    // Wrap contenteditable in block rendering based on block type
     let rendered = props.block.block_type.render(
         props.block.content.clone(),
         update_block_callback,
-        on_keydown.clone(),
-        on_child_focus,
-        on_child_blur,
+        props.on_keydown.clone(),
+        on_focus.clone(),
+        props.on_blur.clone(),
         props.is_active,
     );
 
     html! {
-        <div
-            id={props.id.clone()}
-            class={classes!(
-                &brandguide.markdown_editor_block,
-                if props.is_active { &brandguide.markdown_editor_block_active } else { &brandguide.markdown_editor_block }
-            )}
-            onfocus={on_focus}
-            onkeydown={on_keydown}
-            onblur={on_blur.clone()}
-        >
-            { rendered }
+        <div class="block-container">
+            <div
+                id={props.id.clone()}
+                ref={node_ref}
+                onkeydown={props.on_keydown.clone()}
+                class={classes!(
+                    "p-1",  // Removed mb-2 margin
+                    if props.is_active { "border-zinc-500 border rounded" } else { "" }
+                )}
+            >
+                {rendered}
+            </div>
+            <div
+                class="rounded h-2 w-full cursor-text hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+                onclick={on_insert_block}
+            />
         </div>
     }
 }

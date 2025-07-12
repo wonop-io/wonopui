@@ -1,3 +1,4 @@
+use crate::components::markdown_editor::EditorBlockType;
 use std::str::FromStr;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, KeyboardEvent};
@@ -199,16 +200,16 @@ impl FromStr for RoleType {
     }
 }
 
-// Generic Block Component for editable blocks
+// Generic Block Component for editable blocks with ContentEditableWithCommands
 #[derive(Properties, PartialEq)]
-pub struct GenericBlockProps {
+pub struct GenericBlockProps<T: Clone + PartialEq + 'static> {
     pub tag: &'static str,
     #[prop_or_default]
     pub content: String,
     #[prop_or_default]
     pub classes: Classes,
     #[prop_or_default]
-    pub on_input: Option<Callback<InputEvent>>,
+    pub on_input: Callback<String>,
     #[prop_or_default]
     pub onkeydown: Callback<KeyboardEvent>,
     #[prop_or_default]
@@ -221,27 +222,43 @@ pub struct GenericBlockProps {
     pub contenteditable: bool,
     #[prop_or_default]
     pub children: Children,
+    #[prop_or_default]
+    pub command_triggers: Vec<String>,
+    #[prop_or_default]
+    pub command_options: Vec<(T, String, String, Option<Html>)>,
+    #[prop_or_default]
+    pub on_command_select: Callback<T>,
 }
 
 #[function_component(GenericBlock)]
-pub fn generic_block(props: &GenericBlockProps) -> Html {
+pub fn generic_block<T: Clone + PartialEq + 'static>(props: &GenericBlockProps<T>) -> Html {
     let node_ref = use_node_ref();
-    log::info!("Content rendered: {}", props.content);
-    log::info!("Children rendered: {:#?}", props.children);
 
-    // This effect handles focus and also updates the content
+    // Check if we should use ContentEditableWithCommands
+    let use_commands = !props.command_triggers.is_empty() && !props.command_options.is_empty();
+
+    // Effect for focus when not using ContentEditableWithCommands
+    // Always create the effect at the top level and conditionally check inside
     use_effect_with(
-        (props.has_focus, node_ref.clone(), props.content.clone()),
-        |(has_focus, node_ref, content)| {
-            if let Some(element) = node_ref.cast::<HtmlElement>() {
-                // Instead of using set_text_content which doesn't preserve newlines,
-                // use innerHTML to preserve formatting
-                element.set_inner_html(&content.replace("\n", "<br>"));
+        (
+            props.has_focus,
+            node_ref.clone(),
+            props.content.clone(),
+            use_commands,
+        ),
+        |(has_focus, node_ref, content, use_commands)| {
+            // Only update the HTML if we're not using ContentEditableWithCommands
+            if !*use_commands {
+                if let Some(element) = node_ref.cast::<HtmlElement>() {
+                    // Instead of using set_text_content which doesn't preserve newlines,
+                    // use innerHTML to preserve formatting
+                    element.set_inner_html(&content.replace("\n", "<br>"));
 
-                if *has_focus {
-                    let _ = element.focus();
-                } else {
-                    let _ = element.blur();
+                    if *has_focus {
+                        let _ = element.focus();
+                    } else {
+                        let _ = element.blur();
+                    }
                 }
             }
 
@@ -249,35 +266,76 @@ pub fn generic_block(props: &GenericBlockProps) -> Html {
         },
     );
 
+    // Convert input callback
+    let on_input_string = {
+        let on_input = props.on_input.clone();
+        Callback::from(move |content: String| {
+            on_input.emit(content);
+        })
+    };
+
+    // if use_commands && props.contenteditable {
     html! {
-        <@{props.tag}
-            ref={node_ref}
-            key="editable"
+        <ContentEditableWithCommands<T>
+            tag={props.tag}
+            content={props.content.clone()}
             class={props.classes.clone()}
-            contenteditable={props.contenteditable.to_string()}
-            oninput={props.on_input.clone().unwrap_or_else(|| Callback::noop())}
-            onkeydown={props.onkeydown.clone()}
-            onfocus={props.onfocus.clone()}
-            onblur={props.onblur.clone()}
+            placeholder=""
+            is_active={props.has_focus}
+            on_input={on_input_string}
+            on_keydown={props.onkeydown.clone()}
+            on_focus={props.onfocus.clone()}
+            on_blur={props.onblur.clone()}
+            command_triggers={props.command_triggers.clone()}
+            command_options={props.command_options.clone()}
+            on_command_select={props.on_command_select.clone()}
         />
     }
+    /*
+    } else {
+        html! {
+            <@{props.tag}
+                ref={node_ref}
+                key="editable"
+                class={props.classes.clone()}
+                contenteditable={props.contenteditable.to_string()}
+                oninput={Callback::from(move |e: InputEvent| {
+                    let input = e.target_unchecked_into::<HtmlElement>();
+                    let content = input.inner_text();
+                    on_input_string.emit(content);
+                })}
+                onkeydown={props.onkeydown.clone()}
+                onfocus={props.onfocus.clone()}
+                onblur={props.onblur.clone()}
+            >
+                {props.children.clone()}
+            </@>
+        }
+    }
+    */
 }
 
 // Component for paragraph block rendering
 #[derive(Properties, PartialEq)]
 pub struct ParagraphProps {
     pub content: String,
-    pub on_input: Callback<InputEvent>,
+    pub on_input: Callback<String>,
     pub onkeydown: Callback<KeyboardEvent>,
     pub onfocus: Callback<FocusEvent>,
     pub onblur: Callback<FocusEvent>,
     pub has_focus: bool,
+    #[prop_or_default]
+    pub command_triggers: Vec<String>,
+    #[prop_or_default]
+    pub command_options: Vec<(EditorBlockType, String, String, Option<Html>)>,
+    #[prop_or_default]
+    pub on_command_select: Callback<EditorBlockType>,
 }
 
 #[function_component(ParagraphBlock)]
 pub fn paragraph_block(props: &ParagraphProps) -> Html {
     html! {
-        <GenericBlock
+        <GenericBlock<EditorBlockType>
             tag="div"
             content={props.content.clone()}
             classes={classes!(
@@ -287,11 +345,14 @@ pub fn paragraph_block(props: &ParagraphProps) -> Html {
                 "outline-none",
                 "focus:outline-none"
             )}
-            on_input={Some(props.on_input.clone())}
+            on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
             has_focus={props.has_focus}
+            command_triggers={props.command_triggers.clone()}
+            command_options={props.command_options.clone()}
+            on_command_select={props.on_command_select.clone()}
         />
     }
 }
@@ -300,17 +361,23 @@ pub fn paragraph_block(props: &ParagraphProps) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct Heading1Props {
     pub content: String,
-    pub on_input: Callback<InputEvent>,
+    pub on_input: Callback<String>,
     pub onkeydown: Callback<KeyboardEvent>,
     pub onfocus: Callback<FocusEvent>,
     pub onblur: Callback<FocusEvent>,
     pub has_focus: bool,
+    #[prop_or_default]
+    pub command_triggers: Vec<String>,
+    #[prop_or_default]
+    pub command_options: Vec<(EditorBlockType, String, String, Option<Html>)>,
+    #[prop_or_default]
+    pub on_command_select: Callback<EditorBlockType>,
 }
 
 #[function_component(Heading1Block)]
 pub fn heading1_block(props: &Heading1Props) -> Html {
     html! {
-        <GenericBlock
+        <GenericBlock<EditorBlockType>
             tag="div"
             content={props.content.clone()}
             classes={classes!(
@@ -322,11 +389,14 @@ pub fn heading1_block(props: &Heading1Props) -> Html {
                 "outline-none",
                 "focus:outline-none"
             )}
-            on_input={Some(props.on_input.clone())}
+            on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
             has_focus={props.has_focus}
+            command_triggers={props.command_triggers.clone()}
+            command_options={props.command_options.clone()}
+            on_command_select={props.on_command_select.clone()}
         />
     }
 }
@@ -335,17 +405,23 @@ pub fn heading1_block(props: &Heading1Props) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct Heading2Props {
     pub content: String,
-    pub on_input: Callback<InputEvent>,
+    pub on_input: Callback<String>,
     pub onkeydown: Callback<KeyboardEvent>,
     pub onfocus: Callback<FocusEvent>,
     pub onblur: Callback<FocusEvent>,
     pub has_focus: bool,
+    #[prop_or_default]
+    pub command_triggers: Vec<String>,
+    #[prop_or_default]
+    pub command_options: Vec<(EditorBlockType, String, String, Option<Html>)>,
+    #[prop_or_default]
+    pub on_command_select: Callback<EditorBlockType>,
 }
 
 #[function_component(Heading2Block)]
 pub fn heading2_block(props: &Heading2Props) -> Html {
     html! {
-        <GenericBlock
+        <GenericBlock<EditorBlockType>
             tag="div"
             content={props.content.clone()}
             classes={classes!(
@@ -357,11 +433,14 @@ pub fn heading2_block(props: &Heading2Props) -> Html {
                 "outline-none",
                 "focus:outline-none"
             )}
-            on_input={Some(props.on_input.clone())}
+            on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
             has_focus={props.has_focus}
+            command_triggers={props.command_triggers.clone()}
+            command_options={props.command_options.clone()}
+            on_command_select={props.on_command_select.clone()}
         />
     }
 }
@@ -370,17 +449,23 @@ pub fn heading2_block(props: &Heading2Props) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct Heading3Props {
     pub content: String,
-    pub on_input: Callback<InputEvent>,
+    pub on_input: Callback<String>,
     pub onkeydown: Callback<KeyboardEvent>,
     pub onfocus: Callback<FocusEvent>,
     pub onblur: Callback<FocusEvent>,
     pub has_focus: bool,
+    #[prop_or_default]
+    pub command_triggers: Vec<String>,
+    #[prop_or_default]
+    pub command_options: Vec<(EditorBlockType, String, String, Option<Html>)>,
+    #[prop_or_default]
+    pub on_command_select: Callback<EditorBlockType>,
 }
 
 #[function_component(Heading3Block)]
 pub fn heading3_block(props: &Heading3Props) -> Html {
     html! {
-        <GenericBlock
+        <GenericBlock<EditorBlockType>
             tag="div"
             content={props.content.clone()}
             classes={classes!(
@@ -392,11 +477,14 @@ pub fn heading3_block(props: &Heading3Props) -> Html {
                 "outline-none",
                 "focus:outline-none"
             )}
-            on_input={Some(props.on_input.clone())}
+            on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
             has_focus={props.has_focus}
+            command_triggers={props.command_triggers.clone()}
+            command_options={props.command_options.clone()}
+            on_command_select={props.on_command_select.clone()}
         />
     }
 }
@@ -405,17 +493,23 @@ pub fn heading3_block(props: &Heading3Props) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct BulletListProps {
     pub content: String,
-    pub on_input: Callback<InputEvent>,
+    pub on_input: Callback<String>,
     pub onkeydown: Callback<KeyboardEvent>,
     pub onfocus: Callback<FocusEvent>,
     pub onblur: Callback<FocusEvent>,
     pub has_focus: bool,
+    #[prop_or_default]
+    pub command_triggers: Vec<String>,
+    #[prop_or_default]
+    pub command_options: Vec<(EditorBlockType, String, String, Option<Html>)>,
+    #[prop_or_default]
+    pub on_command_select: Callback<EditorBlockType>,
 }
 
 #[function_component(BulletListBlock)]
 pub fn bullet_list_block(props: &BulletListProps) -> Html {
     html! {
-        <GenericBlock
+        <GenericBlock<EditorBlockType>
             tag="div"
             content={props.content.clone()}
             classes={classes!(
@@ -427,11 +521,14 @@ pub fn bullet_list_block(props: &BulletListProps) -> Html {
                 "outline-none",
                 "focus:outline-none"
             )}
-            on_input={Some(props.on_input.clone())}
+            on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
             has_focus={props.has_focus}
+            command_triggers={props.command_triggers.clone()}
+            command_options={props.command_options.clone()}
+            on_command_select={props.on_command_select.clone()}
         />
     }
 }
@@ -440,17 +537,23 @@ pub fn bullet_list_block(props: &BulletListProps) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct NumberedListProps {
     pub content: String,
-    pub on_input: Callback<InputEvent>,
+    pub on_input: Callback<String>,
     pub onkeydown: Callback<KeyboardEvent>,
     pub onfocus: Callback<FocusEvent>,
     pub onblur: Callback<FocusEvent>,
     pub has_focus: bool,
+    #[prop_or_default]
+    pub command_triggers: Vec<String>,
+    #[prop_or_default]
+    pub command_options: Vec<(EditorBlockType, String, String, Option<Html>)>,
+    #[prop_or_default]
+    pub on_command_select: Callback<EditorBlockType>,
 }
 
 #[function_component(NumberedListBlock)]
 pub fn numbered_list_block(props: &NumberedListProps) -> Html {
     html! {
-        <GenericBlock
+        <GenericBlock<EditorBlockType>
             tag="div"
             content={props.content.clone()}
             classes={classes!(
@@ -462,11 +565,14 @@ pub fn numbered_list_block(props: &NumberedListProps) -> Html {
                 "outline-none",
                 "focus:outline-none"
             )}
-            on_input={Some(props.on_input.clone())}
+            on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
             has_focus={props.has_focus}
+            command_triggers={props.command_triggers.clone()}
+            command_options={props.command_options.clone()}
+            on_command_select={props.on_command_select.clone()}
         />
     }
 }
@@ -475,17 +581,23 @@ pub fn numbered_list_block(props: &NumberedListProps) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct QuoteProps {
     pub content: String,
-    pub on_input: Callback<InputEvent>,
+    pub on_input: Callback<String>,
     pub onkeydown: Callback<KeyboardEvent>,
     pub onfocus: Callback<FocusEvent>,
     pub onblur: Callback<FocusEvent>,
     pub has_focus: bool,
+    #[prop_or_default]
+    pub command_triggers: Vec<String>,
+    #[prop_or_default]
+    pub command_options: Vec<(EditorBlockType, String, String, Option<Html>)>,
+    #[prop_or_default]
+    pub on_command_select: Callback<EditorBlockType>,
 }
 
 #[function_component(QuoteBlock)]
 pub fn quote_block(props: &QuoteProps) -> Html {
     html! {
-        <GenericBlock
+        <GenericBlock<EditorBlockType>
             tag="div"
             content={props.content.clone()}
             classes={classes!(
@@ -502,11 +614,14 @@ pub fn quote_block(props: &QuoteProps) -> Html {
                 "outline-none",
                 "focus:outline-none"
             )}
-            on_input={Some(props.on_input.clone())}
+            on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
             has_focus={props.has_focus}
+            command_triggers={props.command_triggers.clone()}
+            command_options={props.command_options.clone()}
+            on_command_select={props.on_command_select.clone()}
         />
     }
 }
@@ -515,17 +630,23 @@ pub fn quote_block(props: &QuoteProps) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct CodeBlockProps {
     pub content: String,
-    pub on_input: Callback<InputEvent>,
+    pub on_input: Callback<String>,
     pub onkeydown: Callback<KeyboardEvent>,
     pub onfocus: Callback<FocusEvent>,
     pub onblur: Callback<FocusEvent>,
     pub has_focus: bool,
+    #[prop_or_default]
+    pub command_triggers: Vec<String>,
+    #[prop_or_default]
+    pub command_options: Vec<(EditorBlockType, String, String, Option<Html>)>,
+    #[prop_or_default]
+    pub on_command_select: Callback<EditorBlockType>,
 }
 
 #[function_component(CodeBlockBlock)]
 pub fn code_block_block(props: &CodeBlockProps) -> Html {
     html! {
-        <GenericBlock
+        <GenericBlock<EditorBlockType>
             tag="div"
             content={props.content.clone()}
             classes={classes!(
@@ -540,11 +661,14 @@ pub fn code_block_block(props: &CodeBlockProps) -> Html {
                 "outline-none",
                 "focus:outline-none"
             )}
-            on_input={Some(props.on_input.clone())}
+            on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
             has_focus={props.has_focus}
+            command_triggers={props.command_triggers.clone()}
+            command_options={props.command_options.clone()}
+            on_command_select={props.on_command_select.clone()}
         />
     }
 }
@@ -561,7 +685,7 @@ pub struct DividerProps {
 #[function_component(DividerBlock)]
 pub fn divider_block(props: &DividerProps) -> Html {
     html! {
-        <GenericBlock
+        <GenericBlock<EditorBlockType>
             tag="hr"
             content={"".to_string()}
             classes={classes!(
