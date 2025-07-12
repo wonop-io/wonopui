@@ -6,6 +6,8 @@ mod avatar;
 mod card;
 #[cfg(feature = "Carousel")]
 mod carousel;
+#[cfg(feature = "ContentEditableCommands")]
+mod contenteditable_commands;
 #[cfg(feature = "Kanban")]
 mod kanban;
 #[cfg(feature = "MarkdownEditor")]
@@ -24,6 +26,8 @@ pub use avatar::{Avatar, AvatarSize};
 pub use card::{Card, CardContent, CardHeader, CardTitle};
 #[cfg(feature = "Carousel")]
 pub use carousel::{Carousel, CarouselItem};
+#[cfg(feature = "ContentEditableCommands")]
+pub use contenteditable_commands::ContentEditableWithCommands;
 #[cfg(feature = "Kanban")]
 pub use kanban::{Kanban, KanbanCard, KanbanColumn};
 #[cfg(feature = "MarkdownEditor")]

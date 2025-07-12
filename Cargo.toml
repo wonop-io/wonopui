@@ -33,6 +33,7 @@ ColorPickerHue = []
 ColorPickerLight = []
 ColorPickerSaturation = []
 ColorPickerWheel = []
+ContentEditableCommands = []
 MarkdownEditor = []
 Combobox = []
 Kanban = []
@@ -97,6 +98,7 @@ everything = [
     "ColorPickerSaturation",
     "ColorPickerWheel",
     "Combobox",
+    "ContentEditableCommands",
     "Kanban",
     "Command",
     "Container",

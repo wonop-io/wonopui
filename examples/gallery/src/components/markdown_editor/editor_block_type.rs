@@ -10,6 +10,7 @@ use std::str::FromStr;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, KeyboardEvent};
 use wonopui::prelude::*;
+use wonopui::ContentEditableWithCommands;
 use wonopui::*;
 use yew::prelude::*;
 //
@@ -75,220 +76,170 @@ impl BlockTrait for EditorBlockType {
 
     fn render(
         &self,
-        arguments: String,
+        content: String,
         update_block: Callback<Self>,
         onkeydown: Callback<KeyboardEvent>,
         onfocus: Callback<FocusEvent>,
         onblur: Callback<FocusEvent>,
         has_focus: bool,
     ) -> Html {
-        match self {
-            EditorBlockType::Paragraph(content) => {
-                let custom_onblur = {
-                    let update_block = update_block.clone();
-                    let onblur = onblur.clone();
-                    let content_clone = content.clone();
-                    Callback::from(move |e: FocusEvent| {
-                        let input = e.target().unwrap().dyn_into::<HtmlElement>().unwrap();
-                        let new_content = input.inner_text();
-                        if new_content != content_clone {
-                            log::info!("Storing: {} vs {}", new_content, content_clone);
-                            update_block.emit(EditorBlockType::Paragraph(new_content));
-                        }
-                        onblur.emit(e);
-                    })
+        // Get command options for blocks that support commands
+        let command_options = Self::search(None)
+            .into_iter()
+            .map(|block_type| {
+                let name = block_type.name();
+                let keywords = name.to_lowercase();
+                let icon = Some(block_type.icon());
+                (block_type, keywords, name, icon)
+            })
+            .collect::<Vec<_>>();
+
+        // Create an on_input callback that updates content immediately
+        let on_input = {
+            let update_block = update_block.clone();
+            let self_type = self.clone();
+
+            Callback::from(move |content: String| {
+                // Create a new block of the same type with updated content
+                let new_block = match &self_type {
+                    EditorBlockType::Paragraph(_) => EditorBlockType::Paragraph(content),
+                    EditorBlockType::Heading1(_) => EditorBlockType::Heading1(content),
+                    EditorBlockType::Heading2(_) => EditorBlockType::Heading2(content),
+                    EditorBlockType::Heading3(_) => EditorBlockType::Heading3(content),
+                    EditorBlockType::BulletList(_) => EditorBlockType::BulletList(content),
+                    EditorBlockType::NumberedList(_) => EditorBlockType::NumberedList(content),
+                    EditorBlockType::Quote(_) => EditorBlockType::Quote(content),
+                    EditorBlockType::CodeBlock(_) => EditorBlockType::CodeBlock(content),
+                    EditorBlockType::Divider => EditorBlockType::Divider,
+                    EditorBlockType::FileBlock(_) => EditorBlockType::FileBlock(content),
+                    EditorBlockType::UrlBlock(_) => EditorBlockType::UrlBlock(content),
+                    EditorBlockType::Role(role_type, _) => {
+                        EditorBlockType::Role(role_type.clone(), content)
+                    }
                 };
 
+                update_block.emit(new_block);
+            })
+        };
+
+        match self {
+            EditorBlockType::Paragraph(_) => {
                 html! {
                     <ParagraphBlock
                         content={content.clone()}
-                        on_input={Callback::noop()}
+                        on_input={on_input}
                         onkeydown={onkeydown.clone()}
                         onfocus={onfocus.clone()}
-                        onblur={custom_onblur}
+                        onblur={onblur.clone()}
                         has_focus={has_focus}
+                        command_triggers={Self::command_triggers()}
+                        command_options={command_options}
+                        on_command_select={update_block.clone()}
                     />
                 }
             }
-            EditorBlockType::Heading1(content) => {
-                let custom_onblur = {
-                    let update_block = update_block.clone();
-                    let onblur = onblur.clone();
-                    let content_clone = content.clone();
-                    Callback::from(move |e: FocusEvent| {
-                        let input = e.target().unwrap().dyn_into::<HtmlElement>().unwrap();
-                        let new_content = input.inner_text();
-                        if new_content != content_clone {
-                            update_block.emit(EditorBlockType::Heading1(new_content));
-                        }
-                        onblur.emit(e);
-                    })
-                };
-
+            EditorBlockType::Heading1(_) => {
                 html! {
                     <Heading1Block
                         content={content.clone()}
-                        on_input={Callback::noop()}
+                        on_input={on_input}
                         onkeydown={onkeydown.clone()}
                         onfocus={onfocus.clone()}
-                        onblur={custom_onblur}
+                        onblur={onblur.clone()}
                         has_focus={has_focus}
+                        command_triggers={Self::command_triggers()}
+                        command_options={command_options}
+                        on_command_select={update_block.clone()}
                     />
                 }
             }
-            EditorBlockType::Heading2(content) => {
-                let custom_onblur = {
-                    let update_block = update_block.clone();
-                    let onblur = onblur.clone();
-                    let content_clone = content.clone();
-                    Callback::from(move |e: FocusEvent| {
-                        let input = e.target().unwrap().dyn_into::<HtmlElement>().unwrap();
-                        let new_content = input.inner_text();
-                        if new_content != content_clone {
-                            update_block.emit(EditorBlockType::Heading2(new_content));
-                        }
-                        onblur.emit(e);
-                    })
-                };
-
+            EditorBlockType::Heading2(_) => {
                 html! {
                     <Heading2Block
                         content={content.clone()}
-                        on_input={Callback::noop()}
+                        on_input={on_input}
                         onkeydown={onkeydown.clone()}
                         onfocus={onfocus.clone()}
-                        onblur={custom_onblur}
+                        onblur={onblur.clone()}
                         has_focus={has_focus}
+                        command_triggers={Self::command_triggers()}
+                        command_options={command_options}
+                        on_command_select={update_block.clone()}
                     />
                 }
             }
-            EditorBlockType::Heading3(content) => {
-                let custom_onblur = {
-                    let update_block = update_block.clone();
-                    let onblur = onblur.clone();
-                    let content_clone = content.clone();
-                    Callback::from(move |e: FocusEvent| {
-                        let input = e.target().unwrap().dyn_into::<HtmlElement>().unwrap();
-                        let new_content = input.inner_text();
-                        if new_content != content_clone {
-                            update_block.emit(EditorBlockType::Heading3(new_content));
-                        }
-                        onblur.emit(e);
-                    })
-                };
-
+            EditorBlockType::Heading3(_) => {
                 html! {
                     <Heading3Block
                         content={content.clone()}
-                        on_input={Callback::noop()}
+                        on_input={on_input}
                         onkeydown={onkeydown.clone()}
                         onfocus={onfocus.clone()}
-                        onblur={custom_onblur}
+                        onblur={onblur.clone()}
                         has_focus={has_focus}
+                        command_triggers={Self::command_triggers()}
+                        command_options={command_options}
+                        on_command_select={update_block.clone()}
                     />
                 }
             }
-            EditorBlockType::BulletList(content) => {
-                let custom_onblur = {
-                    let update_block = update_block.clone();
-                    let onblur = onblur.clone();
-                    let content_clone = content.clone();
-                    Callback::from(move |e: FocusEvent| {
-                        let input = e.target().unwrap().dyn_into::<HtmlElement>().unwrap();
-                        let new_content = input.inner_text();
-                        if new_content != content_clone {
-                            update_block.emit(EditorBlockType::BulletList(new_content));
-                        }
-                        onblur.emit(e);
-                    })
-                };
-
+            EditorBlockType::BulletList(_) => {
                 html! {
                     <BulletListBlock
                         content={content.clone()}
-                        on_input={Callback::noop()}
+                        on_input={on_input}
                         onkeydown={onkeydown.clone()}
                         onfocus={onfocus.clone()}
-                        onblur={custom_onblur}
+                        onblur={onblur.clone()}
                         has_focus={has_focus}
+                        command_triggers={Self::command_triggers()}
+                        command_options={command_options}
+                        on_command_select={update_block.clone()}
                     />
                 }
             }
-            EditorBlockType::NumberedList(content) => {
-                let custom_onblur = {
-                    let update_block = update_block.clone();
-                    let onblur = onblur.clone();
-                    let content_clone = content.clone();
-                    Callback::from(move |e: FocusEvent| {
-                        let input = e.target().unwrap().dyn_into::<HtmlElement>().unwrap();
-                        let new_content = input.inner_text();
-                        if new_content != content_clone {
-                            update_block.emit(EditorBlockType::NumberedList(new_content));
-                        }
-                        onblur.emit(e);
-                    })
-                };
-
+            EditorBlockType::NumberedList(_) => {
                 html! {
                     <NumberedListBlock
                         content={content.clone()}
-                        on_input={Callback::noop()}
+                        on_input={on_input}
                         onkeydown={onkeydown.clone()}
                         onfocus={onfocus.clone()}
-                        onblur={custom_onblur}
+                        onblur={onblur.clone()}
                         has_focus={has_focus}
+                        command_triggers={Self::command_triggers()}
+                        command_options={command_options}
+                        on_command_select={update_block.clone()}
                     />
                 }
             }
-            EditorBlockType::Quote(content) => {
-                let custom_onblur = {
-                    let update_block = update_block.clone();
-                    let onblur = onblur.clone();
-                    let content_clone = content.clone();
-                    Callback::from(move |e: FocusEvent| {
-                        let input = e.target().unwrap().dyn_into::<HtmlElement>().unwrap();
-                        let new_content = input.inner_text();
-                        if new_content != content_clone {
-                            update_block.emit(EditorBlockType::Quote(new_content));
-                        }
-                        onblur.emit(e);
-                    })
-                };
-
+            EditorBlockType::Quote(_) => {
                 html! {
                     <QuoteBlock
                         content={content.clone()}
-                        on_input={Callback::noop()}
+                        on_input={on_input}
                         onkeydown={onkeydown.clone()}
                         onfocus={onfocus.clone()}
-                        onblur={custom_onblur}
+                        onblur={onblur.clone()}
                         has_focus={has_focus}
+                        command_triggers={Self::command_triggers()}
+                        command_options={command_options}
+                        on_command_select={update_block.clone()}
                     />
                 }
             }
-            EditorBlockType::CodeBlock(content) => {
-                let custom_onblur = {
-                    let update_block = update_block.clone();
-                    let onblur = onblur.clone();
-                    let content_clone = content.clone();
-                    Callback::from(move |e: FocusEvent| {
-                        let input = e.target().unwrap().dyn_into::<HtmlElement>().unwrap();
-                        let new_content = input.inner_text();
-                        if new_content != content_clone {
-                            update_block.emit(EditorBlockType::CodeBlock(new_content));
-                        }
-                        onblur.emit(e);
-                    })
-                };
-
+            EditorBlockType::CodeBlock(_) => {
                 html! {
                     <CodeBlockBlock
                         content={content.clone()}
-                        on_input={Callback::noop()}
+                        on_input={on_input}
                         onkeydown={onkeydown.clone()}
                         onfocus={onfocus.clone()}
-                        onblur={custom_onblur}
+                        onblur={onblur.clone()}
                         has_focus={has_focus}
+                        command_triggers={Self::command_triggers()}
+                        command_options={command_options}
+                        on_command_select={update_block.clone()}
                     />
                 }
             }
@@ -302,57 +253,29 @@ impl BlockTrait for EditorBlockType {
                     />
                 }
             }
-            EditorBlockType::FileBlock(content) => {
-                let custom_onblur = {
-                    let update_block = update_block.clone();
-                    let onblur = onblur.clone();
-                    let content_clone = content.clone();
-                    Callback::from(move |e: FocusEvent| {
-                        let input = e.target().unwrap().dyn_into::<HtmlElement>().unwrap();
-                        let new_content = input.inner_text();
-                        if new_content != content_clone {
-                            update_block.emit(EditorBlockType::FileBlock(new_content));
-                        }
-                        onblur.emit(e);
-                    })
-                };
-
+            EditorBlockType::FileBlock(_) => {
                 html! {
                     <FileBlockBlock
                         content={content.clone()}
                         onkeydown={onkeydown.clone()}
                         onfocus={onfocus.clone()}
-                        onblur={custom_onblur}
+                        onblur={onblur.clone()}
                         has_focus={has_focus}
                     />
                 }
             }
-            EditorBlockType::UrlBlock(content) => {
-                let custom_onblur = {
-                    let update_block = update_block.clone();
-                    let onblur = onblur.clone();
-                    let content_clone = content.clone();
-                    Callback::from(move |e: FocusEvent| {
-                        let input = e.target().unwrap().dyn_into::<HtmlElement>().unwrap();
-                        let new_content = input.inner_text();
-                        if new_content != content_clone {
-                            update_block.emit(EditorBlockType::UrlBlock(new_content));
-                        }
-                        onblur.emit(e);
-                    })
-                };
-
+            EditorBlockType::UrlBlock(_) => {
                 html! {
                     <UrlBlockBlock
                         content={content.clone()}
                         onkeydown={onkeydown.clone()}
                         onfocus={onfocus.clone()}
-                        onblur={custom_onblur}
+                        onblur={onblur.clone()}
                         has_focus={has_focus}
                     />
                 }
             }
-            EditorBlockType::Role(current_role, content) => {
+            EditorBlockType::Role(current_role, _) => {
                 let update_block_cb = update_block.clone();
                 let onclick = {
                     let current_role = current_role.clone();
@@ -381,22 +304,6 @@ impl BlockTrait for EditorBlockType {
                     })
                 };
 
-                let custom_onblur = {
-                    let update_block = update_block.clone();
-                    let onblur = onblur.clone();
-                    let content_clone = content.clone();
-                    let role_type = current_role.clone();
-                    Callback::from(move |e: FocusEvent| {
-                        let input = e.target().unwrap().dyn_into::<HtmlElement>().unwrap();
-                        let new_content = input.inner_text();
-                        if new_content != content_clone {
-                            update_block
-                                .emit(EditorBlockType::Role(role_type.clone(), new_content));
-                        }
-                        onblur.emit(e);
-                    })
-                };
-
                 html! {
                     <RoleBlock
                         role_type={current_role.clone()}
@@ -404,12 +311,16 @@ impl BlockTrait for EditorBlockType {
                         onclick={onclick}
                         onkeydown={onkeydown.clone()}
                         onfocus={onfocus.clone()}
-                        onblur={custom_onblur}
+                        onblur={onblur.clone()}
                         has_focus={has_focus}
                     />
                 }
             }
         }
+    }
+
+    fn command_triggers() -> Vec<String> {
+        vec!["/".to_string()]
     }
 
     fn search(query: Option<String>) -> Vec<Self> {

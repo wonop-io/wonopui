@@ -11,29 +11,33 @@ use yew::prelude::*;
 pub trait BlockTrait: Clone + PartialEq + 'static {
     fn icon(&self) -> Html;
     fn name(&self) -> String;
+
+    // Simplified render function focusing only on display
     fn render(
         &self,
-        arguments: String,
+        content: String,
         update_block: Callback<Self>,
         onkeydown: Callback<KeyboardEvent>,
         onfocus: Callback<FocusEvent>,
         onblur: Callback<FocusEvent>,
         has_focus: bool,
     ) -> Html;
-    fn can_delete(&self) -> bool {
-        true // Default implementation returns true
-    }
 
-    // Define command triggers for this block type (default is "/")
+    // Method to get command triggers - moved from main component
     fn command_triggers() -> Vec<String> {
-        vec!["/".to_string()]
+        vec!["/".to_string()] // Default trigger
     }
 
-    // Only search is a static method, as it needs to return multiple instances
+    // Method to create a new block of this type
+    fn new_block() -> Self;
+
+    // Method to handle command search - moved from main component
     fn search(query: Option<String>) -> Vec<Self>;
 
-    // Create a new block of this type
-    fn new_block() -> Self;
+    // Can this block be deleted?
+    fn can_delete(&self) -> bool {
+        true
+    }
 }
 
 // Block model representing a single block in the editor

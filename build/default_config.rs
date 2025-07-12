@@ -336,7 +336,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("kanban_card_dragging".to_string(), "opacity-50 {{ default_shadow }}".to_string()),
 
         // Markdown Editor
-        ("markdown_editor_container".to_string(), "flex flex-col w-full border border-zinc-200 dark:border-zinc-700 {{ default_rounding_larger }} {{ background }} {{ text }} overflow-hidden".to_string()),
+        ("markdown_editor_container".to_string(), "flex flex-col w-full {{ background }} {{ text }}".to_string()),
         ("markdown_editor_blocks_container".to_string(), "w-full min-h-[200px] p-4 space-y-2 focus:outline-none".to_string()),
         ("markdown_editor_block".to_string(), "relative w-full rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors duration-150".to_string()),
         ("markdown_editor_block_active".to_string(), "bg-zinc-50 dark:bg-zinc-800/50".to_string()),
