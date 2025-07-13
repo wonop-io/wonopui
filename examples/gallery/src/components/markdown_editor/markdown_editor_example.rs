@@ -9,16 +9,17 @@ use yew::prelude::*;
 pub fn markdown_editor_example() -> Html {
     // Initialize with a paragraph block to ensure there's at least one component
     let initial_content = vec![
-        Block::new(EditorBlockType::Paragraph(String::new())),
-        Block::new(EditorBlockType::Role(RoleType::System, String::new())),
-        Block::new(EditorBlockType::FileBlock(String::new())),
-        Block::new(EditorBlockType::UrlBlock(String::new())),
+        EditorBlockType::Heading1("Hello world".to_string()),
+        EditorBlockType::Paragraph("Hello world".to_string()),
+        EditorBlockType::Role(RoleType::System, String::new()),
+        EditorBlockType::FileBlock(String::new()),
+        EditorBlockType::UrlBlock(String::new()),
     ];
     let content = use_state(|| initial_content);
 
     let on_change = {
         let content = content.clone();
-        Callback::from(move |blocks: Vec<Block<EditorBlockType>>| {
+        Callback::from(move |blocks: Vec<EditorBlockType>| {
             content.set(blocks);
         })
     };

@@ -76,7 +76,6 @@ impl BlockTrait for EditorBlockType {
 
     fn render(
         &self,
-        content: String,
         update_block: Callback<Self>,
         onkeydown: Callback<KeyboardEvent>,
         onfocus: Callback<FocusEvent>,
@@ -121,7 +120,21 @@ impl BlockTrait for EditorBlockType {
                 update_block.emit(new_block);
             })
         };
-
+        let content = match self {
+            EditorBlockType::Paragraph(content) => content.clone(),
+            EditorBlockType::Heading1(content) => content.clone(),
+            EditorBlockType::Heading2(content) => content.clone(),
+            EditorBlockType::Heading3(content) => content.clone(),
+            EditorBlockType::BulletList(content) => content.clone(),
+            EditorBlockType::NumberedList(content) => content.clone(),
+            EditorBlockType::Quote(content) => content.clone(),
+            EditorBlockType::CodeBlock(content) => content.clone(),
+            EditorBlockType::Divider => String::new(),
+            EditorBlockType::FileBlock(content) => content.clone(),
+            EditorBlockType::UrlBlock(content) => content.clone(),
+            EditorBlockType::Role(_, content) => content.clone(),
+        };
+        log::info!("Content: {}", content);
         match self {
             EditorBlockType::Paragraph(_) => {
                 html! {

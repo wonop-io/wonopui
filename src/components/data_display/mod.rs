@@ -31,7 +31,7 @@ pub use contenteditable_commands::ContentEditableWithCommands;
 #[cfg(feature = "Kanban")]
 pub use kanban::{Kanban, KanbanCard, KanbanColumn};
 #[cfg(feature = "MarkdownEditor")]
-pub use markdown_editor::{Block, BlockTrait, MarkdownEditor};
+pub use markdown_editor::{BlockTrait, MarkdownEditor};
 #[cfg(feature = "Placeholder")]
 pub use placeholder::Placeholder;
 #[cfg(feature = "Table")]

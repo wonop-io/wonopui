@@ -96,10 +96,10 @@ pub fn markdown_editor_theme_editor() -> Html {
             class="h-[400px]"
             placeholder="Start typing..."
             initial_content={vec![
-                Block::new(EditorBlockType::Paragraph("Start typing here...".to_string())),
-                Block::new(EditorBlockType::Heading2("Example Heading".to_string())),
-                Block::new(EditorBlockType::BulletList("List item example".to_string())),
-                Block::new(EditorBlockType::Role(crate::components::markdown_editor::RoleType::System, "System message".to_string())),
+                EditorBlockType::Paragraph("Start typing here...".to_string()),
+                EditorBlockType::Heading2("Example Heading".to_string()),
+                EditorBlockType::BulletList("List item example".to_string()),
+                EditorBlockType::Role(crate::components::markdown_editor::RoleType::System, "System message".to_string()),
             ]}
         />
     };

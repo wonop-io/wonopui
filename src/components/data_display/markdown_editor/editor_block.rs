@@ -9,14 +9,14 @@ use wasm_bindgen::JsCast;
 use web_sys::HtmlElement;
 use yew::prelude::*;
 
-use super::block::{Block, BlockTrait};
+use super::block::BlockTrait;
 use super::utils::{document, window};
 
 #[derive(Properties, PartialEq)]
 pub struct EditorBlockProps<T: BlockTrait> {
     pub id: String,
     pub index: usize,
-    pub block: Block<T>,
+    pub block: T,
     pub is_active: bool,
     pub on_focus: Callback<usize>,
     pub on_input: Callback<(usize, String)>,
@@ -90,8 +90,7 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
     };
 
     // Wrap contenteditable in block rendering based on block type
-    let rendered = props.block.block_type.render(
-        props.block.content.clone(),
+    let rendered = props.block.render(
         update_block_callback,
         props.on_keydown.clone(),
         on_focus.clone(),

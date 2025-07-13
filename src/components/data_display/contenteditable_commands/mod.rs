@@ -53,7 +53,7 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
     // Set initial content and ensure proper line height on first render
     {
         let node_ref = node_ref.clone();
-
+        let content = props.content.clone();
         use_effect_with((), move |_| {
             if let Some(element) = node_ref.cast::<HtmlElement>() {
                 // Add a non-breaking space to ensure proper line height
@@ -64,9 +64,10 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
                     // but with proper height
                     let window = web_sys::window().expect("no global window exists");
 
+                    let content = content.clone();
                     // Create a proper closure for request_animation_frame
                     let closure = Closure::once_into_js(move |_: f64| {
-                        element.set_inner_html("");
+                        element.set_inner_html(&content.replace("\n", "<br>"));
                     });
 
                     let _ = window.request_animation_frame(closure.as_ref().unchecked_ref());
@@ -81,16 +82,11 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
         let node_ref = node_ref.clone();
         let content = props.content.clone();
 
-        use_effect_with(content, move |content| {
+        use_effect_with((content, node_ref), move |(content, node_ref)| {
             if let Some(element) = node_ref.cast::<HtmlElement>() {
                 // Only update if different to avoid losing selection
                 if element.inner_text() != *content {
-                    if content.is_empty() {
-                        // Add a <br> element to ensure proper height for empty content
-                        element.set_inner_html("<br>");
-                    } else {
-                        element.set_inner_html(&content.replace("\n", "<br>"));
-                    }
+                    element.set_inner_html(&content.replace("\n", "<br>"));
                 }
             }
             || {}
@@ -132,15 +128,9 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
             // Forward content update to parent
             on_input.emit(content.clone());
 
-            // Debug logging
-            log::info!("Input content: '{}'", content);
-            log::info!("Triggers: {:?}", command_triggers);
-
             // Check for command triggers
             for trigger in &command_triggers {
                 if content.contains(trigger) {
-                    log::info!("Found trigger: {}", trigger);
-
                     // Find the last instance of the trigger
                     if let Some(trigger_pos) = content.rfind(trigger) {
                         // Only show commands if trigger is at beginning or after whitespace
@@ -150,12 +140,6 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
                                 .nth(trigger_pos - 1)
                                 .map(|c| c.is_whitespace())
                                 .unwrap_or(false);
-
-                        log::info!(
-                            "Trigger position: {}, should show: {}",
-                            trigger_pos,
-                            should_show_commands
-                        );
 
                         if should_show_commands {
                             // Extract filter text after the trigger
@@ -169,10 +153,6 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
                                     let rect = range.get_bounding_client_rect();
                                     command_position
                                         .set((rect.left() as i32, rect.bottom() as i32 + 5));
-                                    log::info!(
-                                        "Command position: {:?}",
-                                        (rect.left(), rect.bottom())
-                                    );
                                 }
                             }
 

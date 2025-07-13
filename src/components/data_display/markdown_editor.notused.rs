@@ -426,12 +426,12 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                     let can_delete = if index > 0 {
                         if let Some(block) = new_blocks.get(index) {
                             if block.content.is_empty() {
-                                if block.block_type.is_tag() {
+                                if block.is_tag() {
                                     // Tags can be deleted if empty
                                     true
                                 } else {
                                     // Non-tags use their can_delete method
-                                    block.block_type.can_delete()
+                                    block.can_delete()
                                 }
                             } else {
                                 false // Not empty, can't delete
@@ -773,7 +773,7 @@ fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
     };
 
     // Render the block based on its type
-    if !props.block.block_type.is_tag() {
+    if !props.block.is_tag() {
         // This is for non-tag blocks like dividers
         if let Some(rendered) = props
             .block
@@ -800,7 +800,7 @@ fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                     // Fallback rendering if render() returns None
                     <div
                         ref={node_ref}
-                        class={props.block.block_type.classes()}
+                        class={props.block.classes()}
                         contenteditable="true"
                         onfocus={on_focus}
                         oninput={on_input}
@@ -822,7 +822,7 @@ fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
             >
                 <div
                     ref={node_ref}
-                    class={props.block.block_type.classes()}
+                    class={props.block.classes()}
                     contenteditable="true"
                     onfocus={on_focus}
                     oninput={on_input}

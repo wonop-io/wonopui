@@ -11,7 +11,7 @@ use wasm_bindgen::{prelude::*, JsCast};
 use web_sys::KeyboardEvent;
 use yew::prelude::*;
 
-pub use block::{Block, BlockTrait};
+pub use block::BlockTrait;
 use editor_block::{EditorBlock, EditorBlockProps};
 use utils::{document, window};
 
@@ -28,9 +28,9 @@ pub struct MarkdownEditorProps<T: BlockTrait> {
     #[prop_or_default]
     pub class: Classes,
     #[prop_or_default]
-    pub initial_content: Vec<Block<T>>,
+    pub initial_content: Vec<T>,
     #[prop_or_default]
-    pub on_change: Callback<Vec<Block<T>>>,
+    pub on_change: Callback<Vec<T>>,
     #[prop_or_default]
     pub auto_focus: bool,
     #[prop_or_default]
@@ -49,7 +49,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
     // Core state
     let blocks = use_state(|| {
         if props.initial_content.is_empty() {
-            vec![Block::new(T::new_block())]
+            vec![T::new_block()]
         } else {
             props.initial_content.clone()
         }
@@ -112,7 +112,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
 
             let mut new_blocks = (*blocks).clone();
             if index < new_blocks.len() {
-                new_blocks[index].block_type = new_block_type.clone();
+                new_blocks[index] = new_block_type.clone();
                 blocks.set(new_blocks);
 
                 if let Some(callback) = &update_block_callback {
@@ -158,11 +158,14 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                 }
             }
 
+            /*
+            TODO: Implement set_content() on the BlockTrait
             let mut new_blocks = (*blocks).clone();
             if index < new_blocks.len() {
                 new_blocks[index].content = content.clone();
                 blocks.set(new_blocks);
             }
+            */
         })
     };
 
@@ -175,8 +178,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
             let mut new_blocks = (*blocks).clone();
 
             // Create a new empty block
-            let block_type = T::new_block();
-            let new_block = Block::new(block_type);
+            let new_block = T::new_block();
 
             // Insert at the specified position
             new_blocks.insert(index, new_block);
@@ -228,9 +230,11 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
 
                         if index < new_blocks.len() {
                             // Get cursor position
+                            /*
                             let mut cursor_pos = 0;
                             let mut content_before = String::new();
                             let mut content_after = String::new();
+
                             let current_content = &new_blocks[index].content;
 
                             if let Some(selection) = window().get_selection().ok().flatten() {
@@ -253,11 +257,10 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
 
                             // Update current block with content before cursor
                             new_blocks[index].content = content_before;
-
+                            */
                             // Create and insert new block
-                            let block_type = T::new_block();
-                            let mut new_block = Block::new(block_type);
-                            new_block.content = content_after;
+                            let mut new_block = T::new_block();
+                            // new_block.content = content_after;
 
                             // Insert the new block after current
                             new_blocks.insert(index + 1, new_block);
@@ -275,11 +278,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                     // Check if we can delete this block
                     let can_delete = if index > 0 {
                         if let Some(block) = new_blocks.get(index) {
-                            if block.content.is_empty() {
-                                block.block_type.can_delete()
-                            } else {
-                                false // Not empty, can't delete
-                            }
+                            block.can_delete()
                         } else {
                             false
                         }
@@ -331,7 +330,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                         };
 
                         html! {
-                            <div key={block.id.clone()}>
+                            <div key={format!("block-{}", index)}>
                                 <EditorBlock<T> ..block_props />
                             </div>
                         }

@@ -15,7 +15,6 @@ pub trait BlockTrait: Clone + PartialEq + 'static {
     // Simplified render function focusing only on display
     fn render(
         &self,
-        content: String,
         update_block: Callback<Self>,
         onkeydown: Callback<KeyboardEvent>,
         onfocus: Callback<FocusEvent>,
@@ -37,23 +36,5 @@ pub trait BlockTrait: Clone + PartialEq + 'static {
     // Can this block be deleted?
     fn can_delete(&self) -> bool {
         true
-    }
-}
-
-// Block model representing a single block in the editor
-#[derive(Clone, PartialEq)]
-pub struct Block<T: BlockTrait> {
-    pub id: String,
-    pub content: String,
-    pub block_type: T,
-}
-
-impl<T: BlockTrait> Block<T> {
-    pub fn new(block_type: T) -> Self {
-        Self {
-            id: format!("block-{}", Utc::now().timestamp_millis()),
-            content: String::new(),
-            block_type,
-        }
     }
 }
