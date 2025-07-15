@@ -171,7 +171,7 @@ pub fn user_role_icon() -> Html {
 }
 
 // Define RoleType enum
-#[derive(Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum RoleType {
     System,
     Assistant,

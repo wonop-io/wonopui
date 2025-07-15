@@ -336,7 +336,6 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
                             false
                         }
                     }
-                    "Backspace" => content.is_empty(),
                     _ => true,
                 };
                 // Normal mode - forward to parent handler

@@ -15,7 +15,7 @@ use wonopui::*;
 use yew::prelude::*;
 //
 // Define our custom block type implementation
-#[derive(Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum EditorBlockType {
     Paragraph(String),
     Heading1(String),
@@ -372,19 +372,22 @@ impl BlockTrait for EditorBlockType {
     }
 
     fn can_delete(&self) -> bool {
-        match self {
-            EditorBlockType::Paragraph(content) => content.is_empty(),
-            EditorBlockType::Heading1(content) => content.is_empty(),
-            EditorBlockType::Heading2(content) => content.is_empty(),
-            EditorBlockType::Heading3(content) => content.is_empty(),
-            EditorBlockType::BulletList(content) => content.is_empty(),
-            EditorBlockType::NumberedList(content) => content.is_empty(),
-            EditorBlockType::Quote(content) => content.is_empty(),
-            EditorBlockType::CodeBlock(content) => content.is_empty(),
-            EditorBlockType::Divider => true,
-            EditorBlockType::FileBlock(content) => content.is_empty(),
-            EditorBlockType::UrlBlock(content) => content.is_empty(),
-            EditorBlockType::Role(_, content) => content.is_empty(),
-        }
+        let blank = String::new();
+        let content = match self {
+            EditorBlockType::Paragraph(content) => content,
+            EditorBlockType::Heading1(content) => content,
+            EditorBlockType::Heading2(content) => content,
+            EditorBlockType::Heading3(content) => content,
+            EditorBlockType::BulletList(content) => content,
+            EditorBlockType::NumberedList(content) => content,
+            EditorBlockType::Quote(content) => content,
+            EditorBlockType::CodeBlock(content) => content,
+            EditorBlockType::Divider => &blank,
+            EditorBlockType::FileBlock(content) => content,
+            EditorBlockType::UrlBlock(content) => content,
+            EditorBlockType::Role(_, content) => content,
+        };
+
+        content.is_empty() || content == "\n" || content == "\r\n"
     }
 }
