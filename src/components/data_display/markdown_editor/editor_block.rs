@@ -58,7 +58,17 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
     let on_focus = {
         let on_focus = props.on_focus.clone();
         let index = props.index;
-        Callback::from(move |_: FocusEvent| {
+        Callback::from(move |e: FocusEvent| {
+            e.stop_propagation();
+            on_focus.emit(index);
+        })
+    };
+
+    let on_click = {
+        let on_focus = props.on_focus.clone();
+        let index = props.index;
+        Callback::from(move |e: MouseEvent| {
+            e.stop_propagation();
             on_focus.emit(index);
         })
     };
@@ -103,6 +113,8 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
             <div
                 id={props.id.clone()}
                 ref={node_ref}
+                onfocus={on_focus}
+                onclick={on_click}
                 onkeydown={props.on_keydown.clone()}
                 class={classes!(
                     "p-1",  // Removed mb-2 margin

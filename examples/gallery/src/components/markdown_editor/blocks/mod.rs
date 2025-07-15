@@ -716,10 +716,28 @@ pub struct FileBlockProps {
 
 #[function_component(FileBlockBlock)]
 pub fn file_block_block(props: &FileBlockProps) -> Html {
+    let node_ref = use_node_ref();
+
+    // Effect to handle focusing/blurring based on has_focus prop
+    use_effect_with(
+        (props.has_focus, node_ref.clone()),
+        |(has_focus, node_ref)| {
+            if let Some(element) = node_ref.cast::<HtmlElement>() {
+                if *has_focus {
+                    let _ = element.focus();
+                } else {
+                    let _ = element.blur();
+                }
+            }
+            || ()
+        },
+    );
+
     html! {
         <div
-            content={"".to_string()}
-            classes={classes!(
+            ref={node_ref}
+            tabindex="0"
+            class={classes!(
                 "p-2",
                 "min-h-[1.5em]",
                 "w-full",
@@ -769,15 +787,33 @@ pub struct UrlBlockProps {
 
 #[function_component(UrlBlockBlock)]
 pub fn url_block_block(props: &UrlBlockProps) -> Html {
+    let node_ref = use_node_ref();
     let url = if props.content.is_empty() {
         "https://".to_string()
     } else {
         props.content.clone()
     };
 
+    // Effect to handle focusing/blurring based on has_focus prop
+    use_effect_with(
+        (props.has_focus, node_ref.clone()),
+        |(has_focus, node_ref)| {
+            if let Some(element) = node_ref.cast::<HtmlElement>() {
+                if *has_focus {
+                    let _ = element.focus();
+                } else {
+                    let _ = element.blur();
+                }
+            }
+            || ()
+        },
+    );
+
     html! {
         <div
-            classes={classes!(
+            ref={node_ref}
+            tabindex="0"
+            class={classes!(
                 "p-2",
                 "min-h-[1.5em]",
                 "w-full",
@@ -822,6 +858,7 @@ pub struct RoleProps {
 
 #[function_component(RoleBlock)]
 pub fn role_block(props: &RoleProps) -> Html {
+    let node_ref = use_node_ref();
     let badge_color = match props.role_type {
         RoleType::System => {
             "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
@@ -832,8 +869,24 @@ pub fn role_block(props: &RoleProps) -> Html {
         RoleType::User => "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
     };
 
+    // Effect to handle focusing/blurring based on has_focus prop
+    use_effect_with(
+        (props.has_focus, node_ref.clone()),
+        |(has_focus, node_ref)| {
+            if let Some(element) = node_ref.cast::<HtmlElement>() {
+                if *has_focus {
+                    let _ = element.focus();
+                } else {
+                    let _ = element.blur();
+                }
+            }
+            || ()
+        },
+    );
+
     html! {
         <div
+            ref={node_ref}
             class={classes!(
                 "inline-flex",
                 "items-center",
@@ -845,13 +898,15 @@ pub fn role_block(props: &RoleProps) -> Html {
                 "font-medium",
                 "cursor-pointer",
                 "mb-3",
-                badge_color
+                badge_color,
+                "outline-none"  // Add this to remove focus outline if needed
             )}
             data-role={props.role_type.to_string()}
             onclick={props.onclick.clone()}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
+            tabindex="0"  // Make the div focusable
         >
             {props.role_type.to_string()}
         </div>
