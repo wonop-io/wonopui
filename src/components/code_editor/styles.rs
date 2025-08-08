@@ -16,41 +16,41 @@ pub fn code_editor_styles() -> Html {
                 animation: blink 1s infinite;
             }
             
-            /* Syntax highlighting colors */
+            /* Enhanced syntax highlighting colors */
             .token.comment, .token.prolog, .token.doctype, .token.cdata {
-                @apply text-gray-500 dark:text-gray-400 italic;
+                @apply text-slate-500 dark:text-slate-400 italic font-medium opacity-80;
             }
             
             .token.punctuation {
-                @apply text-gray-500 dark:text-gray-400;
+                @apply text-slate-600 dark:text-slate-400 font-semibold;
             }
             
             .token.property, .token.tag, .token.constant, .token.symbol, .token.deleted {
-                @apply text-pink-600 dark:text-pink-400;
+                @apply text-rose-600 dark:text-rose-400 font-semibold;
             }
             
             .token.boolean, .token.number {
-                @apply text-purple-600 dark:text-purple-400;
+                @apply text-fuchsia-600 dark:text-fuchsia-400 font-bold;
             }
             
             .token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted {
-                @apply text-green-600 dark:text-green-400;
+                @apply text-emerald-600 dark:text-emerald-400 font-medium;
             }
             
             .token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string {
-                @apply text-yellow-600 dark:text-yellow-400;
+                @apply text-amber-600 dark:text-amber-400 font-semibold;
             }
             
             .token.atrule, .token.attr-value, .token.keyword {
-                @apply text-blue-600 dark:text-blue-400;
+                @apply text-indigo-600 dark:text-indigo-400 font-bold;
             }
             
             .token.function, .token.class-name {
-                @apply text-red-600 dark:text-red-400;
+                @apply text-cyan-600 dark:text-cyan-400 font-bold;
             }
             
             .token.regex, .token.important, .token.variable {
-                @apply text-orange-600 dark:text-orange-400;
+                @apply text-orange-600 dark:text-orange-400 font-semibold;
             }
             
             .token.important, .token.bold {
@@ -65,35 +65,54 @@ pub fn code_editor_styles() -> Html {
                 @apply cursor-help;
             }
             
-            /* Selection styles */
+            /* Enhanced selection styles */
             .selection-highlight {
-                @apply bg-blue-200 dark:bg-blue-800 bg-opacity-50 dark:bg-opacity-50;
+                @apply bg-indigo-200 dark:bg-indigo-800 bg-opacity-60 dark:bg-opacity-40 shadow-sm;
             }
             
-            /* Diff styles */
+            /* Enhanced diff styles with animations */
             .diff-added {
-                @apply bg-green-200 dark:bg-green-900 bg-opacity-30 dark:bg-opacity-30;
+                @apply bg-emerald-200 dark:bg-emerald-800 bg-opacity-60 dark:bg-opacity-40 shadow-md;
             }
             
             .diff-removed {
-                @apply bg-red-200 dark:bg-red-900 bg-opacity-30 dark:bg-opacity-30;
+                @apply bg-rose-200 dark:bg-rose-800 bg-opacity-60 dark:bg-opacity-40 shadow-md;
             }
             
             .diff-modified {
-                @apply bg-yellow-200 dark:bg-yellow-900 bg-opacity-30 dark:bg-opacity-30;
+                @apply bg-amber-200 dark:bg-amber-800 bg-opacity-60 dark:bg-opacity-40 shadow-md;
             }
             
-            /* Annotation styles */
+            /* Enhanced annotation styles with animations */
             .annotation-error {
-                @apply border-b-2 border-red-500;
+                @apply border-b-4 border-rose-500 border-double shadow-sm;
+                animation: errorPulse 2s infinite;
             }
             
             .annotation-warning {
-                @apply border-b-2 border-yellow-500;
+                @apply border-b-4 border-amber-500 border-double shadow-sm;
+                animation: warningPulse 2s infinite;
             }
             
             .annotation-info {
-                @apply border-b-2 border-blue-500;
+                @apply border-b-4 border-sky-500 border-double shadow-sm;
+                animation: infoPulse 2s infinite;
+            }
+            
+            /* Pulse animations for annotations */
+            @keyframes errorPulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
+            }
+            
+            @keyframes warningPulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
+            }
+            
+            @keyframes infoPulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
             }
             "#}
         </style>

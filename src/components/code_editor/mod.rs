@@ -373,9 +373,9 @@ impl CodeEditor {
             
             let diff_classes = if let Some(diff) = has_diff {
                 match diff.diff_type {
-                    DiffType::Added => "text-green-600 dark:text-green-400",
-                    DiffType::Removed => "text-red-600 dark:text-red-400", 
-                    DiffType::Modified => "text-yellow-600 dark:text-yellow-400",
+                    DiffType::Added => "text-emerald-500 dark:text-emerald-400 font-bold",
+                    DiffType::Removed => "text-rose-500 dark:text-rose-400 font-bold", 
+                    DiffType::Modified => "text-amber-500 dark:text-amber-400 font-bold",
                 }
             } else {
                 ""
@@ -385,7 +385,7 @@ impl CodeEditor {
                 <div key={i} class={format!("leading-[inherit] flex items-center justify-end gap-1 {}", diff_classes)}>
                     <span>{ line_num }</span>
                     if has_diff.is_some() {
-                        <span class="w-2 h-2 rounded-full bg-current opacity-75"></span>
+                        <span class="w-3 h-3 rounded-full bg-current shadow-lg animate-pulse"></span>
                     }
                 </div>
             }
@@ -403,9 +403,9 @@ impl CodeEditor {
 
             let line_index = diff.line_number - 1;
             let bg_class = match diff.diff_type {
-                DiffType::Added => "bg-green-100 dark:bg-green-900 bg-opacity-30",
-                DiffType::Removed => "bg-red-100 dark:bg-red-900 bg-opacity-30",
-                DiffType::Modified => "bg-yellow-100 dark:bg-yellow-900 bg-opacity-30",
+                DiffType::Added => "bg-emerald-200 dark:bg-emerald-800 bg-opacity-60 dark:bg-opacity-40 shadow-sm",
+                DiffType::Removed => "bg-rose-200 dark:bg-rose-800 bg-opacity-60 dark:bg-opacity-40 shadow-sm",
+                DiffType::Modified => "bg-amber-200 dark:bg-amber-800 bg-opacity-60 dark:bg-opacity-40 shadow-sm",
             };
 
             html! {
@@ -438,10 +438,10 @@ impl CodeEditor {
                 // Inline annotation - show message directly in the editor
                 let column_pos = annotation.column_range.map(|(start, _)| start).unwrap_or(0);
                 let annotation_class = match annotation.annotation_type {
-                    AnnotationType::Error => "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950",
-                    AnnotationType::Warning => "text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950",
-                    AnnotationType::Info => "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950",
-                    AnnotationType::Success => "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950",
+                    AnnotationType::Error => "text-rose-700 dark:text-rose-300 bg-rose-100 dark:bg-rose-900 border border-rose-300 dark:border-rose-700 shadow-lg font-semibold",
+                    AnnotationType::Warning => "text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900 border border-amber-300 dark:border-amber-700 shadow-lg font-semibold",
+                    AnnotationType::Info => "text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900 border border-sky-300 dark:border-sky-700 shadow-lg font-semibold",
+                    AnnotationType::Success => "text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900 border border-emerald-300 dark:border-emerald-700 shadow-lg font-semibold",
                 };
 
                 elements.push(html! {
@@ -460,10 +460,10 @@ impl CodeEditor {
             } else {
                 // Gutter annotation - show indicator with tooltip
                 let annotation_class = match annotation.annotation_type {
-                    AnnotationType::Error => "text-red-500 border-red-500",
-                    AnnotationType::Warning => "text-yellow-500 border-yellow-500", 
-                    AnnotationType::Info => "text-blue-500 border-blue-500",
-                    AnnotationType::Success => "text-green-500 border-green-500",
+                    AnnotationType::Error => "text-rose-500 border-rose-500 shadow-lg shadow-rose-200 dark:shadow-rose-800",
+                    AnnotationType::Warning => "text-amber-500 border-amber-500 shadow-lg shadow-amber-200 dark:shadow-amber-800", 
+                    AnnotationType::Info => "text-sky-500 border-sky-500 shadow-lg shadow-sky-200 dark:shadow-sky-800",
+                    AnnotationType::Success => "text-emerald-500 border-emerald-500 shadow-lg shadow-emerald-200 dark:shadow-emerald-800",
                 };
 
                 elements.push(html! {
@@ -474,7 +474,7 @@ impl CodeEditor {
                             line_top + 2.0
                         )}
                     >
-                        <div class="w-3 h-3 rounded-full border-2 bg-white dark:bg-gray-800 cursor-help"></div>
+                        <div class="w-4 h-4 rounded-full border-2 bg-white dark:bg-gray-800 cursor-help hover:scale-110 transition-transform"></div>
                         <div class="absolute hidden group-hover:block bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded shadow-lg z-50 left-6 top-0 whitespace-nowrap">
                             <div class="text-sm text-gray-800 dark:text-gray-200">{ &annotation.message }</div>
                         </div>
@@ -484,10 +484,10 @@ impl CodeEditor {
                 // Add underline for column range
                 if let Some((start, end)) = annotation.column_range {
                     let underline_class = match annotation.annotation_type {
-                        AnnotationType::Error => "border-b-2 border-red-500 border-dashed",
-                        AnnotationType::Warning => "border-b-2 border-yellow-500 border-dashed",
-                        AnnotationType::Info => "border-b-2 border-blue-500 border-dashed", 
-                        AnnotationType::Success => "border-b-2 border-green-500 border-dashed",
+                        AnnotationType::Error => "border-b-4 border-rose-500 border-double shadow-sm animate-pulse",
+                        AnnotationType::Warning => "border-b-4 border-amber-500 border-double shadow-sm animate-pulse",
+                        AnnotationType::Info => "border-b-4 border-sky-500 border-double shadow-sm animate-pulse", 
+                        AnnotationType::Success => "border-b-4 border-emerald-500 border-double shadow-sm animate-pulse",
                     };
 
                     elements.push(html! {
@@ -540,7 +540,7 @@ impl CodeEditor {
                             column_pos
                         )}
                     >
-                        <div class="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-600 cursor-help"></div>
+                        <div class="w-3 h-3 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 shadow-lg shadow-violet-200 dark:shadow-violet-800 cursor-help hover:scale-125 transition-all"></div>
                         <div class="absolute hidden group-hover:block bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded shadow-lg z-50 left-4 top-0 whitespace-nowrap">
                             <div class="text-sm text-gray-800 dark:text-gray-200">{ &hint.hint }</div>
                         </div>
@@ -608,8 +608,8 @@ impl CodeEditor {
                 result.push(self.highlight_rust_tokens(before_comment, &keywords));
             }
             
-            // Add the comment
-            result.push(html! { <span class="text-gray-500 dark:text-gray-400 italic">{ comment_part }</span> });
+            // Add the comment  
+            result.push(html! { <span class="text-slate-500 dark:text-slate-400 italic font-medium opacity-75">{ comment_part }</span> });
             
             return html! { <>{ for result }</> };
         }
@@ -629,7 +629,7 @@ impl CodeEditor {
                 current_word.push(ch);
                 if ch == string_char {
                     // Simple string end detection (not handling escapes for simplicity)
-                    result.push(html! { <span class="text-green-600 dark:text-green-400">{ current_word.clone() }</span> });
+                    result.push(html! { <span class="text-emerald-600 dark:text-emerald-400 font-medium">{ current_word.clone() }</span> });
                     current_word.clear();
                     in_string = false;
                 }
@@ -652,7 +652,7 @@ impl CodeEditor {
                         current_word.clear();
                     }
                     if ch != ' ' && ch != '\t' {
-                        result.push(html! { <span class="text-gray-600 dark:text-gray-400">{ ch.to_string() }</span> });
+                        result.push(html! { <span class="text-slate-600 dark:text-slate-400 font-semibold">{ ch.to_string() }</span> });
                     } else {
                         result.push(html! { { ch.to_string() } });
                     }
@@ -665,7 +665,7 @@ impl CodeEditor {
 
         if !current_word.is_empty() {
             if in_string {
-                result.push(html! { <span class="text-green-600 dark:text-green-400">{ current_word }</span> });
+                result.push(html! { <span class="text-emerald-600 dark:text-emerald-400 font-medium">{ current_word }</span> });
             } else {
                 self.push_word(&mut result, &current_word, keywords);
             }
@@ -688,11 +688,11 @@ impl CodeEditor {
 
     fn push_word(&self, result: &mut Vec<Html>, word: &str, keywords: &[&str]) {
         if keywords.contains(&word) {
-            result.push(html! { <span class="text-blue-600 dark:text-blue-400 font-semibold">{ word.to_string() }</span> });
+            result.push(html! { <span class="text-indigo-600 dark:text-indigo-400 font-bold">{ word.to_string() }</span> });
         } else if word.chars().all(|c| c.is_ascii_digit() || c == '.') {
-            result.push(html! { <span class="text-purple-600 dark:text-purple-400">{ word.to_string() }</span> });
+            result.push(html! { <span class="text-fuchsia-600 dark:text-fuchsia-400 font-semibold">{ word.to_string() }</span> });
         } else {
-            result.push(html! { { word.to_string() } });
+            result.push(html! { <span class="text-gray-800 dark:text-gray-200">{ word.to_string() }</span> });
         }
     }
 }
