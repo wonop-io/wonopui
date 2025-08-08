@@ -423,30 +423,40 @@ impl CodeEditor {
             diff_map.insert(diff.line_number, diff);
         }
 
+        let mut line_counter = 0; // Track actual line numbers (skip removed lines)
+
         lines.iter().enumerate().map(|(i, _)| {
             let display_line_num = i + 1;
-            let original_line_num = if i < props.original_line_numbers.len() {
-                props.original_line_numbers[i]
-            } else {
-                Some(display_line_num) // fallback to display line number
-            };
-            
             let has_diff = diff_map.get(&display_line_num);
             
-            let (diff_classes, symbol) = if let Some(diff) = has_diff {
+            let (diff_classes, symbol, show_line_number) = if let Some(diff) = has_diff {
                 match diff.diff_type {
-                    DiffType::Added => ("text-emerald-500 dark:text-emerald-400 font-bold", "+"),
-                    DiffType::Removed => ("text-rose-500 dark:text-rose-400 font-bold line-through", "−"), 
-                    DiffType::Modified => ("text-amber-500 dark:text-amber-400 font-bold", "~"),
+                    DiffType::Added => {
+                        line_counter += 1;
+                        ("text-emerald-500 dark:text-emerald-400 font-bold", "+", true)
+                    },
+                    DiffType::Removed => {
+                        // Don't increment counter for removed lines and don't show line number
+                        ("text-rose-500 dark:text-rose-400 font-bold line-through", "−", false)
+                    }, 
+                    DiffType::Modified => {
+                        line_counter += 1;
+                        ("text-amber-500 dark:text-amber-400 font-bold", "~", true)
+                    },
                 }
             } else {
-                ("", "")
+                line_counter += 1;
+                ("", "", true)
             };
 
             html! {
                 <div key={i} class={format!("leading-[inherit] flex items-center justify-end gap-1 {}", diff_classes)}>
-                    // Always show line number for added lines too
-                    <span>{ display_line_num }</span>
+                    if show_line_number {
+                        <span>{ line_counter }</span>
+                    } else {
+                        // Empty space for removed lines (no line number shown)
+                        <span class="invisible">{ "---" }</span>
+                    }
                     if has_diff.is_some() {
                         <span class="w-3 h-3 flex items-center justify-center text-xs font-bold">{ symbol }</span>
                     }
