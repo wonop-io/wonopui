@@ -35,6 +35,25 @@ impl BlockTrait for EditorBlockType {
     fn new_block() -> Self {
         EditorBlockType::Paragraph(String::new())
     }
+    
+    fn to_markdown(&self) -> String {
+        match self {
+            EditorBlockType::Paragraph(content) => content.clone(),
+            EditorBlockType::Heading1(content) => format!("# {}", content),
+            EditorBlockType::Heading2(content) => format!("## {}", content),
+            EditorBlockType::Heading3(content) => format!("### {}", content),
+            EditorBlockType::BulletList(content) => format!("- {}", content),
+            EditorBlockType::NumberedList(content) => format!("1. {}", content),
+            EditorBlockType::Quote(content) => format!("> {}", content),
+            EditorBlockType::CodeBlock(content) => format!("```\n{}\n```", content),
+            EditorBlockType::Divider => "---".to_string(),
+            EditorBlockType::FileBlock(path) => format!("![File]({})", path),
+            EditorBlockType::UrlBlock(url) => format!("[{}]({})", url, url),
+            EditorBlockType::Role(role_type, content) => {
+                format!("**{}**: {}", role_type.to_string(), content)
+            }
+        }
+    }
 
     fn icon(&self) -> Html {
         match self {

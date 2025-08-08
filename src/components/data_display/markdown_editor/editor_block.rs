@@ -6,7 +6,7 @@ use crate::config::get_brandguide;
 use crate::config::use_brandguide;
 use crate::config::BrandGuideType;
 use wasm_bindgen::{prelude::Closure, JsCast};
-use web_sys::HtmlElement;
+use web_sys::{DragEvent, HtmlElement};
 use yew::prelude::*;
 
 use super::block::BlockTrait;
@@ -29,6 +29,16 @@ pub struct EditorBlockProps<T: BlockTrait> {
     pub on_block_action: Callback<(usize, String)>,
     #[prop_or(false)]
     pub show_block_actions: bool,
+    #[prop_or(false)]
+    pub is_selected: bool,
+    #[prop_or_default]
+    pub on_select: Callback<(usize, bool)>,
+    #[prop_or_default]
+    pub on_drag_start: Callback<usize>,
+    #[prop_or_default]
+    pub on_drag_over: Callback<(usize, web_sys::DragEvent)>,
+    #[prop_or_default]
+    pub on_drop: Callback<(usize, web_sys::DragEvent)>,
 }
 
 #[function_component(EditorBlock)]
@@ -112,7 +122,7 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
     let on_insert_block = {
         let on_insert_block = props.on_insert_block.clone();
         let index = props.index;
-        Callback::from(move |_| {
+        Callback::from(move |_: MouseEvent| {
             on_insert_block.emit(index + 1); // Insert after current block
         })
     };
@@ -164,9 +174,97 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
         props.is_active,
     );
 
+    // Handle selection toggle
+    let on_select_click = {
+        let on_select = props.on_select.clone();
+        let index = props.index;
+        let is_selected = props.is_selected;
+        Callback::from(move |e: MouseEvent| {
+            e.stop_propagation();
+            on_select.emit((index, !is_selected));
+        })
+    };
+
+    // Drag handlers
+    let on_drag_start = {
+        let on_drag_start = props.on_drag_start.clone();
+        let index = props.index;
+        Callback::from(move |e: web_sys::DragEvent| {
+            e.data_transfer()
+                .unwrap()
+                .set_effect_allowed("move");
+            on_drag_start.emit(index);
+        })
+    };
+
+    let on_drag_over = {
+        let on_drag_over = props.on_drag_over.clone();
+        let index = props.index;
+        Callback::from(move |e: web_sys::DragEvent| {
+            e.prevent_default();
+            e.data_transfer()
+                .unwrap()
+                .set_drop_effect("move");
+            on_drag_over.emit((index, e));
+        })
+    };
+
+    let on_drop = {
+        let on_drop = props.on_drop.clone();
+        let index = props.index;
+        Callback::from(move |e: web_sys::DragEvent| {
+            e.prevent_default();
+            on_drop.emit((index, e));
+        })
+    };
+
     html! {
-        <div class="block-container group relative">
-            <div class="flex items-start gap-2">
+        <div 
+            class={classes!(
+                "block-container", "group", "relative", "flex", "gap-2",
+                if props.is_selected { "bg-blue-50 dark:bg-blue-950/30 ring-2 ring-blue-500/50" } else { "" }
+            )}
+            ondragover={on_drag_over}
+            ondrop={on_drop}
+        >
+            // Selection checkbox and drag handle on the left
+            <div class="flex flex-col items-center gap-1 mt-2">
+                // Selection checkbox
+                <button
+                    class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    onclick={on_select_click}
+                    title="Select block"
+                >
+                    <div class={classes!(
+                        "w-4", "h-4", "border-2", "rounded",
+                        if props.is_selected { 
+                            "bg-blue-500 border-blue-500" 
+                        } else { 
+                            "border-gray-400 dark:border-gray-600" 
+                        }
+                    )}>
+                        if props.is_selected {
+                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        }
+                    </div>
+                </button>
+
+                // Drag handle
+                <div
+                    draggable="true"
+                    ondragstart={on_drag_start}
+                    class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-move p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    title="Drag to reorder"
+                >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M7 2a2 2 0 11-4 0 2 2 0 014 0zM7 6a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0zM7 14a2 2 0 11-4 0 2 2 0 014 0zM7 18a2 2 0 11-4 0 2 2 0 014 0zM17 2a2 2 0 11-4 0 2 2 0 014 0zM17 6a2 2 0 11-4 0 2 2 0 014 0zM17 10a2 2 0 11-4 0 2 2 0 014 0zM17 14a2 2 0 11-4 0 2 2 0 014 0zM17 18a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-2 flex-1">
                 // Optional dropdown button for block actions
                 if props.show_block_actions {
                     <div class="relative">
@@ -227,13 +325,6 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                     </div>
                 </div>
             </div>
-            
-            // Insert block area
-            <div
-                class="mt-2 rounded h-2 w-full cursor-text opacity-0 group-hover:opacity-100 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all duration-200"
-                onclick={on_insert_block}
-                title="Click to add a block below"
-            />
         </div>
     }
 }

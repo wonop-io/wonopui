@@ -55,4 +55,10 @@ pub trait BlockTrait: Clone + PartialEq + 'static {
             _ => None,
         }
     }
+    
+    // Convert block to markdown representation
+    fn to_markdown(&self) -> String {
+        // Default implementation - blocks should override this
+        String::new()
+    }
 }

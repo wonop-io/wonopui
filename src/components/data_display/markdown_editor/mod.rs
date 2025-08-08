@@ -7,8 +7,9 @@ use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
 use crate::config::BrandGuideType;
+use std::collections::HashSet;
 use wasm_bindgen::{prelude::*, JsCast};
-use web_sys::KeyboardEvent;
+use web_sys::{DragEvent, KeyboardEvent};
 use yew::prelude::*;
 
 pub use block::BlockTrait;
@@ -58,6 +59,8 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
     });
 
     let active_block_index = use_state(|| 0);
+    let selected_blocks = use_state(|| std::collections::HashSet::<usize>::new());
+    let dragging_index = use_state(|| None::<usize>);
 
     // State for selection tracking
     let selection_info = use_state(|| None::<(usize, usize, usize)>);
@@ -259,16 +262,109 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
         })
     };
 
+    // Handle block selection
+    let on_select_block = {
+        let selected_blocks = selected_blocks.clone();
+        Callback::from(move |(index, is_selected): (usize, bool)| {
+            let mut selected = (*selected_blocks).clone();
+            if is_selected {
+                selected.insert(index);
+            } else {
+                selected.remove(&index);
+            }
+            selected_blocks.set(selected);
+        })
+    };
+
+    // Handle drag start
+    let on_drag_start = {
+        let dragging_index = dragging_index.clone();
+        Callback::from(move |index: usize| {
+            dragging_index.set(Some(index));
+        })
+    };
+
+    // Handle drag over
+    let on_drag_over = {
+        Callback::from(move |(_index, _e): (usize, DragEvent)| {
+            // Visual feedback handled in CSS
+        })
+    };
+
+    // Handle drop
+    let on_drop = {
+        let blocks = blocks.clone();
+        let dragging_index = dragging_index.clone();
+        let selected_blocks = selected_blocks.clone();
+        Callback::from(move |(drop_index, _e): (usize, DragEvent)| {
+            if let Some(drag_index) = *dragging_index {
+                if drag_index != drop_index {
+                    let mut new_blocks = (*blocks).clone();
+                    let dragged_block = new_blocks.remove(drag_index);
+                    
+                    let adjusted_drop_index = if drag_index < drop_index {
+                        drop_index - 1
+                    } else {
+                        drop_index
+                    };
+                    
+                    new_blocks.insert(adjusted_drop_index, dragged_block);
+                    blocks.set(new_blocks);
+                    
+                    // Clear selection after drag
+                    selected_blocks.set(HashSet::new());
+                }
+            }
+            dragging_index.set(None);
+        })
+    };
+
+    // Handle copy with markdown conversion through keyboard shortcut
+    let handle_copy = {
+        let blocks = blocks.clone();
+        let selected_blocks = selected_blocks.clone();
+        move || {
+            let selected = (*selected_blocks).clone();
+            if !selected.is_empty() {
+                let mut markdown = String::new();
+                let blocks_vec = (*blocks).clone();
+                
+                // Sort selected indices to maintain order
+                let mut indices: Vec<_> = selected.iter().copied().collect();
+                indices.sort();
+                
+                for index in indices {
+                    if let Some(block) = blocks_vec.get(index) {
+                        markdown.push_str(&block.to_markdown());
+                        markdown.push_str("\n\n");
+                    }
+                }
+                
+                // Copy to clipboard using navigator.clipboard API
+                let window = window();
+                let clipboard = window.navigator().clipboard();
+                let _ = clipboard.write_text(&markdown);
+            }
+        }
+    };
+
     // Handle keydown events - simplified to focus on core operations
     let on_keydown_block = {
         let blocks = blocks.clone();
         let active_block_index = active_block_index.clone();
         let selection_info = selection_info.clone();
+        let handle_copy = handle_copy.clone();
 
         Callback::from(move |e: KeyboardEvent| {
             let index = *active_block_index;
             let mut new_blocks = (*blocks).clone();
             let key = e.key();
+            
+            // Handle Ctrl/Cmd+C for copy
+            if (e.ctrl_key() || e.meta_key()) && key == "c" {
+                handle_copy();
+                return;
+            }
 
             match key.as_str() {
                 "Enter" => {
@@ -359,15 +455,19 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
     };
 
     html! {
-        <div class={classes!(&brandguide.markdown_editor_container, props.class.clone())}>
+        <div 
+            class={classes!(&brandguide.markdown_editor_container, props.class.clone())}
+        >
             <div class={classes!(&brandguide.markdown_editor_blocks_container)}>
                 {
                     blocks.iter().enumerate().map(|(index, block)| {
+                        let is_selected = selected_blocks.contains(&index);
                         let block_props = EditorBlockProps {
                             id: format!("block-{}", index),
                             index,
                             block: block.clone(),
                             is_active: index == *active_block_index,
+                            is_selected,
                             on_focus: on_focus_block.clone(),
                             on_input: on_input_block.clone(),
                             on_keydown: on_keydown_block.clone(),
@@ -375,6 +475,10 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                             on_blur: on_blur_block.clone(),
                             on_insert_block: on_insert_block.clone(),
                             on_block_action: on_block_action.clone(),
+                            on_select: on_select_block.clone(),
+                            on_drag_start: on_drag_start.clone(),
+                            on_drag_over: on_drag_over.clone(),
+                            on_drop: on_drop.clone(),
                             show_block_actions: props.show_block_actions,
                         };
 
