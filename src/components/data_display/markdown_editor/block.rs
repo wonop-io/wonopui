@@ -37,4 +37,22 @@ pub trait BlockTrait: Clone + PartialEq + 'static {
     fn can_delete(&self) -> bool {
         true
     }
+
+    // Get available custom actions for this block type
+    fn get_block_actions(&self) -> Vec<(&'static str, &'static str)> {
+        vec![
+            ("duplicate", "Duplicate"),
+            ("delete", "Delete"),
+            ("move-up", "Move Up"),
+            ("move-down", "Move Down"),
+        ]
+    }
+
+    // Handle custom block action
+    fn handle_action(&self, action: &str) -> Option<Self> {
+        match action {
+            "duplicate" => Some(self.clone()),
+            _ => None,
+        }
+    }
 }

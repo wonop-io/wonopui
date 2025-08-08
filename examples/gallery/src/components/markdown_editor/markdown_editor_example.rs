@@ -36,6 +36,7 @@ pub fn markdown_editor_example() -> Html {
                 placeholder="Start typing..."
                 on_change={on_change}
                 initial_content={(*content).clone()}
+                show_block_actions={true}
             />
             <div class="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md">
                 <h3 class="text-sm font-semibold mb-2">{"Editor Content (Debug View):"}</h3>

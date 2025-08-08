@@ -144,8 +144,13 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
                         if should_show_commands {
                             // Extract filter text after the trigger
                             let filter = &content[trigger_pos + trigger.len()..];
+                            let prev_filter = (*command_filter).clone();
                             command_filter.set(filter.to_string());
-                            selected_index.set(0); // Reset selection on new input
+                            
+                            // Reset selection only if filter actually changed
+                            if prev_filter != filter {
+                                selected_index.set(0);
+                            }
 
                             // Position the command menu at cursor
                             if let Some(selection) = window().get_selection().ok().flatten() {
@@ -180,34 +185,49 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
         let on_command_select = props.on_command_select.clone();
         let node_ref = node_ref.clone();
         let current_trigger = current_trigger.clone();
-        let brandguide = brandguide.clone();
-        let content = props.content.clone();
+        let command_filter = command_filter.clone();
         Callback::from(move |e: KeyboardEvent| {
+            // Filter command options based on current input for keyboard navigation
+            let filtered_options = {
+                let filter = (*command_filter).clone();
+                if filter.is_empty() {
+                    command_options.clone()
+                } else {
+                    let filter_lower = filter.to_lowercase();
+                    command_options
+                        .iter()
+                        .filter(|(_, keywords, name, _)| {
+                            keywords.to_lowercase().contains(&filter_lower)
+                                || name.to_lowercase().contains(&filter_lower)
+                        })
+                        .cloned()
+                        .collect::<Vec<_>>()
+                }
+            };
+
             // Handle command menu navigation and selection
-            if *show_commands {
+            if *show_commands && !filtered_options.is_empty() {
                 match e.key().as_str() {
                     "Enter" => {
                         e.prevent_default();
                         e.stop_propagation();
-                        let idx = *selected_index;
-                        if idx < command_options.len() {
-                            let (value, _, _, _) = &command_options[idx];
-                            on_command_select.emit(value.clone());
+                        let idx = (*selected_index).min(filtered_options.len() - 1);
+                        let (value, _, _, _) = &filtered_options[idx];
+                        on_command_select.emit(value.clone());
 
-                            // Clear the command trigger from content
-                            if let Some(element) = node_ref.cast::<HtmlElement>() {
-                                if let Some(trigger) = &*current_trigger {
-                                    let content = element.inner_text();
-                                    if let Some(pos) = content.rfind(trigger) {
-                                        let new_content = content[..pos].to_string();
-                                        element.set_inner_text(&new_content);
-                                    }
+                        // Clear the command trigger from content
+                        if let Some(element) = node_ref.cast::<HtmlElement>() {
+                            if let Some(trigger) = &*current_trigger {
+                                let content = element.inner_text();
+                                if let Some(pos) = content.rfind(trigger) {
+                                    let new_content = content[..pos].to_string();
+                                    element.set_inner_text(&new_content);
                                 }
                             }
-
-                            show_commands.set(false);
-                            current_trigger.set(None);
                         }
+
+                        show_commands.set(false);
+                        current_trigger.set(None);
                     }
                     "Escape" => {
                         e.prevent_default();
@@ -221,58 +241,32 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
                         let new_index = if *selected_index > 0 {
                             *selected_index - 1
                         } else {
-                            command_options.len() - 1
+                            filtered_options.len().saturating_sub(1)
                         };
                         selected_index.set(new_index);
-
-                        // Ensure the item is visible in the menu
-                        let document = document();
-                        if let Some(selected_element) = document
-                            .query_selector(&format!(
-                                ".{} > div:nth-child({})",
-                                brandguide
-                                    .command_list
-                                    .value
-                                    .split_whitespace()
-                                    .next()
-                                    .unwrap_or(""),
-                                new_index + 1
-                            ))
-                            .ok()
-                            .flatten()
-                        {
-                            selected_element.scroll_into_view();
-                        }
                     }
                     "ArrowDown" => {
                         e.prevent_default();
                         e.stop_propagation();
-                        let new_index = (*selected_index + 1) % command_options.len().max(1);
+                        let max_index = filtered_options.len().saturating_sub(1);
+                        let new_index = if *selected_index < max_index {
+                            *selected_index + 1
+                        } else {
+                            0
+                        };
                         selected_index.set(new_index);
-
-                        // Ensure the item is visible in the menu
-                        let document = document();
-                        if let Some(selected_element) = document
-                            .query_selector(&format!(
-                                ".{} > div:nth-child({})",
-                                brandguide
-                                    .command_list
-                                    .value
-                                    .split_whitespace()
-                                    .next()
-                                    .unwrap_or(""),
-                                new_index + 1
-                            ))
-                            .ok()
-                            .flatten()
-                        {
-                            selected_element.scroll_into_view();
-                        }
                     }
                     "Tab" => {
-                        // Prevent tab from moving focus away during command selection
                         e.prevent_default();
                         e.stop_propagation();
+                        // Tab acts like ArrowDown for better UX
+                        let max_index = filtered_options.len().saturating_sub(1);
+                        let new_index = if *selected_index < max_index {
+                            *selected_index + 1
+                        } else {
+                            0
+                        };
+                        selected_index.set(new_index);
                     }
                     _ => {
                         // Forward to parent handler, but keep command menu open
@@ -365,23 +359,34 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
         }
     };
 
-    // Prepare command menu HTML
+    // Prepare command menu HTML with improved styling and positioning
     let command_menu = if *show_commands {
+        let menu_style = format!(
+            "position: fixed; left: {}px; top: {}px; z-index: 1000;", 
+            command_position.0, 
+            command_position.1
+        );
+        
         html! {
             <div
-                class={classes!("absolute", "top-0", "left-0", markdown_command_menu_container)}
+                class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-xl max-h-64 overflow-y-auto min-w-[250px] animate-in fade-in-0 zoom-in-95 duration-200"
+                style={menu_style}
             >
-                <div class={command_list}>
+                <div class="p-1">
                     {
                         if filtered_options.is_empty() {
-                            html! { <div class={classes!(&brandguide.command_item, "text-zinc-500")}>{"No results found"}</div> }
+                            html! { 
+                                <div class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400 italic">
+                                    {"No results found"}
+                                </div> 
+                            }
                         } else {
                             filtered_options.iter().enumerate().map(|(idx, (value, _, display, icon))| {
                                 let is_selected = idx == *selected_index;
                                 let item_class = if is_selected {
-                                    classes!(&brandguide.command_selected_item)
+                                    "flex items-center gap-3 px-3 py-2 text-sm rounded-md bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 cursor-pointer transition-all duration-150"
                                 } else {
-                                    classes!(&brandguide.command_item)
+                                    "flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-all duration-150"
                                 };
 
                                 let on_command_select = props.on_command_select.clone();
@@ -412,11 +417,16 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
                                         })}
                                     >
                                         if let Some(icon_html) = icon {
-                                            <span class={classes!(&brandguide.command_item_icon)}>
+                                            <span class="w-4 h-4 flex items-center justify-center text-gray-500 dark:text-gray-400">
                                                 { icon_html.clone() }
                                             </span>
+                                        } else {
+                                            <span class="w-4 h-4"></span>
                                         }
-                                        <span>{ display }</span>
+                                        <span class="flex-1 font-medium">{ display }</span>
+                                        if is_selected {
+                                            <span class="text-xs text-gray-500 dark:text-gray-400 font-mono">{"↵"}</span>
+                                        }
                                     </div>
                                 }
                             }).collect::<Html>()

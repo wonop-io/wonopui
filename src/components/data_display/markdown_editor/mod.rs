@@ -37,6 +37,8 @@ pub struct MarkdownEditorProps<T: BlockTrait> {
     pub update_block: Option<Callback<(usize, T)>>,
     #[prop_or_default]
     pub on_blur: Option<Callback<FocusEvent>>,
+    #[prop_or(false)]
+    pub show_block_actions: bool,
 }
 
 #[function_component(MarkdownEditor)]
@@ -118,6 +120,51 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                 if let Some(callback) = &update_block_callback {
                     callback.emit((index, new_block_type));
                 }
+            }
+        })
+    };
+
+    // Handle block actions (duplicate, delete, move, etc.)
+    let on_block_action = {
+        let blocks = blocks.clone();
+        let active_block_index = active_block_index.clone();
+        Callback::from(move |(index, action): (usize, String)| {
+            let mut new_blocks = (*blocks).clone();
+            
+            match action.as_str() {
+                "duplicate" => {
+                    if let Some(block) = new_blocks.get(index) {
+                        let duplicated = block.clone();
+                        new_blocks.insert(index + 1, duplicated);
+                        blocks.set(new_blocks);
+                        active_block_index.set(index + 1);
+                    }
+                }
+                "delete" => {
+                    if new_blocks.len() > 1 && index < new_blocks.len() {
+                        new_blocks.remove(index);
+                        blocks.set(new_blocks);
+                        
+                        // Adjust active block index
+                        let new_active = if index > 0 { index - 1 } else { 0 };
+                        active_block_index.set(new_active);
+                    }
+                }
+                "move-up" => {
+                    if index > 0 && index < new_blocks.len() {
+                        new_blocks.swap(index, index - 1);
+                        blocks.set(new_blocks);
+                        active_block_index.set(index - 1);
+                    }
+                }
+                "move-down" => {
+                    if index < new_blocks.len() - 1 {
+                        new_blocks.swap(index, index + 1);
+                        blocks.set(new_blocks);
+                        active_block_index.set(index + 1);
+                    }
+                }
+                _ => {}
             }
         })
     };
@@ -327,6 +374,8 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                             on_update_block_type: on_update_block_type.clone(),
                             on_blur: on_blur_block.clone(),
                             on_insert_block: on_insert_block.clone(),
+                            on_block_action: on_block_action.clone(),
+                            show_block_actions: props.show_block_actions,
                         };
 
                         html! {
