@@ -164,7 +164,7 @@ impl Component for CodeEditor {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let props = ctx.props();
-        let lines = self.code.lines().collect::<Vec<_>>();
+        let _lines = self.code.lines().collect::<Vec<_>>();
 
         let container_style = format!(
             "font-family: {}; font-size: {}px; line-height: {};{}",
@@ -201,23 +201,31 @@ impl Component for CodeEditor {
                     style={format!("{} {}", container_style, max_height_style)}
                 >
                     <div class="flex">
-                        // Line numbers
+                        // Line numbers with diff indicators
                         if props.show_line_numbers {
                             <div class="flex-none bg-gray-100 dark:bg-gray-800 px-3 py-2 text-gray-500 dark:text-gray-400 text-right select-none border-r border-gray-300 dark:border-gray-700">
-                                { for lines.iter().enumerate().map(|(i, _)| {
-                                    html! { <div key={i} class="leading-[inherit]">{ i + 1 }</div> }
-                                }) }
+                                { self.render_line_numbers_with_diffs(ctx) }
                             </div>
                         }
 
                         // Editor area
                         <div class="flex-1 relative">
+                            // Diff backgrounds layer (behind everything)
+                            <div class="absolute inset-0 pointer-events-none">
+                                { self.render_diff_backgrounds(ctx) }
+                            </div>
+
                             // Syntax highlighting overlay - exactly matches textarea positioning
                             <div 
                                 class="absolute inset-0 p-2 m-0 pointer-events-none overflow-hidden whitespace-pre-wrap break-words text-gray-900 dark:text-gray-100"
                                 style={format!("{} font-family: inherit; font-size: inherit; line-height: inherit;", editor_style)}
                             >
-                                { self.render_highlighted_code(ctx) }
+                                { self.render_highlighted_code_with_annotations(ctx) }
+                            </div>
+
+                            // Annotations and type hints overlay (above highlighting but below textarea)
+                            <div class="absolute inset-0 pointer-events-none">
+                                { self.render_annotations_and_hints(ctx) }
                             </div>
 
                             // Actual textarea - transparent text, visible cursor
@@ -347,6 +355,206 @@ impl CodeEditor {
                 }
             }
         }
+    }
+
+    fn render_line_numbers_with_diffs(&self, ctx: &Context<Self>) -> Html {
+        let props = ctx.props();
+        let lines = self.code.lines().collect::<Vec<_>>();
+        
+        // Create a map of line numbers to their diffs for quick lookup
+        let mut diff_map = std::collections::HashMap::new();
+        for diff in &props.diffs {
+            diff_map.insert(diff.line_number, diff);
+        }
+
+        lines.iter().enumerate().map(|(i, _)| {
+            let line_num = i + 1;
+            let has_diff = diff_map.get(&line_num);
+            
+            let diff_classes = if let Some(diff) = has_diff {
+                match diff.diff_type {
+                    DiffType::Added => "text-green-600 dark:text-green-400",
+                    DiffType::Removed => "text-red-600 dark:text-red-400", 
+                    DiffType::Modified => "text-yellow-600 dark:text-yellow-400",
+                }
+            } else {
+                ""
+            };
+
+            html! {
+                <div key={i} class={format!("leading-[inherit] flex items-center justify-end gap-1 {}", diff_classes)}>
+                    <span>{ line_num }</span>
+                    if has_diff.is_some() {
+                        <span class="w-2 h-2 rounded-full bg-current opacity-75"></span>
+                    }
+                </div>
+            }
+        }).collect::<Html>()
+    }
+
+    fn render_diff_backgrounds(&self, ctx: &Context<Self>) -> Html {
+        let props = ctx.props();
+        let lines = self.code.lines().collect::<Vec<_>>();
+        
+        props.diffs.iter().map(|diff| {
+            if diff.line_number == 0 || diff.line_number > lines.len() {
+                return html! {};
+            }
+
+            let line_index = diff.line_number - 1;
+            let bg_class = match diff.diff_type {
+                DiffType::Added => "bg-green-100 dark:bg-green-900 bg-opacity-30",
+                DiffType::Removed => "bg-red-100 dark:bg-red-900 bg-opacity-30",
+                DiffType::Modified => "bg-yellow-100 dark:bg-yellow-900 bg-opacity-30",
+            };
+
+            html! {
+                <div 
+                    class={format!("absolute left-0 right-0 {}", bg_class)}
+                    style={format!(
+                        "top: {}px; height: {}px; margin-left: 8px; margin-right: 8px;", 
+                        line_index as f32 * props.font_size as f32 * props.line_height + 8.0, // +8 for padding
+                        props.font_size as f32 * props.line_height
+                    )}
+                />
+            }
+        }).collect::<Html>()
+    }
+
+    fn render_annotations_and_hints(&self, ctx: &Context<Self>) -> Html {
+        let props = ctx.props();
+        let mut elements = Vec::new();
+
+        // Render annotations
+        for annotation in &props.annotations {
+            if annotation.line_number == 0 {
+                continue;
+            }
+
+            let line_index = annotation.line_number - 1;
+            let line_top = line_index as f32 * props.font_size as f32 * props.line_height + 8.0; // +8 for padding
+
+            if annotation.inline {
+                // Inline annotation - show message directly in the editor
+                let column_pos = annotation.column_range.map(|(start, _)| start).unwrap_or(0);
+                let annotation_class = match annotation.annotation_type {
+                    AnnotationType::Error => "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950",
+                    AnnotationType::Warning => "text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950",
+                    AnnotationType::Info => "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950",
+                    AnnotationType::Success => "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950",
+                };
+
+                elements.push(html! {
+                    <div 
+                        class={format!("absolute px-2 py-1 rounded text-xs pointer-events-auto {}", annotation_class)}
+                        style={format!(
+                            "top: {}px; left: {}ch; z-index: 10;",
+                            line_top + props.font_size as f32 * props.line_height,
+                            column_pos
+                        )}
+                        title={annotation.message.clone()}
+                    >
+                        { &annotation.message }
+                    </div>
+                });
+            } else {
+                // Gutter annotation - show indicator with tooltip
+                let annotation_class = match annotation.annotation_type {
+                    AnnotationType::Error => "text-red-500 border-red-500",
+                    AnnotationType::Warning => "text-yellow-500 border-yellow-500", 
+                    AnnotationType::Info => "text-blue-500 border-blue-500",
+                    AnnotationType::Success => "text-green-500 border-green-500",
+                };
+
+                elements.push(html! {
+                    <div 
+                        class={format!("absolute group pointer-events-auto {}", annotation_class)}
+                        style={format!(
+                            "top: {}px; left: 4px; z-index: 10;",
+                            line_top + 2.0
+                        )}
+                    >
+                        <div class="w-3 h-3 rounded-full border-2 bg-white dark:bg-gray-800 cursor-help"></div>
+                        <div class="absolute hidden group-hover:block bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded shadow-lg z-50 left-6 top-0 whitespace-nowrap">
+                            <div class="text-sm text-gray-800 dark:text-gray-200">{ &annotation.message }</div>
+                        </div>
+                    </div>
+                });
+
+                // Add underline for column range
+                if let Some((start, end)) = annotation.column_range {
+                    let underline_class = match annotation.annotation_type {
+                        AnnotationType::Error => "border-b-2 border-red-500 border-dashed",
+                        AnnotationType::Warning => "border-b-2 border-yellow-500 border-dashed",
+                        AnnotationType::Info => "border-b-2 border-blue-500 border-dashed", 
+                        AnnotationType::Success => "border-b-2 border-green-500 border-dashed",
+                    };
+
+                    elements.push(html! {
+                        <div 
+                            class={format!("absolute {}", underline_class)}
+                            style={format!(
+                                "top: {}px; left: {}ch; width: {}ch; height: 2px; margin-left: 8px;",
+                                line_top + props.font_size as f32 * props.line_height - 2.0,
+                                start,
+                                end.saturating_sub(start)
+                            )}
+                        />
+                    });
+                }
+            }
+        }
+
+        // Render type hints
+        for hint in &props.type_hints {
+            if hint.line_number == 0 {
+                continue;
+            }
+
+            let line_index = hint.line_number - 1;
+            let line_top = line_index as f32 * props.font_size as f32 * props.line_height + 8.0; // +8 for padding
+            let column_pos = hint.column.unwrap_or(0);
+
+            if hint.inline {
+                // Inline type hint
+                elements.push(html! {
+                    <div 
+                        class={classes!("absolute", "text-xs", "text-gray-500", "dark:text-gray-400", "italic", "pointer-events-auto", hint.class.clone())}
+                        style={format!(
+                            "top: {}px; left: {}ch; z-index: 10;",
+                            line_top,
+                            column_pos
+                        )}
+                    >
+                        { &hint.hint }
+                    </div>
+                });
+            } else {
+                // Tooltip type hint
+                elements.push(html! {
+                    <div 
+                        class={classes!("absolute", "group", "pointer-events-auto", hint.class.clone())}
+                        style={format!(
+                            "top: {}px; left: {}ch; z-index: 10;",
+                            line_top + 2.0,
+                            column_pos
+                        )}
+                    >
+                        <div class="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-600 cursor-help"></div>
+                        <div class="absolute hidden group-hover:block bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded shadow-lg z-50 left-4 top-0 whitespace-nowrap">
+                            <div class="text-sm text-gray-800 dark:text-gray-200">{ &hint.hint }</div>
+                        </div>
+                    </div>
+                });
+            }
+        }
+
+        html! { <>{ for elements }</> }
+    }
+
+    fn render_highlighted_code_with_annotations(&self, ctx: &Context<Self>) -> Html {
+        // Same as the old render_highlighted_code method
+        self.render_highlighted_code(ctx)
     }
 
     fn render_highlighted_code(&self, ctx: &Context<Self>) -> Html {
