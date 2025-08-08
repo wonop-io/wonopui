@@ -87,8 +87,11 @@ pub fn code_editor_documentation() -> Html {
             <h2 class="text-2xl font-semibold mb-4 text-zinc-900 dark:text-white">{ "Example" }</h2>
             <ExampleCode
                 preview={html! {
-                    <CodeEditor
-                        code={r#"use std::collections::HashMap;
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2 text-zinc-800 dark:text-zinc-200">{"Original Code"}</h3>
+                            <CodeEditor
+                                code={r#"use std::collections::HashMap;
 
 fn main() {
     let mut map = HashMap::new(); // HashMap<_, _>
@@ -97,41 +100,90 @@ fn main() {
     map.insert("key1", "value1");
     // Error: This function might panic
 }"#}
-                        language="rust"
-                        theme="light"
-                        show_line_numbers=true
-                        diffs={vec![
-                            Diff::added(5),
-                            Diff::modified(6)
-                        ]}
-                        annotations={vec![
-                            Annotation::error(7, "This function might panic").inline()
-                        ]}
-                        type_hints={vec![
-                            TypeHint::new(3, "HashMap<String, String>").at_column(23)
-                        ]}
-                        font_size={14}
-                        line_height={1.5}
-                        enable_multi_cursor={true}
-                        enable_keymap={true}
-                        keymap={
-                            {
-                                let mut keymap = HashMap::new();
-                                keymap.insert("Ctrl+/".to_string(), 
-                                    Callback::from(|e: KeyboardEvent| { 
-                                        e.prevent_default(); 
-                                        console::log!("Comment toggled");
-                                    }));
-                                keymap.insert("Ctrl+d".to_string(), 
-                                    Callback::from(|e: KeyboardEvent| { 
-                                        e.prevent_default(); 
-                                        console::log!("Line duplicated");
-                                    }));
-                                Some(keymap)
-                            }
-                        }
-                        class="border border-gray-300 dark:border-gray-700 rounded shadow-sm"
-                    />
+                                language="rust"
+                                theme="light"
+                                show_line_numbers=true
+                                diffs={vec![
+                                    Diff::added(5),
+                                    Diff::modified(6)
+                                ]}
+                                annotations={vec![
+                                    Annotation::error(7, "This function might panic").inline()
+                                ]}
+                                type_hints={vec![
+                                    TypeHint::new(3, "HashMap<String, String>").at_column(23)
+                                ]}
+                                font_size={14}
+                                line_height={1.5}
+                                enable_multi_cursor={true}
+                                enable_keymap={true}
+                                keymap={
+                                    {
+                                        let mut keymap = HashMap::new();
+                                        keymap.insert("Ctrl+/".to_string(), 
+                                            Callback::from(|e: KeyboardEvent| { 
+                                                e.prevent_default(); 
+                                                console::log!("Comment toggled");
+                                            }));
+                                        keymap.insert("Ctrl+d".to_string(), 
+                                            Callback::from(|e: KeyboardEvent| { 
+                                                e.prevent_default(); 
+                                                console::log!("Line duplicated");
+                                            }));
+                                        Some(keymap)
+                                    }
+                                }
+                                class="border border-gray-300 dark:border-gray-700 rounded shadow-sm"
+                            />
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2 text-zinc-800 dark:text-zinc-200">{"Diff View - Modified Version"}</h3>
+                            <CodeEditor
+                                code={r#"use std::collections::HashMap;
+
+fn main() {
+    let mut data_map = HashMap::new(); // HashMap<String, String>
+    
+    // Initialize with default values
+    data_map.insert("key1", "updated_value1");
+    data_map.insert("key2", "new_value2");
+    
+    // Safe access with error handling
+    match data_map.get("key1") {
+        Some(value) => println!("Found: {}", value),
+        None => println!("Key not found"),
+    }
+}"#}
+                                language="rust"
+                                theme="light"
+                                show_line_numbers=true
+                                diffs={vec![
+                                    Diff::modified(4),
+                                    Diff::added(6),
+                                    Diff::modified(7),
+                                    Diff::added(8),
+                                    Diff::added(10),
+                                    Diff::added(11),
+                                    Diff::added(12),
+                                    Diff::added(13),
+                                    Diff::removed(14)
+                                ]}
+                                annotations={vec![
+                                    Annotation::info(4, "Better variable name for clarity").with_column_range(12, 20),
+                                    Annotation::success(6, "Added helpful comment").inline(),
+                                    Annotation::success(10, "Safe pattern matching instead of potential panic").with_column_range(4, 38)
+                                ]}
+                                type_hints={vec![
+                                    TypeHint::new(4, "HashMap<&str, &str>").at_column(36),
+                                    TypeHint::new(11, "Option<&&str>").at_column(8)
+                                ]}
+                                font_size={14}
+                                line_height={1.5}
+                                class="border border-emerald-300 dark:border-emerald-700 rounded shadow-md bg-emerald-50 dark:bg-emerald-950"
+                            />
+                        </div>
+                    </div>
                 }}
                 customize={html! {
                     <CodeEditorThemeEditor />
