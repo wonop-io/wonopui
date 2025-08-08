@@ -1,7 +1,5 @@
 use yew::prelude::*;
-use wonopui::components::code_editor::{
-    CodeEditor, CodeEditorProps, Diff, Annotation, AnnotationType, TypeHint
-};
+use wonopui::prelude::*;
 
 #[function_component(App)]
 fn app() -> Html {

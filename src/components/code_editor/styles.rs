@@ -12,6 +12,10 @@ pub fn code_editor_styles() -> Html {
                 50% { opacity: 0; }
             }
             
+            .animate-blink {
+                animation: blink 1s infinite;
+            }
+            
             /* Syntax highlighting colors */
             .token.comment, .token.prolog, .token.doctype, .token.cdata {
                 @apply text-gray-500 dark:text-gray-400 italic;
