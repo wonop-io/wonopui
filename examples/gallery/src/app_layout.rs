@@ -143,6 +143,7 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
                 <SidebarLink<Route> label="Card" to={Route::CardExample} />
                 <SidebarLink<Route> label="Carousel" to={Route::CarouselExample} />
                 <SidebarLink<Route> label="Checkbox" to={Route::CheckboxExample} />
+                <SidebarLink<Route> label="Code Editor" to={Route::CodeEditorExample} />
                 <SidebarLink<Route> label="Col" to={Route::ColExample} />
                 <SidebarLink<Route> label="Collapsible" to={Route::CollapsibleExample} />
                 <SidebarLink<Route> label="Color Picker" to={Route::ColorPickerExample} />
@@ -162,7 +163,9 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
                 <SidebarLink<Route> label="Group Button" to={Route::GroupButtonExample} />
                 <SidebarLink<Route> label="Iframe" to={Route::IframeExample} />
                 <SidebarLink<Route> label="Input" to={Route::InputExample} />
+                <SidebarLink<Route> label="Kanban" to={Route::KanbanExample} />
                 <SidebarLink<Route> label="Label" to={Route::LabelExample} />
+                <SidebarLink<Route> label="Markdown Editor" to={Route::MarkdownEditorExample} />
                 <SidebarLink<Route> label="Media Query" to={Route::MediaQueryExample} />
                 <SidebarLink<Route> label="Multicol Sidebar" to={Route::MulticolSidebarExample} />
                 <SidebarLink<Route> label="Notification" to={Route::NotificationExample} />
