@@ -96,7 +96,7 @@ pub fn code_editor_documentation() -> Html {
 fn main() {
     let mut map = HashMap::new(); // HashMap<_, _>
 
-    // Added comment
+    // This might panic
     map.insert("key1", "value1");
     // Error: This function might panic
 }"#}
@@ -104,52 +104,36 @@ fn main() {
                                 theme="light"
                                 show_line_numbers=true
                                 diffs={vec![
-                                    Diff::added(5),
-                                    Diff::modified(6)
+                                    Diff::modified(6),
+                                    Diff::removed(7)
                                 ]}
                                 annotations={vec![
-                                    Annotation::error(7, "This function might panic").inline()
+                                    Annotation::error(8, "This function might panic").inline()
                                 ]}
                                 type_hints={vec![
-                                    TypeHint::new(3, "HashMap<String, String>").at_column(23)
+                                    TypeHint::new(4, "HashMap<&str, &str>").at_column(23)
                                 ]}
                                 font_size={14}
                                 line_height={1.5}
-                                enable_multi_cursor={true}
-                                enable_keymap={true}
-                                keymap={
-                                    {
-                                        let mut keymap = HashMap::new();
-                                        keymap.insert("Ctrl+/".to_string(), 
-                                            Callback::from(|e: KeyboardEvent| { 
-                                                e.prevent_default(); 
-                                                console::log!("Comment toggled");
-                                            }));
-                                        keymap.insert("Ctrl+d".to_string(), 
-                                            Callback::from(|e: KeyboardEvent| { 
-                                                e.prevent_default(); 
-                                                console::log!("Line duplicated");
-                                            }));
-                                        Some(keymap)
-                                    }
-                                }
                                 class="border border-gray-300 dark:border-gray-700 rounded shadow-sm"
                             />
                         </div>
                         
-                        <div>
-                            <h3 class="text-lg font-semibold mb-2 text-zinc-800 dark:text-zinc-200">{"Diff View - Modified Version"}</h3>
+                        <div class="relative">
+                            <h3 class="text-lg font-semibold mb-2 text-zinc-800 dark:text-zinc-200">{"Diff View - Proposed Changes"}</h3>
                             <CodeEditor
                                 code={r#"use std::collections::HashMap;
 
 fn main() {
     let mut data_map = HashMap::new(); // HashMap<String, String>
     
-    // Initialize with default values
+    // Initialize with proper error handling
     data_map.insert("key1", "updated_value1");
     data_map.insert("key2", "new_value2");
     
-    // Safe access with error handling
+    // This line was removed - old panic code
+    
+    // Safe access with error handling  
     match data_map.get("key1") {
         Some(value) => println!("Found: {}", value),
         None => println!("Key not found"),
@@ -158,25 +142,35 @@ fn main() {
                                 language="rust"
                                 theme="light"
                                 show_line_numbers=true
+                                diff_view=true
                                 diffs={vec![
-                                    Diff::modified(4),
-                                    Diff::added(6),
-                                    Diff::modified(7),
-                                    Diff::added(8),
-                                    Diff::added(10),
-                                    Diff::added(11),
-                                    Diff::added(12),
-                                    Diff::added(13),
-                                    Diff::removed(14)
+                                    // First diff block - variable rename
+                                    Diff::modified(4).with_message("Improved variable name"),
+                                    
+                                    // Second diff block - new initialization code
+                                    Diff::added(6).with_message("Added helpful comment"),
+                                    Diff::added(7).with_message("Updated insert call"), 
+                                    Diff::added(8).with_message("Added second insert"),
+                                    
+                                    // Third diff block - removed old code
+                                    Diff::removed(10).with_message("Removed unsafe panic code"),
+                                    
+                                    // Fourth diff block - new safe code
+                                    Diff::added(12).with_message("Added safe error handling comment"),
+                                    Diff::added(13).with_message("Safe pattern matching"),
+                                    Diff::added(14).with_message("Handle Some case"),
+                                    Diff::added(15).with_message("Handle None case"),
+                                    Diff::added(16).with_message("Close match block")
                                 ]}
                                 annotations={vec![
                                     Annotation::info(4, "Better variable name for clarity").with_column_range(12, 20),
-                                    Annotation::success(6, "Added helpful comment").inline(),
-                                    Annotation::success(10, "Safe pattern matching instead of potential panic").with_column_range(4, 38)
+                                    Annotation::success(6, "Added helpful initialization comment").inline(),
+                                    Annotation::warning(10, "This line represents removed code").with_column_range(4, 50),
+                                    Annotation::success(13, "Replaced potential panic with safe pattern matching").with_column_range(4, 38)
                                 ]}
                                 type_hints={vec![
                                     TypeHint::new(4, "HashMap<&str, &str>").at_column(36),
-                                    TypeHint::new(11, "Option<&&str>").at_column(8)
+                                    TypeHint::new(14, "Option<&&str>").at_column(8)
                                 ]}
                                 font_size={14}
                                 line_height={1.5}
@@ -237,6 +231,8 @@ fn main() {
                 "Real-time editable code with performant rendering",
                 "Line numbers with toggle support",
                 "Inline diffs to show code changes (added, removed, modified)",
+                "True diff view mode with proper line number mapping",
+                "Accept/Reject controls for code change proposals",
                 "Annotations for errors, warnings, and information",
                 "Type hints for showing type information at specific positions",
                 "Customizable themes and styles",
@@ -274,12 +270,17 @@ fn main() {
                     ("enable_multi_cursor", "bool", "Enable multiple cursors with Alt+Click (default: false)."),
                     ("enable_keymap", "bool", "Enable custom keymap support (default: false)."),
                     ("keymap", "Option<HashMap<String, Callback<KeyboardEvent>>>", "Custom keyboard shortcuts."),
+                    ("diff_view", "bool", "Enable diff view mode with proper line number mapping (default: false)."),
+                    ("original_line_numbers", "Vec<Option<usize>>", "Maps display lines to original line numbers for diff view."),
                 ]}
             />
 
             <NotesSection
                 title={"Recently Added Features".to_string()}
                 notes={vec![
+                    "Diff view mode: Proper side-by-side diff with accurate line number mapping".to_string(),
+                    "Accept/Reject controls: Interactive buttons to approve or dismiss code changes".to_string(),
+                    "Enhanced line numbering: Shows original line numbers or gaps for added/removed lines".to_string(),
                     "Multi-cursor support: Create and manage multiple cursors with Alt+Click".to_string(),
                     "Custom keymap: Define your own keyboard shortcuts".to_string(),
                     "Fixed scrolling: Properly synchronized scrolling of line numbers and content".to_string(),

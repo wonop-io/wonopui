@@ -105,6 +105,14 @@ pub struct CodeEditorProps {
     /// Custom inline style
     #[prop_or_default]
     pub style: String,
+
+    /// Enable diff view mode with original line numbers
+    #[prop_or(false)]
+    pub diff_view: bool,
+
+    /// Original line numbers for diff view (maps display line to original line)
+    #[prop_or_default]
+    pub original_line_numbers: Vec<Option<usize>>,
 }
 
 pub enum CodeEditorMsg {
@@ -204,7 +212,13 @@ impl Component for CodeEditor {
                         // Line numbers with diff indicators
                         if props.show_line_numbers {
                             <div class="flex-none bg-gray-100 dark:bg-gray-800 px-3 py-2 text-gray-500 dark:text-gray-400 text-right select-none border-r border-gray-300 dark:border-gray-700">
-                                { self.render_line_numbers_with_diffs(ctx) }
+                                { 
+                                    if props.diff_view {
+                                        self.render_diff_line_numbers(ctx) 
+                                    } else {
+                                        self.render_line_numbers_with_diffs(ctx)
+                                    }
+                                }
                             </div>
                         }
 
@@ -227,6 +241,13 @@ impl Component for CodeEditor {
                             <div class="absolute inset-0 pointer-events-none">
                                 { self.render_annotations_and_hints(ctx) }
                             </div>
+
+                            // Inline diff controls overlay (for accept/reject buttons)
+                            if props.diff_view {
+                                <div class="absolute inset-0 pointer-events-none">
+                                    { self.render_inline_diff_controls(ctx) }
+                                </div>
+                            }
 
                             // Actual textarea - transparent text, visible cursor
                             <textarea
@@ -392,6 +413,48 @@ impl CodeEditor {
         }).collect::<Html>()
     }
 
+    fn render_diff_line_numbers(&self, ctx: &Context<Self>) -> Html {
+        let props = ctx.props();
+        let lines = self.code.lines().collect::<Vec<_>>();
+        
+        // Create a map of line numbers to their diffs for quick lookup
+        let mut diff_map = std::collections::HashMap::new();
+        for diff in &props.diffs {
+            diff_map.insert(diff.line_number, diff);
+        }
+
+        lines.iter().enumerate().map(|(i, _)| {
+            let display_line_num = i + 1;
+            let original_line_num = if i < props.original_line_numbers.len() {
+                props.original_line_numbers[i]
+            } else {
+                Some(display_line_num) // fallback to display line number
+            };
+            
+            let has_diff = diff_map.get(&display_line_num);
+            
+            let (diff_classes, symbol) = if let Some(diff) = has_diff {
+                match diff.diff_type {
+                    DiffType::Added => ("text-emerald-500 dark:text-emerald-400 font-bold", "+"),
+                    DiffType::Removed => ("text-rose-500 dark:text-rose-400 font-bold line-through", "−"), 
+                    DiffType::Modified => ("text-amber-500 dark:text-amber-400 font-bold", "~"),
+                }
+            } else {
+                ("", "")
+            };
+
+            html! {
+                <div key={i} class={format!("leading-[inherit] flex items-center justify-end gap-1 {}", diff_classes)}>
+                    // Always show line number for added lines too
+                    <span>{ display_line_num }</span>
+                    if has_diff.is_some() {
+                        <span class="w-3 h-3 flex items-center justify-center text-xs font-bold">{ symbol }</span>
+                    }
+                </div>
+            }
+        }).collect::<Html>()
+    }
+
     fn render_diff_backgrounds(&self, ctx: &Context<Self>) -> Html {
         let props = ctx.props();
         let lines = self.code.lines().collect::<Vec<_>>();
@@ -550,6 +613,61 @@ impl CodeEditor {
         }
 
         html! { <>{ for elements }</> }
+    }
+
+    fn render_inline_diff_controls(&self, ctx: &Context<Self>) -> Html {
+        let props = ctx.props();
+        let lines = self.code.lines().collect::<Vec<_>>();
+        
+        // Group consecutive diffs into blocks
+        let mut diff_blocks = Vec::new();
+        let mut current_block = Vec::new();
+        
+        for (i, diff) in props.diffs.iter().enumerate() {
+            if current_block.is_empty() {
+                current_block.push((i, diff));
+            } else if let Some((_, last_diff)) = current_block.last() {
+                // If this diff is consecutive to the last one, add to current block
+                if diff.line_number == last_diff.line_number + 1 {
+                    current_block.push((i, diff));
+                } else {
+                    // Start a new block
+                    diff_blocks.push(current_block.clone());
+                    current_block.clear();
+                    current_block.push((i, diff));
+                }
+            }
+        }
+        if !current_block.is_empty() {
+            diff_blocks.push(current_block);
+        }
+
+        diff_blocks.into_iter().map(|block| {
+            if block.is_empty() {
+                return html! {};
+            }
+            
+            let (_, first_diff) = &block[0];
+            let (_, last_diff) = block.last().unwrap();
+            
+            // Position controls at the end of the diff block
+            let line_index = last_diff.line_number - 1;
+            let control_top = line_index as f32 * props.font_size as f32 * props.line_height + 8.0; // +8 for padding
+
+            html! {
+                <div 
+                    class="absolute right-2 flex gap-1 pointer-events-auto z-20"
+                    style={format!("top: {}px;", control_top)}
+                >
+                    <button class="px-2 py-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-sm text-xs font-medium transition-colors shadow-sm opacity-80 hover:opacity-100">
+                        {"✓"}
+                    </button>
+                    <button class="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded-sm text-xs font-medium transition-colors shadow-sm opacity-80 hover:opacity-100">
+                        {"✗"}
+                    </button>
+                </div>
+            }
+        }).collect::<Html>()
     }
 
     fn render_highlighted_code_with_annotations(&self, ctx: &Context<Self>) -> Html {
