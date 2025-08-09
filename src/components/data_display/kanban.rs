@@ -58,10 +58,10 @@ pub fn kanban(props: &KanbanProps) -> Html {
     
     let drag_state = use_state(DragState::default);
     
-    // Cleanup effect to ensure states are reset
+    // Cleanup effect to ensure states are reset when component unmounts
     {
         let drag_state = drag_state.clone();
-        use_effect(move || {
+        use_effect_with((), move |_| {
             // Cleanup function that runs when component unmounts
             move || {
                 drag_state.set(DragState::default());
