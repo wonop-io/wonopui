@@ -1,5 +1,9 @@
 use crate::components::layout::layout_context::{LayoutAction, LayoutContext};
 use crate::components::layout::multicol_sidebar::{MultiColumnSidebar, SidebarColumn};
+#[cfg(not(feature = "ThemeProvider"))]
+use crate::config::get_brandguide;
+#[cfg(feature = "ThemeProvider")]
+use crate::config::use_brandguide;
 use yew::prelude::*; // Import LayoutContext and SidebarPosition
 use yew_router::prelude::use_location;
 use yew_router::prelude::use_navigator;
@@ -20,8 +24,14 @@ pub fn sidebar_heading(props: &SidebarHeadingProps) -> Html {
     if folded {
         return html! {};
     }
+    
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    
     html! {
-        <h2 class="flex flex-row justify-between items-center mt-4 mb-2 mx-3 px-2 py-1 text-zinc-900 dark:text-zinc-100 leading-6 text-xs font-semibold tracking-tight text-zinc-700 dark:text-zinc-300">
+        <h2 class={brandguide.sidebar_heading.to_string()}>
             {children}
         </h2>
     }
@@ -56,39 +66,21 @@ pub fn SidebarLink<R: Routable + 'static>(props: &SidebarLinkProps<R>) -> Html {
         })
     };
 
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    
     let location = use_location().expect("Failed to get location");
     let is_active = location.path() == to.to_path();
 
     let mut class = classes!(
-        "flex-grow",
-        "mx-3",
-        "px-2",
-        "hover:bg-zinc-200",
-        "hover:dark:bg-zinc-700",
-        "inline-flex",
-        "space-x-2",
-        "items-center",
-        "whitespace-nowrap",
-        "rounded-md",
-        "text-sm",
-        "font-medium",
-        "transition-colors",
-        "focus-visible:outline-none",
-        "focus-visible:ring-1",
-        "focus-visible:ring-ring",
-        "disabled:pointer-events-none",
-        "disabled:opacity-50",
-        "hover:bg-accent",
-        "hover:text-accent-foreground",
-        "h-9",
-        "py-1",
-        "text-zinc-700",
-        "dark:text-zinc-300",
+        &brandguide.sidebar_link_base,
         justify
     );
 
     if is_active {
-        class.push("bg-zinc-200 dark:bg-zinc-700");
+        class.push(&brandguide.sidebar_link_active);
     }
 
     html! {
@@ -146,39 +138,23 @@ pub fn sidebar_item(props: &SidebarItemProps) -> Html {
             }
         })
     };
+    
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    
     let mut class = classes!(
-        "flex-grow",
-        "mx-3",
-        "px-2",
-        "inline-flex",
-        "space-x-2",
-        "items-center",
-        "whitespace-nowrap",
-        "rounded-md",
-        "text-sm",
-        "font-medium",
-        "transition-colors",
-        "focus-visible:outline-none",
-        "focus-visible:ring-1",
-        "focus-visible:ring-ring",
-        "disabled:pointer-events-none",
-        "disabled:opacity-50",
-        "h-9",
-        "py-1",
-        "text-zinc-700",
-        "dark:text-zinc-300",
+        &brandguide.sidebar_item_base,
         justify
     );
 
     if has_action {
-        class.push("hover:bg-zinc-200");
-        class.push("hover:dark:bg-zinc-700");
-        class.push("hover:bg-accent");
-        class.push("hover:text-accent-foreground");
+        class.push(&brandguide.sidebar_item_hover);
     }
 
     if *active {
-        class.push("bg-zinc-200 dark:bg-zinc-700");
+        class.push(&brandguide.sidebar_item_active);
     }
 
     let content = html! {
@@ -217,8 +193,14 @@ pub struct SidebarMenuProps {
 #[function_component(SidebarMenu)]
 pub fn sidebar_menu(props: &SidebarMenuProps) -> Html {
     let SidebarMenuProps { children } = props;
+    
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    
     html! {
-        <div class="space-y-1 my-1 flex flex-col items-stretch">
+        <div class={brandguide.sidebar_menu.to_string()}>
             {children}
         </div>
     }
@@ -284,14 +266,13 @@ pub struct SidebarHeaderProps {
 
 #[function_component(SidebarHeader)]
 pub fn sidebar_header(props: &SidebarHeaderProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    
     let default_classes = classes!(
-        "h-16",
-        "shrink-0",
-        "border-b",
-        "border-zinc-200",
-        "dark:border-zinc-800",
-        "bg-white",
-        "dark:bg-zinc-900"
+        &brandguide.sidebar_header
     );
 
     let combined_classes = classes!(default_classes, props.class.clone());
@@ -314,8 +295,13 @@ pub struct SidebarFooterProps {
 
 #[function_component(SidebarFooter)]
 pub fn sidebar_footer(props: &SidebarFooterProps) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+    
     html! {
-        <div class="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+        <div class={brandguide.sidebar_footer.to_string()}>
             {for props.children.iter()}
         </div>
     }

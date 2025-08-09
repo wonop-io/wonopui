@@ -302,6 +302,16 @@ pub struct BrandGuide<T> {
     pub resizable_handle_w: ClassesContainer<T>,
     pub resizable_handle_e: ClassesContainer<T>,
 
+    pub sidebar_heading: ClassesContainer<T>,
+    pub sidebar_menu: ClassesContainer<T>,
+    pub sidebar_item_base: ClassesContainer<T>,
+    pub sidebar_item_hover: ClassesContainer<T>,
+    pub sidebar_item_active: ClassesContainer<T>,
+    pub sidebar_link_base: ClassesContainer<T>,
+    pub sidebar_link_active: ClassesContainer<T>,
+    pub sidebar_header: ClassesContainer<T>,
+    pub sidebar_footer: ClassesContainer<T>,
+    
     pub selectable_indicator: ClassesContainer<T>,
     pub selectable_hover: ClassesContainer<T>,
     pub selectable_selected: ClassesContainer<T>,
@@ -549,6 +559,16 @@ impl BrandGuide<&'static str> {
             resizable_handle_w: self.resizable_handle_w.to_owned(),
             resizable_handle_e: self.resizable_handle_e.to_owned(),
 
+            sidebar_heading: self.sidebar_heading.to_owned(),
+            sidebar_menu: self.sidebar_menu.to_owned(),
+            sidebar_item_base: self.sidebar_item_base.to_owned(),
+            sidebar_item_hover: self.sidebar_item_hover.to_owned(),
+            sidebar_item_active: self.sidebar_item_active.to_owned(),
+            sidebar_link_base: self.sidebar_link_base.to_owned(),
+            sidebar_link_active: self.sidebar_link_active.to_owned(),
+            sidebar_header: self.sidebar_header.to_owned(),
+            sidebar_footer: self.sidebar_footer.to_owned(),
+            
             selectable_indicator: self.selectable_indicator.to_owned(),
             selectable_hover: self.selectable_hover.to_owned(),
             selectable_selected: self.selectable_selected.to_owned(),
