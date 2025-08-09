@@ -9,7 +9,7 @@ use crate::config::use_brandguide;
 use crate::config::BrandGuideType;
 use std::collections::HashSet;
 use wasm_bindgen::{prelude::*, JsCast};
-use web_sys::{DragEvent, KeyboardEvent};
+use web_sys::{DragEvent, KeyboardEvent, MouseEvent};
 use yew::prelude::*;
 
 pub use block::BlockTrait;
@@ -61,6 +61,8 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
     let active_block_index = use_state(|| 0);
     let selected_blocks = use_state(|| std::collections::HashSet::<usize>::new());
     let dragging_index = use_state(|| None::<usize>);
+    let drop_indicator_index = use_state(|| None::<usize>);
+    let last_selected_index = use_state(|| None::<usize>);
 
     // State for selection tracking
     let selection_info = use_state(|| None::<(usize, usize, usize)>);
@@ -262,16 +264,40 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
         })
     };
 
-    // Handle block selection
+    // Handle block selection with shift-click support
     let on_select_block = {
         let selected_blocks = selected_blocks.clone();
-        Callback::from(move |(index, is_selected): (usize, bool)| {
+        let last_selected_index = last_selected_index.clone();
+        let blocks = blocks.clone();
+        Callback::from(move |(index, e): (usize, web_sys::MouseEvent)| {
             let mut selected = (*selected_blocks).clone();
-            if is_selected {
-                selected.insert(index);
+            
+            if e.shift_key() {
+                // Shift-click: select range
+                if let Some(last_idx) = *last_selected_index {
+                    let start = last_idx.min(index);
+                    let end = last_idx.max(index);
+                    for i in start..=end {
+                        if i < blocks.len() {
+                            selected.insert(i);
+                        }
+                    }
+                }
+            } else if e.ctrl_key() || e.meta_key() {
+                // Ctrl/Cmd-click: toggle individual selection
+                if selected.contains(&index) {
+                    selected.remove(&index);
+                } else {
+                    selected.insert(index);
+                    last_selected_index.set(Some(index));
+                }
             } else {
-                selected.remove(&index);
+                // Regular click: single selection
+                selected.clear();
+                selected.insert(index);
+                last_selected_index.set(Some(index));
             }
+            
             selected_blocks.set(selected);
         })
     };
@@ -286,8 +312,25 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
 
     // Handle drag over
     let on_drag_over = {
-        Callback::from(move |(_index, _e): (usize, DragEvent)| {
-            // Visual feedback handled in CSS
+        let drop_indicator_index = drop_indicator_index.clone();
+        Callback::from(move |(index, e): (usize, DragEvent)| {
+            e.prevent_default();
+            
+            // Determine drop position based on mouse position
+            if let Some(target) = e.target() {
+                if let Ok(element) = target.dyn_into::<web_sys::HtmlElement>() {
+                    let rect = element.get_bounding_client_rect();
+                    let y = e.client_y() as f64;
+                    let mid = rect.top() + (rect.height() / 2.0);
+                    
+                    // Show indicator above or below based on mouse position
+                    if y < mid {
+                        drop_indicator_index.set(Some(index));
+                    } else {
+                        drop_indicator_index.set(Some(index + 1));
+                    }
+                }
+            }
         })
     };
 
@@ -296,16 +339,26 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
         let blocks = blocks.clone();
         let dragging_index = dragging_index.clone();
         let selected_blocks = selected_blocks.clone();
-        Callback::from(move |(drop_index, _e): (usize, DragEvent)| {
+        let drop_indicator_index = drop_indicator_index.clone();
+        Callback::from(move |(drop_index, e): (usize, DragEvent)| {
+            e.prevent_default();
+            
             if let Some(drag_index) = *dragging_index {
-                if drag_index != drop_index {
+                // Calculate actual drop position based on indicator
+                let actual_drop_index = if let Some(indicator) = *drop_indicator_index {
+                    indicator
+                } else {
+                    drop_index
+                };
+                
+                if drag_index != actual_drop_index {
                     let mut new_blocks = (*blocks).clone();
                     let dragged_block = new_blocks.remove(drag_index);
                     
-                    let adjusted_drop_index = if drag_index < drop_index {
-                        drop_index - 1
+                    let adjusted_drop_index = if drag_index < actual_drop_index {
+                        actual_drop_index - 1
                     } else {
-                        drop_index
+                        actual_drop_index
                     };
                     
                     new_blocks.insert(adjusted_drop_index, dragged_block);
@@ -316,6 +369,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                 }
             }
             dragging_index.set(None);
+            drop_indicator_index.set(None);
         })
     };
 
@@ -348,23 +402,31 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
         }
     };
 
+    // Handle global keydown for copy
+    let on_global_keydown = {
+        let handle_copy = handle_copy.clone();
+        let selected_blocks = selected_blocks.clone();
+        Callback::from(move |e: KeyboardEvent| {
+            let key = e.key();
+            
+            // Handle Ctrl/Cmd+C for copy when blocks are selected
+            if (e.ctrl_key() || e.meta_key()) && key == "c" && !selected_blocks.is_empty() {
+                e.prevent_default();
+                handle_copy();
+            }
+        })
+    };
+
     // Handle keydown events - simplified to focus on core operations
     let on_keydown_block = {
         let blocks = blocks.clone();
         let active_block_index = active_block_index.clone();
         let selection_info = selection_info.clone();
-        let handle_copy = handle_copy.clone();
 
         Callback::from(move |e: KeyboardEvent| {
             let index = *active_block_index;
             let mut new_blocks = (*blocks).clone();
             let key = e.key();
-            
-            // Handle Ctrl/Cmd+C for copy
-            if (e.ctrl_key() || e.meta_key()) && key == "c" {
-                handle_copy();
-                return;
-            }
 
             match key.as_str() {
                 "Enter" => {
@@ -457,11 +519,15 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
     html! {
         <div 
             class={classes!(&brandguide.markdown_editor_container, props.class.clone())}
+            onkeydown={on_global_keydown}
+            tabindex="0"
         >
             <div class={classes!(&brandguide.markdown_editor_blocks_container)}>
                 {
                     blocks.iter().enumerate().map(|(index, block)| {
                         let is_selected = selected_blocks.contains(&index);
+                        let show_drop_indicator = drop_indicator_index.map_or(false, |idx| idx == index);
+                        
                         let block_props = EditorBlockProps {
                             id: format!("block-{}", index),
                             index,
@@ -481,11 +547,23 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                             on_drop: on_drop.clone(),
                             show_block_actions: props.show_block_actions,
                         };
-
+                        
                         html! {
-                            <div key={format!("block-{}", index)}>
-                                <EditorBlock<T> ..block_props />
-                            </div>
+                            <>
+                                // Drop indicator line
+                                if show_drop_indicator {
+                                    <div class="h-1 bg-blue-500 rounded-full mx-2 my-1 animate-pulse" />
+                                }
+                                
+                                <div key={format!("block-{}", index)}>
+                                    <EditorBlock<T> ..block_props />
+                                </div>
+                                
+                                // Show drop indicator at the end if needed
+                                if blocks.len() == index + 1 && drop_indicator_index.map_or(false, |idx| idx == index + 1) {
+                                    <div class="h-1 bg-blue-500 rounded-full mx-2 my-1 animate-pulse" />
+                                }
+                            </>
                         }
                     }).collect::<Html>()
                 }

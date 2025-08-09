@@ -32,7 +32,7 @@ pub struct EditorBlockProps<T: BlockTrait> {
     #[prop_or(false)]
     pub is_selected: bool,
     #[prop_or_default]
-    pub on_select: Callback<(usize, bool)>,
+    pub on_select: Callback<(usize, MouseEvent)>,
     #[prop_or_default]
     pub on_drag_start: Callback<usize>,
     #[prop_or_default]
@@ -111,10 +111,17 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
 
     let on_click = {
         let on_focus = props.on_focus.clone();
+        let on_select = props.on_select.clone();
         let index = props.index;
         Callback::from(move |e: MouseEvent| {
             e.stop_propagation();
-            on_focus.emit(index);
+            
+            // If shift or ctrl/cmd is held, handle selection
+            if e.shift_key() || e.ctrl_key() || e.meta_key() {
+                on_select.emit((index, e));
+            } else {
+                on_focus.emit(index);
+            }
         })
     };
 
@@ -178,10 +185,9 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
     let on_select_click = {
         let on_select = props.on_select.clone();
         let index = props.index;
-        let is_selected = props.is_selected;
         Callback::from(move |e: MouseEvent| {
             e.stop_propagation();
-            on_select.emit((index, !is_selected));
+            on_select.emit((index, e));
         })
     };
 
