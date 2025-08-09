@@ -39,6 +39,7 @@ pub fn tag_input(props: &TagInputProps) -> Html {
     let container_ref = use_node_ref();
 
     // Effect for setting up focus event listener
+    #[cfg(not(feature = "ssr"))]
     {
         let container_ref = container_ref.clone();
         let input_ref = input_ref.clone();

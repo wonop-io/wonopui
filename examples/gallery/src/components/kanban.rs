@@ -45,22 +45,14 @@ pub fn kanban_theme_editor() -> Html {
     let preview = html! {
         <Kanban class="h-[400px]">
             <KanbanColumn id="todo" title="To Do">
-                <KanbanCard id="task1" title="Task 1" order={0}>
-                    {"Complete the project documentation"}
-                </KanbanCard>
-                <KanbanCard id="task2" title="Task 2" order={1}>
-                    {"Set up CI/CD pipeline"}
-                </KanbanCard>
+                <KanbanCard id="task1" title="Task 1" description="Complete the project documentation" order={0} />
+                <KanbanCard id="task2" title="Task 2" description="Set up CI/CD pipeline" order={1} />
             </KanbanColumn>
             <KanbanColumn id="progress" title="In Progress">
-                <KanbanCard id="task3" title="Task 3" order={0}>
-                    {"Implement user authentication"}
-                </KanbanCard>
+                <KanbanCard id="task3" title="Task 3" description="Implement user authentication" order={0} />
             </KanbanColumn>
             <KanbanColumn id="done" title="Done">
-                <KanbanCard id="task4" title="Task 4" order={0}>
-                    {"Project setup"}
-                </KanbanCard>
+                <KanbanCard id="task4" title="Task 4" description="Project setup" order={0} />
             </KanbanColumn>
         </Kanban>
     };
@@ -195,9 +187,7 @@ pub fn kanban_example() -> Html {
                 let content = content.clone();
                 let order = *order;
                 html_nested! {
-                    <KanbanCard id={id} title={title} order={order}>
-                        {content}
-                    </KanbanCard>
+                    <KanbanCard id={id} title={title} description={content} order={order} />
                 }
             })
             .collect::<Vec<_>>()
@@ -329,9 +319,7 @@ let render_cards = |column_id: &str| -> Vec<VChild<KanbanCard>> {
             let content = content.clone();
             let order = *order;
             html_nested! {
-                <KanbanCard id={id} title={title} order={order}>
-                    {content}
-                </KanbanCard>
+                <KanbanCard id={id} title={title} description={content} order={order} />
             }
         })
         .collect::<Vec<_>>()
@@ -403,6 +391,7 @@ html! {
                     ("id", "AttrValue", "Unique identifier for the card."),
                     ("column_id", "Option<AttrValue>", "ID of the column the card belongs to. This is set automatically by the KanbanColumn."),
                     ("title", "Option<AttrValue>", "Optional title to display at the top of the card."),
+                    ("description", "Option<AttrValue>", "Optional description text for the card content."),
                     ("order", "Option<usize>", "Ordering position within the column. Cards are sorted by this value."),
                     ("ondragstart", "Option<Callback<DragEvent>>", "Callback when dragging of the card starts."),
                     ("ondragend", "Option<Callback<DragEvent>>", "Callback when dragging of the card ends."),
