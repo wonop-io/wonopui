@@ -16,6 +16,7 @@ pub struct DragState {
     pub dragging_card_id: Option<String>,
     pub dragging_card_title: Option<String>,
     pub dragging_card_content: Option<String>,
+    pub source_column_id: Option<String>,
     pub hover_column_id: Option<String>,
     pub hover_card_id: Option<String>,
     pub drop_position: Option<DropPosition>,
@@ -27,6 +28,7 @@ impl Default for DragState {
             dragging_card_id: None,
             dragging_card_title: None,
             dragging_card_content: None,
+            source_column_id: None,
             hover_column_id: None,
             hover_card_id: None,
             drop_position: None,
@@ -44,7 +46,7 @@ pub struct KanbanProps {
     #[prop_or(false)]
     pub allow_multiple_column_drops: bool,
     #[prop_or_default]
-    pub ondragstart: Option<Callback<(String, Option<String>, Option<String>)>>,
+    pub ondragstart: Option<Callback<(String, Option<String>, Option<String>, Option<String>)>>,
     #[prop_or_default]
     pub ondragend: Option<Callback<()>>,
 }
@@ -56,18 +58,30 @@ pub fn kanban(props: &KanbanProps) -> Html {
     
     let drag_state = use_state(DragState::default);
     
+    // Cleanup effect to ensure states are reset
+    {
+        let drag_state = drag_state.clone();
+        use_effect(move || {
+            // Cleanup function that runs when component unmounts
+            move || {
+                drag_state.set(DragState::default());
+            }
+        });
+    }
+    
     let ondragstart = {
         let drag_state = drag_state.clone();
         let user_callback = props.ondragstart.clone();
-        Callback::from(move |(id, title, content): (String, Option<String>, Option<String>)| {
+        Callback::from(move |(id, title, content, column_id): (String, Option<String>, Option<String>, Option<String>)| {
             let mut state = (*drag_state).clone();
             state.dragging_card_id = Some(id.clone());
             state.dragging_card_title = title.clone();
             state.dragging_card_content = content.clone();
+            state.source_column_id = column_id.clone();
             drag_state.set(state);
             
             if let Some(callback) = &user_callback {
-                callback.emit((id, title, content));
+                callback.emit((id, title, content, column_id));
             }
         })
     };
@@ -76,7 +90,9 @@ pub fn kanban(props: &KanbanProps) -> Html {
         let drag_state = drag_state.clone();
         let user_callback = props.ondragend.clone();
         Callback::from(move |_| {
+            // Clear all drag state
             drag_state.set(DragState::default());
+            
             if let Some(callback) = &user_callback {
                 callback.emit(());
             }
@@ -102,7 +118,7 @@ pub fn kanban(props: &KanbanProps) -> Html {
 
     html! {
         <ContextProvider<Rc<DragState>> context={Rc::new((*drag_state).clone())}>
-            <ContextProvider<Callback<(String, Option<String>, Option<String>)>> context={ondragstart}>
+            <ContextProvider<Callback<(String, Option<String>, Option<String>, Option<String>)>> context={ondragstart}>
                 <ContextProvider<Callback<()>> context={ondragend}>
                     <ContextProvider<Callback<(Option<String>, Option<String>, Option<DropPosition>)>> context={onhover}>
                         <div class={classes!(kanban_container, props.class.clone())}>
@@ -110,7 +126,7 @@ pub fn kanban(props: &KanbanProps) -> Html {
                         </div>
                     </ContextProvider<Callback<(Option<String>, Option<String>, Option<DropPosition>)>>>
                 </ContextProvider<Callback<()>>>
-            </ContextProvider<Callback<(String, Option<String>, Option<String>)>>>
+            </ContextProvider<Callback<(String, Option<String>, Option<String>, Option<String>)>>>
         </ContextProvider<Rc<DragState>>>
     }
 }
@@ -144,6 +160,7 @@ pub struct KanbanColumnProps {
 pub fn kanban_column(props: &KanbanColumnProps) -> Html {
     let drag_state = use_context::<Rc<DragState>>().unwrap_or_default();
     let onhover = use_context::<Callback<(Option<String>, Option<String>, Option<DropPosition>)>>();
+    let global_ondragend = use_context::<Callback<()>>();
     // Use hardcoded styles since these components may not be in the brandguide yet
     let kanban_column = "flex flex-col min-w-[300px] border rounded-md bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 shadow-sm";
     let kanban_column_header = "p-4 font-semibold border-b border-zinc-200 dark:border-zinc-700";
@@ -211,7 +228,9 @@ pub fn kanban_column(props: &KanbanColumnProps) -> Html {
 
             if new_count == 0 {
                 is_over.set(false);
+                
                 // Clear hover state when leaving column
+                // The global drag end will handle final cleanup
                 if let Some(ref hover_cb) = onhover {
                     hover_cb.emit((None, None, None));
                 }
@@ -261,12 +280,20 @@ pub fn kanban_column(props: &KanbanColumnProps) -> Html {
         let drag_counter = drag_counter.clone();
         let column_id = column_id.clone();
         let user_callback = props.ondrop.clone();
+        let onhover = onhover.clone();
 
         Callback::from(move |e: DragEvent| {
             e.prevent_default();
             e.stop_propagation();
+            
+            // Reset all hover states immediately
             is_over.set(false);
             drag_counter.set(0);
+            
+            // Clear global hover state
+            if let Some(ref hover_cb) = onhover {
+                hover_cb.emit((None, None, None));
+            }
 
             if let Some(data_transfer) = e.data_transfer() {
                 if let Ok(card_id) = data_transfer.get_data("text/plain") {
@@ -288,6 +315,11 @@ pub fn kanban_column(props: &KanbanColumnProps) -> Html {
 
                     if let Some(callback) = &user_callback {
                         callback.emit((card_id, column_id.to_string(), target_card_id));
+                    }
+                    
+                    // Ensure drag end is called after successful drop
+                    if let Some(ref global_cb) = global_ondragend {
+                        global_cb.emit(());
                     }
                 }
             }
@@ -341,44 +373,68 @@ pub fn kanban_column(props: &KanbanColumnProps) -> Html {
                             items.push(ghost_card.unwrap());
                         } else {
                             // Process cards with ghost positioning
+                            let is_same_column = drag_state.source_column_id == Some(column_id.to_string());
+                            
                             for (index, child) in sorted_children.iter().enumerate() {
                                 let card_id = child.props.id.to_string();
                                 let is_dragging_this = drag_state.dragging_card_id.as_ref() == Some(&card_id);
                                 
                                 // Determine if we should show ghost before this card
                                 if let Some(ref ghost) = ghost_card {
-                                    if !is_dragging_this {  // Don't show ghost near the card being dragged
+                                    // In same column: only show ghost if moving to a different position
+                                    // In different column: always show ghost
+                                    let should_show_ghost = if is_same_column {
+                                        // Don't show ghost immediately next to the dragged card in same column
+                                        !is_dragging_this
+                                    } else {
+                                        true
+                                    };
+                                    
+                                    if should_show_ghost {
                                         if let Some(ref hover_card_id) = drag_state.hover_card_id {
                                             if hover_card_id == &card_id {
                                                 // Show ghost based on drop position
                                                 if drag_state.drop_position == Some(DropPosition::Above) {
-                                                    items.push(ghost.clone());
+                                                    // For same column, only show if it's actually a different position
+                                                    if !is_same_column || !is_dragging_this {
+                                                        items.push(ghost.clone());
+                                                    }
                                                 }
                                             }
                                         } else if index == 0 && drag_state.hover_card_id.is_none() {
                                             // Default to top when hovering column but no specific card
-                                            items.push(ghost.clone());
+                                            // But not if this is where the card already is
+                                            if !is_same_column || !is_dragging_this {
+                                                items.push(ghost.clone());
+                                            }
                                         }
                                     }
                                 }
                                 
-                                // Add the actual card (unless it's being dragged)
-                                if !is_dragging_this || !is_column_hovered {
-                                    let mut props = (*child.props).clone();
-                                    props.column_id = Some(column_id.clone());
-                                    items.push(html! {
-                                        <KanbanCard ..props>
-                                            { for child.props.children.iter() }
-                                        </KanbanCard>
-                                    });
-                                }
+                                // Always show the card (it will be semi-transparent if being dragged)
+                                let mut props = (*child.props).clone();
+                                props.column_id = Some(column_id.clone());
+                                items.push(html! {
+                                    <KanbanCard ..props>
+                                        { for child.props.children.iter() }
+                                    </KanbanCard>
+                                });
                                 
                                 // Check if we should show ghost after this card
                                 if let Some(ref ghost) = ghost_card {
-                                    if !is_dragging_this {
+                                    let should_show_ghost = if is_same_column {
+                                        !is_dragging_this
+                                    } else {
+                                        true
+                                    };
+                                    
+                                    if should_show_ghost {
                                         if let Some(ref hover_card_id) = drag_state.hover_card_id {
                                             if hover_card_id == &card_id && drag_state.drop_position == Some(DropPosition::Below) {
-                                                items.push(ghost.clone());
+                                                // For same column, only show if it's actually a different position
+                                                if !is_same_column || !is_dragging_this {
+                                                    items.push(ghost.clone());
+                                                }
                                             }
                                         }
                                     }
@@ -427,7 +483,7 @@ pub struct KanbanCardProps {
 
 #[function_component(KanbanCard)]
 pub fn kanban_card(props: &KanbanCardProps) -> Html {
-    let global_ondragstart = use_context::<Callback<(String, Option<String>, Option<String>)>>();
+    let global_ondragstart = use_context::<Callback<(String, Option<String>, Option<String>, Option<String>)>>();
     let global_ondragend = use_context::<Callback<()>>();
     let onhover = use_context::<Callback<(Option<String>, Option<String>, Option<DropPosition>)>>();
     let card_ref = use_node_ref();
@@ -477,7 +533,8 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
                 global_cb.emit((
                     card_id.to_string(), 
                     title.clone().map(|t| t.to_string()), 
-                    description.clone().map(|d| d.to_string())
+                    description.clone().map(|d| d.to_string()),
+                    column_id.clone().map(|c| c.to_string())
                 ));
             }
 
@@ -489,11 +546,16 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
 
     let ondragend = {
         let is_dragging = is_dragging.clone();
+        let is_drag_over = is_drag_over.clone();
+        let drag_counter = drag_counter.clone();
         let user_callback = props.ondragend.clone();
         let global_ondragend = global_ondragend.clone();
 
         Callback::from(move |e: DragEvent| {
+            // Reset all local states
             is_dragging.set(false);
+            is_drag_over.set(false);
+            drag_counter.set(0);
             
             // Notify global drag end
             if let Some(ref global_cb) = global_ondragend {
