@@ -74,6 +74,9 @@ pub fn app() -> Html {
         Route::CodeEditorExample => {
             html! { <CodeEditorDocumentation /> }
         }
+        Route::DiffViewExample => {
+            html! { <DiffViewDocumentation /> }
+        }
         Route::ColExample => {
             html! { <ColDocumentation /> }
         }

@@ -8,11 +8,21 @@ use yew::prelude::*;
 // Internal modules
 pub mod annotation;
 pub mod diff;
+pub mod diff_types;
+pub mod diffview;
 pub mod styles;
+pub mod syntax_highlighter;
 pub mod type_hint;
+
+#[cfg(test)]
+mod diffview_test;
+#[cfg(test)]
+mod syntax_test;
 
 pub use annotation::{Annotation, AnnotationType};
 pub use diff::{Diff, DiffType};
+pub use diff_types::{DiffViewMode, DiffSide, ChangeType};
+pub use diffview::DiffView;
 pub use type_hint::TypeHint;
 
 /// A simple, fast code editor component

@@ -32,6 +32,8 @@ pub enum Route {
     CollapsibleExample,
     #[at("/code-editor")]
     CodeEditorExample,
+    #[at("/diffview")]
+    DiffViewExample,
     #[at("/color-picker")]
     ColorPickerExample,
     #[at("/combobox")]

@@ -90,6 +90,12 @@ pub fn create_search_index() -> Vec<(Route, String, String, Option<Html>)> {
             None,
         ),
         (
+            Route::DiffViewExample,
+            "diff, diff view, compare, changes, side by side, inline".to_string(),
+            "DiffView".to_string(),
+            None,
+        ),
+        (
             Route::ColorPickerExample,
             "color picker, palette, choose".to_string(),
             "Color Picker".to_string(),
