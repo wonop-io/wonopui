@@ -311,51 +311,37 @@ impl DiffView {
             <div class="flex divide-x divide-gray-300 dark:divide-gray-700">
                 // Left pane (old text)
                 <div class="flex-1 min-w-0" role="group" aria-label="Original text">
-                    <div class="bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-950 dark:to-pink-950 px-4 py-2 border-b border-gray-300 dark:border-gray-700 flex items-center justify-between">
-                        <h3 class="text-sm font-semibold text-rose-900 dark:text-rose-100 flex items-center gap-2">
+                    <div class="bg-gradient-to-r from-red-100 to-red-50 dark:from-red-950/50 dark:to-red-900/30 px-4 py-2 border-b-2 border-red-400 dark:border-red-600 flex items-center justify-between shadow-sm">
+                        <h3 class="text-sm font-bold text-red-800 dark:text-red-200 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                             </svg>
                             {"Original"}
                         </h3>
-                        <span class="text-xs text-rose-700 dark:text-rose-300 opacity-75">
+                        <span class="text-xs font-medium text-red-700 dark:text-red-300">
                             {format!("{} lines", left_lines.iter().filter(|l| l.is_some()).count())}
                         </span>
                     </div>
-                    <div class="flex">
-                        if props.show_line_numbers {
-                            <div class="flex-none bg-gray-100 dark:bg-gray-800 px-3 py-2 text-gray-500 dark:text-gray-400 text-right select-none border-r border-gray-300 dark:border-gray-700 min-w-[3rem]">
-                                { self.render_line_numbers(&left_lines, DiffSide::Left) }
-                            </div>
-                        }
-                        <div class="flex-1 p-2 overflow-x-auto">
-                            { self.render_diff_content(&left_lines, ctx) }
-                        </div>
+                    <div class="overflow-x-auto">
+                        { self.render_side_pane(&left_lines, DiffSide::Left, props.show_line_numbers, ctx) }
                     </div>
                 </div>
                 
                 // Right pane (new text)
                 <div class="flex-1 min-w-0" role="group" aria-label="Modified text">
-                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950 dark:to-green-950 px-4 py-2 border-b border-gray-300 dark:border-gray-700 flex items-center justify-between">
-                        <h3 class="text-sm font-semibold text-emerald-900 dark:text-emerald-100 flex items-center gap-2">
+                    <div class="bg-gradient-to-r from-green-100 to-green-50 dark:from-green-950/50 dark:to-green-900/30 px-4 py-2 border-b-2 border-green-400 dark:border-green-600 flex items-center justify-between shadow-sm">
+                        <h3 class="text-sm font-bold text-green-800 dark:text-green-200 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             {"Modified"}
                         </h3>
-                        <span class="text-xs text-emerald-700 dark:text-emerald-300 opacity-75">
+                        <span class="text-xs font-medium text-green-700 dark:text-green-300">
                             {format!("{} lines", right_lines.iter().filter(|l| l.is_some()).count())}
                         </span>
                     </div>
-                    <div class="flex">
-                        if props.show_line_numbers {
-                            <div class="flex-none bg-gray-100 dark:bg-gray-800 px-3 py-2 text-gray-500 dark:text-gray-400 text-right select-none border-r border-gray-300 dark:border-gray-700 min-w-[3rem]">
-                                { self.render_line_numbers(&right_lines, DiffSide::Right) }
-                            </div>
-                        }
-                        <div class="flex-1 p-2 overflow-x-auto">
-                            { self.render_diff_content(&right_lines, ctx) }
-                        </div>
+                    <div class="overflow-x-auto">
+                        { self.render_side_pane(&right_lines, DiffSide::Right, props.show_line_numbers, ctx) }
                     </div>
                 </div>
             </div>
@@ -371,15 +357,15 @@ impl DiffView {
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">{"Unified Diff View"}</h3>
                     <div class="flex items-center gap-4 text-xs">
                         <span class="flex items-center gap-1">
-                            <span class="w-3 h-3 bg-emerald-500 rounded"></span>
+                            <span class="w-3 h-3 bg-green-500 rounded shadow-sm border border-green-600"></span>
                             <span class="text-gray-600 dark:text-gray-400">{"Added"}</span>
                         </span>
                         <span class="flex items-center gap-1">
-                            <span class="w-3 h-3 bg-rose-500 rounded"></span>
+                            <span class="w-3 h-3 bg-red-500 rounded shadow-sm border border-red-600"></span>
                             <span class="text-gray-600 dark:text-gray-400">{"Removed"}</span>
                         </span>
                         <span class="flex items-center gap-1">
-                            <span class="w-3 h-3 bg-amber-500 rounded"></span>
+                            <span class="w-3 h-3 bg-yellow-500 rounded shadow-sm border border-yellow-600"></span>
                             <span class="text-gray-600 dark:text-gray-400">{"Modified"}</span>
                         </span>
                     </div>
@@ -415,147 +401,176 @@ impl DiffView {
         let mut right_lines = Vec::new();
 
         for hunk in &self.diff_hunks {
-            for line in &hunk.lines {
+            let mut i = 0;
+            while i < hunk.lines.len() {
+                let line = &hunk.lines[i];
                 match line.change_type {
                     ChangeType::Unchanged => {
+                        // Unchanged lines go on both sides, perfectly aligned
                         left_lines.push(Some(line.clone()));
                         right_lines.push(Some(line.clone()));
+                        i += 1;
                     }
                     ChangeType::Removed => {
-                        left_lines.push(Some(line.clone()));
-                        right_lines.push(None);
+                        // Collect all consecutive removed lines
+                        let mut removed_lines = vec![line.clone()];
+                        let mut j = i + 1;
+                        while j < hunk.lines.len() && hunk.lines[j].change_type == ChangeType::Removed {
+                            removed_lines.push(hunk.lines[j].clone());
+                            j += 1;
+                        }
+                        
+                        // Check for added lines immediately after
+                        let mut added_lines = Vec::new();
+                        while j < hunk.lines.len() && hunk.lines[j].change_type == ChangeType::Added {
+                            added_lines.push(hunk.lines[j].clone());
+                            j += 1;
+                        }
+                        
+                        // Align removed and added lines side by side
+                        let max_count = removed_lines.len().max(added_lines.len());
+                        for idx in 0..max_count {
+                            if idx < removed_lines.len() {
+                                left_lines.push(Some(removed_lines[idx].clone()));
+                            } else {
+                                left_lines.push(None);
+                            }
+                            
+                            if idx < added_lines.len() {
+                                right_lines.push(Some(added_lines[idx].clone()));
+                            } else {
+                                right_lines.push(None);
+                            }
+                        }
+                        
+                        i = j;
                     }
                     ChangeType::Added => {
+                        // If we hit an Added without a preceding Removed, it's a pure addition
                         left_lines.push(None);
                         right_lines.push(Some(line.clone()));
+                        i += 1;
                     }
                     ChangeType::Modified => {
-                        // For now, treat modified as removed + added
+                        // Modified lines appear on both sides for comparison
                         left_lines.push(Some(line.clone()));
                         right_lines.push(Some(line.clone()));
+                        i += 1;
                     }
                 }
             }
         }
 
-        // Ensure both sides have the same length
-        let max_len = left_lines.len().max(right_lines.len());
-        left_lines.resize(max_len, None);
-        right_lines.resize(max_len, None);
-
         (left_lines, right_lines)
     }
 
-    fn render_line_numbers(&self, lines: &[Option<DiffLine>], side: DiffSide) -> Html {
+    fn render_side_pane(&self, lines: &[Option<DiffLine>], side: DiffSide, show_line_numbers: bool, ctx: &Context<Self>) -> Html {
         html! {
-            <>
+            <div>
                 {
-                    for lines.iter().map(|line_opt| {
-                        if let Some(line) = line_opt {
-                            let line_no = match side {
-                                DiffSide::Left => line.old_line_no,
-                                DiffSide::Right => line.new_line_no,
-                                _ => None,
-                            };
-                            
-                            if let Some(num) = line_no {
-                                html! {
-                                    <div class="leading-[inherit]">{ num }</div>
-                                }
-                            } else {
-                                html! {
-                                    <div class="leading-[inherit]">{" "}</div>
-                                }
-                            }
-                        } else {
-                            html! {
-                                <div class="leading-[inherit]">{" "}</div>
-                            }
-                        }
+                    for lines.iter().enumerate().map(|(idx, line_opt)| {
+                        self.render_side_line(line_opt, idx, side, show_line_numbers, ctx)
                     })
                 }
-            </>
+            </div>
+        }
+    }
+    
+    fn render_side_line(&self, line_opt: &Option<DiffLine>, idx: usize, side: DiffSide, show_line_numbers: bool, ctx: &Context<Self>) -> Html {
+        if let Some(line) = line_opt {
+            let (bg_class, hover_class, border_class) = match line.change_type {
+                ChangeType::Added => match side {
+                    DiffSide::Right => (
+                        "bg-green-100 dark:bg-green-900/40",
+                        "hover:bg-green-200 dark:hover:bg-green-900/60",
+                        "border-l-4 border-green-500 dark:border-green-400"
+                    ),
+                    _ => ("", "hover:bg-gray-50 dark:hover:bg-gray-850", "")
+                },
+                ChangeType::Removed => match side {
+                    DiffSide::Left => (
+                        "bg-red-100 dark:bg-red-900/40",
+                        "hover:bg-red-200 dark:hover:bg-red-900/60",
+                        "border-l-4 border-red-500 dark:border-red-400"
+                    ),
+                    _ => ("", "hover:bg-gray-50 dark:hover:bg-gray-850", "")
+                },
+                ChangeType::Modified => (
+                    "bg-yellow-100 dark:bg-yellow-900/40",
+                    "hover:bg-yellow-200 dark:hover:bg-yellow-900/60",
+                    "border-l-4 border-yellow-500 dark:border-yellow-400"
+                ),
+                ChangeType::Unchanged => (
+                    "",
+                    "hover:bg-gray-50 dark:hover:bg-gray-850",
+                    ""
+                ),
+            };
+            
+            let line_no = match side {
+                DiffSide::Left => line.old_line_no,
+                DiffSide::Right => line.new_line_no,
+                _ => None,
+            };
+            
+            let prefix = match line.change_type {
+                ChangeType::Added => "+",
+                ChangeType::Removed => "−",
+                ChangeType::Modified => "~",
+                _ => " ",
+            };
+            
+            let prefix_class = match line.change_type {
+                ChangeType::Added => "text-green-700 dark:text-green-300 font-bold",
+                ChangeType::Removed => "text-red-700 dark:text-red-300 font-bold",
+                ChangeType::Modified => "text-yellow-700 dark:text-yellow-300 font-bold",
+                _ => "text-gray-400 dark:text-gray-600",
+            };
+            
+            html! {
+                <div
+                    key={idx}
+                    class={classes!(
+                        "flex", "min-h-[1.5rem]", "leading-6", "font-mono", "text-sm",
+                        "transition-colors", "duration-150",
+                        bg_class, hover_class, border_class
+                    )}
+                >
+                    if show_line_numbers {
+                        <div class="flex-none w-12 px-2 text-right text-gray-500 dark:text-gray-400 select-none bg-gray-50 dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-700">
+                            { line_no.map(|n| n.to_string()).unwrap_or_else(|| String::new()) }
+                        </div>
+                    }
+                    <div class="flex-none px-2 text-center select-none">
+                        <span class={classes!("inline-block", "w-4", prefix_class)}>
+                            { prefix }
+                        </span>
+                    </div>
+                    <div class="flex-1 px-2 whitespace-pre overflow-x-auto">
+                        { self.highlight_line_with_theme(&line.content, ctx.props()) }
+                    </div>
+                </div>
+            }
+        } else {
+            // Empty placeholder for missing lines
+            html! {
+                <div
+                    key={idx}
+                    class="flex min-h-[1.5rem] leading-6 font-mono text-sm bg-gray-50 dark:bg-gray-850/50"
+                >
+                    if show_line_numbers {
+                        <div class="flex-none w-12 px-2 text-right select-none bg-gray-50 dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-700">
+                            {" "}
+                        </div>
+                    }
+                    <div class="flex-1 px-4 text-gray-400 dark:text-gray-600">
+                        {" "}
+                    </div>
+                </div>
+            }
         }
     }
 
-    fn render_diff_content(&self, lines: &[Option<DiffLine>], ctx: &Context<Self>) -> Html {
-        html! {
-            <>
-                {
-                    for lines.iter().enumerate().map(|(idx, line_opt)| {
-                        if let Some(line) = line_opt {
-                            let (bg_class, hover_class, border_class) = match line.change_type {
-                                ChangeType::Added => (
-                                    "bg-emerald-50 dark:bg-emerald-950",
-                                    "hover:bg-emerald-100 dark:hover:bg-emerald-900",
-                                    "border-l-2 border-emerald-500"
-                                ),
-                                ChangeType::Removed => (
-                                    "bg-rose-50 dark:bg-rose-950",
-                                    "hover:bg-rose-100 dark:hover:bg-rose-900",
-                                    "border-l-2 border-rose-500"
-                                ),
-                                ChangeType::Modified => (
-                                    "bg-amber-50 dark:bg-amber-950",
-                                    "hover:bg-amber-100 dark:hover:bg-amber-900",
-                                    "border-l-2 border-amber-500"
-                                ),
-                                ChangeType::Unchanged => (
-                                    "",
-                                    "hover:bg-gray-50 dark:hover:bg-gray-850",
-                                    ""
-                                ),
-                            };
-                            
-                            let prefix = match line.change_type {
-                                ChangeType::Added => "+",
-                                ChangeType::Removed => "−",
-                                ChangeType::Modified => "~",
-                                _ => " ",
-                            };
-                            
-                            let prefix_class = match line.change_type {
-                                ChangeType::Added => "text-emerald-600 dark:text-emerald-400 font-bold",
-                                ChangeType::Removed => "text-rose-600 dark:text-rose-400 font-bold",
-                                ChangeType::Modified => "text-amber-600 dark:text-amber-400 font-bold",
-                                _ => "text-gray-400 dark:text-gray-600",
-                            };
-                            
-                            html! {
-                                <div 
-                                    key={idx}
-                                    class={classes!(
-                                        "leading-[inherit]", "whitespace-pre", "transition-colors", "duration-150",
-                                        bg_class, hover_class, border_class, "group"
-                                    )}
-                                    role="row"
-                                    aria-label={format!("{} line", match line.change_type {
-                                        ChangeType::Added => "Added",
-                                        ChangeType::Removed => "Removed",
-                                        ChangeType::Modified => "Modified",
-                                        ChangeType::Unchanged => "Unchanged",
-                                    })}
-                                >
-                                    <span class={classes!("select-none", "inline-block", "w-4", "text-center", prefix_class)}>
-                                        {prefix}
-                                    </span>
-                                    <span class="pl-1">
-                                        { self.highlight_line_with_theme(&line.content, ctx.props()) }
-                                    </span>
-                                </div>
-                            }
-                        } else {
-                            html! {
-                                <div key={idx} class="leading-[inherit] bg-gray-50 dark:bg-gray-850 opacity-50">
-                                    <span class="select-none text-gray-400 dark:text-gray-600">{" "}</span>
-                                </div>
-                            }
-                        }
-                    })
-                }
-            </>
-        }
-    }
 
     fn render_inline_hunk_enhanced(&self, hunk: &DiffHunk, ctx: &Context<Self>, hunk_idx: usize) -> Html {
         let props = ctx.props();
@@ -620,22 +635,22 @@ impl DiffView {
     fn render_enhanced_diff_line(&self, line: &DiffLine, props: &DiffViewProps) -> Html {
         let (bg_class, border_class, symbol, symbol_class) = match line.change_type {
             ChangeType::Added => (
-                "bg-emerald-50 dark:bg-emerald-950 hover:bg-emerald-100 dark:hover:bg-emerald-900",
+                "bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-900/70 border-l-4 border-green-500",
                 "border-l-4 border-emerald-500",
                 "+",
-                "text-emerald-700 dark:text-emerald-300 font-bold"
+                "text-green-700 dark:text-green-300 font-bold text-lg"
             ),
             ChangeType::Removed => (
-                "bg-rose-50 dark:bg-rose-950 hover:bg-rose-100 dark:hover:bg-rose-900",
+                "bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/70 border-l-4 border-red-500",
                 "border-l-4 border-rose-500",
                 "−",
-                "text-rose-700 dark:text-rose-300 font-bold"
+                "text-red-700 dark:text-red-300 font-bold text-lg"
             ),
             ChangeType::Modified => (
-                "bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900",
+                "bg-yellow-100 dark:bg-yellow-900/50 hover:bg-yellow-200 dark:hover:bg-yellow-900/70 border-l-4 border-yellow-500",
                 "border-l-4 border-amber-500",
                 "~",
-                "text-amber-700 dark:text-amber-300 font-bold"
+                "text-yellow-700 dark:text-yellow-300 font-bold text-lg"
             ),
             ChangeType::Unchanged => (
                 "hover:bg-gray-50 dark:hover:bg-gray-850",
@@ -687,16 +702,16 @@ impl DiffView {
                         for hunk.lines.iter().map(|line| {
                             let (bg_class, text_class) = match line.change_type {
                                 ChangeType::Added => (
-                                    "bg-emerald-50 dark:bg-emerald-950",
-                                    "text-emerald-900 dark:text-emerald-100"
+                                    "bg-green-100 dark:bg-green-900/40 border-l-4 border-green-500",
+                                    "text-green-900 dark:text-green-100 font-medium"
                                 ),
                                 ChangeType::Removed => (
-                                    "bg-rose-50 dark:bg-rose-950",
-                                    "text-rose-900 dark:text-rose-100"
+                                    "bg-red-100 dark:bg-red-900/40 border-l-4 border-red-500",
+                                    "text-red-900 dark:text-red-100 font-medium"
                                 ),
                                 ChangeType::Modified => (
-                                    "bg-amber-50 dark:bg-amber-950",
-                                    "text-amber-900 dark:text-amber-100"
+                                    "bg-yellow-100 dark:bg-yellow-900/40 border-l-4 border-yellow-500",
+                                    "text-yellow-900 dark:text-yellow-100 font-medium"
                                 ),
                                 ChangeType::Unchanged => ("", ""),
                             };
@@ -796,7 +811,7 @@ impl DiffView {
                 current_word.push(ch);
                 if ch == string_char {
                     result.push(html! { 
-                        <span class="text-emerald-600 dark:text-emerald-400">
+                        <span class="text-green-600 dark:text-green-400 font-bold">
                             { current_word.clone() }
                         </span> 
                     });

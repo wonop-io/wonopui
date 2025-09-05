@@ -13,7 +13,7 @@ pub struct DiffLineInfo {
     pub change_type: ChangeType,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum DiffSide {
     Left,   // Old text
     Right,  // New text
