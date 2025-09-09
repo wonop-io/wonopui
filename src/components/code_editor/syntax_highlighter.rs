@@ -62,21 +62,33 @@ impl SyntaxHighlighter {
     }
     
     fn get_theme(theme_name: &str) -> &'static Theme {
+        let is_dark = theme_name.to_lowercase().contains("dark");
+        
         let theme_key = match theme_name.to_lowercase().as_str() {
             "dark" | "monokai" => "base16-monokai.dark",
             "light" | "inspired" => "InspiredGitHub",
             "ocean" => "base16-ocean.dark",
             "solarized-dark" => "Solarized (dark)",
             "solarized-light" => "Solarized (light)",
-            _ => if theme_name.contains("dark") {
+            _ => if is_dark {
                 "base16-monokai.dark"
             } else {
                 "InspiredGitHub"
             }
         };
         
+        // IMPORTANT: Use appropriate fallback based on dark/light mode
         THEME_SET.themes.get(theme_key)
-            .unwrap_or_else(|| THEME_SET.themes.get("InspiredGitHub").unwrap())
+            .unwrap_or_else(|| {
+                if is_dark {
+                    // Fallback to a dark theme if in dark mode
+                    THEME_SET.themes.get("base16-monokai.dark")
+                        .or_else(|| THEME_SET.themes.get("base16-ocean.dark"))
+                        .unwrap_or_else(|| THEME_SET.themes.get("InspiredGitHub").unwrap())
+                } else {
+                    THEME_SET.themes.get("InspiredGitHub").unwrap()
+                }
+            })
     }
     
     pub fn highlight_line(&self, line: &str) -> Html {
@@ -91,13 +103,43 @@ impl SyntaxHighlighter {
     }
     
     fn render_highlighted_ranges(&self, ranges: &[(Style, &str)], _original: &str) -> Html {
+        // Check if this is a dark theme
+        let is_dark_theme = self.theme.name.as_ref()
+            .map(|n| n.to_lowercase().contains("dark") || n.to_lowercase().contains("monokai") || n.to_lowercase().contains("ocean"))
+            .unwrap_or(false);
+            
         let spans: Vec<Html> = ranges.iter().map(|(style, text)| {
-            let color = format!(
-                "color: rgb({}, {}, {});",
-                style.foreground.r,
-                style.foreground.g,
-                style.foreground.b
-            );
+            // Adjust colors based on theme to ensure readability
+            let (r, g, b) = if is_dark_theme {
+                // For dark themes, ensure colors are bright enough
+                let brightness = (style.foreground.r as f32 * 0.299 + 
+                                 style.foreground.g as f32 * 0.587 + 
+                                 style.foreground.b as f32 * 0.114) / 255.0;
+                
+                if brightness < 0.4 {
+                    // Too dark for dark mode, brighten it
+                    (
+                        (style.foreground.r as f32 * 1.8).min(255.0) as u8,
+                        (style.foreground.g as f32 * 1.8).min(255.0) as u8,
+                        (style.foreground.b as f32 * 1.8).min(255.0) as u8,
+                    )
+                } else {
+                    (style.foreground.r, style.foreground.g, style.foreground.b)
+                }
+            } else {
+                // For light themes, ensure text is dark enough for readability
+                // Set maximum brightness cap - no component should exceed 180
+                let max_component = 180u8;
+                
+                // Ensure minimum contrast by capping each color component
+                (
+                    style.foreground.r.min(max_component),
+                    style.foreground.g.min(max_component),
+                    style.foreground.b.min(max_component),
+                )
+            };
+            
+            let color = format!("color: rgb({}, {}, {});", r, g, b);
             
             let mut styles = vec![color];
             
@@ -128,23 +170,46 @@ impl SyntaxHighlighter {
         let mut h = HighlightLines::new(self.syntax, self.theme);
         
         if let Ok(ranges) = h.highlight_line(line, &SYNTAX_SET) {
+            // Check if this is a dark theme by looking at the theme name
+            let is_dark_theme = self.theme.name.as_ref()
+                .map(|n| n.to_lowercase().contains("dark") || n.to_lowercase().contains("monokai") || n.to_lowercase().contains("ocean"))
+                .unwrap_or(false);
+            
             let spans: Vec<Html> = ranges.iter().map(|(style, text)| {
-                // Only apply foreground color and font styles, not background
-                let color = if preserve_bg {
-                    // Use a slightly muted version of colors in diff mode for better contrast
-                    format!(
-                        "color: rgba({}, {}, {}, 0.95);",
-                        style.foreground.r,
-                        style.foreground.g,
-                        style.foreground.b
-                    )
+                // Adjust colors based on theme to ensure readability
+                let (r, g, b) = if is_dark_theme {
+                    // For dark themes, ensure colors are bright enough
+                    let brightness = (style.foreground.r as f32 * 0.299 + 
+                                     style.foreground.g as f32 * 0.587 + 
+                                     style.foreground.b as f32 * 0.114) / 255.0;
+                    
+                    if brightness < 0.4 {
+                        // Too dark for dark mode, brighten it
+                        (
+                            (style.foreground.r as f32 * 1.8).min(255.0) as u8,
+                            (style.foreground.g as f32 * 1.8).min(255.0) as u8,
+                            (style.foreground.b as f32 * 1.8).min(255.0) as u8,
+                        )
+                    } else {
+                        (style.foreground.r, style.foreground.g, style.foreground.b)
+                    }
                 } else {
-                    format!(
-                        "color: rgb({}, {}, {});",
-                        style.foreground.r,
-                        style.foreground.g,
-                        style.foreground.b
+                    // For light themes, ensure text is dark enough for readability
+                    // Set maximum brightness cap - no component should exceed 180
+                    let max_component = 180u8;
+                    
+                    // Ensure minimum contrast by capping each color component
+                    (
+                        style.foreground.r.min(max_component),
+                        style.foreground.g.min(max_component),
+                        style.foreground.b.min(max_component),
                     )
+                };
+                
+                let color = if preserve_bg {
+                    format!("color: rgba({}, {}, {}, 0.95);", r, g, b)
+                } else {
+                    format!("color: rgb({}, {}, {});", r, g, b)
                 };
                 
                 let mut styles = vec![color];

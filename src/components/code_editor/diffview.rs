@@ -308,17 +308,17 @@ impl DiffView {
         let (left_lines, right_lines) = self.prepare_side_by_side_lines();
         
         html! {
-            <div class="flex divide-x divide-gray-300 dark:divide-gray-700">
+            <div class="flex divide-x divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
                 // Left pane (old text)
-                <div class="flex-1 min-w-0" role="group" aria-label="Original text">
-                    <div class="bg-gradient-to-r from-red-100 to-red-50 dark:from-red-950/50 dark:to-red-900/30 px-4 py-2 border-b-2 border-red-400 dark:border-red-600 flex items-center justify-between shadow-sm">
-                        <h3 class="text-sm font-bold text-red-800 dark:text-red-200 flex items-center gap-2">
+                <div class="flex-1 min-w-0 bg-white dark:bg-gray-900" role="group" aria-label="Original text">
+                    <div class="bg-gradient-to-r from-red-100 to-red-50 dark:from-red-500/10 dark:to-red-600/5 px-4 py-2 border-b-2 border-red-300 dark:border-red-500 flex items-center justify-between shadow-sm dark:shadow-red-900/20">
+                        <h3 class="text-sm font-bold text-red-700 dark:text-red-300 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                             </svg>
                             {"Original"}
                         </h3>
-                        <span class="text-xs font-medium text-red-700 dark:text-red-300">
+                        <span class="text-xs font-medium text-red-600 dark:text-red-400">
                             {format!("{} lines", left_lines.iter().filter(|l| l.is_some()).count())}
                         </span>
                     </div>
@@ -328,15 +328,15 @@ impl DiffView {
                 </div>
                 
                 // Right pane (new text)
-                <div class="flex-1 min-w-0" role="group" aria-label="Modified text">
-                    <div class="bg-gradient-to-r from-green-100 to-green-50 dark:from-green-950/50 dark:to-green-900/30 px-4 py-2 border-b-2 border-green-400 dark:border-green-600 flex items-center justify-between shadow-sm">
-                        <h3 class="text-sm font-bold text-green-800 dark:text-green-200 flex items-center gap-2">
+                <div class="flex-1 min-w-0 bg-white dark:bg-gray-900" role="group" aria-label="Modified text">
+                    <div class="bg-gradient-to-r from-green-100 to-green-50 dark:from-green-500/10 dark:to-green-600/5 px-4 py-2 border-b-2 border-green-300 dark:border-green-500 flex items-center justify-between shadow-sm dark:shadow-green-900/20">
+                        <h3 class="text-sm font-bold text-green-700 dark:text-green-300 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             {"Modified"}
                         </h3>
-                        <span class="text-xs font-medium text-green-700 dark:text-green-300">
+                        <span class="text-xs font-medium text-green-600 dark:text-green-400">
                             {format!("{} lines", right_lines.iter().filter(|l| l.is_some()).count())}
                         </span>
                     </div>
@@ -481,28 +481,28 @@ impl DiffView {
             let (bg_class, hover_class, border_class) = match line.change_type {
                 ChangeType::Added => match side {
                     DiffSide::Right => (
-                        "bg-green-100 dark:bg-green-900/40",
-                        "hover:bg-green-200 dark:hover:bg-green-900/60",
+                        "bg-green-50 dark:bg-green-500/20",
+                        "hover:bg-green-100 dark:hover:bg-green-500/30",
                         "border-l-4 border-green-500 dark:border-green-400"
                     ),
-                    _ => ("", "hover:bg-gray-50 dark:hover:bg-gray-850", "")
+                    _ => ("dark:bg-gray-800/50", "hover:bg-gray-50 dark:hover:bg-gray-800/70", "")
                 },
                 ChangeType::Removed => match side {
                     DiffSide::Left => (
-                        "bg-red-100 dark:bg-red-900/40",
-                        "hover:bg-red-200 dark:hover:bg-red-900/60",
+                        "bg-red-50 dark:bg-red-500/20",
+                        "hover:bg-red-100 dark:hover:bg-red-500/30",
                         "border-l-4 border-red-500 dark:border-red-400"
                     ),
-                    _ => ("", "hover:bg-gray-50 dark:hover:bg-gray-850", "")
+                    _ => ("dark:bg-gray-800/50", "hover:bg-gray-50 dark:hover:bg-gray-800/70", "")
                 },
                 ChangeType::Modified => (
-                    "bg-yellow-100 dark:bg-yellow-900/40",
-                    "hover:bg-yellow-200 dark:hover:bg-yellow-900/60",
+                    "bg-yellow-50 dark:bg-yellow-500/20",
+                    "hover:bg-yellow-100 dark:hover:bg-yellow-500/30",
                     "border-l-4 border-yellow-500 dark:border-yellow-400"
                 ),
                 ChangeType::Unchanged => (
-                    "",
-                    "hover:bg-gray-50 dark:hover:bg-gray-850",
+                    "dark:bg-transparent",
+                    "hover:bg-gray-100 dark:hover:bg-gray-700",
                     ""
                 ),
             };
@@ -521,10 +521,10 @@ impl DiffView {
             };
             
             let prefix_class = match line.change_type {
-                ChangeType::Added => "text-green-700 dark:text-green-300 font-bold",
-                ChangeType::Removed => "text-red-700 dark:text-red-300 font-bold",
-                ChangeType::Modified => "text-yellow-700 dark:text-yellow-300 font-bold",
-                _ => "text-gray-400 dark:text-gray-600",
+                ChangeType::Added => "text-green-600 dark:text-green-400 font-bold",
+                ChangeType::Removed => "text-red-600 dark:text-red-400 font-bold",
+                ChangeType::Modified => "text-yellow-600 dark:text-yellow-400 font-bold",
+                _ => "text-gray-400 dark:text-gray-500",
             };
             
             html! {
@@ -537,7 +537,7 @@ impl DiffView {
                     )}
                 >
                     if show_line_numbers {
-                        <div class="flex-none w-12 px-2 text-right text-gray-500 dark:text-gray-400 select-none bg-gray-50 dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-700">
+                        <div class="flex-none w-12 px-2 text-right text-gray-600 dark:text-gray-400 select-none bg-gray-50/50 dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-700">
                             { line_no.map(|n| n.to_string()).unwrap_or_else(|| String::new()) }
                         </div>
                     }
@@ -547,7 +547,13 @@ impl DiffView {
                         </span>
                     </div>
                     <div class="flex-1 px-2 whitespace-pre overflow-x-auto">
-                        { self.highlight_line_with_theme(&line.content, ctx.props()) }
+                        <span class="text-gray-900 dark:text-gray-100">
+                            { if !line.content.trim().is_empty() {
+                                self.highlight_line_with_theme(&line.content, ctx.props())
+                            } else {
+                                html! { {&line.content} }
+                            }}
+                        </span>
                     </div>
                 </div>
             }
@@ -556,14 +562,14 @@ impl DiffView {
             html! {
                 <div
                     key={idx}
-                    class="flex min-h-[1.5rem] leading-6 font-mono text-sm bg-gray-50 dark:bg-gray-850/50"
+                    class="flex min-h-[1.5rem] leading-6 font-mono text-sm bg-gray-50/30 dark:bg-gray-800/30"
                 >
                     if show_line_numbers {
-                        <div class="flex-none w-12 px-2 text-right select-none bg-gray-50 dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-700">
+                        <div class="flex-none w-12 px-2 text-right select-none bg-gray-50/50 dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-700">
                             {" "}
                         </div>
                     }
-                    <div class="flex-1 px-4 text-gray-400 dark:text-gray-600">
+                    <div class="flex-1 px-4 text-gray-300 dark:text-gray-700">
                         {" "}
                     </div>
                 </div>
@@ -584,9 +590,9 @@ impl DiffView {
         let toggle_callback = link.callback(move |_| DiffViewMessage::ToggleCollapse(hunk_idx));
         
         html! {
-            <div class="group hover:bg-gray-50 dark:hover:bg-gray-850 transition-colors">
+            <div class="group hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
                 if props.unified_diff || is_collapsible {
-                    <div class="sticky top-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 px-3 py-1 text-xs text-blue-700 dark:text-blue-300 font-mono border-b border-blue-200 dark:border-blue-800 flex items-center justify-between">
+                    <div class="sticky top-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-500/10 dark:to-indigo-500/10 px-3 py-1 text-xs text-blue-700 dark:text-blue-300 font-mono border-b border-blue-200 dark:border-blue-700 flex items-center justify-between shadow-sm dark:shadow-blue-900/20">
                         <div class="flex items-center gap-2">
                             if is_collapsible {
                                 <button 
@@ -689,9 +695,9 @@ impl DiffView {
         let props = ctx.props();
         
         html! {
-            <div class="mb-4 border border-gray-200 dark:border-gray-700 rounded">
+            <div class="mb-4 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-900">
                 if props.unified_diff {
-                    <div class="bg-gray-100 dark:bg-gray-800 px-2 py-1 text-xs text-gray-600 dark:text-gray-400 font-mono">
+                    <div class="bg-gray-100 dark:bg-gray-800/70 px-2 py-1 text-xs text-gray-600 dark:text-gray-300 font-mono border-b border-gray-200 dark:border-gray-700">
                         { format!("@@ -{},{} +{},{} @@", 
                             hunk.old_start, hunk.old_count, 
                             hunk.new_start, hunk.new_count) }
@@ -702,18 +708,21 @@ impl DiffView {
                         for hunk.lines.iter().map(|line| {
                             let (bg_class, text_class) = match line.change_type {
                                 ChangeType::Added => (
-                                    "bg-green-100 dark:bg-green-900/40 border-l-4 border-green-500",
-                                    "text-green-900 dark:text-green-100 font-medium"
+                                    "bg-green-50 dark:bg-green-500/20 border-l-4 border-green-500 dark:border-green-400",
+                                    "text-green-800 dark:text-green-200 font-medium"
                                 ),
                                 ChangeType::Removed => (
-                                    "bg-red-100 dark:bg-red-900/40 border-l-4 border-red-500",
-                                    "text-red-900 dark:text-red-100 font-medium"
+                                    "bg-red-50 dark:bg-red-500/20 border-l-4 border-red-500 dark:border-red-400",
+                                    "text-red-800 dark:text-red-200 font-medium"
                                 ),
                                 ChangeType::Modified => (
-                                    "bg-yellow-100 dark:bg-yellow-900/40 border-l-4 border-yellow-500",
-                                    "text-yellow-900 dark:text-yellow-100 font-medium"
+                                    "bg-yellow-50 dark:bg-yellow-500/20 border-l-4 border-yellow-500 dark:border-yellow-400",
+                                    "text-yellow-800 dark:text-yellow-200 font-medium"
                                 ),
-                                ChangeType::Unchanged => ("", ""),
+                                ChangeType::Unchanged => (
+                                    "bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800",
+                                    "text-gray-800 dark:text-gray-200"
+                                ),
                             };
                             
                             let prefix = match line.change_type {
@@ -726,7 +735,15 @@ impl DiffView {
                             html! {
                                 <div class={classes!("flex", bg_class, text_class)}>
                                     if props.show_line_numbers {
-                                        <div class="flex-none px-2 py-0 text-gray-500 dark:text-gray-400 text-right select-none border-r border-gray-300 dark:border-gray-700 min-w-[6rem]">
+                                        <div class={classes!(
+                                            "flex-none", "px-2", "py-0", "text-right", "select-none", "border-r", "min-w-[6rem]",
+                                            match line.change_type {
+                                                ChangeType::Added => "bg-green-50/50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-700",
+                                                ChangeType::Removed => "bg-red-50/50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-700",
+                                                ChangeType::Modified => "bg-yellow-50/50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-700",
+                                                ChangeType::Unchanged => "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700",
+                                            }
+                                        )}>
                                             <span class="inline-block w-10 text-right">
                                                 { line.old_line_no.map(|n| n.to_string()).unwrap_or_default() }
                                             </span>
@@ -738,7 +755,13 @@ impl DiffView {
                                     }
                                     <div class="flex-1 px-2 whitespace-pre overflow-x-auto">
                                         <span class="select-none opacity-50 font-bold">{prefix}{" "}</span>
-                                        { self.highlight_line(&line.content, &props.language) }
+                                        <span class="text-gray-900 dark:text-gray-100">
+                                            { if !line.content.trim().is_empty() {
+                                                self.highlight_line(&line.content, &props.language)
+                                            } else {
+                                                html! { {&line.content} }
+                                            }}
+                                        </span>
                                     </div>
                                 </div>
                             }
@@ -751,7 +774,18 @@ impl DiffView {
 
     fn highlight_line(&self, content: &str, language: &str) -> Html {
         // Use the syntect-based highlighter for proper syntax highlighting
-        highlight_code_line(content, language, "light", true)
+        // Auto-detect theme based on dark mode preference
+        let theme = if web_sys::window()
+            .and_then(|w| w.match_media("(prefers-color-scheme: dark)").ok())
+            .and_then(|m| m)
+            .map(|m| m.matches())
+            .unwrap_or(false)
+        {
+            "dark"
+        } else {
+            "light"
+        };
+        highlight_code_line(content, language, theme, true)
     }
     
     fn highlight_line_with_theme(&self, content: &str, props: &DiffViewProps) -> Html {
