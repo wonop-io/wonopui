@@ -55,6 +55,46 @@ pub fn BreadcrumbRouteItem<R: Routable + 'static>(props: &BreadcrumbRouteItemPro
     }
 }
 
+#[derive(Properties, PartialEq)]
+pub struct BreadcrumbLinkProps<R: Routable + 'static> {
+    #[prop_or_default]
+    pub children: Children,
+    pub to: R,
+    #[prop_or_default]
+    pub class: Classes,
+}
+
+#[function_component]
+pub fn BreadcrumbLink<R: Routable + 'static>(props: &BreadcrumbLinkProps<R>) -> Html {
+    #[cfg(feature = "ThemeProvider")]
+    let brandguide = use_brandguide();
+    #[cfg(not(feature = "ThemeProvider"))]
+    let brandguide = get_brandguide();
+
+    let navigator = use_navigator().unwrap();
+    let onclick = {
+        let to = props.to.clone();
+        Callback::from(move |e: MouseEvent| {
+            e.prevent_default();
+            navigator.push(&to);
+        })
+    };
+
+    let combined_class = classes!(
+        "transition-colors",
+        "hover:text-foreground",
+        props.class.clone()
+    );
+
+    html! {
+        <li class={&brandguide.breadcrumb_item}>
+            <a href={props.to.to_path()} class={combined_class} onclick={onclick}>
+                { for props.children.iter() }
+            </a>
+        </li>
+    }
+}
+
 #[function_component(BreadcrumbItem)]
 pub fn breadcrumb_item(props: &BreadcrumbItemProps) -> Html {
     #[cfg(feature = "ThemeProvider")]

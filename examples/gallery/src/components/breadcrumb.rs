@@ -2,6 +2,7 @@ use super::example_code::ExampleCode;
 use crate::api_section::ApiSection;
 use crate::features_section::Features;
 use crate::notes_section::NotesSection;
+use crate::routes::Route;
 use crate::styling_section::StylingSection;
 use wonopui::prelude::{BrandGuideType as BrandGuide, ClassesStr, ComponentEditor};
 use wonopui::*;
@@ -62,6 +63,35 @@ pub fn breadcrumb_documentation() -> Html {
 </Breadcrumb>"#.to_string()}
             />
 
+            <h2 class="text-2xl font-semibold mt-8 mb-4 text-zinc-900 dark:text-white">{ "Example with Router Links" }</h2>
+            <ExampleCode
+                preview={html! {
+                    <Breadcrumb>
+                        <BreadcrumbLink<Route> to={Route::GettingStarted}>
+                            {"Home"}
+                        </BreadcrumbLink<Route>>
+                        <BreadcrumbLink<Route> to={Route::ButtonExample}>
+                            {"Components"}
+                        </BreadcrumbLink<Route>>
+                        <BreadcrumbLink<Route> to={Route::BreadcrumbExample}>
+                            {"Breadcrumb"}
+                        </BreadcrumbLink<Route>>
+                    </Breadcrumb>
+                }}
+                code={r#"
+<Breadcrumb>
+    <BreadcrumbLink<Route> to={Route::GettingStarted}>
+        {"Home"}
+    </BreadcrumbLink<Route>>
+    <BreadcrumbLink<Route> to={Route::ButtonExample}>
+        {"Components"}
+    </BreadcrumbLink<Route>>
+    <BreadcrumbLink<Route> to={Route::BreadcrumbExample}>
+        {"Breadcrumb"}
+    </BreadcrumbLink<Route>>
+</Breadcrumb>"#.to_string()}
+            />
+
             <Features features={vec![
                 "Customizable separator icon",
                 "Automatic styling for the current page",
@@ -88,6 +118,16 @@ pub fn breadcrumb_documentation() -> Html {
                 props={vec![
                     ("label", "String", "The text to be displayed for the breadcrumb item."),
                     ("href", "Option<String>", "An optional URL for the breadcrumb item. If provided, the item will be rendered as a link."),
+                ]}
+            />
+
+            <ApiSection
+                title="BreadcrumbLink"
+                description="Props for the BreadcrumbLink component - used for router-aware navigation."
+                props={vec![
+                    ("children", "Children", "The child elements to be rendered inside the breadcrumb link."),
+                    ("to", "R (Routable)", "The route to navigate to when clicked."),
+                    ("class", "Classes", "Optional additional CSS classes to apply to the link."),
                 ]}
             />
 
