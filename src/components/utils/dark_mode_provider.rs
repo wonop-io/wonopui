@@ -1,6 +1,11 @@
 use crate::components::utils::media_query::use_media_query;
+
+#[cfg(all(feature = "BrowserProvider", feature = "WindowProvider"))]
+use crate::components::utils::{use_browser_window as use_window, use_document};
+
+#[cfg(all(feature = "BrowserProvider", not(feature = "WindowProvider")))]
+use crate::components::utils::{use_window, use_document};
 use std::rc::Rc;
-use web_sys::window;
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
@@ -27,25 +32,29 @@ pub fn dark_mode_provider(props: &DarkModeProviderProps) -> Html {
     let mode = use_state(|| DarkModeColor::System);
     let mode_preference = use_media_query("(prefers-color-scheme: dark)");
 
+    let window = use_window();
+    let document = use_document();
+
     use_effect_with(
         (mode.clone(), mode_preference.clone()),
         move |(mode, mode_preference)| {
-            let window = window().unwrap();
-            let document = window.document().unwrap();
-            let body = document.body().unwrap();
+            if let Some(document) = document {
+                if let Some(body) = document.body() {
 
-            match **mode {
-                DarkModeColor::Light => {
-                    body.class_list().remove_1("dark").unwrap();
-                }
-                DarkModeColor::Dark => {
-                    body.class_list().add_1("dark").unwrap();
-                }
-                DarkModeColor::System => {
-                    if *mode_preference {
-                        body.class_list().add_1("dark").unwrap();
-                    } else {
-                        body.class_list().remove_1("dark").unwrap();
+                    match **mode {
+                        DarkModeColor::Light => {
+                            body.class_list().remove_1("dark").unwrap();
+                        }
+                        DarkModeColor::Dark => {
+                            body.class_list().add_1("dark").unwrap();
+                        }
+                        DarkModeColor::System => {
+                            if *mode_preference {
+                                body.class_list().add_1("dark").unwrap();
+                            } else {
+                                body.class_list().remove_1("dark").unwrap();
+                            }
+                        }
                     }
                 }
             }

@@ -1,7 +1,11 @@
-use gloo_utils::document;
 use wasm_bindgen::{closure::Closure, JsCast};
-use web_sys::{HtmlElement, Navigator};
 use yew::prelude::*;
+
+#[cfg(all(feature = "BrowserProvider", feature = "WindowProvider"))]
+use crate::components::utils::{use_browser_window as use_window, use_clipboard};
+
+#[cfg(all(feature = "BrowserProvider", not(feature = "WindowProvider")))]
+use crate::components::utils::{use_window, use_clipboard};
 
 #[derive(Properties, PartialEq)]
 pub struct CopyButtonProps {
@@ -41,6 +45,8 @@ pub struct CopyButtonProps {
 pub fn copy_button(props: &CopyButtonProps) -> Html {
     let is_copied = use_state(|| false);
     let timeout_handle = use_mut_ref(|| None::<i32>);
+    let window = use_window();
+    let clipboard_ops = use_clipboard();
 
     let onclick = {
         let is_copied = is_copied.clone();
@@ -48,6 +54,8 @@ pub fn copy_button(props: &CopyButtonProps) -> Html {
         let copy_text = props.copy_text.clone();
         let copied_timeout_ms = props.copied_timeout_ms;
         let user_onclick = props.onclick.clone();
+        let window = window.clone();
+        let clipboard_ops = clipboard_ops.clone();
 
         Callback::from(move |e: MouseEvent| {
             // Call user's onclick handler if provided
@@ -56,25 +64,24 @@ pub fn copy_button(props: &CopyButtonProps) -> Html {
             }
 
             // Copy text to clipboard
-            let window = web_sys::window().expect("should have a window");
-            let navigator = window.navigator();
+            if window.is_none() {
+                return;
+            }
 
-            // Use clipboard API if available
-            let clipboard = navigator.clipboard();
-            let copy_text = copy_text.clone();
-            let is_copied = is_copied.clone();
-            let timeout_handle = timeout_handle.clone();
-            let copied_timeout_ms = copied_timeout_ms;
-
-            // Write text to clipboard
-            let _ = clipboard.write_text(&copy_text);
+            // Use clipboard API through BrowserProvider
+            let copy_text_clone = copy_text.clone();
+            let clipboard_ops = clipboard_ops.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let _ = clipboard_ops.copy_text(&copy_text_clone).await;
+            });
 
             // Update copied state
             is_copied.set(true);
 
+            let window = window.as_ref().unwrap();
+
             // Clear existing timeout if it exists
             if let Some(handle) = *timeout_handle.borrow() {
-                let window = web_sys::window().unwrap();
                 window.clear_timeout_with_handle(handle);
             }
 
