@@ -1,10 +1,4 @@
 use crate::components::utils::media_query::use_media_query;
-
-#[cfg(all(feature = "BrowserProvider", feature = "WindowProvider"))]
-use crate::components::utils::{use_browser_window as use_window, use_document};
-
-#[cfg(all(feature = "BrowserProvider", not(feature = "WindowProvider")))]
-use crate::components::utils::{use_window, use_document};
 use std::rc::Rc;
 use yew::prelude::*;
 
@@ -32,12 +26,12 @@ pub fn dark_mode_provider(props: &DarkModeProviderProps) -> Html {
     let mode = use_state(|| DarkModeColor::System);
     let mode_preference = use_media_query("(prefers-color-scheme: dark)");
 
-    let window = use_window();
-    let document = use_document();
-
     use_effect_with(
         (mode.clone(), mode_preference.clone()),
         move |(mode, mode_preference)| {
+            // Access document only on client side inside use_effect
+            let document = web_sys::window().and_then(|w| w.document());
+
             if let Some(document) = document {
                 if let Some(body) = document.body() {
 

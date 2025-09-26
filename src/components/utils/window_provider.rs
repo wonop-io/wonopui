@@ -1,4 +1,3 @@
-use gloo::utils::window as gloo_window;
 use std::rc::Rc;
 use web_sys::{HtmlIFrameElement, Window};
 use yew::context::ContextProvider;
@@ -49,10 +48,11 @@ pub fn window_provider(props: &WindowProviderProps) -> Html {
         let window_context = window_context.clone();
         let iframe_ref = props.iframe_ref.clone();
         use_effect_with((iframe_ref,), move |(iframe_ref,)| {
+            // Only access window on client side
             let window = iframe_ref
                 .cast::<HtmlIFrameElement>()
                 .and_then(|iframe| iframe.content_window())
-                .or_else(|| Some(gloo::utils::window()));
+                .or_else(|| web_sys::window());
             window_context.dispatch(WindowAction::SetWindow(window));
             || {}
         });
@@ -66,10 +66,10 @@ pub fn window_provider(props: &WindowProviderProps) -> Html {
 }
 
 #[hook]
-pub fn use_window() -> web_sys::Window {
+pub fn use_window() -> Option<web_sys::Window> {
     let window_context = use_context::<WindowContext>();
     match window_context {
-        Some(context) => context.window.clone().unwrap_or_else(gloo_window),
-        None => gloo_window(),
+        Some(context) => context.window.clone(),
+        None => None,
     }
 }
