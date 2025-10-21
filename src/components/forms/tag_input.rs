@@ -199,13 +199,13 @@ pub fn tag_input(props: &TagInputProps) -> Html {
 }
 
 // Snippets to update brandguide:
-// ("tag_input_container".to_string(), "cursor-text flex flex-col space-y-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500".to_string()),
+// ("tag_input_container".to_string(), "cursor-text flex flex-col space-y-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500".to_string()),
 // ("tag_input_tags_container".to_string(), "flex flex-wrap gap-2".to_string()),
-// ("tag_input_tag".to_string(), "bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300".to_string()),
+// ("tag_input_tag".to_string(), "bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300".to_string()),
 // ("tag_input_remove_button".to_string(), "ml-1 text-blue-600 rounded-full hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-100 cursor-pointer".to_string()),
-// ("tag_input_input".to_string(), "bg-transparent outline-none focus:outline-none flex-grow".to_string()),
+// ("tag_input_input".to_string(), "bg-transparent outline-hidden focus:outline-hidden flex-grow".to_string()),
 // ("tag_input_candidates_container".to_string(), "flex flex-wrap gap-2".to_string()),
-// ("tag_input_candidate_button".to_string(), "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800".to_string()),
+// ("tag_input_candidate_button".to_string(), "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-md text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800".to_string()),
 //
 // pub tag_input_container: ClassesContainer<T>,
 // pub tag_input_tags_container: ClassesContainer<T>,

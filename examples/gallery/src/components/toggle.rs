@@ -172,7 +172,7 @@ html! {
             <label for="disabled-toggle" class={BRANDGUIDE.toggle_label}>
                 { "Disabled toggle" }
             </label>
-            <button onclick={on_disable_toggle} class="ml-2 px-2 py-1 bg-gray-200 rounded">
+            <button onclick={on_disable_toggle} class="ml-2 px-2 py-1 bg-gray-200 rounded-sm">
                 { if *disabled { "Enable" } else { "Disable" } }
             </button>
         </div>

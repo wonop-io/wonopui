@@ -106,10 +106,10 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
 
         // Sizing
         ("padding_4".to_string(), "p-4".to_string()),
-        ("default_rounding_smaller".to_string(), "rounded".to_string()),
+        ("default_rounding_smaller".to_string(), "rounded-sm".to_string()),
         ("default_rounding".to_string(), "rounded-md".to_string()),
-        ("default_rounding_larger".to_string(), "rounded-lg".to_string()),
-        ("default_shadow".to_string(), "shadow-sm".to_string()),
+        ("default_rounding_larger".to_string(), "rounded-md".to_string()),
+        ("default_shadow".to_string(), "shadow-xs".to_string()),
         ("default_shadow_larger".to_string(), "shadow-md".to_string()),
 
         // Typography
@@ -159,10 +159,10 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("avatar_small".to_string(), "w-8 h-8".to_string()),
         ("avatar_medium".to_string(), "w-12 h-12".to_string()),
         ("avatar_large".to_string(), "w-16 h-16".to_string()),
-        ("avatar_base".to_string(), "{{ rounded_full }} object-cover border-2 border-white dark:border-zinc-800 shadow-sm".to_string()),
+        ("avatar_base".to_string(), "{{ rounded_full }} object-cover border-2 border-white dark:border-zinc-800 shadow-xs".to_string()),
 
         // Badge
-        ("badge_base".to_string(), "inline-flex items-center {{ default_rounding }} border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2 dark:focus:ring-zinc-300".to_string()),
+        ("badge_base".to_string(), "inline-flex items-center {{ default_rounding }} border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-hidden focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2 dark:focus:ring-zinc-300".to_string()),
         ("badge_success".to_string(), "{{ badge_base }} border-transparent bg-emerald-100 text-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-400".to_string()),
         ("badge_warning".to_string(), "{{ badge_base }} border-transparent bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-400".to_string()),
         ("badge_error".to_string(), "{{ badge_base }} border-transparent bg-red-100 text-red-900 dark:bg-red-900/30 dark:text-red-400".to_string()),
@@ -177,7 +177,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("breadcrumb_separator".to_string(), "[&>svg]:size-4 text-zinc-400".to_string()),
 
         // Button
-        ("button_base".to_string(), "inline-flex items-center justify-center whitespace-nowrap {{ default_rounding }} text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-zinc-950 dark:focus-visible:ring-zinc-300".to_string()),
+        ("button_base".to_string(), "inline-flex items-center justify-center whitespace-nowrap {{ default_rounding }} text-sm font-medium ring-offset-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-zinc-950 dark:focus-visible:ring-zinc-300".to_string()),
         ("button_primary".to_string(), "{{ button_base }} bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90".to_string()),
         ("button_secondary".to_string(), "{{ button_base }} {{ border }} bg-white hover:bg-zinc-100 hover:text-zinc-900 dark:bg-zinc-950 dark:hover:bg-zinc-800 dark:hover:text-zinc-50".to_string()),
         ("button_danger".to_string(), "{{ button_base }} bg-red-500 text-white hover:bg-red-600 dark:bg-red-900 dark:text-red-50 dark:hover:bg-red-800".to_string()),
@@ -195,7 +195,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("calendar_title".to_string(), "flex justify-center pt-1 relative items-center".to_string()),
         ("calendar_month_year".to_string(), "text-sm font-medium".to_string()),
         ("calendar_nav".to_string(), "space-x-1 flex items-center".to_string()),
-        ("calendar_nav_button".to_string(), "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100".to_string()),
+        ("calendar_nav_button".to_string(), "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100".to_string()),
         ("calendar_grid".to_string(), "w-full border-collapse space-y-1".to_string()),
         ("calendar_thead".to_string(), "".to_string()),
         ("calendar_weekdays".to_string(), "flex".to_string()),
@@ -203,7 +203,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("calendar_tbody".to_string(), "".to_string()),
         ("calendar_week".to_string(), "flex w-full mt-2".to_string()),
         ("calendar_day".to_string(), "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20".to_string()),
-        ("calendar_day_button".to_string(), "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-zinc-100 dark:hover:bg-zinc-800 h-9 w-9 p-0 font-normal aria-selected:opacity-100".to_string()),
+        ("calendar_day_button".to_string(), "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-zinc-100 dark:hover:bg-zinc-800 h-9 w-9 p-0 font-normal aria-selected:opacity-100".to_string()),
         ("calendar_day_today".to_string(), "bg-accent text-accent-foreground".to_string()),
         ("calendar_day_selected".to_string(), "bg-indigo-500 text-white hover:bg-indigo-600 hover:text-white focus:bg-indigo-600 focus:text-white".to_string()),
         ("calendar_day_outside".to_string(), "text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30".to_string()),
@@ -225,7 +225,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("card_body".to_string(), "p-6".to_string()),
 
         // Checkbox
-        ("checkbox_base".to_string(), "h-4 w-4 shrink-0 {{ default_rounding_smaller }} border {{ border_dark }} ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 text-indigo-600 dark:text-indigo-400".to_string()),
+        ("checkbox_base".to_string(), "h-4 w-4 shrink-0 {{ default_rounding_smaller }} border {{ border_dark }} ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 text-indigo-600 dark:text-indigo-400".to_string()),
         ("checkbox_checked".to_string(), "{{ primary_background }} {{ text_dark }} border-transparent".to_string()),
         ("checkbox_unchecked".to_string(), "border-zinc-300 dark:border-zinc-600".to_string()),
         ("checkbox_disabled".to_string(), "opacity-50 cursor-not-allowed".to_string()),
@@ -239,7 +239,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("collapsible_container".to_string(), "w-[350px] space-y-2".to_string()),
         ("collapsible_header".to_string(), "flex items-center justify-between space-x-4 px-4".to_string()),
         ("collapsible_title".to_string(), "text-sm font-semibold".to_string()),
-        ("collapsible_button".to_string(), "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-zinc-100 dark:hover:bg-zinc-800 h-9 {{ default_rounding }} w-9 p-0 dark:ring-offset-zinc-800".to_string()),
+        ("collapsible_button".to_string(), "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-zinc-100 dark:hover:bg-zinc-800 h-9 {{ default_rounding }} w-9 p-0 dark:ring-offset-zinc-800".to_string()),
         ("collapsible_content".to_string(), "{{ collapsible_base }} {{ text_container_medium_padding }}".to_string()),
         ("collapsible_item".to_string(), "{{ collapsible_content }}".to_string()),
 
@@ -259,7 +259,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
 
 
         // Combobox
-        ("combobox_button".to_string(), "inline-flex items-center whitespace-nowrap {{ default_rounding }} text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-zinc-100 dark:hover:bg-zinc-800 h-10 px-4 py-2 w-[200px] justify-between {{ border_dark }} {{ background }}".to_string()),
+        ("combobox_button".to_string(), "inline-flex items-center whitespace-nowrap {{ default_rounding }} text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-zinc-100 dark:hover:bg-zinc-800 h-10 px-4 py-2 w-[200px] justify-between {{ border_dark }} {{ background }}".to_string()),
         ("combobox_button_open".to_string(), "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white".to_string()),
         ("combobox_button_disabled".to_string(), "disabled:pointer-events-none disabled:opacity-50".to_string()),
         ("combobox_list".to_string(), "py-4 absolute mt-1 w-[200px] max-h-[300px] overflow-y-auto bg-background border border-input {{ default_rounding }} {{ default_shadow }} {{ border_dark }} {{ background }}".to_string()),
@@ -271,9 +271,9 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("command_container".to_string(), "flex h-auto w-full flex-col overflow-hidden {{ background }} {{ text }} {{ default_rounding_larger }} {{ border }} {{ default_shadow }}".to_string()),
         ("command_input_wrapper".to_string(), "flex items-center [&:not(:last-child)]:border-b px-3 dark:border-zinc-700".to_string()),
         ("command_icon".to_string(), "mr-2 h-4 w-4 shrink-0 opacity-50".to_string()),
-        ("command_input".to_string(), "flex h-11 w-full {{ default_rounding }} bg-transparent py-3 text-sm outline-none placeholder-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder-zinc-400".to_string()),
+        ("command_input".to_string(), "flex h-11 w-full {{ default_rounding }} bg-transparent py-3 text-sm outline-hidden placeholder-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder-zinc-400".to_string()),
         ("command_list".to_string(), "max-h-[300px] overflow-y-auto overflow-x-hidden".to_string()),
-        ("command_item".to_string(), "relative flex cursor-default select-none items-center {{ default_rounding_smaller}} {{ text_container_medium_padding }} text-sm outline-none hover:bg-zinc-100 dark:hover:bg-zinc-800 space-x-2".to_string()),
+        ("command_item".to_string(), "relative flex cursor-default select-none items-center {{ default_rounding_smaller}} {{ text_container_medium_padding }} text-sm outline-hidden hover:bg-zinc-100 dark:hover:bg-zinc-800 space-x-2".to_string()),
         ("command_selected_item".to_string(), "{{ command_item }} bg-zinc-100 dark:bg-zinc-800".to_string()),
         ("command_item_icon".to_string(), "mr-2 h-4 w-4".to_string()),
 
@@ -288,7 +288,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
 
         // Drawer
 
-        ("drawer_provider".to_string(), "fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/80 dark:bg-zinc-950/90 backdrop-blur-sm".to_string()),
+        ("drawer_provider".to_string(), "fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/80 dark:bg-zinc-950/90 backdrop-blur-xs".to_string()),
         ("drawer_container".to_string(), "{{ background }} {{ default_rounding_larger }} {{ default_shadow }} {{ limit_width_drawer_size }} border border-zinc-200 dark:border-zinc-700 overflow-hidden".to_string()),
         ("drawer_header".to_string(), "{{ padding_4 }} border-b {{ border }} sticky top-0 z-10 flex items-center justify-between bg-white dark:bg-zinc-800".to_string()),
         ("drawer_title".to_string(), "text-lg font-semibold text-zinc-900 dark:text-zinc-100".to_string()),
@@ -307,8 +307,8 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("drawer_left".to_string(), "fixed inset-y-0 left-0".to_string()),
 
         // Dialog
-        ("dialog_container".to_string(), "fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/80 dark:bg-zinc-950/90 backdrop-blur-sm overflow-auto pointer-events-auto".to_string()),
-        ("dialog_content".to_string(), "bg-white dark:bg-zinc-800 rounded-lg shadow-xl max-w-md w-full border border-zinc-200 dark:border-zinc-700 transition-all duration-300 ease-out transform".to_string()),
+        ("dialog_container".to_string(), "fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/80 dark:bg-zinc-950/90 backdrop-blur-xs overflow-auto pointer-events-auto".to_string()),
+        ("dialog_content".to_string(), "bg-white dark:bg-zinc-800 rounded-md shadow-md max-w-md w-full border border-zinc-200 dark:border-zinc-700 transition-all duration-300 ease-out transform".to_string()),
         // TODO: ("dialog_content_active".to_string(), "scale-95 opacity-0".to_string()),
         // ("dialog_content_inactive".to_string(), "scale-95 opacity-0".to_string()),
         ("dialog_header".to_string(), "p-4 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between".to_string()),
@@ -319,8 +319,8 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         // Group Button
         ("group_button_container".to_string(), "flex w-full".to_string()),
         ("group_button_list".to_string(), "h-10 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-300".to_string()),
-        ("group_button_trigger".to_string(), "inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium transition-all ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50".to_string()),
-        ("group_button_trigger_active".to_string(), "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-sm".to_string()),
+        ("group_button_trigger".to_string(), "inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium transition-all ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50".to_string()),
+        ("group_button_trigger_active".to_string(), "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-xs".to_string()),
         ("group_button_trigger_inactive".to_string(), "bg-zinc-200 dark:bg-zinc-600 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-500".to_string()),
         ("group_button_demo".to_string(), "w-[400px]".to_string()),
 
@@ -337,17 +337,17 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
 
         // Markdown Editor
         ("markdown_editor_container".to_string(), "flex flex-col w-full {{ background }} {{ text }}".to_string()),
-        ("markdown_editor_blocks_container".to_string(), "w-full min-h-[200px] p-4 space-y-2 focus:outline-none".to_string()),
+        ("markdown_editor_blocks_container".to_string(), "w-full min-h-[200px] p-4 space-y-2 focus:outline-hidden".to_string()),
         ("markdown_editor_block".to_string(), "relative w-full rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors duration-150".to_string()),
         ("markdown_editor_block_active".to_string(), "bg-zinc-50 dark:bg-zinc-800/50".to_string()),
-        ("markdown_editor_paragraph".to_string(), "p-2 min-h-[1.5em] w-full outline-none focus:outline-none".to_string()),
-        ("markdown_editor_heading1".to_string(), "p-2 min-h-[1.5em] w-full text-3xl font-bold outline-none focus:outline-none".to_string()),
-        ("markdown_editor_heading2".to_string(), "p-2 min-h-[1.5em] w-full text-2xl font-bold outline-none focus:outline-none".to_string()),
-        ("markdown_editor_heading3".to_string(), "p-2 min-h-[1.5em] w-full text-xl font-bold outline-none focus:outline-none".to_string()),
-        ("markdown_editor_bullet_list".to_string(), "p-2 min-h-[1.5em] w-full pl-8 list-disc outline-none focus:outline-none".to_string()),
-        ("markdown_editor_numbered_list".to_string(), "p-2 min-h-[1.5em] w-full pl-8 list-decimal outline-none focus:outline-none".to_string()),
-        ("markdown_editor_quote".to_string(), "p-2 min-h-[1.5em] w-full pl-4 border-l-4 border-zinc-300 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-800/50 italic outline-none focus:outline-none".to_string()),
-        ("markdown_editor_code".to_string(), "p-2 min-h-[1.5em] w-full font-mono text-sm bg-zinc-100 dark:bg-zinc-800 {{ default_rounding_smaller }} outline-none focus:outline-none".to_string()),
+        ("markdown_editor_paragraph".to_string(), "p-2 min-h-[1.5em] w-full outline-hidden focus:outline-hidden".to_string()),
+        ("markdown_editor_heading1".to_string(), "p-2 min-h-[1.5em] w-full text-3xl font-bold outline-hidden focus:outline-hidden".to_string()),
+        ("markdown_editor_heading2".to_string(), "p-2 min-h-[1.5em] w-full text-2xl font-bold outline-hidden focus:outline-hidden".to_string()),
+        ("markdown_editor_heading3".to_string(), "p-2 min-h-[1.5em] w-full text-xl font-bold outline-hidden focus:outline-hidden".to_string()),
+        ("markdown_editor_bullet_list".to_string(), "p-2 min-h-[1.5em] w-full pl-8 list-disc outline-hidden focus:outline-hidden".to_string()),
+        ("markdown_editor_numbered_list".to_string(), "p-2 min-h-[1.5em] w-full pl-8 list-decimal outline-hidden focus:outline-hidden".to_string()),
+        ("markdown_editor_quote".to_string(), "p-2 min-h-[1.5em] w-full pl-4 border-l-4 border-zinc-300 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-800/50 italic outline-hidden focus:outline-hidden".to_string()),
+        ("markdown_editor_code".to_string(), "p-2 min-h-[1.5em] w-full font-mono text-sm bg-zinc-100 dark:bg-zinc-800 {{ default_rounding_smaller }} outline-hidden focus:outline-hidden".to_string()),
         ("markdown_editor_divider".to_string(), "w-full border-t-2 border-zinc-200 dark:border-zinc-700 my-4".to_string()),
         ("markdown_editor_divider_block".to_string(), "py-2 flex items-center justify-center".to_string()),
         ("markdown_command_menu_container".to_string(), "z-50 w-64 bg-white dark:bg-zinc-800 {{ default_rounding }} {{ default_shadow }} {{ border }}".to_string()),
@@ -381,7 +381,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         // Popover
         ("popover_container".to_string(), "relative inline-block".to_string()),
         ("popover_trigger".to_string(), "cursor-pointer".to_string()),
-        ("popover_content".to_string(), "absolute {{ text }} {{ background }} {{ border }} {{ default_rounding }} {{ padding_4 }} z-10 shadow-lg".to_string()),
+        ("popover_content".to_string(), "absolute {{ text }} {{ background }} {{ border }} {{ default_rounding }} {{ padding_4 }} z-10 shadow-md".to_string()),
         ("popover_position_north_start".to_string(), "bottom-full left-0 transform translate-x-0 mb-2".to_string()),
         ("popover_position_north_middle".to_string(), "bottom-full left-1/2 transform -translate-x-1/2 mb-2".to_string()),
         ("popover_position_north_end".to_string(), "bottom-full right-0 transform translate-x-0 mb-2".to_string()),
@@ -412,10 +412,10 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         // Sidebar
         ("sidebar_heading".to_string(), "flex flex-row justify-between items-center mt-6 mb-0 mx-3 px-2 py-1 leading-6 text-xs font-bold tracking-widest uppercase text-zinc-500 dark:text-zinc-400".to_string()),
         ("sidebar_menu".to_string(), "space-y-1 my-1 flex flex-col items-stretch".to_string()),
-        ("sidebar_item_base".to_string(), "flex-grow mx-3 px-4 inline-flex space-x-2 items-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 py-1 text-zinc-700 dark:text-zinc-300".to_string()),
+        ("sidebar_item_base".to_string(), "flex-grow mx-3 px-4 inline-flex space-x-2 items-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 py-1 text-zinc-700 dark:text-zinc-300".to_string()),
         ("sidebar_item_hover".to_string(), "hover:bg-zinc-100 hover:dark:bg-zinc-700 hover:bg-accent hover:text-accent-foreground".to_string()),
         ("sidebar_item_active".to_string(), "bg-zinc-200 dark:bg-zinc-700".to_string()),
-        ("sidebar_link_base".to_string(), "flex-grow mx-3 px-4 hover:bg-zinc-200 hover:dark:bg-zinc-700 inline-flex space-x-2 items-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 py-1 text-zinc-700 dark:text-zinc-300".to_string()),
+        ("sidebar_link_base".to_string(), "flex-grow mx-3 px-4 hover:bg-zinc-200 hover:dark:bg-zinc-700 inline-flex space-x-2 items-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 py-1 text-zinc-700 dark:text-zinc-300".to_string()),
         ("sidebar_link_active".to_string(), "bg-zinc-200 dark:bg-zinc-700".to_string()),
         ("sidebar_header".to_string(), "h-16 shrink-0 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900".to_string()),
         ("sidebar_footer".to_string(), "border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900".to_string()),
@@ -427,7 +427,7 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("selectable_cursor".to_string(), "cursor-pointer".to_string()),
 
         // Toggle
-        ("toggle_base".to_string(), "px-3.5 py-2.5 font-semibold rounded-md transition-all duration-200 ease-in-out flex space-x-2 justify-center items-center focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-zinc-800".to_string()),
+        ("toggle_base".to_string(), "px-3.5 py-2.5 font-semibold rounded-md transition-all duration-200 ease-in-out flex space-x-2 justify-center items-center focus:outline-hidden focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-zinc-800".to_string()),
         ("toggle_checked".to_string(), "bg-indigo-500/90 dark:bg-indigo-600 text-white border border-indigo-500 dark:border-indigo-600 hover:bg-indigo-700/100 dark:hover:bg-indigo-700 focus:ring-indigo-600".to_string()),
         ("toggle_unchecked".to_string(), "text-zinc-800 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:ring-zinc-400".to_string()),
         ("toggle_disabled".to_string(), "disabled:cursor-not-allowed disabled:opacity-50".to_string()),
@@ -435,22 +435,22 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         ("toggle_container".to_string(), "inline-flex items-center justify-center".to_string()),
         ("toggle_icon".to_string(), "h-4 w-4".to_string()),
 
-        ("switch_base".to_string(), "flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-800 flex w-12 h-6".to_string()),
+        ("switch_base".to_string(), "shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-800 flex w-12 h-6".to_string()),
         ("switch_checked".to_string(), "bg-indigo-600 dark:bg-indigo-500".to_string()),
         ("switch_unchecked".to_string(), "bg-zinc-200 dark:bg-zinc-700".to_string()),
         ("switch_disabled".to_string(), "disabled:cursor-not-allowed disabled:opacity-50 dark:disabled:bg-zinc-600".to_string()),
         ("switch_label".to_string(), "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-zinc-700".to_string()),
-        ("switch_thumb".to_string(), "pointer-events-none inline-block h-5 w-5 text-zinc-700 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out".to_string()),
+        ("switch_thumb".to_string(), "pointer-events-none inline-block h-5 w-5 text-zinc-700 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out".to_string()),
         ("switch_translate_checked".to_string(), "translate-x-6".to_string()),
         ("switch_translate_unchecked".to_string(), "translate-x-0".to_string()),
 
         // Select
         ("select_container".to_string(), "relative inline-block text-left dark:text-white".to_string()),
-        ("select_trigger".to_string(), "flex h-10 items-center justify-between {{ default_rounding }} {{ border }} {{ background }} {{ text_container_medium_padding }} text-sm ring-offset-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[180px] {{ border_dark }} dark:ring-offset-zinc-800 transition-colors duration-200".to_string()),
+        ("select_trigger".to_string(), "flex h-10 items-center justify-between {{ default_rounding }} {{ border }} {{ background }} {{ text_container_medium_padding }} text-sm ring-offset-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[180px] {{ border_dark }} dark:ring-offset-zinc-800 transition-colors duration-200".to_string()),
         ("select_trigger_placeholder".to_string(), "pointer-events-none text-zinc-500 dark:text-zinc-400".to_string()),
         ("select_trigger_icon".to_string(), "lucide lucide-chevron-down h-4 w-4 opacity-50 dark:text-white".to_string()),
         ("select_content_container".to_string(), "absolute mt-1 w-full {{ default_rounding }} {{ background }} {{ default_shadow }} z-10 border border-zinc-200 dark:border-zinc-700".to_string()),
-        ("select_content_list".to_string(), "max-h-60 {{ default_rounding }} py-1 text-base ring-1 ring-zinc-200 dark:ring-zinc-700 overflow-auto focus:outline-none sm:text-sm".to_string()),
+        ("select_content_list".to_string(), "max-h-60 {{ default_rounding }} py-1 text-base ring-1 ring-zinc-200 dark:ring-zinc-700 overflow-auto focus:outline-hidden sm:text-sm".to_string()),
         ("select_group".to_string(), "text-zinc-900 {{ text_dark }}".to_string()),
         ("select_label".to_string(), "{{ text_container_medium_padding }} text-sm font-semibold text-zinc-700 dark:text-zinc-300".to_string()),
         ("select_item".to_string(), "text-zinc-900 cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-700 transition-colors duration-150".to_string()),
@@ -467,9 +467,9 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
 
         // Tailwind Color Picker
         ("tailwind_color_picker_container".to_string(), "relative".to_string()),
-        ("tailwind_color_picker_button".to_string(), "h-10 w-10 mb-4 p-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-full flex justify-center items-center shadow-md hover:shadow-lg transition-shadow duration-200".to_string()),
+        ("tailwind_color_picker_button".to_string(), "h-10 w-10 mb-4 p-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-full flex justify-center items-center shadow-md hover:shadow-md transition-shadow-sm duration-200".to_string()),
         ("tailwind_color_picker_selected_color".to_string(), "h-6 w-6 rounded-full".to_string()),
-        ("tailwind_color_picker_dropdown".to_string(), "z-20 bg-white dark:bg-zinc-800 absolute top-12 left-0 flex-grow palettes overflow-auto flex flex-col p-2 rounded-lg shadow-xl border border-zinc-200 dark:border-zinc-700".to_string()),
+        ("tailwind_color_picker_dropdown".to_string(), "z-20 bg-white dark:bg-zinc-800 absolute top-12 left-0 flex-grow palettes overflow-auto flex flex-col p-2 rounded-md shadow-md border border-zinc-200 dark:border-zinc-700".to_string()),
         ("tailwind_color_picker_row".to_string(), "flex flex-row space-x-1 mb-1".to_string()),
         ("tailwind_color_picker_cell".to_string(), "cursor-pointer border h-6 w-6 rounded-full transition-transform duration-150 hover:scale-110".to_string()),
 
@@ -482,17 +482,17 @@ pub fn get_default_config() -> Result<HashMap<String, String>> {
         // tabs_container_auto: flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0
         ("tabs_trigger".to_string(), "flex-1 inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium {{ default_rounding }} transition-all duration-200".to_string()),
         ("tabs_trigger_inactive".to_string(), "{{ text }} hover:bg-white dark:hover:bg-zinc-700".to_string()),
-        ("tabs_trigger_active".to_string(), "{{ primary_background }} {{ text_dark }} shadow-sm".to_string()),
+        ("tabs_trigger_active".to_string(), "{{ primary_background }} {{ text_dark }} shadow-xs".to_string()),
         ("tabs_trigger_disabled".to_string(), "opacity-50 cursor-not-allowed".to_string()),
         ("tabs_content".to_string(), "".to_string()),
 
-        ("tag_input_container".to_string(), "cursor-text flex flex-col space-y-1 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 text-sm rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 block w-full p-2.5 transition-all duration-200".to_string()),
+        ("tag_input_container".to_string(), "cursor-text flex flex-col space-y-1 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 text-sm rounded-md focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 block w-full p-2.5 transition-all duration-200".to_string()),
         ("tag_input_tags_container".to_string(), "flex flex-wrap gap-2".to_string()),
-        ("tag_input_tag".to_string(), "bg-indigo-100 text-indigo-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300 flex items-center".to_string()),
+        ("tag_input_tag".to_string(), "bg-indigo-100 text-indigo-800 text-sm font-medium px-2.5 py-0.5 rounded-sm dark:bg-indigo-900 dark:text-indigo-300 flex items-center".to_string()),
         ("tag_input_remove_button".to_string(), "ml-1 text-indigo-600 rounded-full hover:text-indigo-800 dark:text-indigo-300 dark:hover:text-indigo-100 cursor-pointer transition-colors duration-150".to_string()),
-        ("tag_input_input".to_string(), "bg-transparent outline-none focus:outline-none flex-grow text-zinc-700 dark:text-zinc-300".to_string()),
+        ("tag_input_input".to_string(), "bg-transparent outline-hidden focus:outline-hidden flex-grow text-zinc-700 dark:text-zinc-300".to_string()),
         ("tag_input_candidates_container".to_string(), "flex flex-wrap gap-2 mt-2".to_string()),
-        ("tag_input_candidate_button".to_string(), "text-indigo-600 bg-indigo-100 hover:bg-indigo-200 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:text-indigo-300 dark:bg-indigo-900 dark:hover:bg-indigo-800 dark:focus:ring-indigo-800 transition-colors duration-150".to_string()),
+        ("tag_input_candidate_button".to_string(), "text-indigo-600 bg-indigo-100 hover:bg-indigo-200 focus:ring-4 focus:outline-hidden focus:ring-indigo-300 font-medium rounded-md text-sm px-4 py-2 text-center dark:text-indigo-300 dark:bg-indigo-900 dark:hover:bg-indigo-800 dark:focus:ring-indigo-800 transition-colors duration-150".to_string()),
 
     ];
 

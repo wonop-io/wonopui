@@ -196,7 +196,7 @@ impl Component for DiffView {
                     props.class.clone(),
                     "diff-view-container",
                     "border", "border-gray-300", "dark:border-gray-700",
-                    "bg-white", "dark:bg-gray-900", "rounded", "overflow-hidden",
+                    "bg-white", "dark:bg-gray-900", "rounded-sm", "overflow-hidden",
                     "transition-all", "duration-300", "ease-in-out"
                 )}
                 style={container_style}
@@ -311,7 +311,7 @@ impl DiffView {
             <div class="flex divide-x divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
                 // Left pane (old text)
                 <div class="flex-1 min-w-0 bg-white dark:bg-gray-900" role="group" aria-label="Original text">
-                    <div class="bg-gradient-to-r from-red-100 to-red-50 dark:from-red-500/10 dark:to-red-600/5 px-4 py-2 border-b-2 border-red-300 dark:border-red-500 flex items-center justify-between shadow-sm dark:shadow-red-900/20">
+                    <div class="bg-gradient-to-r from-red-100 to-red-50 dark:from-red-500/10 dark:to-red-600/5 px-4 py-2 border-b-2 border-red-300 dark:border-red-500 flex items-center justify-between shadow-xs dark:shadow-red-900/20">
                         <h3 class="text-sm font-bold text-red-700 dark:text-red-300 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
@@ -329,7 +329,7 @@ impl DiffView {
                 
                 // Right pane (new text)
                 <div class="flex-1 min-w-0 bg-white dark:bg-gray-900" role="group" aria-label="Modified text">
-                    <div class="bg-gradient-to-r from-green-100 to-green-50 dark:from-green-500/10 dark:to-green-600/5 px-4 py-2 border-b-2 border-green-300 dark:border-green-500 flex items-center justify-between shadow-sm dark:shadow-green-900/20">
+                    <div class="bg-gradient-to-r from-green-100 to-green-50 dark:from-green-500/10 dark:to-green-600/5 px-4 py-2 border-b-2 border-green-300 dark:border-green-500 flex items-center justify-between shadow-xs dark:shadow-green-900/20">
                         <h3 class="text-sm font-bold text-green-700 dark:text-green-300 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -357,15 +357,15 @@ impl DiffView {
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">{"Unified Diff View"}</h3>
                     <div class="flex items-center gap-4 text-xs">
                         <span class="flex items-center gap-1">
-                            <span class="w-3 h-3 bg-green-500 rounded shadow-sm border border-green-600"></span>
+                            <span class="w-3 h-3 bg-green-500 rounded-sm shadow-xs border border-green-600"></span>
                             <span class="text-gray-600 dark:text-gray-400">{"Added"}</span>
                         </span>
                         <span class="flex items-center gap-1">
-                            <span class="w-3 h-3 bg-red-500 rounded shadow-sm border border-red-600"></span>
+                            <span class="w-3 h-3 bg-red-500 rounded-sm shadow-xs border border-red-600"></span>
                             <span class="text-gray-600 dark:text-gray-400">{"Removed"}</span>
                         </span>
                         <span class="flex items-center gap-1">
-                            <span class="w-3 h-3 bg-yellow-500 rounded shadow-sm border border-yellow-600"></span>
+                            <span class="w-3 h-3 bg-yellow-500 rounded-sm shadow-xs border border-yellow-600"></span>
                             <span class="text-gray-600 dark:text-gray-400">{"Modified"}</span>
                         </span>
                     </div>
@@ -592,12 +592,12 @@ impl DiffView {
         html! {
             <div class="group hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
                 if props.unified_diff || is_collapsible {
-                    <div class="sticky top-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-500/10 dark:to-indigo-500/10 px-3 py-1 text-xs text-blue-700 dark:text-blue-300 font-mono border-b border-blue-200 dark:border-blue-700 flex items-center justify-between shadow-sm dark:shadow-blue-900/20">
+                    <div class="sticky top-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-500/10 dark:to-indigo-500/10 px-3 py-1 text-xs text-blue-700 dark:text-blue-300 font-mono border-b border-blue-200 dark:border-blue-700 flex items-center justify-between shadow-xs dark:shadow-blue-900/20">
                         <div class="flex items-center gap-2">
                             if is_collapsible {
                                 <button 
                                     onclick={toggle_callback}
-                                    class="hover:bg-blue-200 dark:hover:bg-blue-800 p-1 rounded transition-colors"
+                                    class="hover:bg-blue-200 dark:hover:bg-blue-800 p-1 rounded-sm transition-colors"
                                     aria-label={if is_collapsed { "Expand section" } else { "Collapse section" }}
                                 >
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -695,7 +695,7 @@ impl DiffView {
         let props = ctx.props();
         
         html! {
-            <div class="mb-4 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-900">
+            <div class="mb-4 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900">
                 if props.unified_diff {
                     <div class="bg-gray-100 dark:bg-gray-800/70 px-2 py-1 text-xs text-gray-600 dark:text-gray-300 font-mono border-b border-gray-200 dark:border-gray-700">
                         { format!("@@ -{},{} +{},{} @@", 

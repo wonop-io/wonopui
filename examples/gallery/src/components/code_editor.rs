@@ -31,19 +31,19 @@ pub fn code_editor_theme_editor() -> Html {
             "Cursor".to_string(),
         ),
         (
-            "bg-blue-200 dark:bg-blue-800 bg-opacity-30".to_string(),
+            "bg-blue-200 dark:bg-blue-800/30".to_string(),
             "Selection".to_string(),
         ),
         (
-            "bg-green-200 dark:bg-green-900 bg-opacity-30".to_string(),
+            "bg-green-200 dark:bg-green-900/30".to_string(),
             "Added Diff".to_string(),
         ),
         (
-            "bg-red-200 dark:bg-red-900 bg-opacity-30".to_string(),
+            "bg-red-200 dark:bg-red-900/30".to_string(),
             "Removed Diff".to_string(),
         ),
         (
-            "bg-yellow-200 dark:bg-yellow-900 bg-opacity-30".to_string(),
+            "bg-yellow-200 dark:bg-yellow-900/30".to_string(),
             "Modified Diff".to_string(),
         ),
         (
@@ -115,7 +115,7 @@ fn main() {
                                 ]}
                                 font_size={14}
                                 line_height={1.5}
-                                class="border border-gray-300 dark:border-gray-700 rounded shadow-sm"
+                                class="border border-gray-300 dark:border-gray-700 rounded-sm shadow-xs"
                             />
                         </div>
                         
@@ -174,7 +174,7 @@ fn main() {
                                 ]}
                                 font_size={14}
                                 line_height={1.5}
-                                class="border border-emerald-300 dark:border-emerald-700 rounded shadow-md bg-emerald-50 dark:bg-emerald-950"
+                                class="border border-emerald-300 dark:border-emerald-700 rounded-sm shadow-md bg-emerald-50 dark:bg-emerald-950"
                             />
                         </div>
                     </div>
@@ -222,7 +222,7 @@ fn main() {
             Callback::from(|e| { e.prevent_default(); }));
         Some(keymap)
     }
-    class=\"border border-gray-300 dark:border-gray-700 rounded shadow-sm\"
+    class=\"border border-gray-300 dark:border-gray-700 rounded-sm shadow-xs\"
 />"
             />
 
@@ -302,7 +302,7 @@ fn main() {
             />
 
             <h3 class="text-xl font-semibold mt-6 mb-3 text-zinc-900 dark:text-white">{"Keyboard Shortcuts"}</h3>
-            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded mb-6">
+            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-sm mb-6">
                 <p class="text-sm mb-2">{"The code editor supports custom keyboard shortcuts through the keymap property:"}</p>
                 <ul class="list-disc ml-6 text-sm text-gray-700 dark:text-gray-300">
                     <li>{"Ctrl+/ - Toggle comment (in the example)"}</li>
@@ -316,13 +316,13 @@ fn main() {
             <StylingSection
             component_name={"CodeEditor".to_string()}
             class_descriptions={vec![
-                ("editor-container".to_string(), "Container for the entire editor (Tailwind: flex relative rounded overflow-hidden)".to_string()),
+                ("editor-container".to_string(), "Container for the entire editor (Tailwind: flex relative rounded-sm overflow-hidden)".to_string()),
                 ("line-numbers".to_string(), "Line numbers column (Tailwind: flex-none w-12 text-right bg-gray-100 dark:bg-gray-800)".to_string()),
                 ("code-display".to_string(), "Main code display area (Tailwind: p-2 whitespace-pre)".to_string()),
                 ("cursor-element".to_string(), "Editor cursor (Tailwind: absolute w-[2px] bg-blue-500 animate-blink)".to_string()),
-                ("diff-added".to_string(), "Added line highlight (Tailwind: bg-green-200 dark:bg-green-900 bg-opacity-30)".to_string()),
-                ("diff-removed".to_string(), "Removed line highlight (Tailwind: bg-red-200 dark:bg-red-900 bg-opacity-30)".to_string()),
-                ("diff-modified".to_string(), "Modified line highlight (Tailwind: bg-yellow-200 dark:bg-yellow-900 bg-opacity-30)".to_string()),
+                ("diff-added".to_string(), "Added line highlight (Tailwind: bg-green-200 dark:bg-green-900/30)".to_string()),
+                ("diff-removed".to_string(), "Removed line highlight (Tailwind: bg-red-200 dark:bg-red-900/30)".to_string()),
+                ("diff-modified".to_string(), "Modified line highlight (Tailwind: bg-yellow-200 dark:bg-yellow-900/30)".to_string()),
                 ("annotation-error".to_string(), "Error annotation (Tailwind: border-b-2 border-red-500)".to_string()),
                 ("annotation-warning".to_string(), "Warning annotation (Tailwind: border-b-2 border-yellow-500)".to_string()),
                 ("annotation-info".to_string(), "Info annotation (Tailwind: border-b-2 border-blue-500)".to_string()),

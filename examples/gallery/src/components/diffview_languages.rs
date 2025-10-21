@@ -255,7 +255,7 @@ pub fn language_showcase() -> Html {
                         html! {
                             <button
                                 class={classes!(
-                                    "px-3", "py-1", "rounded", "text-sm", "font-medium",
+                                    "px-3", "py-1", "rounded-sm", "text-sm", "font-medium",
                                     "transition-colors", "duration-200",
                                     if idx == *selected_lang {
                                         "bg-blue-500 text-white"
@@ -272,7 +272,7 @@ pub fn language_showcase() -> Html {
                 }
             </div>
             
-            <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
+            <div class="border border-gray-300 dark:border-gray-700 rounded-md overflow-hidden">
                 <div class="bg-gray-100 dark:bg-gray-800 px-3 py-1 border-b border-gray-300 dark:border-gray-700">
                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
                         { format!("{} Example", current_example.name) }

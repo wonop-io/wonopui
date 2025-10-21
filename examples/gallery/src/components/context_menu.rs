@@ -106,7 +106,7 @@ pub fn context_menu_documentation() -> Html {
 
             // Display the clicked item if any
             if let Some(item) = (*clicked_item).clone() {
-                <div class="mb-4 p-3 bg-blue-100 dark:bg-blue-900 rounded">
+                <div class="mb-4 p-3 bg-blue-100 dark:bg-blue-900 rounded-sm">
                     <p class="text-blue-800 dark:text-blue-100">
                         { format!("Last clicked: {}", item) }
                     </p>
@@ -218,7 +218,7 @@ let on_menu_item_click = {
         </ContextMenuSub>
         <!-- Display the clicked item if any -->
         if let Some(item) = (*clicked_item).clone() {
-            <div class="mt-4 p-2 bg-blue-100 rounded">
+            <div class="mt-4 p-2 bg-blue-100 rounded-sm">
                 <p>{ format!("Last clicked: {}", item) }</p>
             </div>
         }

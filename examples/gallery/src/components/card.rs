@@ -130,7 +130,7 @@ pub fn card_documentation() -> Html {
             <StylingSection
                 component_name={"Card".to_string()}
                 class_descriptions={vec![
-                    ("card_container".to_string(), "Styles for the main card container. Consider using rounded corners, shadows, and background colors.".to_string()),
+                    ("card_container".to_string(), "Styles for the main card container. Consider using rounded-sm corners, shadows, and background colors.".to_string()),
                     ("card_header".to_string(), "Styles for the card header section. Often includes padding and a different background color.".to_string()),
                     ("card_title".to_string(), "Styles for the card title. Usually involves font size, weight, and color adjustments.".to_string()),
                     ("card_body".to_string(), "Styles for the card content area. Typically includes padding and potentially a different background color.".to_string()),

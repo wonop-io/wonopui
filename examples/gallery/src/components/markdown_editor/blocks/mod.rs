@@ -342,8 +342,8 @@ pub fn paragraph_block(props: &ParagraphProps) -> Html {
                 "p-2",
                 "min-h-[1.5em]",
                 "w-full",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -386,8 +386,8 @@ pub fn heading1_block(props: &Heading1Props) -> Html {
                 "w-full",
                 "text-3xl",
                 "font-bold",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -430,8 +430,8 @@ pub fn heading2_block(props: &Heading2Props) -> Html {
                 "w-full",
                 "text-2xl",
                 "font-bold",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -474,8 +474,8 @@ pub fn heading3_block(props: &Heading3Props) -> Html {
                 "w-full",
                 "text-xl",
                 "font-bold",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -518,8 +518,8 @@ pub fn bullet_list_block(props: &BulletListProps) -> Html {
                 "w-full",
                 "pl-8",
                 "list-disc",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -562,8 +562,8 @@ pub fn numbered_list_block(props: &NumberedListProps) -> Html {
                 "w-full",
                 "pl-8",
                 "list-decimal",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -611,8 +611,8 @@ pub fn quote_block(props: &QuoteProps) -> Html {
                 "bg-zinc-50",
                 "dark:bg-zinc-800/50",
                 "italic",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -658,8 +658,8 @@ pub fn code_block_block(props: &CodeBlockProps) -> Html {
                 "bg-zinc-100",
                 "dark:bg-zinc-800",
                 "rounded-md",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -751,8 +751,8 @@ pub fn file_block_block(props: &FileBlockProps) -> Html {
                 "flex",
                 "items-center",
                 "gap-2",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             )}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
@@ -826,8 +826,8 @@ pub fn url_block_block(props: &UrlBlockProps) -> Html {
                 "flex",
                 "items-center",
                 "gap-2",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             )}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
@@ -899,7 +899,7 @@ pub fn role_block(props: &RoleProps) -> Html {
                 "cursor-pointer",
                 "mb-3",
                 badge_color,
-                "outline-none"  // Add this to remove focus outline if needed
+                "outline-hidden"  // Add this to remove focus outline if needed
             )}
             data-role={props.role_type.to_string()}
             onclick={props.onclick.clone()}

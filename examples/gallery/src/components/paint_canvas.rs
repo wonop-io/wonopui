@@ -44,7 +44,7 @@ fn paint_canvas_demo() -> Html {
     html! {
         <div>
             <PaintCanvas image_src={(*image_src).clone()} />
-            <button onclick={on_load_image} class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+            <button onclick={on_load_image} class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-sm">
                 {"Load Image"}
             </button>
         </div>
@@ -79,7 +79,7 @@ let on_load_image = {
 html! {
     <div>
         <PaintCanvas image_src={(*image_src).clone()} />
-        <button onclick={on_load_image} class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+        <button onclick={on_load_image} class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-sm">
             {"Load Image"}
         </button>
     </div>

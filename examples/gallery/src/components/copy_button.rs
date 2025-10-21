@@ -13,7 +13,7 @@ pub fn copy_button_documentation() -> Html {
             <H2>{ "Basic Usage" }</H2>
             <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
                 <div class="flex items-center space-x-2">
-                    <code class="bg-gray-100 dark:bg-zinc-700 p-2 rounded">{ "npm install wonopui" }</code>
+                    <code class="bg-gray-100 dark:bg-zinc-700 p-2 rounded-sm">{ "npm install wonopui" }</code>
                     <CopyButton copy_text="npm install wonopui" />
                 </div>
             </div>
@@ -21,7 +21,7 @@ pub fn copy_button_documentation() -> Html {
             <H2>{ "With Custom Children" }</H2>
             <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
                 <div class="flex items-center space-x-2">
-                    <code class="bg-gray-100 dark:bg-zinc-700 p-2 rounded">{ "yarn add wonopui" }</code>
+                    <code class="bg-gray-100 dark:bg-zinc-700 p-2 rounded-sm">{ "yarn add wonopui" }</code>
                     <CopyButton copy_text="yarn add wonopui">
                         <Button variant={ButtonVariant::Secondary} size={ButtonSize::Small}>
                             { "Copy command" }
@@ -33,7 +33,7 @@ pub fn copy_button_documentation() -> Html {
             <H2>{ "With Success Text" }</H2>
             <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
                 <div class="flex items-center space-x-2">
-                    <code class="bg-gray-100 dark:bg-zinc-700 p-2 rounded">{ "pnpm add wonopui" }</code>
+                    <code class="bg-gray-100 dark:bg-zinc-700 p-2 rounded-sm">{ "pnpm add wonopui" }</code>
                     <CopyButton
                         copy_text="pnpm add wonopui"
                         copied_text={Some("Copied to clipboard!".to_string())}

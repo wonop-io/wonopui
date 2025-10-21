@@ -237,12 +237,12 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
             <div class="flex flex-col items-center gap-1 mt-2">
                 // Selection checkbox
                 <button
-                    class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm"
                     onclick={on_select_click}
                     title="Select block"
                 >
                     <div class={classes!(
-                        "w-4", "h-4", "border-2", "rounded",
+                        "w-4", "h-4", "border-2", "rounded-sm",
                         if props.is_selected { 
                             "bg-blue-500 border-blue-500" 
                         } else { 
@@ -261,7 +261,7 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                 <div
                     draggable="true"
                     ondragstart={on_drag_start}
-                    class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-move p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-move p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     title="Drag to reorder"
                 >
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -275,7 +275,7 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                 if props.show_block_actions {
                     <div class="relative">
                         <button
-                            class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                            class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                             onclick={toggle_dropdown}
                             title="Block actions"
                         >
@@ -286,7 +286,7 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                         
                         // Dropdown menu
                         if *dropdown_open {
-                            <div class="absolute left-0 top-8 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-xl min-w-[150px] z-50 animate-in fade-in-0 zoom-in-95 duration-200">
+                            <div class="absolute left-0 top-8 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-md min-w-[150px] z-50 animate-in fade-in-0 zoom-in-95 duration-200">
                                 <div class="p-1">
                                     {
                                         props.block.get_block_actions().iter().map(|(action, label)| {

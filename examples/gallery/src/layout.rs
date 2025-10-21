@@ -151,10 +151,10 @@ pub fn header(props: &HeaderProps) -> Html {
                         </svg>
                     </a>
                 </div>
-                <div class="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between gap-12 px-4 transition sm:px-6 lg:left-72 lg:z-30 lg:px-8 xl:left-80 backdrop-blur-sm lg:left-72 xl:left-80 dark:backdrop-blur bg-white/[var(--bg-opacity-light)] dark:bg-zinc-900/[var(--bg-opacity-dark)]  border-b border-zinc-900/10 dark:border-white/10" style="--bg-opacity-light: 0.5; --bg-opacity-dark: 0.2; ">
+                <div class="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between gap-12 px-4 transition sm:px-6 lg:left-72 lg:z-30 lg:px-8 xl:left-80 backdrop-blur-xs lg:left-72 xl:left-80 dark:backdrop-blur-sm bg-white/[var(--bg-opacity-light)] dark:bg-zinc-900/[var(--bg-opacity-dark)]  border-b border-zinc-900/10 dark:border-white/10" style="--bg-opacity-light: 0.5; --bg-opacity-dark: 0.2; ">
                     <div class="absolute inset-x-0 top-full h-px transition bg-zinc-900/7.5 dark:bg-white/7.5"></div>
                     <div class="hidden lg:block lg:max-w-md lg:flex-auto">
-                        <button type="button" class="hidden h-8 w-full items-center gap-2 rounded-full bg-white pl-2 pr-3 text-sm text-zinc-500 ring-1 ring-zinc-900/10 transition hover:ring-zinc-900/20 ui-not-focus-visible:outline-none lg:flex dark:bg-white/5 dark:text-zinc-400 dark:ring-inset dark:ring-white/10 dark:hover:ring-white/20">
+                        <button type="button" class="hidden h-8 w-full items-center gap-2 rounded-full bg-white pl-2 pr-3 text-sm text-zinc-500 ring-1 ring-zinc-900/10 transition hover:ring-zinc-900/20 ui-not-focus-visible:outline-hidden lg:flex dark:bg-white/5 dark:text-zinc-400 dark:ring-inset dark:ring-white/10 dark:hover:ring-white/20">
                             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="h-5 w-5 stroke-current">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12.01 12a4.25 4.25 0 1 0-6.02-6 4.25 4.25 0 0 0 6.02 6Zm0 0 3.24 3.25"></path>
                             </svg>
@@ -189,7 +189,7 @@ pub fn header(props: &HeaderProps) -> Html {
                         <div class="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15"></div>
                         <div class="flex gap-4">
                             <div class="contents lg:hidden">
-                                <button type="button" class="flex h-6 w-6 items-center justify-center rounded-md transition hover:bg-zinc-900/5 ui-not-focus-visible:outline-none lg:hidden dark:hover:bg-white/5" aria-label="Find something...">
+                                <button type="button" class="flex h-6 w-6 items-center justify-center rounded-md transition hover:bg-zinc-900/5 ui-not-focus-visible:outline-hidden lg:hidden dark:hover:bg-white/5" aria-label="Find something...">
                                     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="h-5 w-5 stroke-zinc-900 dark:stroke-white">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12.01 12a4.25 4.25 0 1 0-6.02-6 4.25 4.25 0 0 0 6.02 6Zm0 0 3.24 3.25"></path>
                                     </svg>
@@ -396,7 +396,7 @@ pub fn test(props: &AppProps) -> Html {
                 <h2 class="scroll-mt-24" id="guides">
                     <a class="group text-inherit no-underline hover:text-inherit" href="#guides">
                         <div class="absolute ml-[calc(-1*var(--width))] mt-1 hidden w-[var(--width)] opacity-0 transition [--width:calc(2.625rem+0.5px+50%-min(50%,calc(theme(maxWidth.lg)+theme(spacing.8))))] group-hover:opacity-100 group-focus:opacity-100 md:block lg:z-50 2xl:[--width:theme(spacing.10)]">
-                            <div class="group/anchor block h-5 w-5 rounded-lg bg-zinc-50 ring-1 ring-inset ring-zinc-300 transition hover:ring-zinc-500 dark:bg-zinc-800 dark:ring-zinc-700 dark:hover:bg-zinc-700 dark:hover:ring-zinc-600">
+                            <div class="group/anchor block h-5 w-5 rounded-md bg-zinc-50 ring-1 ring-inset ring-zinc-300 transition hover:ring-zinc-500 dark:bg-zinc-800 dark:ring-zinc-700 dark:hover:bg-zinc-700 dark:hover:ring-zinc-600">
                                 <svg viewBox="0 0 20 20" fill="none" stroke-linecap="round" aria-hidden="true" class="h-5 w-5 stroke-zinc-500 transition dark:stroke-zinc-400 dark:group-hover/anchor:stroke-white">
                                     <path d="m6.5 11.5-.964-.964a3.535 3.535 0 1 1 5-5l.964.964m2 2 .964.964a3.536 3.536 0 0 1-5 5L8.5 13.5m0-5 3 3"></path>
                                 </svg>
@@ -461,9 +461,9 @@ pub fn test(props: &AppProps) -> Html {
                     <a class="group text-inherit no-underline hover:text-inherit" href="#resources">{"Resources"}</a>
                 </h2>
                 <div class="not-prose mt-4 grid grid-cols-1 gap-8 border-t border-zinc-900/5 pt-10 sm:grid-cols-2 xl:grid-cols-4 dark:border-white/5">
-                    <div class="group relative flex rounded-2xl bg-zinc-50 transition-shadow hover:shadow-md hover:shadow-zinc-900/5 dark:bg-white/2.5 dark:hover:shadow-black/5">
+                    <div class="group relative flex rounded-md bg-zinc-50 transition-shadow-sm hover:shadow-md hover:shadow-zinc-900/5 dark:bg-white/2.5 dark:hover:shadow-black/5">
                         <div class="pointer-events-none">
-                            <div class="absolute inset-0 rounded-2xl transition duration-300 [mask-image:linear-gradient(white,transparent)] group-hover:opacity-50">
+                            <div class="absolute inset-0 rounded-md transition duration-300 [mask-image:linear-gradient(white,transparent)] group-hover:opacity-50">
                                 <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/[0.02] stroke-black/5 dark:fill-white/1 dark:stroke-white/2.5">
                                     <defs>
                                         <pattern id=":r2m:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="16">
@@ -477,8 +477,8 @@ pub fn test(props: &AppProps) -> Html {
                                     </svg>
                                 </svg>
                             </div>
-                            <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#D7EDEA] to-[#F4FBDF] opacity-0 transition duration-300 group-hover:opacity-100 dark:from-[#202D2E] dark:to-[#303428]" style="mask-image: radial-gradient(180px at 0px 0px, white, transparent);"></div>
-                            <div class="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay transition duration-300 group-hover:opacity-100" style="mask-image: radial-gradient(180px at 0px 0px, white, transparent);">
+                            <div class="absolute inset-0 rounded-md bg-gradient-to-r from-[#D7EDEA] to-[#F4FBDF] opacity-0 transition duration-300 group-hover:opacity-100 dark:from-[#202D2E] dark:to-[#303428]" style="mask-image: radial-gradient(180px at 0px 0px, white, transparent);"></div>
+                            <div class="absolute inset-0 rounded-md opacity-0 mix-blend-overlay transition duration-300 group-hover:opacity-100" style="mask-image: radial-gradient(180px at 0px 0px, white, transparent);">
                                 <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/50 stroke-black/70 dark:fill-white/2.5 dark:stroke-white/10">
                                     <defs>
                                         <pattern id=":r2n:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="16">

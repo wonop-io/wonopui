@@ -120,7 +120,7 @@ fn main() {
             <h2 class="text-2xl font-semibold mb-4 mt-8 text-zinc-900 dark:text-white">{ "Interactive Example" }</h2>
             
             // Controls
-            <div class="mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-4" role="region" aria-label="Diff viewer controls">
+            <div class="mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md space-y-4" role="region" aria-label="Diff viewer controls">
                 <div class="flex flex-wrap gap-4">
                     <div>
                         <label for="view-mode-select" class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
@@ -128,7 +128,7 @@ fn main() {
                         </label>
                         <select 
                             id="view-mode-select"
-                            class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                            class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             onchange={on_mode_change}
                             aria-label="Select diff view mode"
                         >
@@ -147,7 +147,7 @@ fn main() {
                             min="0" 
                             max="10" 
                             value={context_lines.to_string()}
-                            class="px-3 py-2 w-20 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                            class="px-3 py-2 w-20 border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             onchange={on_context_lines_change}
                             aria-label="Number of context lines to show"
                             aria-describedby="context-lines-desc"
@@ -201,7 +201,7 @@ fn main() {
                     context_lines={*context_lines}
                     font_size={14}
                     line_height={1.6}
-                    class="shadow-lg"
+                    class="shadow-md"
                 />
             </div>
 
@@ -354,14 +354,14 @@ fn app() -> Html {
             </div>
 
             <h2 class="text-2xl font-semibold mb-4 mt-8 text-zinc-900 dark:text-white">{ "📝 Usage Notes" }</h2>
-            <div class="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4 space-y-2">
+            <div class="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md p-4 space-y-2">
                 <p>{ "The DiffView component uses the 'similar' crate to compute text differences efficiently." }</p>
                 <p>{ "Large files may take a moment to process - consider implementing virtual scrolling for very large diffs." }</p>
                 <p>{ "The component recomputes diffs when the input texts or context lines change." }</p>
             </div>
 
             <h2 class="text-2xl font-semibold mb-4 mt-8 text-zinc-900 dark:text-white">{ "🎨 Styling & Customization" }</h2>
-            <div class="bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+            <div class="bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 rounded-md p-4">
                 <p>{ "The DiffView component uses Tailwind classes for styling. Key classes include:" }</p>
                 <ul class="list-disc list-inside space-y-2 mt-2">
                     <li><code>{"bg-emerald-50"}</code> { " - Added lines background" }</li>

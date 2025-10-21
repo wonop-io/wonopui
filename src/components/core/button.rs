@@ -87,7 +87,7 @@ pub fn button(props: &ButtonProps) -> Html {
 }
 
 // Snippets to update brandguide:
-// ("button_base".to_string(), "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background".to_string()),
+// ("button_base".to_string(), "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background".to_string()),
 // ("button_primary".to_string(), "bg-primary text-primary-foreground hover:bg-primary/90".to_string()),
 // ("button_secondary".to_string(), "bg-secondary text-secondary-foreground hover:bg-secondary/80".to_string()),
 // ("button_success".to_string(), "bg-green-500 text-white hover:bg-green-600".to_string()),

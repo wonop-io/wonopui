@@ -80,7 +80,7 @@ pub struct CodeEditorProps {
     #[prop_or_default]
     pub on_focus: Option<Callback<FocusEvent>>,
 
-    /// Optional callback for code blur
+    /// Optional callback for code blur-sm
     #[prop_or_default]
     pub on_blur: Option<Callback<FocusEvent>>,
 
@@ -214,7 +214,7 @@ impl Component for CodeEditor {
                     class={classes!(
                         props.class.clone(),
                         "relative", "border", "border-gray-300", "dark:border-gray-700",
-                        "bg-white", "dark:bg-gray-900", "rounded", "overflow-hidden"
+                        "bg-white", "dark:bg-gray-900", "rounded-sm", "overflow-hidden"
                     )}
                     style={format!("{} {}", container_style, max_height_style)}
                 >
@@ -262,7 +262,7 @@ impl Component for CodeEditor {
                             // Actual textarea - transparent text, visible cursor
                             <textarea
                                 ref={self.textarea_ref.clone()}
-                                class="absolute inset-0 p-2 m-0 resize-none bg-transparent outline-none border-none whitespace-pre-wrap break-words"
+                                class="absolute inset-0 p-2 m-0 resize-none bg-transparent outline-hidden border-none whitespace-pre-wrap break-words"
                                 style={format!("{} color: transparent; caret-color: #3b82f6; font-family: inherit; font-size: inherit; line-height: inherit;", editor_style)}
                                 value={self.code.clone()}
                                 readonly={props.read_only}
@@ -333,7 +333,7 @@ impl CodeEditor {
             // Blur event
             {
                 let link = ctx.link().clone();
-                let listener = EventListener::new(&textarea, "blur", move |event| {
+                let listener = EventListener::new(&textarea, "blur-sm", move |event| {
                     link.send_message(CodeEditorMsg::Blur(
                         event.clone().dyn_into::<FocusEvent>().unwrap(),
                     ));
@@ -416,7 +416,7 @@ impl CodeEditor {
                 <div key={i} class={format!("leading-[inherit] flex items-center justify-end gap-1 {}", diff_classes)}>
                     <span>{ line_num }</span>
                     if has_diff.is_some() {
-                        <span class="w-3 h-3 rounded-full bg-current shadow-lg animate-pulse"></span>
+                        <span class="w-3 h-3 rounded-full bg-current shadow-md animate-pulse"></span>
                     }
                 </div>
             }
@@ -486,9 +486,9 @@ impl CodeEditor {
 
             let line_index = diff.line_number - 1;
             let bg_class = match diff.diff_type {
-                DiffType::Added => "bg-emerald-200 dark:bg-emerald-800 bg-opacity-60 dark:bg-opacity-40 shadow-sm",
-                DiffType::Removed => "bg-rose-200 dark:bg-rose-800 bg-opacity-60 dark:bg-opacity-40 shadow-sm",
-                DiffType::Modified => "bg-amber-200 dark:bg-amber-800 bg-opacity-60 dark:bg-opacity-40 shadow-sm",
+                DiffType::Added => "bg-emerald-200 dark:bg-emerald-800/40 shadow-xs",
+                DiffType::Removed => "bg-rose-200 dark:bg-rose-800/40 shadow-xs",
+                DiffType::Modified => "bg-amber-200 dark:bg-amber-800/40 shadow-xs",
             };
 
             html! {
@@ -521,15 +521,15 @@ impl CodeEditor {
                 // Inline annotation - show message directly in the editor
                 let column_pos = annotation.column_range.map(|(start, _)| start).unwrap_or(0);
                 let annotation_class = match annotation.annotation_type {
-                    AnnotationType::Error => "text-rose-700 dark:text-rose-300 bg-rose-100 dark:bg-rose-900 border border-rose-300 dark:border-rose-700 shadow-lg font-semibold",
-                    AnnotationType::Warning => "text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900 border border-amber-300 dark:border-amber-700 shadow-lg font-semibold",
-                    AnnotationType::Info => "text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900 border border-sky-300 dark:border-sky-700 shadow-lg font-semibold",
-                    AnnotationType::Success => "text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900 border border-emerald-300 dark:border-emerald-700 shadow-lg font-semibold",
+                    AnnotationType::Error => "text-rose-700 dark:text-rose-300 bg-rose-100 dark:bg-rose-900 border border-rose-300 dark:border-rose-700 shadow-md font-semibold",
+                    AnnotationType::Warning => "text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900 border border-amber-300 dark:border-amber-700 shadow-md font-semibold",
+                    AnnotationType::Info => "text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900 border border-sky-300 dark:border-sky-700 shadow-md font-semibold",
+                    AnnotationType::Success => "text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900 border border-emerald-300 dark:border-emerald-700 shadow-md font-semibold",
                 };
 
                 elements.push(html! {
                     <div 
-                        class={format!("absolute px-2 py-1 rounded text-xs pointer-events-auto {}", annotation_class)}
+                        class={format!("absolute px-2 py-1 rounded-sm text-xs pointer-events-auto {}", annotation_class)}
                         style={format!(
                             "top: {}px; left: {}ch; z-index: 10;",
                             line_top + props.font_size as f32 * props.line_height,
@@ -543,10 +543,10 @@ impl CodeEditor {
             } else {
                 // Gutter annotation - show indicator with tooltip
                 let annotation_class = match annotation.annotation_type {
-                    AnnotationType::Error => "text-rose-500 border-rose-500 shadow-lg shadow-rose-200 dark:shadow-rose-800",
-                    AnnotationType::Warning => "text-amber-500 border-amber-500 shadow-lg shadow-amber-200 dark:shadow-amber-800", 
-                    AnnotationType::Info => "text-sky-500 border-sky-500 shadow-lg shadow-sky-200 dark:shadow-sky-800",
-                    AnnotationType::Success => "text-emerald-500 border-emerald-500 shadow-lg shadow-emerald-200 dark:shadow-emerald-800",
+                    AnnotationType::Error => "text-rose-500 border-rose-500 shadow-md shadow-rose-200 dark:shadow-rose-800",
+                    AnnotationType::Warning => "text-amber-500 border-amber-500 shadow-md shadow-amber-200 dark:shadow-amber-800", 
+                    AnnotationType::Info => "text-sky-500 border-sky-500 shadow-md shadow-sky-200 dark:shadow-sky-800",
+                    AnnotationType::Success => "text-emerald-500 border-emerald-500 shadow-md shadow-emerald-200 dark:shadow-emerald-800",
                 };
 
                 elements.push(html! {
@@ -558,7 +558,7 @@ impl CodeEditor {
                         )}
                     >
                         <div class="w-4 h-4 rounded-full border-2 bg-white dark:bg-gray-800 cursor-help hover:scale-110 transition-transform"></div>
-                        <div class="absolute hidden group-hover:block bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded shadow-lg z-50 left-6 top-0 whitespace-nowrap">
+                        <div class="absolute hidden group-hover:block bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded-sm shadow-md z-50 left-6 top-0 whitespace-nowrap">
                             <div class="text-sm text-gray-800 dark:text-gray-200">{ &annotation.message }</div>
                         </div>
                     </div>
@@ -567,10 +567,10 @@ impl CodeEditor {
                 // Add underline for column range
                 if let Some((start, end)) = annotation.column_range {
                     let underline_class = match annotation.annotation_type {
-                        AnnotationType::Error => "border-b-4 border-rose-500 border-double shadow-sm animate-pulse",
-                        AnnotationType::Warning => "border-b-4 border-amber-500 border-double shadow-sm animate-pulse",
-                        AnnotationType::Info => "border-b-4 border-sky-500 border-double shadow-sm animate-pulse", 
-                        AnnotationType::Success => "border-b-4 border-emerald-500 border-double shadow-sm animate-pulse",
+                        AnnotationType::Error => "border-b-4 border-rose-500 border-double shadow-xs animate-pulse",
+                        AnnotationType::Warning => "border-b-4 border-amber-500 border-double shadow-xs animate-pulse",
+                        AnnotationType::Info => "border-b-4 border-sky-500 border-double shadow-xs animate-pulse", 
+                        AnnotationType::Success => "border-b-4 border-emerald-500 border-double shadow-xs animate-pulse",
                     };
 
                     elements.push(html! {
@@ -623,8 +623,8 @@ impl CodeEditor {
                             column_pos
                         )}
                     >
-                        <div class="w-3 h-3 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 shadow-lg shadow-violet-200 dark:shadow-violet-800 cursor-help hover:scale-125 transition-all"></div>
-                        <div class="absolute hidden group-hover:block bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded shadow-lg z-50 left-4 top-0 whitespace-nowrap">
+                        <div class="w-3 h-3 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 shadow-md shadow-violet-200 dark:shadow-violet-800 cursor-help hover:scale-125 transition-all"></div>
+                        <div class="absolute hidden group-hover:block bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded-sm shadow-md z-50 left-4 top-0 whitespace-nowrap">
                             <div class="text-sm text-gray-800 dark:text-gray-200">{ &hint.hint }</div>
                         </div>
                     </div>
@@ -679,10 +679,10 @@ impl CodeEditor {
                     class="absolute right-2 flex gap-1 pointer-events-auto z-20"
                     style={format!("top: {}px;", control_top)}
                 >
-                    <button class="px-2 py-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-sm text-xs font-medium transition-colors shadow-sm opacity-80 hover:opacity-100">
+                    <button class="px-2 py-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xs text-xs font-medium transition-colors shadow-xs opacity-80 hover:opacity-100">
                         {"✓"}
                     </button>
-                    <button class="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded-sm text-xs font-medium transition-colors shadow-sm opacity-80 hover:opacity-100">
+                    <button class="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded-xs text-xs font-medium transition-colors shadow-xs opacity-80 hover:opacity-100">
                         {"✗"}
                     </button>
                 </div>

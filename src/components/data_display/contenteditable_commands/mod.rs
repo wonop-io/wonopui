@@ -93,7 +93,7 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
         });
     }
 
-    // Focus/blur based on is_active prop changes
+    // Focus/blur-sm based on is_active prop changes
     {
         let node_ref = node_ref.clone();
         let is_active = props.is_active;
@@ -369,7 +369,7 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
         
         html! {
             <div
-                class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-xl max-h-64 overflow-y-auto min-w-[250px] animate-in fade-in-0 zoom-in-95 duration-200"
+                class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-md max-h-64 overflow-y-auto min-w-[250px] animate-in fade-in-0 zoom-in-95 duration-200"
                 style={menu_style}
             >
                 <div class="p-1">
@@ -443,7 +443,7 @@ pub fn contenteditable_with_commands<T: Clone + PartialEq + 'static>(
         <>
             <@{props.tag}
                 ref={node_ref}
-                class={classes!("w-full","outline-none","min-h-[1.5rem]","p-1", "leading-normal", "empty:before:content-['\\00a0']", "empty:before:inline-block", "empty:before:h-0", props.class.clone())}
+                class={classes!("w-full","outline-hidden","min-h-[1.5rem]","p-1", "leading-normal", "empty:before:content-['\\00a0']", "empty:before:inline-block", "empty:before:h-0", props.class.clone())}
                 contenteditable="true"
                 oninput={on_input}
                 onkeydown={on_keydown}

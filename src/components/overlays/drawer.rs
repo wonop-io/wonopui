@@ -232,8 +232,8 @@ pub fn drawer_close<T: Clone + PartialEq + 'static>(props: &DrawerCloseProps) ->
 }
 
 // Snippets to update brandguide:
-// ("drawer_provider".to_string(), "fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75".to_string()),
-// ("drawer_container".to_string(), "bg-white rounded-lg shadow-lg max-w-md w-full".to_string()),
+// ("drawer_provider".to_string(), "fixed inset-0 z-50 flex items-center justify-center bg-gray-800/75".to_string()),
+// ("drawer_container".to_string(), "bg-white rounded-md shadow-md max-w-md w-full".to_string()),
 // ("drawer_header".to_string(), "p-4 border-b border-gray-200".to_string()),
 // ("drawer_title".to_string(), "text-lg font-semibold text-gray-900".to_string()),
 // ("drawer_description".to_string(), "text-sm text-gray-600".to_string()),

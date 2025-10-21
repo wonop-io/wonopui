@@ -108,8 +108,8 @@ pub fn group_button_trigger(props: &GroupButtonTriggerProps) -> Html {
 // Snippets to update brandguide:
 // ("group_button_container".to_string(), "flex w-full".to_string()),
 // ("group_button_list".to_string(), "h-10 items-center justify-center rounded-md bg-gray-100 p-1 text-gray-600".to_string()),
-// ("group_button_trigger".to_string(), "inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium transition-all ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50".to_string()),
-// ("group_button_trigger_active".to_string(), "bg-white text-black shadow-sm".to_string()),
+// ("group_button_trigger".to_string(), "inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium transition-all ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50".to_string()),
+// ("group_button_trigger_active".to_string(), "bg-white text-black shadow-xs".to_string()),
 // ("group_button_trigger_inactive".to_string(), "bg-gray-200 text-gray-600".to_string()),
 // ("group_button_demo".to_string(), "w-[400px]".to_string()),
 //

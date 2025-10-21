@@ -162,7 +162,7 @@ pub fn kanban_column(props: &KanbanColumnProps) -> Html {
     let onhover = use_context::<Callback<(Option<String>, Option<String>, Option<DropPosition>)>>();
     let global_ondragend = use_context::<Callback<()>>();
     // Use hardcoded styles since these components may not be in the brandguide yet
-    let kanban_column = "flex flex-col min-w-[300px] border rounded-md bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 shadow-sm";
+    let kanban_column = "flex flex-col min-w-[300px] border rounded-md bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 shadow-xs";
     let kanban_column_header = "p-4 font-semibold border-b border-zinc-200 dark:border-zinc-700";
     let kanban_column_content = "p-3 flex-1 flex flex-col gap-3 min-h-[100px] overflow-y-auto";
     let kanban_column_over = "border-2 border-blue-500 dark:border-blue-400";
@@ -488,7 +488,7 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
     let onhover = use_context::<Callback<(Option<String>, Option<String>, Option<DropPosition>)>>();
     let card_ref = use_node_ref();
     // Use hardcoded styles since these components may not be in the brandguide yet
-    let kanban_card = "border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-800 p-4 cursor-grab active:cursor-grabbing shadow-sm";
+    let kanban_card = "border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-800 p-4 cursor-grab active:cursor-grabbing shadow-xs";
     let kanban_card_title = "font-medium pb-2";
     let kanban_card_content = "text-sm text-zinc-600 dark:text-zinc-400";
     let kanban_card_dragging = "opacity-50 shadow-md";

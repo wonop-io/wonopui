@@ -127,8 +127,8 @@ impl BlockTrait for EditorBlockType {
                 "flex",
                 "items-center",
                 "gap-2",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             ),
             EditorBlockType::UrlBlock => classes!(
                 "p-2",
@@ -143,8 +143,8 @@ impl BlockTrait for EditorBlockType {
                 "flex",
                 "items-center",
                 "gap-2",
-                "outline-none",
-                "focus:outline-none"
+                "outline-hidden",
+                "focus:outline-hidden"
             ),
             EditorBlockType::Role(_) => classes!(
                 "inline-flex",

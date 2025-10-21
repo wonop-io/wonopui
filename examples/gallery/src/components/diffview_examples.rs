@@ -36,7 +36,7 @@ impl DiffExample {
                     theme={theme.to_string()}
                     font_size={13}
                     line_height={1.5}
-                    class="shadow-lg"
+                    class="shadow-md"
                 />
             </div>
         }
@@ -440,10 +440,10 @@ pub fn use_case_examples() -> Html {
                         html! {
                             <button
                                 class={classes!(
-                                    "px-3", "py-2", "rounded-lg", "text-sm", "font-medium",
+                                    "px-3", "py-2", "rounded-md", "text-sm", "font-medium",
                                     "transition-all", "duration-200",
                                     if idx == *selected_example {
-                                        "bg-blue-500 text-white shadow-lg transform scale-105"
+                                        "bg-blue-500 text-white shadow-md transform scale-105"
                                     } else {
                                         "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                                     }
@@ -458,9 +458,9 @@ pub fn use_case_examples() -> Html {
             </div>
             
             // Controls
-            <div class="flex flex-wrap gap-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            <div class="flex flex-wrap gap-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md">
                 <button
-                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                    class="px-4 py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 transition-colors"
                     onclick={on_mode_toggle}
                 >
                     { format!("Mode: {}", if matches!(*mode, DiffViewMode::SideBySide) { "Side-by-Side" } else { "Inline" }) }
@@ -468,7 +468,7 @@ pub fn use_case_examples() -> Html {
                 
                 <button
                     class={classes!(
-                        "px-4", "py-2", "rounded", "transition-colors",
+                        "px-4", "py-2", "rounded-sm", "transition-colors",
                         if *show_line_numbers {
                             "bg-green-500 text-white hover:bg-green-600"
                         } else {
@@ -481,7 +481,7 @@ pub fn use_case_examples() -> Html {
                 </button>
                 
                 <select
-                    class="px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
+                    class="px-4 py-2 rounded-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
                     onchange={on_theme_change}
                     value={(*theme).clone()}
                 >
@@ -492,7 +492,7 @@ pub fn use_case_examples() -> Html {
             </div>
             
             // Render selected example
-            <div class="border-2 border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <div class="border-2 border-gray-200 dark:border-gray-700 rounded-md overflow-hidden">
                 { examples[*selected_example].render((*mode).clone(), *show_line_numbers, &theme) }
             </div>
         </div>

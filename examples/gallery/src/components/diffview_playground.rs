@@ -99,7 +99,7 @@ pub fn diffview_playground() -> Html {
     
     html! {
         <div class="space-y-6">
-            <div class="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div class="bg-blue-50 dark:bg-blue-950 p-4 rounded-md border border-blue-200 dark:border-blue-800">
                 <h3 class="text-lg font-bold text-blue-900 dark:text-blue-100 mb-2">
                     {"🎮 Interactive Playground"}
                 </h3>
@@ -114,7 +114,7 @@ pub fn diffview_playground() -> Html {
                     {"Load Preset:"}
                 </span>
                 <button
-                    class="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-sm"
+                    class="px-3 py-1 bg-purple-500 text-white rounded-sm hover:bg-purple-600 transition-colors text-sm"
                     onclick={
                         let load_preset = load_preset.clone();
                         Callback::from(move |_| load_preset.emit("refactor"))
@@ -123,7 +123,7 @@ pub fn diffview_playground() -> Html {
                     {"Python Refactor"}
                 </button>
                 <button
-                    class="px-3 py-1 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors text-sm"
+                    class="px-3 py-1 bg-orange-500 text-white rounded-sm hover:bg-orange-600 transition-colors text-sm"
                     onclick={
                         let load_preset = load_preset.clone();
                         Callback::from(move |_| load_preset.emit("bugfix"))
@@ -132,7 +132,7 @@ pub fn diffview_playground() -> Html {
                     {"Java Bug Fix"}
                 </button>
                 <button
-                    class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
+                    class="px-3 py-1 bg-green-500 text-white rounded-sm hover:bg-green-600 transition-colors text-sm"
                     onclick={
                         let load_preset = load_preset.clone();
                         Callback::from(move |_| load_preset.emit("feature"))
@@ -149,7 +149,7 @@ pub fn diffview_playground() -> Html {
                         {"Original Text"}
                     </label>
                     <textarea
-                        class="w-full h-40 p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 font-mono text-sm"
+                        class="w-full h-40 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 font-mono text-sm"
                         value={(*old_text).clone()}
                         onchange={on_old_text_change}
                         placeholder="Enter original text..."
@@ -160,7 +160,7 @@ pub fn diffview_playground() -> Html {
                         {"Modified Text"}
                     </label>
                     <textarea
-                        class="w-full h-40 p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 font-mono text-sm"
+                        class="w-full h-40 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 font-mono text-sm"
                         value={(*new_text).clone()}
                         onchange={on_new_text_change}
                         placeholder="Enter modified text..."
@@ -169,7 +169,7 @@ pub fn diffview_playground() -> Html {
             </div>
             
             // Controls panel
-            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg space-y-4">
+            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-md space-y-4">
                 <h4 class="font-semibold text-gray-700 dark:text-gray-300">{"Display Options"}</h4>
                 
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -179,7 +179,7 @@ pub fn diffview_playground() -> Html {
                             {"View Mode"}
                         </label>
                         <select
-                            class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+                            class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700"
                             onchange={
                                 let mode = mode.clone();
                                 Callback::from(move |e: Event| {
@@ -203,7 +203,7 @@ pub fn diffview_playground() -> Html {
                             {"Language"}
                         </label>
                         <select
-                            class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+                            class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700"
                             value={(*language).clone()}
                             onchange={
                                 let language = language.clone();
@@ -235,7 +235,7 @@ pub fn diffview_playground() -> Html {
                             {"Theme"}
                         </label>
                         <select
-                            class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+                            class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700"
                             value={(*theme).clone()}
                             onchange={
                                 let theme = theme.clone();
@@ -261,7 +261,7 @@ pub fn diffview_playground() -> Html {
                             type="number"
                             min="0"
                             max="10"
-                            class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+                            class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700"
                             value={context_lines.to_string()}
                             onchange={
                                 let context_lines = context_lines.clone();
@@ -361,7 +361,7 @@ pub fn diffview_playground() -> Html {
             // Live preview
             <div>
                 <h4 class="font-semibold text-gray-700 dark:text-gray-300 mb-2">{"Preview"}</h4>
-                <div class="border-2 border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                <div class="border-2 border-gray-200 dark:border-gray-700 rounded-md overflow-hidden">
                     <DiffView
                         old_text={(*old_text).clone()}
                         new_text={(*new_text).clone()}

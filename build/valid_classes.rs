@@ -76,7 +76,7 @@ pub fn is_valid_tailwind_class(class: &str) -> bool {
         // Borders
         "border",
         "border-",
-        "rounded",
+        "rounded-sm",
         "rounded-",
         "divide-",
         "ring-",

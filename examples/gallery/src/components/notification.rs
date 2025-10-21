@@ -105,13 +105,13 @@ fn notification_demo() -> Html {
 
     html! {
         <div class="space-x-4">
-            <button class="border border-gray-300 rounded px-4 py-2" onclick={on_click_simple}>
+            <button class="border border-gray-300 rounded-sm px-4 py-2" onclick={on_click_simple}>
                 { "Show Simple Notification" }
             </button>
-            <button class="border border-gray-300 rounded px-4 py-2" onclick={on_click_with_action}>
+            <button class="border border-gray-300 rounded-sm px-4 py-2" onclick={on_click_with_action}>
                 { "Show Notification with Action" }
             </button>
-            <button class="border border-gray-300 rounded px-4 py-2" onclick={on_click_long}>
+            <button class="border border-gray-300 rounded-sm px-4 py-2" onclick={on_click_long}>
                 { "Show Long Notification" }
             </button>
         </div>
@@ -169,10 +169,10 @@ fn notification_demo() -> Html {
 
     html! {
         <div class="space-x-4">
-            <button class="border border-gray-300 rounded px-4 py-2" onclick={on_click_simple}>
+            <button class="border border-gray-300 rounded-sm px-4 py-2" onclick={on_click_simple}>
                 { "Show Simple Notification" }
             </button>
-            <button class="border border-gray-300 rounded px-4 py-2" onclick={on_click_with_action}>
+            <button class="border border-gray-300 rounded-sm px-4 py-2" onclick={on_click_with_action}>
                 { "Show Notification with Action" }
             </button>
         </div>

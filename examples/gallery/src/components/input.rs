@@ -133,7 +133,7 @@ pub fn input_documentation() -> Html {
             <StylingSection
                 component_name="Input"
                 class_descriptions={vec![
-                    ("input_base".to_string(), "Base styling for the input. Default: 'border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600'".to_string()),
+                    ("input_base".to_string(), "Base styling for the input. Default: 'border rounded-sm px-4 py-2 focus:outline-hidden focus:ring-2 focus:ring-blue-600'".to_string()),
                 ]}
             />
         </Container>

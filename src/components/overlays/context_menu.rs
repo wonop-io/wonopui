@@ -137,7 +137,7 @@ pub fn context_menu_content(props: &ContextMenuContentProps) -> Html {
     html! {
         <div
             ref={menu_ref}
-            class={classes!(props.class.clone(), "bg-white","dark:bg-zinc-800","border","border-gray-200","dark:border-gray-700","rounded-md","shadow-lg","p-1","z-50")}
+            class={classes!(props.class.clone(), "bg-white","dark:bg-zinc-800","border","border-gray-200","dark:border-gray-700","rounded-md","shadow-md","p-1","z-50")}
             {style}
             tabindex="0"
             {onblur}
@@ -189,7 +189,7 @@ pub fn context_menu_item(props: &ContextMenuItemProps) -> Html {
         "px-2",
         "py-1.5",
         "text-sm",
-        "outline-none",
+        "outline-hidden",
         if props.inset { "pl-8" } else { "" },
         if props.disabled {
             "text-gray-400 dark:text-gray-500 cursor-not-allowed"
@@ -238,7 +238,7 @@ pub fn context_menu_sub_trigger(props: &ContextMenuSubTriggerProps) -> Html {
         "px-2",
         "py-1.5",
         "text-sm",
-        "outline-none",
+        "outline-hidden",
         "text-gray-700",
         "dark:text-gray-200",
         "hover:bg-gray-100",
@@ -268,7 +268,7 @@ pub struct ContextMenuSubContentProps {
 #[function_component(ContextMenuSubContent)]
 pub fn context_menu_sub_content(props: &ContextMenuSubContentProps) -> Html {
     html! {
-        <div class={classes!(props.class.clone(), "absolute","left-full","top-0","min-w-[8rem]","bg-white","dark:bg-zinc-800","border","border-gray-200","dark:border-gray-700","rounded-md","shadow-lg","p-1","z-50")}>
+        <div class={classes!(props.class.clone(), "absolute","left-full","top-0","min-w-[8rem]","bg-white","dark:bg-zinc-800","border","border-gray-200","dark:border-gray-700","rounded-md","shadow-md","p-1","z-50")}>
             { for props.children.iter() }
         </div>
     }
@@ -317,7 +317,7 @@ pub fn context_menu_checkbox_item(props: &ContextMenuCheckboxItemProps) -> Html 
         "px-2",
         "py-1.5",
         "text-sm",
-        "outline-none",
+        "outline-hidden",
         "text-gray-700",
         "dark:text-gray-200",
         "hover:bg-gray-100",
@@ -428,7 +428,7 @@ pub fn context_menu_radio_item(props: &ContextMenuRadioItemProps) -> Html {
         "px-2",
         "py-1.5",
         "text-sm",
-        "outline-none",
+        "outline-hidden",
         "text-gray-700",
         "dark:text-gray-200",
         "hover:bg-gray-100",

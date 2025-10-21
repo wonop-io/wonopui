@@ -182,7 +182,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
         })
     };
 
-    // Handle blur events
+    // Handle blur-sm events
     let on_blur_block = {
         let on_blur = props.on_blur.clone();
         Callback::from(move |event: FocusEvent| {

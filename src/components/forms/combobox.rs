@@ -115,7 +115,7 @@ pub fn combobox(props: &ComboboxProps) -> Html {
         })
     };
 
-    // Close on blur, but only if the mouse is not down inside the container
+    // Close on blur-sm, but only if the mouse is not down inside the container
     let on_blur = {
         let open = open.clone();
         let is_mouse_down_inside = is_mouse_down_inside.clone();
@@ -244,10 +244,10 @@ pub fn combobox(props: &ComboboxProps) -> Html {
 }
 
 // New entries in the brand guide:
-// combobox_button: "inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-[200px] justify-between",
+// combobox_button: "inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-[200px] justify-between",
 // combobox_button_open: "bg-accent text-accent-foreground",
 // combobox_button_disabled: "disabled:pointer-events-none disabled:opacity-50",
-// combobox_list: "absolute mt-1 w-[200px] bg-background border border-input rounded-md shadow-lg",
+// combobox_list: "absolute mt-1 w-[200px] bg-background border border-input rounded-md shadow-md",
 // combobox_item: "px-4 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground",
 // combobox_item_selected: "bg-accent text-accent-foreground",
 // combobox_heading: "px-4 py-1 text-xs font-semibold text-foreground/70 uppercase"

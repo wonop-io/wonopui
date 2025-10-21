@@ -28,7 +28,7 @@ pub struct CopyButtonProps {
 ///         <CopyButton
 ///             copy_text="Hello, World!"
 ///             copied_text={Some("Copied!".to_string())}
-///             class="p-2 bg-blue-500 text-white rounded"
+///             class="p-2 bg-blue-500 text-white rounded-sm"
 ///         >
 ///             {"Copy to clipboard"}
 ///         </CopyButton>
