@@ -70,6 +70,8 @@ pub enum Route {
     KanbanExample,
     #[at("/label")]
     LabelExample,
+    #[at("/markdown-editor")]
+    MarkdownEditorExample,
     #[at("/media-query")]
     MediaQueryExample,
     #[at("/multicol-sidebar")]

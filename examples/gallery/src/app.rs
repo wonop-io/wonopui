@@ -134,6 +134,9 @@ pub fn app() -> Html {
         Route::LabelExample => {
             html! { <LabelDocumentation /> }
         }
+        Route::MarkdownEditorExample => {
+            html! { <MarkdownEditorDocumentation /> }
+        }
         Route::MediaQueryExample => {
             html! { <MediaQueryDocumentation /> }
         }

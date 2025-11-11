@@ -70,6 +70,7 @@ TailwindColorPicker = []
 Textarea = []
 Toggle = []
 Typography = []
+MarkdownEditor = ["Textarea", "Button", "Select", "TagInput", "Tabs"]
 WindowProvider = []
 Layout = []
 MulticolSidebar = ["Layout"]
@@ -131,6 +132,7 @@ everything = [
     "Textarea",
     "Toggle",
     "Typography",
+    "MarkdownEditor",
     "WindowProvider",
     "Layout",
     "MulticolSidebar",
@@ -205,6 +207,7 @@ syntect = { version = "5.2.0", default-features = false, features = [
     "metadata",
     "regex-fancy",
 ] }
+pulldown-cmark = { version = "0.11", default-features = false, features = ["html"] }
 
 [build-dependencies]
 serde = { version = "1.0.195", features = ["derive"] }

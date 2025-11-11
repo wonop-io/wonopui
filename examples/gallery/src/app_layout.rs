@@ -163,6 +163,7 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
                 <SidebarLink<Route> label="Iframe" to={Route::IframeExample} />
                 <SidebarLink<Route> label="Input" to={Route::InputExample} />
                 <SidebarLink<Route> label="Label" to={Route::LabelExample} />
+                <SidebarLink<Route> label="Markdown Editor" to={Route::MarkdownEditorExample} />
                 <SidebarLink<Route> label="Media Query" to={Route::MediaQueryExample} />
                 <SidebarLink<Route> label="Multicol Sidebar" to={Route::MulticolSidebarExample} />
                 <SidebarLink<Route> label="Notification" to={Route::NotificationExample} />

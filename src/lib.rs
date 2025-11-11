@@ -49,6 +49,12 @@ pub use components::forms::switch::SwitchButton;
 #[cfg(feature = "Input")]
 pub use components::forms::input::Input;
 
+// Markdown Editor
+#[cfg(feature = "MarkdownEditor")]
+pub use components::markdown_editor::{
+    EditorMode, FileAttachment, MarkdownEditor, MarkdownEditorProps, ToolbarAction,
+};
+
 // Layout components
 #[cfg(feature = "Container")]
 pub use components::layout::container::{Container, ContainerVariant};
