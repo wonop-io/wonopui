@@ -158,6 +158,7 @@ pub struct CodeEditor {
     keymap: Option<HashMap<String, Callback<KeyboardEvent>>>,
     keymap_enabled: bool,
     is_drag_over: bool,
+    drag_counter: i32, // Counter to track nested drag enter/leave events
 }
 
 impl CodeEditor {
@@ -792,6 +793,7 @@ impl Component for CodeEditor {
             keymap: props.keymap.clone(),
             keymap_enabled: props.enable_keymap,
             is_drag_over: false,
+            drag_counter: 0,
         }
     }
 
@@ -933,6 +935,7 @@ impl Component for CodeEditor {
                 }
             }
             CodeEditorMsg::DragEnter => {
+                self.drag_counter += 1;
                 if !self.is_drag_over {
                     self.is_drag_over = true;
                     true
@@ -941,15 +944,19 @@ impl Component for CodeEditor {
                 }
             }
             CodeEditorMsg::DragLeave => {
-                if self.is_drag_over {
-                    self.is_drag_over = false;
-                    true
-                } else {
-                    false
+                self.drag_counter -= 1;
+                if self.drag_counter <= 0 {
+                    self.drag_counter = 0;
+                    if self.is_drag_over {
+                        self.is_drag_over = false;
+                        return true;
+                    }
                 }
+                false
             }
             CodeEditorMsg::Drop(files) => {
                 self.is_drag_over = false;
+                self.drag_counter = 0;
                 if let Some(callback) = &ctx.props().on_files_drop {
                     callback.emit(files);
                 }
@@ -1005,12 +1012,27 @@ impl Component for CodeEditor {
             diff_map.entry(line_idx).or_default().push(diff);
         }
 
-        // Drag and drop event handlers
+        // Drag and drop event handlers - make them robust by handling all events properly
+        let ondragenter = if props.enable_drag_drop {
+            let link = ctx.link().clone();
+            Some(Callback::from(move |e: DragEvent| {
+                e.prevent_default();
+                e.stop_propagation();
+                link.send_message(CodeEditorMsg::DragEnter);
+            }))
+        } else {
+            None
+        };
+
         let ondragover = if props.enable_drag_drop {
             let link = ctx.link().clone();
             Some(Callback::from(move |e: DragEvent| {
                 e.prevent_default();
-                link.send_message(CodeEditorMsg::DragEnter);
+                e.stop_propagation();
+                // Set the drop effect to show a copy cursor
+                if let Some(dt) = e.data_transfer() {
+                    dt.set_drop_effect("copy");
+                }
             }))
         } else {
             None
@@ -1018,7 +1040,9 @@ impl Component for CodeEditor {
 
         let ondragleave = if props.enable_drag_drop {
             let link = ctx.link().clone();
-            Some(Callback::from(move |_e: DragEvent| {
+            Some(Callback::from(move |e: DragEvent| {
+                e.prevent_default();
+                e.stop_propagation();
                 link.send_message(CodeEditorMsg::DragLeave);
             }))
         } else {
@@ -1029,6 +1053,8 @@ impl Component for CodeEditor {
             let link = ctx.link().clone();
             Some(Callback::from(move |e: DragEvent| {
                 e.prevent_default();
+                e.stop_propagation();
+
                 let mut files = Vec::new();
 
                 if let Some(data_transfer) = e.data_transfer() {
@@ -1049,6 +1075,12 @@ impl Component for CodeEditor {
             None
         };
 
+        // Clone the drag handlers for use on textarea
+        let textarea_ondragenter = ondragenter.clone();
+        let textarea_ondragover = ondragover.clone();
+        let textarea_ondragleave = ondragleave.clone();
+        let textarea_ondrop = ondrop.clone();
+
         html! {
             <>
                 <styles::CodeEditorStyles />
@@ -1063,6 +1095,7 @@ impl Component for CodeEditor {
                         if self.is_drag_over { "editor-drag-over" } else { "" }
                     )}
                     style={format!("{} {}", container_style, max_height_style)}
+                    ondragenter={ondragenter}
                     ondragover={ondragover}
                     ondragleave={ondragleave}
                     ondrop={ondrop}
@@ -1082,14 +1115,15 @@ impl Component for CodeEditor {
 
                         // Main editor area with scrollable content - this will control scrolling
                         <div class="flex-grow relative overflow-hidden">
-                            // Drag and drop indicator
+                            // Drag and drop indicator - positioned above everything
                             if self.is_drag_over && props.enable_drag_drop {
                                 <div class="editor-drag-indicator">
-                                    <div class="bg-white dark:bg-gray-800 p-4 rounded shadow-lg">
-                                        <svg class="w-12 h-12 text-blue-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="editor-drag-indicator-content">
+                                        <svg class="w-16 h-16 text-blue-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                         </svg>
-                                        <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold">{"Drop files here"}</p>
+                                        <p class="text-lg text-gray-900 dark:text-white font-bold mb-1">{"Drop files here"}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{"Release to upload files"}</p>
                                     </div>
                                 </div>
                             }
@@ -1181,7 +1215,11 @@ impl Component for CodeEditor {
                                 // Actual editable textarea (transparent, handles input and controls scrolling)
                                 <textarea
                                     ref={self.textarea_ref.clone()}
-                                    class="absolute inset-0 p-2 bg-transparent text-transparent resize-none z-20 overflow-auto"
+                                    class={classes!(
+                                        "absolute", "inset-0", "p-2", "bg-transparent", "text-transparent",
+                                        "resize-none", "z-20", "overflow-auto",
+                                        if self.is_drag_over && props.enable_drag_drop { "pointer-events-none" } else { "" }
+                                    )}
                                     style={editor_style}
                                     value={self.code.clone()}
                                     readonly={props.read_only}
@@ -1189,6 +1227,10 @@ impl Component for CodeEditor {
                                     autocomplete="off"
                                     autocorrect="off"
                                     autocapitalize="off"
+                                    ondragenter={textarea_ondragenter}
+                                    ondragover={textarea_ondragover}
+                                    ondragleave={textarea_ondragleave}
+                                    ondrop={textarea_ondrop}
                                 />
                             </div>
                         </div>

@@ -179,11 +179,28 @@ pub fn code_editor_styles() -> Html {
 
             /* Drag and drop styles */
             .editor-drag-over {
-                @apply ring-4 ring-blue-500 ring-opacity-50 bg-blue-50 dark:bg-blue-900 bg-opacity-20;
+                @apply ring-4 ring-blue-500 ring-opacity-50;
             }
 
             .editor-drag-indicator {
-                @apply absolute inset-0 flex items-center justify-center bg-blue-500 bg-opacity-10 pointer-events-none;
+                @apply absolute inset-0 flex items-center justify-center pointer-events-none;
+                z-index: 100;
+                background-color: rgba(59, 130, 246, 0.1);
+                backdrop-filter: blur(2px);
+            }
+
+            .editor-drag-indicator-content {
+                @apply bg-white dark:bg-gray-800 p-6 rounded-lg shadow-2xl border-2 border-blue-500;
+                animation: bounce-subtle 2s ease-in-out infinite;
+            }
+
+            @keyframes bounce-subtle {
+                0%, 100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-10px);
+                }
             }
             "#}
         </style>
