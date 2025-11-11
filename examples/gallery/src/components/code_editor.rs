@@ -230,7 +230,7 @@ Try the **drag-and-drop** feature - drag files onto the editor!"#}
                     theme="light"
                     show_line_numbers={true}
                     enable_drag_drop={true}
-                    on_files_drop={Callback::from(|files| {
+                    on_files_drop={Callback::from(|files: Vec<web_sys::File>| {
                         console::log!("Files dropped:", files.len());
                     })}
                     class="border border-gray-300 dark:border-gray-700 rounded shadow-sm mb-4"
