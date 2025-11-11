@@ -65,7 +65,9 @@ fn main() {
 
 #[function_component(EditOnlyModeDemo)]
 pub fn edit_only_mode_demo() -> Html {
-    let value = use_state(|| "# Edit Mode Only\n\nThis editor is in edit-only mode.".to_string());
+    let value = use_state(|| r#"# Edit Mode Only
+
+This editor is in edit-only mode."#.to_string());
 
     let on_change = {
         let value = value.clone();
@@ -127,7 +129,9 @@ let x = 42;
 
 #[function_component(WithAttachmentsDemo)]
 pub fn with_attachments_demo() -> Html {
-    let value = use_state(|| "# Document with Attachments\n\nThis editor supports file attachments!".to_string());
+    let value = use_state(|| r#"# Document with Attachments
+
+This editor supports file attachments!"#.to_string());
     let attachments = use_state(|| vec![
         FileAttachment {
             id: "1".to_string(),
@@ -175,7 +179,9 @@ pub fn with_attachments_demo() -> Html {
 
 #[function_component(WithMentionsDemo)]
 pub fn with_mentions_demo() -> Html {
-    let value = use_state(|| "# Collaborative Document\n\nType @ to mention team members!".to_string());
+    let value = use_state(|| r#"# Collaborative Document
+
+Type @ to mention team members!"#.to_string());
     let mention_options = vec![
         ("user1".to_string(), "Alice Johnson".to_string()),
         ("user2".to_string(), "Bob Smith".to_string()),
@@ -192,7 +198,7 @@ pub fn with_mentions_demo() -> Html {
     };
 
     let on_mention = Callback::from(move |mentioned: String| {
-        gloo::console::log!("Mentioned:", &mentioned);
+        log::info!("Mentioned: {}", mentioned);
     });
 
     html! {
@@ -209,7 +215,9 @@ pub fn with_mentions_demo() -> Html {
 
 #[function_component(CustomHeightDemo)]
 pub fn custom_height_demo() -> Html {
-    let value = use_state(|| "# Compact Editor\n\nThis editor has custom height constraints.".to_string());
+    let value = use_state(|| r#"# Compact Editor
+
+This editor has custom height constraints."#.to_string());
 
     let on_change = {
         let value = value.clone();
@@ -230,7 +238,9 @@ pub fn custom_height_demo() -> Html {
 
 #[function_component(DisabledDemo)]
 pub fn disabled_demo() -> Html {
-    let value = "# Disabled Editor\n\nThis editor is in read-only mode.".to_string();
+    let value = r#"# Disabled Editor
+
+This editor is in read-only mode."#.to_string();
 
     html! {
         <MarkdownEditor
@@ -254,20 +264,8 @@ pub fn markdown_editor_documentation() -> Html {
 
             // Features Section
             <Features
-                title="Key Features"
                 features={vec![
-                    "📝 Live preview with split-screen mode".to_string(),
-                    "🎨 Rich formatting toolbar with all markdown elements".to_string(),
-                    "⌨️ Comprehensive keyboard shortcuts (Ctrl+B, Ctrl+I, etc.)".to_string(),
-                    "📎 File attachment support with preview".to_string(),
-                    "👥 User/role mentions for collaboration".to_string(),
-                    "📊 Real-time statistics (words, characters, lines)".to_string(),
-                    "🔄 Multiple view modes (Edit, Preview, Split)".to_string(),
-                    "✅ Task lists with checkboxes".to_string(),
-                    "📋 Tables with proper formatting".to_string(),
-                    "💻 Code blocks with syntax highlighting support".to_string(),
-                    "🎯 Auto-save functionality".to_string(),
-                    "♿ Full accessibility support".to_string(),
+                    "MarkdownEditor",
                 ]}
             />
 
@@ -280,13 +278,15 @@ pub fn markdown_editor_documentation() -> Html {
             </p>
             <ExampleCode
                 preview={html! { <BasicMarkdownEditorDemo /> }}
-                code={r#"
+                code={r##"
 use wonopui::*;
 use yew::prelude::*;
 
 #[function_component(App)]
 fn app() -> Html {
-    let value = use_state(|| "# Hello World\n\nWrite **markdown** here!".to_string());
+    let value = use_state(|| r#"# Hello World
+
+Write **markdown** here!"#.to_string());
 
     let on_change = {
         let value = value.clone();
@@ -308,7 +308,7 @@ fn app() -> Html {
         />
     }
 }
-                "#}
+                "##}
             />
 
             // Edit Only Mode
@@ -409,7 +409,7 @@ let mention_options = vec![
 ];
 
 let on_mention = Callback::from(|mentioned: String| {
-    gloo::console::log!("Mentioned:", &mentioned);
+    log::info!("Mentioned: {}", mentioned);
 });
 
 html! {
@@ -466,27 +466,27 @@ html! {
                 title="MarkdownEditor API"
                 description="Complete list of properties for the MarkdownEditor component."
                 props={vec![
-                    ("value", "String", "\"\"", "The markdown content to display and edit."),
-                    ("on_change", "Callback<String>", "-", "Callback fired when the content changes."),
-                    ("placeholder", "String", "\"Write your markdown here...\"", "Placeholder text for the editor."),
-                    ("disabled", "bool", "false", "Whether the editor is in read-only mode."),
-                    ("show_toolbar", "bool", "true", "Show the formatting toolbar."),
-                    ("show_mode_switcher", "bool", "true", "Show the Edit/Preview/Split mode switcher."),
-                    ("initial_mode", "EditorMode", "EditorMode::Split", "Initial viewing mode (Edit, Preview, or Split)."),
-                    ("enable_attachments", "bool", "false", "Enable file attachment functionality."),
-                    ("on_attach", "Callback<Vec<FileAttachment>>", "-", "Callback fired when files are attached."),
-                    ("attachments", "Vec<FileAttachment>", "[]", "Current file attachments to display."),
-                    ("enable_mentions", "bool", "false", "Enable user/role mention functionality."),
-                    ("mention_options", "Vec<(String, String)>", "[]", "Available users/roles for mentions (id, name)."),
-                    ("on_mention", "Callback<String>", "-", "Callback fired when a user/role is mentioned."),
-                    ("min_height", "u32", "300", "Minimum height of the editor in pixels."),
-                    ("max_height", "u32", "0", "Maximum height of the editor (0 = no limit)."),
-                    ("class", "Classes", "-", "Custom CSS classes to apply."),
-                    ("autosave_interval", "u32", "0", "Auto-save interval in milliseconds (0 = disabled)."),
-                    ("on_autosave", "Callback<String>", "-", "Callback for auto-save functionality."),
-                    ("enable_shortcuts", "bool", "true", "Enable keyboard shortcuts."),
-                    ("preview_css", "String", "\"\"", "Custom CSS for the preview pane."),
-                    ("show_stats", "bool", "true", "Show word/character/line count statistics."),
+                    ("value", "String", "The markdown content to display and edit. Default: \"\""),
+                    ("on_change", "Callback<String>", "Callback fired when the content changes."),
+                    ("placeholder", "String", "Placeholder text for the editor. Default: \"Write your markdown here...\""),
+                    ("disabled", "bool", "Whether the editor is in read-only mode. Default: false"),
+                    ("show_toolbar", "bool", "Show the formatting toolbar. Default: true"),
+                    ("show_mode_switcher", "bool", "Show the Edit/Preview/Split mode switcher. Default: true"),
+                    ("initial_mode", "EditorMode", "Initial viewing mode (Edit, Preview, or Split). Default: EditorMode::Split"),
+                    ("enable_attachments", "bool", "Enable file attachment functionality. Default: false"),
+                    ("on_attach", "Callback<Vec<FileAttachment>>", "Callback fired when files are attached."),
+                    ("attachments", "Vec<FileAttachment>", "Current file attachments to display. Default: []"),
+                    ("enable_mentions", "bool", "Enable user/role mention functionality. Default: false"),
+                    ("mention_options", "Vec<(String, String)>", "Available users/roles for mentions (id, name). Default: []"),
+                    ("on_mention", "Callback<String>", "Callback fired when a user/role is mentioned."),
+                    ("min_height", "u32", "Minimum height of the editor in pixels. Default: 300"),
+                    ("max_height", "u32", "Maximum height of the editor (0 = no limit). Default: 0"),
+                    ("class", "Classes", "Custom CSS classes to apply."),
+                    ("autosave_interval", "u32", "Auto-save interval in milliseconds (0 = disabled). Default: 0"),
+                    ("on_autosave", "Callback<String>", "Callback for auto-save functionality."),
+                    ("enable_shortcuts", "bool", "Enable keyboard shortcuts. Default: true"),
+                    ("preview_css", "String", "Custom CSS for the preview pane. Default: \"\""),
+                    ("show_stats", "bool", "Show word/character/line count statistics. Default: true"),
                 ]}
             />
 
