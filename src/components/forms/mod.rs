@@ -32,6 +32,10 @@ pub mod color_picker_saturation;
 pub mod color_picker_wheel;
 #[cfg(feature = "TailwindColorPicker")]
 pub mod tailwind_color_picker;
+#[cfg(feature = "FileInput")]
+pub mod file_input;
+#[cfg(feature = "RoleSelector")]
+pub mod role_selector;
 
 #[cfg(feature = "Input")]
 pub use input::Input;
@@ -65,3 +69,7 @@ pub use color_picker_saturation::ColorPickerSaturation;
 pub use color_picker_wheel::ColorPickerWheel;
 #[cfg(feature = "TailwindColorPicker")]
 pub use tailwind_color_picker::TailwindColorPicker;
+#[cfg(feature = "FileInput")]
+pub use file_input::FileInput;
+#[cfg(feature = "RoleSelector")]
+pub use role_selector::{Role, RoleSelector};

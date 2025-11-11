@@ -91,6 +91,100 @@ pub fn code_editor_styles() -> Html {
             .annotation-info {
                 @apply border-b-2 border-blue-500;
             }
+
+            /* Markdown-specific syntax highlighting */
+            .token.markdown-header {
+                @apply text-purple-600 dark:text-purple-400 font-bold;
+            }
+
+            .token.markdown-header-text {
+                @apply text-purple-700 dark:text-purple-300 font-bold text-lg;
+            }
+
+            .token.markdown-bold {
+                @apply font-bold text-gray-900 dark:text-white;
+            }
+
+            .token.markdown-bold-marker {
+                @apply text-gray-500 dark:text-gray-400 font-bold;
+            }
+
+            .token.markdown-italic {
+                @apply italic text-gray-900 dark:text-white;
+            }
+
+            .token.markdown-italic-marker {
+                @apply text-gray-500 dark:text-gray-400 italic;
+            }
+
+            .token.markdown-code {
+                @apply bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400 px-1 rounded font-mono;
+            }
+
+            .token.markdown-code-marker {
+                @apply text-gray-400 dark:text-gray-600;
+            }
+
+            .token.markdown-code-fence {
+                @apply text-gray-400 dark:text-gray-600 font-mono;
+            }
+
+            .token.markdown-link-text {
+                @apply text-blue-600 dark:text-blue-400 underline;
+            }
+
+            .token.markdown-link-url {
+                @apply text-blue-400 dark:text-blue-600;
+            }
+
+            .token.markdown-link-marker {
+                @apply text-gray-500 dark:text-gray-400;
+            }
+
+            .token.markdown-image-alt {
+                @apply text-green-600 dark:text-green-400;
+            }
+
+            .token.markdown-image-url {
+                @apply text-green-400 dark:text-green-600;
+            }
+
+            .token.markdown-image-marker {
+                @apply text-gray-500 dark:text-gray-400;
+            }
+
+            .token.markdown-list-marker {
+                @apply text-orange-600 dark:text-orange-400 font-bold;
+            }
+
+            .token.markdown-blockquote {
+                @apply text-gray-600 dark:text-gray-400 italic;
+            }
+
+            .token.markdown-blockquote-marker {
+                @apply text-gray-500 dark:text-gray-500 font-bold;
+            }
+
+            .token.markdown-hr {
+                @apply text-gray-400 dark:text-gray-600;
+            }
+
+            .token.markdown-strikethrough {
+                @apply line-through text-gray-600 dark:text-gray-400;
+            }
+
+            .token.markdown-strikethrough-marker {
+                @apply text-gray-500 dark:text-gray-400;
+            }
+
+            /* Drag and drop styles */
+            .editor-drag-over {
+                @apply ring-4 ring-blue-500 ring-opacity-50 bg-blue-50 dark:bg-blue-900 bg-opacity-20;
+            }
+
+            .editor-drag-indicator {
+                @apply absolute inset-0 flex items-center justify-center bg-blue-500 bg-opacity-10 pointer-events-none;
+            }
             "#}
         </style>
     }

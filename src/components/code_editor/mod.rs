@@ -6,7 +6,7 @@ use web_sys::js_sys;
 use gloo::events::EventListener;
 use gloo_utils::document;
 use wasm_bindgen::{closure::Closure, JsCast, JsValue};
-use web_sys::{Element, FocusEvent, HtmlElement, HtmlTextAreaElement, KeyboardEvent, Window};
+use web_sys::{DragEvent, Element, File, FocusEvent, HtmlElement, HtmlTextAreaElement, KeyboardEvent, Window};
 use yew::prelude::*;
 
 // Internal modules
@@ -14,10 +14,14 @@ pub mod annotation;
 pub mod diff;
 pub mod styles;
 pub mod type_hint;
+pub mod markdown_preview;
+pub mod markdown_toolbar;
 
 pub use annotation::{Annotation, AnnotationType};
 pub use diff::{Diff, DiffType};
 pub use type_hint::TypeHint;
+pub use markdown_preview::MarkdownPreview;
+pub use markdown_toolbar::{MarkdownAction, MarkdownToolbar};
 
 /// A performant code editor component based on syntect
 #[derive(Properties, PartialEq, Clone)]
@@ -109,6 +113,14 @@ pub struct CodeEditorProps {
     /// Custom inline style
     #[prop_or_default]
     pub style: String,
+
+    /// Enable drag-and-drop file functionality
+    #[prop_or(false)]
+    pub enable_drag_drop: bool,
+
+    /// Callback when files are dropped
+    #[prop_or_default]
+    pub on_files_drop: Option<Callback<Vec<File>>>,
 }
 
 pub enum CodeEditorMsg {
@@ -123,6 +135,9 @@ pub enum CodeEditorMsg {
     AddCursor((usize, usize)),
     RemoveCursor(usize),
     ClearCursors,
+    DragEnter,
+    DragLeave,
+    Drop(Vec<File>),
 }
 
 pub struct CodeEditor {
@@ -142,6 +157,7 @@ pub struct CodeEditor {
     cursors: Vec<(usize, usize)>, // Multiple cursors [(line, column)]
     keymap: Option<HashMap<String, Callback<KeyboardEvent>>>,
     keymap_enabled: bool,
+    is_drag_over: bool,
 }
 
 impl CodeEditor {
@@ -334,6 +350,176 @@ impl CodeEditor {
 
         // Very basic tokenization for common programming languages
         match language {
+            "markdown" | "md" => {
+                // Markdown tokenization
+                let mut current_pos = 0;
+                let chars: Vec<char> = line.chars().collect();
+
+                while current_pos < chars.len() {
+                    let remaining = &line[current_pos..];
+
+                    // Headers
+                    if current_pos == 0 && remaining.starts_with('#') {
+                        let hash_count = remaining.chars().take_while(|c| *c == '#').count();
+                        if hash_count <= 6 && remaining.chars().nth(hash_count).map_or(true, |c| c == ' ') {
+                            tokens.push(("markdown-header".to_string(), "#".repeat(hash_count)));
+                            current_pos += hash_count;
+                            if current_pos < chars.len() && chars[current_pos] == ' ' {
+                                tokens.push(("whitespace".to_string(), " ".to_string()));
+                                current_pos += 1;
+                            }
+                            tokens.push(("markdown-header-text".to_string(), remaining[hash_count..].trim_start().to_string()));
+                            break;
+                        }
+                    }
+
+                    // Bold with **
+                    if remaining.starts_with("**") {
+                        let end = remaining[2..].find("**").map(|i| i + 2);
+                        if let Some(end_pos) = end {
+                            tokens.push(("markdown-bold-marker".to_string(), "**".to_string()));
+                            tokens.push(("markdown-bold".to_string(), remaining[2..end_pos].to_string()));
+                            tokens.push(("markdown-bold-marker".to_string(), "**".to_string()));
+                            current_pos += end_pos + 2;
+                            continue;
+                        }
+                    }
+
+                    // Italic with *
+                    if remaining.starts_with('*') && !remaining.starts_with("**") {
+                        let end = remaining[1..].find('*');
+                        if let Some(end_pos) = end {
+                            tokens.push(("markdown-italic-marker".to_string(), "*".to_string()));
+                            tokens.push(("markdown-italic".to_string(), remaining[1..=end_pos].to_string()));
+                            tokens.push(("markdown-italic-marker".to_string(), "*".to_string()));
+                            current_pos += end_pos + 2;
+                            continue;
+                        }
+                    }
+
+                    // Italic with _
+                    if remaining.starts_with('_') && !remaining.starts_with("__") {
+                        let end = remaining[1..].find('_');
+                        if let Some(end_pos) = end {
+                            tokens.push(("markdown-italic-marker".to_string(), "_".to_string()));
+                            tokens.push(("markdown-italic".to_string(), remaining[1..=end_pos].to_string()));
+                            tokens.push(("markdown-italic-marker".to_string(), "_".to_string()));
+                            current_pos += end_pos + 2;
+                            continue;
+                        }
+                    }
+
+                    // Inline code with `
+                    if remaining.starts_with('`') && !remaining.starts_with("```") {
+                        let end = remaining[1..].find('`');
+                        if let Some(end_pos) = end {
+                            tokens.push(("markdown-code-marker".to_string(), "`".to_string()));
+                            tokens.push(("markdown-code".to_string(), remaining[1..=end_pos].to_string()));
+                            tokens.push(("markdown-code-marker".to_string(), "`".to_string()));
+                            current_pos += end_pos + 2;
+                            continue;
+                        }
+                    }
+
+                    // Code fence with ```
+                    if current_pos == 0 && remaining.starts_with("```") {
+                        tokens.push(("markdown-code-fence".to_string(), remaining.to_string()));
+                        break;
+                    }
+
+                    // Links [text](url)
+                    if remaining.starts_with('[') {
+                        let close_bracket = remaining.find(']');
+                        if let Some(close_pos) = close_bracket {
+                            let after_bracket = &remaining[close_pos + 1..];
+                            if after_bracket.starts_with('(') {
+                                let close_paren = after_bracket.find(')');
+                                if let Some(paren_pos) = close_paren {
+                                    tokens.push(("markdown-link-marker".to_string(), "[".to_string()));
+                                    tokens.push(("markdown-link-text".to_string(), remaining[1..close_pos].to_string()));
+                                    tokens.push(("markdown-link-marker".to_string(), "](".to_string()));
+                                    tokens.push(("markdown-link-url".to_string(), after_bracket[1..paren_pos].to_string()));
+                                    tokens.push(("markdown-link-marker".to_string(), ")".to_string()));
+                                    current_pos += close_pos + paren_pos + 3;
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+
+                    // Images ![alt](url)
+                    if remaining.starts_with("![") {
+                        let close_bracket = remaining.find(']');
+                        if let Some(close_pos) = close_bracket {
+                            let after_bracket = &remaining[close_pos + 1..];
+                            if after_bracket.starts_with('(') {
+                                let close_paren = after_bracket.find(')');
+                                if let Some(paren_pos) = close_paren {
+                                    tokens.push(("markdown-image-marker".to_string(), "![".to_string()));
+                                    tokens.push(("markdown-image-alt".to_string(), remaining[2..close_pos].to_string()));
+                                    tokens.push(("markdown-image-marker".to_string(), "](".to_string()));
+                                    tokens.push(("markdown-image-url".to_string(), after_bracket[1..paren_pos].to_string()));
+                                    tokens.push(("markdown-image-marker".to_string(), ")".to_string()));
+                                    current_pos += close_pos + paren_pos + 4;
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+
+                    // List items
+                    if current_pos == 0 || (current_pos > 0 && chars[current_pos - 1] == ' ') {
+                        if remaining.starts_with("- ") || remaining.starts_with("* ") || remaining.starts_with("+ ") {
+                            tokens.push(("markdown-list-marker".to_string(), remaining[..2].to_string()));
+                            tokens.push(("text".to_string(), remaining[2..].to_string()));
+                            break;
+                        }
+                        // Numbered lists
+                        let num_end = remaining.chars().take_while(|c| c.is_digit(10)).count();
+                        if num_end > 0 && remaining[num_end..].starts_with(". ") {
+                            tokens.push(("markdown-list-marker".to_string(), remaining[..num_end + 2].to_string()));
+                            tokens.push(("text".to_string(), remaining[num_end + 2..].to_string()));
+                            break;
+                        }
+                    }
+
+                    // Blockquote
+                    if current_pos == 0 && remaining.starts_with("> ") {
+                        tokens.push(("markdown-blockquote-marker".to_string(), "> ".to_string()));
+                        tokens.push(("markdown-blockquote".to_string(), remaining[2..].to_string()));
+                        break;
+                    }
+
+                    // Horizontal rule
+                    if current_pos == 0 && (remaining.starts_with("---") || remaining.starts_with("***") || remaining.starts_with("___")) {
+                        if remaining.chars().all(|c| c == '-' || c == '*' || c == '_' || c == ' ') {
+                            tokens.push(("markdown-hr".to_string(), remaining.to_string()));
+                            break;
+                        }
+                    }
+
+                    // Strikethrough with ~~
+                    if remaining.starts_with("~~") {
+                        let end = remaining[2..].find("~~").map(|i| i + 2);
+                        if let Some(end_pos) = end {
+                            tokens.push(("markdown-strikethrough-marker".to_string(), "~~".to_string()));
+                            tokens.push(("markdown-strikethrough".to_string(), remaining[2..end_pos].to_string()));
+                            tokens.push(("markdown-strikethrough-marker".to_string(), "~~".to_string()));
+                            current_pos += end_pos + 2;
+                            continue;
+                        }
+                    }
+
+                    // Default: add as plain text
+                    tokens.push(("text".to_string(), chars[current_pos].to_string()));
+                    current_pos += 1;
+                }
+
+                // If no tokens were added, add the whole line as text
+                if tokens.is_empty() {
+                    tokens.push(("text".to_string(), line.to_string()));
+                }
+            }
             "rust" => {
                 // Simple Rust tokenization
                 let keywords = vec![
@@ -605,6 +791,7 @@ impl Component for CodeEditor {
             cursors: Vec::new(),
             keymap: props.keymap.clone(),
             keymap_enabled: props.enable_keymap,
+            is_drag_over: false,
         }
     }
 
@@ -745,6 +932,29 @@ impl Component for CodeEditor {
                     false
                 }
             }
+            CodeEditorMsg::DragEnter => {
+                if !self.is_drag_over {
+                    self.is_drag_over = true;
+                    true
+                } else {
+                    false
+                }
+            }
+            CodeEditorMsg::DragLeave => {
+                if self.is_drag_over {
+                    self.is_drag_over = false;
+                    true
+                } else {
+                    false
+                }
+            }
+            CodeEditorMsg::Drop(files) => {
+                self.is_drag_over = false;
+                if let Some(callback) = &ctx.props().on_files_drop {
+                    callback.emit(files);
+                }
+                true
+            }
         }
     }
 
@@ -795,6 +1005,50 @@ impl Component for CodeEditor {
             diff_map.entry(line_idx).or_default().push(diff);
         }
 
+        // Drag and drop event handlers
+        let ondragover = if props.enable_drag_drop {
+            let link = ctx.link().clone();
+            Some(Callback::from(move |e: DragEvent| {
+                e.prevent_default();
+                link.send_message(CodeEditorMsg::DragEnter);
+            }))
+        } else {
+            None
+        };
+
+        let ondragleave = if props.enable_drag_drop {
+            let link = ctx.link().clone();
+            Some(Callback::from(move |_e: DragEvent| {
+                link.send_message(CodeEditorMsg::DragLeave);
+            }))
+        } else {
+            None
+        };
+
+        let ondrop = if props.enable_drag_drop {
+            let link = ctx.link().clone();
+            Some(Callback::from(move |e: DragEvent| {
+                e.prevent_default();
+                let mut files = Vec::new();
+
+                if let Some(data_transfer) = e.data_transfer() {
+                    if let Some(file_list) = data_transfer.files() {
+                        for i in 0..file_list.length() {
+                            if let Some(file) = file_list.get(i) {
+                                files.push(file);
+                            }
+                        }
+                    }
+                }
+
+                if !files.is_empty() {
+                    link.send_message(CodeEditorMsg::Drop(files));
+                }
+            }))
+        } else {
+            None
+        };
+
         html! {
             <>
                 <styles::CodeEditorStyles />
@@ -805,9 +1059,13 @@ impl Component for CodeEditor {
                         "border","border-gray-300","dark:border-gray-700",
                         "bg-white","dark:bg-gray-900",
                         "text-gray-900","dark:text-gray-100",
-                        theme_class
+                        theme_class,
+                        if self.is_drag_over { "editor-drag-over" } else { "" }
                     )}
                     style={format!("{} {}", container_style, max_height_style)}
+                    ondragover={ondragover}
+                    ondragleave={ondragleave}
+                    ondrop={ondrop}
                 >
                     // The editor layout is now a flex container with synchronized scroll
                     <div class="flex w-full h-full relative overflow-hidden">
@@ -824,6 +1082,18 @@ impl Component for CodeEditor {
 
                         // Main editor area with scrollable content - this will control scrolling
                         <div class="flex-grow relative overflow-hidden">
+                            // Drag and drop indicator
+                            if self.is_drag_over && props.enable_drag_drop {
+                                <div class="editor-drag-indicator">
+                                    <div class="bg-white dark:bg-gray-800 p-4 rounded shadow-lg">
+                                        <svg class="w-12 h-12 text-blue-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                        </svg>
+                                        <p class="text-sm text-gray-700 dark:text-gray-300 font-semibold">{"Drop files here"}</p>
+                                    </div>
+                                </div>
+                            }
+
                             // Diffs background layer
                             <div class="absolute inset-0 pointer-events-none">
                                 {{

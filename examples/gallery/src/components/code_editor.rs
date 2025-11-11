@@ -180,6 +180,66 @@ fn main() {
 />"
             />
 
+            <h2 class="text-2xl font-semibold mt-8 mb-4 text-zinc-900 dark:text-white">{ "Markdown Editor Example" }</h2>
+            <p class="mb-6 text-zinc-600 dark:text-zinc-400">
+                { "The CodeEditor now includes comprehensive markdown support with syntax highlighting, preview, and formatting toolbar!" }
+            </p>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+                <CodeEditor
+                    code={r#"# Markdown Editor
+
+Welcome to the **enhanced** markdown editor!
+
+## Features
+
+- **Bold text** with double asterisks
+- *Italic text* with single asterisks
+- `Inline code` with backticks
+- ~~Strikethrough~~ with tildes
+
+### Code Blocks
+
+```rust
+fn main() {
+    println!("Hello, markdown!");
+}
+```
+
+### Links and Images
+
+[Visit Yew](https://yew.rs)
+
+![Example](https://via.placeholder.com/150)
+
+### Lists
+
+1. First item
+2. Second item
+3. Third item
+
+- Unordered item
+- Another item
+
+> Blockquote for important notes
+
+---
+
+Try the **drag-and-drop** feature - drag files onto the editor!"#}
+                    language="markdown"
+                    theme="light"
+                    show_line_numbers={true}
+                    enable_drag_drop={true}
+                    on_files_drop={Callback::from(|files| {
+                        console::log!("Files dropped:", files.len());
+                    })}
+                    class="border border-gray-300 dark:border-gray-700 rounded shadow-sm mb-4"
+                />
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    { "✨ Try dragging files onto the editor to see the drag-and-drop feature in action!" }
+                </p>
+            </div>
+
             <Features features={vec![
                 "Syntax highlighting based on syntect",
                 "Real-time editable code with performant rendering",
@@ -193,6 +253,10 @@ fn main() {
                 "Custom keymap support for personalized shortcuts",
                 "Tab management and indentation support",
                 "Tailwind CSS styling for consistent design",
+                "Comprehensive markdown syntax highlighting",
+                "Drag-and-drop file support",
+                "Markdown preview component (MarkdownPreview)",
+                "Markdown toolbar with formatting buttons (MarkdownToolbar)",
             ]} />
 
             <h2 class="text-2xl font-semibold mt-8 mb-4 text-zinc-900 dark:text-white">
@@ -222,12 +286,62 @@ fn main() {
                     ("enable_multi_cursor", "bool", "Enable multiple cursors with Alt+Click (default: false)."),
                     ("enable_keymap", "bool", "Enable custom keymap support (default: false)."),
                     ("keymap", "Option<HashMap<String, Callback<KeyboardEvent>>>", "Custom keyboard shortcuts."),
+                    ("enable_drag_drop", "bool", "Enable drag-and-drop file functionality (default: false)."),
+                    ("on_files_drop", "Option<Callback<Vec<File>>>", "Callback when files are dropped on the editor."),
                 ]}
             />
+
+            <h2 class="text-2xl font-semibold mt-8 mb-4 text-zinc-900 dark:text-white">
+                { "Markdown Support" }
+            </h2>
+            <p class="mb-4 text-zinc-600 dark:text-zinc-400">
+                { "The CodeEditor now includes comprehensive markdown support with the following components:" }
+            </p>
+
+            <div class="space-y-6 mb-8">
+                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded">
+                    <h3 class="text-lg font-semibold mb-2 text-zinc-900 dark:text-white">{ "MarkdownPreview" }</h3>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+                        { "A component that renders markdown as HTML with styled output." }
+                    </p>
+                    <pre class="bg-white dark:bg-gray-900 p-3 rounded text-xs">
+{r#"<MarkdownPreview
+    markdown={markdown_text}
+    theme="light"
+    visible={true}
+/>"#}
+                    </pre>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded">
+                    <h3 class="text-lg font-semibold mb-2 text-zinc-900 dark:text-white">{ "MarkdownToolbar" }</h3>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+                        { "A toolbar with formatting buttons for markdown (bold, italic, links, etc.)." }
+                    </p>
+                    <pre class="bg-white dark:bg-gray-900 p-3 rounded text-xs">
+{r#"<MarkdownToolbar
+    on_action={Callback::from(|action| {
+        // Handle formatting action
+        match action {
+            MarkdownAction::Bold => {},
+            MarkdownAction::Italic => {},
+            // ... other actions
+        }
+    })}
+/>"#}
+                    </pre>
+                </div>
+            </div>
 
             <NotesSection
                 title={"Recently Added Features".to_string()}
                 notes={vec![
+                    "Markdown syntax highlighting: Comprehensive support for all markdown elements".to_string(),
+                    "Drag-and-drop files: Drop files directly onto the editor".to_string(),
+                    "MarkdownPreview: Render markdown as styled HTML".to_string(),
+                    "MarkdownToolbar: Formatting toolbar with all markdown actions".to_string(),
+                    "FileInput component: Drag-and-drop file attachment field".to_string(),
+                    "RoleSelector component: Multi-select role/option picker".to_string(),
                     "Multi-cursor support: Create and manage multiple cursors with Alt+Click".to_string(),
                     "Custom keymap: Define your own keyboard shortcuts".to_string(),
                     "Fixed scrolling: Properly synchronized scrolling of line numbers and content".to_string(),
@@ -240,6 +354,12 @@ fn main() {
                 title={"Usage Notes".to_string()}
                 notes={vec![
                     "The CodeEditor component uses syntect for syntax highlighting.".to_string(),
+                    "Set language='markdown' or 'md' to enable markdown syntax highlighting.".to_string(),
+                    "Enable drag-and-drop with enable_drag_drop={true} and handle files with on_files_drop.".to_string(),
+                    "Use MarkdownPreview to render markdown content as HTML.".to_string(),
+                    "Use MarkdownToolbar with markdown_toolbar::formatting::apply_formatting helper.".to_string(),
+                    "FileInput component supports multiple files, max size limits, and file type restrictions.".to_string(),
+                    "RoleSelector supports both single and multi-select modes with custom styling.".to_string(),
                     "Multi-cursor can be activated by holding Alt key while clicking in the editor.".to_string(),
                     "Custom keymaps can be defined for specialized editing operations.".to_string(),
                     "For monospaced fonts, 'JetBrains Mono', 'Fira Code', or 'Source Code Pro' are recommended.".to_string(),
