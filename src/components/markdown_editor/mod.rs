@@ -1,7 +1,7 @@
 use pulldown_cmark::{html, Options, Parser};
 use std::collections::HashMap;
 use wasm_bindgen::JsCast;
-use web_sys::{HtmlInputElement, HtmlTextAreaElement, KeyboardEvent};
+use web_sys::{DragEvent, FileList, HtmlInputElement, HtmlTextAreaElement, KeyboardEvent};
 use yew::prelude::*;
 
 #[cfg(not(feature = "ThemeProvider"))]
@@ -145,6 +145,12 @@ pub enum MarkdownEditorMsg {
     HandleKeyDown(KeyboardEvent),
     AutoSave,
     UpdateStats,
+    DragEnter,
+    DragLeave,
+    DragOver,
+    Drop(DragEvent),
+    FilesSelected(FileList),
+    TriggerFileInput,
 }
 
 pub struct MarkdownEditor {
@@ -152,9 +158,11 @@ pub struct MarkdownEditor {
     mode: EditorMode,
     textarea_ref: NodeRef,
     preview_ref: NodeRef,
+    file_input_ref: NodeRef,
     word_count: usize,
     char_count: usize,
     line_count: usize,
+    is_dragging: bool,
 }
 
 impl Component for MarkdownEditor {
@@ -170,9 +178,11 @@ impl Component for MarkdownEditor {
             mode: ctx.props().initial_mode.clone(),
             textarea_ref: NodeRef::default(),
             preview_ref: NodeRef::default(),
+            file_input_ref: NodeRef::default(),
             word_count,
             char_count,
             line_count,
+            is_dragging: false,
         }
     }
 
@@ -227,14 +237,125 @@ impl Component for MarkdownEditor {
                 self.line_count = line_count;
                 true
             }
+            MarkdownEditorMsg::DragEnter => {
+                self.is_dragging = true;
+                true
+            }
+            MarkdownEditorMsg::DragLeave => {
+                self.is_dragging = false;
+                true
+            }
+            MarkdownEditorMsg::DragOver => {
+                // Just prevent default, no state change needed
+                false
+            }
+            MarkdownEditorMsg::Drop(event) => {
+                event.prevent_default();
+                self.is_dragging = false;
+
+                if let Some(data_transfer) = event.data_transfer() {
+                    if let Some(files) = data_transfer.files() {
+                        ctx.link().send_message(MarkdownEditorMsg::FilesSelected(files));
+                    }
+                }
+                true
+            }
+            MarkdownEditorMsg::FilesSelected(file_list) => {
+                let on_attach = ctx.props().on_attach.clone();
+
+                let mut attachments = Vec::new();
+
+                // Generate a simple timestamp for unique IDs
+                let timestamp = std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .map(|d| d.as_millis())
+                    .unwrap_or(0);
+
+                for i in 0..file_list.length() {
+                    if let Some(file) = file_list.get(i) {
+                        let id = format!("{}-{}-{}", file.name(), timestamp, i);
+                        let name = file.name();
+                        let size = file.size() as usize;
+                        let mime_type = file.type_();
+
+                        attachments.push(FileAttachment {
+                            id,
+                            name,
+                            size,
+                            mime_type,
+                            url: None,
+                        });
+                    }
+                }
+
+                if !attachments.is_empty() {
+                    on_attach.emit(attachments);
+                }
+
+                false
+            }
+            MarkdownEditorMsg::TriggerFileInput => {
+                if let Some(input) = self.file_input_ref.cast::<HtmlInputElement>() {
+                    input.click();
+                }
+                false
+            }
         }
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let props = ctx.props();
+        let link = ctx.link();
+
+        // Drag and drop handlers
+        let ondragenter = link.callback(|e: DragEvent| {
+            e.prevent_default();
+            MarkdownEditorMsg::DragEnter
+        });
+
+        let ondragleave = link.callback(|e: DragEvent| {
+            e.prevent_default();
+            MarkdownEditorMsg::DragLeave
+        });
+
+        let ondragover = link.callback(|e: DragEvent| {
+            e.prevent_default();
+            MarkdownEditorMsg::DragOver
+        });
+
+        let ondrop = link.callback(|e: DragEvent| {
+            MarkdownEditorMsg::Drop(e)
+        });
+
+        let drag_overlay = if self.is_dragging && props.enable_attachments {
+            html! {
+                <div class="absolute inset-0 bg-blue-500 bg-opacity-20 border-4 border-blue-500 border-dashed rounded-lg flex items-center justify-center z-50 pointer-events-none">
+                    <div class="text-2xl font-bold text-blue-600 bg-white px-6 py-4 rounded-lg shadow-lg">
+                        {"📎 Drop files here to attach"}
+                    </div>
+                </div>
+            }
+        } else {
+            html! {}
+        };
 
         html! {
-            <div class={classes!("wonop-markdown-editor", "flex", "flex-col", "border", "rounded-lg", "overflow-hidden", props.class.clone())}>
+            <div
+                class={classes!("wonop-markdown-editor", "flex", "flex-col", "border", "rounded-lg", "overflow-hidden", "relative", props.class.clone())}
+                {ondragenter}
+                {ondragleave}
+                {ondragover}
+                {ondrop}
+            >
+                {drag_overlay}
+
+                // Hidden file input for click-to-upload
+                {if props.enable_attachments {
+                    self.render_file_input(ctx)
+                } else {
+                    html! {}
+                }}
+
                 // Toolbar
                 {if props.show_toolbar {
                     self.render_toolbar(ctx)
@@ -419,11 +540,8 @@ impl MarkdownEditor {
                             <div class="w-px h-6 bg-gray-300 mx-1"></div>
                             <button
                                 class="p-2 hover:bg-gray-200 rounded transition-colors"
-                                title="Attach File"
-                                onclick={link.callback(|_| {
-                                    // Trigger file input click
-                                    MarkdownEditorMsg::UpdateStats
-                                })}
+                                title="Attach File (or drag and drop)"
+                                onclick={link.callback(|_| MarkdownEditorMsg::TriggerFileInput)}
                             >
                                 {"📎 Attach"}
                             </button>
@@ -433,6 +551,29 @@ impl MarkdownEditor {
                     html! {}
                 }}
             </div>
+        }
+    }
+
+    fn render_file_input(&self, ctx: &Context<Self>) -> Html {
+        let link = ctx.link();
+
+        let onchange = link.callback(|e: Event| {
+            let input: HtmlInputElement = e.target_unchecked_into();
+            if let Some(files) = input.files() {
+                MarkdownEditorMsg::FilesSelected(files)
+            } else {
+                MarkdownEditorMsg::UpdateStats // No-op
+            }
+        });
+
+        html! {
+            <input
+                ref={self.file_input_ref.clone()}
+                type="file"
+                multiple={true}
+                class="hidden"
+                {onchange}
+            />
         }
     }
 
