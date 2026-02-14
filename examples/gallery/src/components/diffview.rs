@@ -199,8 +199,8 @@ fn main() {
                     show_line_numbers={*show_line_numbers}
                     unified_diff={*unified_diff}
                     context_lines={*context_lines}
-                    font_size={14}
-                    line_height={1.6}
+                    font_size={"14px"}
+                    line_height={"1.6"}
                     class="shadow-md"
                 />
             </div>

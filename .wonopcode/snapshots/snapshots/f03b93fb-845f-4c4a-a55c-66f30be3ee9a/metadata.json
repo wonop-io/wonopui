@@ -1,0 +1,11 @@
+{
+  "id": "f03b93fb-845f-4c4a-a55c-66f30be3ee9a",
+  "session_id": "native-agent-mcp",
+  "message_id": "native-mcp",
+  "timestamp": "2026-02-14T18:42:52.655319Z",
+  "description": "Before edit: /Users/tfr/Documents/Projects/.worktrees/feature-won-151--refactor-wonopui-into-individual-crates/examples/gallery/src/components/collapsible.rs",
+  "files": [
+    "examples/gallery/src/components/collapsible.rs"
+  ],
+  "trigger": null
+}

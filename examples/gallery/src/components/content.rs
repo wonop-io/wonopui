@@ -24,8 +24,7 @@ pub fn content_theme_editor() -> Html {
     let preview = html! {
         <MainContent
             expanding={true}
-            padding_x={true}
-            padding_y={true}
+            padding={true}
             aside={Some(html! { <p>{"Aside content here"}</p> })}
         >
             <p>{ "Main content goes here" }</p>
@@ -56,7 +55,7 @@ pub fn content_documentation() -> Html {
             </h2>
             <ExampleCode
                 preview={html! {
-                    <MainContent expanding={true} padding_x={true} padding_y={true} aside={Some(html! { <p>{"Aside content here"}</p> })}>
+                    <MainContent expanding={true} padding={true} aside={Some(html! { <p>{"Aside content here"}</p> })}>
                         <p>{ "Main content goes here" }</p>
                     </MainContent>
                 }}

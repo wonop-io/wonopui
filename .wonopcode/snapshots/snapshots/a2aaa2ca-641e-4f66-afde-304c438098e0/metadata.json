@@ -1,0 +1,11 @@
+{
+  "id": "a2aaa2ca-641e-4f66-afde-304c438098e0",
+  "session_id": "native-agent-mcp",
+  "message_id": "native-mcp",
+  "timestamp": "2026-02-14T19:25:51.094914Z",
+  "description": "Before write: /Users/tfr/Documents/Projects/.worktrees/feature-won-151--refactor-wonopui-into-individual-crates/crates/wonopui-diffview/src/lib.rs",
+  "files": [
+    "crates/wonopui-diffview/src/lib.rs"
+  ],
+  "trigger": null
+}

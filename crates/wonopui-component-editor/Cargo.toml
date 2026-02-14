@@ -1,0 +1,10 @@
+[package]
+name = "wonopui-component-editor"
+version = "0.1.0"
+edition = "2021"
+description = "Component editor for displaying component demos in WonopUI gallery"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+yew = { version = "0.21", features = ["csr"] }
+wonopui-core = { path = "../wonopui-core" }

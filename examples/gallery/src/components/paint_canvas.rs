@@ -32,21 +32,13 @@ pub fn paint_canvas_theme_editor() -> Html {
 
 #[function_component(PaintCanvasDemo)]
 fn paint_canvas_demo() -> Html {
-    let image_src = use_state(|| None::<String>);
-
-    let on_load_image = {
-        let image_src = image_src.clone();
-        Callback::from(move |_| {
-            image_src.set(Some("https://example.com/image.png".to_string()));
-        })
-    };
-
     html! {
         <div>
-            <PaintCanvas image_src={(*image_src).clone()} />
-            <button onclick={on_load_image} class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-sm">
-                {"Load Image"}
-            </button>
+            <PaintCanvas 
+                width={400} 
+                height={300} 
+                show_toolbar={true}
+            />
         </div>
     }
 }

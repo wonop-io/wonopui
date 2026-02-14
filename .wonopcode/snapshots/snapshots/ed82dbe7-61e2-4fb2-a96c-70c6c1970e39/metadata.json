@@ -1,0 +1,11 @@
+{
+  "id": "ed82dbe7-61e2-4fb2-a96c-70c6c1970e39",
+  "session_id": "native-agent-mcp",
+  "message_id": "native-mcp",
+  "timestamp": "2026-02-14T17:54:35.536103Z",
+  "description": "Before edit: /Users/tfr/Documents/Projects/.worktrees/feature-won-151--refactor-wonopui-into-individual-crates/crates/wonopui/src/compat.rs",
+  "files": [
+    "crates/wonopui/src/compat.rs"
+  ],
+  "trigger": null
+}

@@ -1,0 +1,212 @@
+[package]
+name = "wonopui"
+version = "0.1.0"
+edition = "2021"
+authors = ["Troels F. Rønnow <troels@wonop.com>"]
+description = "WonopUI: A YEW UI framework for building flexible and customizable web applications."
+license = "MIT"
+repository = "https://github.com/wonop-io/wonopui"
+homepage = "https://github.com/wonop-io/wonopui"
+readme = "../../README.md"
+keywords = ["yew", "tailwindcss", "ui"]
+categories = ["web-programming"]
+
+[features]
+default = []
+
+# Include all components
+everything = [
+    "accordion",
+    "alert",
+    "avatar",
+    "badge",
+    "breadcrumb",
+    "browser-provider",
+    "button",
+    "calendar",
+    "card",
+    "carousel",
+    "checkbox",
+    "code-editor",
+    "col",
+    "collapsible",
+    "color-picker",
+    "combobox",
+    "command",
+    "container",
+    "content",
+    "context-menu",
+    "copy-button",
+    "dark-mode-provider",
+    "data-table",
+    "date-picker",
+    "dialog",
+    "diffview",
+    "divider",
+    "drag-point",
+    "drawer",
+    "dropdown",
+    "group-button",
+    "iframe",
+    "input",
+    "kanban",
+    "label",
+    "layout",
+    "markdown-editor",
+    "media-query",
+    "mention-input",
+    "multicol-sidebar",
+    "notification",
+    "page-content",
+    "page-header",
+    "pagination",
+    "paint-canvas",
+    "placeholder",
+    "popover",
+    "resizable",
+    "select",
+    "selectable",
+    "sidebar",
+    "switch",
+    "table",
+    "tabs",
+    "tag-input",
+    "tailwind-color-picker",
+    "textarea",
+    "toggle",
+    "topbar",
+    "typography",
+    "window-provider",
+]
+
+# Individual component features
+accordion = ["dep:wonopui-accordion"]
+alert = ["dep:wonopui-alert"]
+avatar = ["dep:wonopui-avatar"]
+badge = ["dep:wonopui-badge"]
+breadcrumb = ["dep:wonopui-breadcrumb"]
+browser-provider = ["dep:wonopui-browser-provider"]
+button = ["dep:wonopui-button"]
+calendar = ["dep:wonopui-calendar"]
+card = ["dep:wonopui-card"]
+carousel = ["dep:wonopui-carousel"]
+checkbox = ["dep:wonopui-checkbox"]
+code-editor = ["dep:wonopui-code-editor"]
+col = ["dep:wonopui-col"]
+collapsible = ["dep:wonopui-collapsible"]
+component-editor = ["dep:wonopui-component-editor"]
+color-picker = ["dep:wonopui-color-picker"]
+combobox = ["dep:wonopui-combobox"]
+command = ["dep:wonopui-command"]
+container = ["dep:wonopui-container"]
+content = ["dep:wonopui-content"]
+context-menu = ["dep:wonopui-context-menu"]
+copy-button = ["dep:wonopui-copy-button"]
+dark-mode-provider = ["dep:wonopui-dark-mode-provider", "media-query"]
+data-table = ["dep:wonopui-data-table"]
+date-picker = ["dep:wonopui-date-picker"]
+dialog = ["dep:wonopui-dialog"]
+diffview = ["dep:wonopui-diffview"]
+divider = ["dep:wonopui-divider"]
+drag-point = ["dep:wonopui-drag-point"]
+drawer = ["dep:wonopui-drawer"]
+dropdown = ["dep:wonopui-dropdown"]
+group-button = ["dep:wonopui-group-button"]
+iframe = ["dep:wonopui-iframe"]
+input = ["dep:wonopui-input"]
+kanban = ["dep:wonopui-kanban"]
+label = ["dep:wonopui-label"]
+layout = ["dep:wonopui-layout"]
+markdown-editor = ["dep:wonopui-markdown-editor"]
+media-query = ["dep:wonopui-media-query", "window-provider"]
+mention-input = ["dep:wonopui-mention-input"]
+multicol-sidebar = ["dep:wonopui-multicol-sidebar", "layout"]
+notification = ["dep:wonopui-notification"]
+page-content = ["dep:wonopui-page-content"]
+page-header = ["dep:wonopui-page-header"]
+pagination = ["dep:wonopui-pagination"]
+paint-canvas = ["dep:wonopui-paint-canvas"]
+placeholder = ["dep:wonopui-placeholder"]
+popover = ["dep:wonopui-popover"]
+resizable = ["dep:wonopui-resizable"]
+select = ["dep:wonopui-select"]
+selectable = ["dep:wonopui-selectable"]
+sidebar = ["dep:wonopui-sidebar"]
+switch = ["dep:wonopui-switch"]
+table = ["dep:wonopui-table"]
+tabs = ["dep:wonopui-tabs"]
+tag-input = ["dep:wonopui-tag-input"]
+tailwind-color-picker = ["dep:wonopui-tailwind-color-picker"]
+textarea = ["dep:wonopui-textarea"]
+toggle = ["dep:wonopui-toggle"]
+topbar = ["dep:wonopui-topbar"]
+typography = ["dep:wonopui-typography"]
+window-provider = ["dep:wonopui-window-provider"]
+
+[dependencies]
+wonopui-core = { path = "../wonopui-core" }
+yew = { version = "0.21", features = ["csr"] }
+web-sys = { version = "0.3", features = ["KeyboardEvent"] }
+
+# Optional component dependencies
+wonopui-accordion = { path = "../wonopui-accordion", optional = true }
+wonopui-alert = { path = "../wonopui-alert", optional = true }
+wonopui-avatar = { path = "../wonopui-avatar", optional = true }
+wonopui-badge = { path = "../wonopui-badge", optional = true }
+wonopui-breadcrumb = { path = "../wonopui-breadcrumb", optional = true }
+wonopui-browser-provider = { path = "../wonopui-browser-provider", optional = true }
+wonopui-button = { path = "../wonopui-button", optional = true }
+wonopui-calendar = { path = "../wonopui-calendar", optional = true }
+wonopui-card = { path = "../wonopui-card", optional = true }
+wonopui-carousel = { path = "../wonopui-carousel", optional = true }
+wonopui-checkbox = { path = "../wonopui-checkbox", optional = true }
+wonopui-code-editor = { path = "../wonopui-code-editor", optional = true }
+wonopui-col = { path = "../wonopui-col", optional = true }
+wonopui-collapsible = { path = "../wonopui-collapsible", optional = true }
+wonopui-color-picker = { path = "../wonopui-color-picker", optional = true }
+wonopui-combobox = { path = "../wonopui-combobox", optional = true }
+wonopui-command = { path = "../wonopui-command", optional = true }
+wonopui-container = { path = "../wonopui-container", optional = true }
+wonopui-content = { path = "../wonopui-content", optional = true }
+wonopui-context-menu = { path = "../wonopui-context-menu", optional = true }
+wonopui-copy-button = { path = "../wonopui-copy-button", optional = true }
+wonopui-dark-mode-provider = { path = "../wonopui-dark-mode-provider", optional = true }
+wonopui-data-table = { path = "../wonopui-data-table", optional = true }
+wonopui-date-picker = { path = "../wonopui-date-picker", optional = true }
+wonopui-dialog = { path = "../wonopui-dialog", optional = true }
+wonopui-diffview = { path = "../wonopui-diffview", optional = true }
+wonopui-divider = { path = "../wonopui-divider", optional = true }
+wonopui-drag-point = { path = "../wonopui-drag-point", optional = true }
+wonopui-drawer = { path = "../wonopui-drawer", optional = true }
+wonopui-dropdown = { path = "../wonopui-dropdown", optional = true }
+wonopui-group-button = { path = "../wonopui-group-button", optional = true }
+wonopui-iframe = { path = "../wonopui-iframe", optional = true }
+wonopui-input = { path = "../wonopui-input", optional = true }
+wonopui-kanban = { path = "../wonopui-kanban", optional = true }
+wonopui-label = { path = "../wonopui-label", optional = true }
+wonopui-layout = { path = "../wonopui-layout", optional = true }
+wonopui-markdown-editor = { path = "../wonopui-markdown-editor", optional = true }
+wonopui-media-query = { path = "../wonopui-media-query", optional = true }
+wonopui-mention-input = { path = "../wonopui-mention-input", optional = true }
+wonopui-multicol-sidebar = { path = "../wonopui-multicol-sidebar", optional = true }
+wonopui-notification = { path = "../wonopui-notification", optional = true }
+wonopui-page-content = { path = "../wonopui-page-content", optional = true }
+wonopui-page-header = { path = "../wonopui-page-header", optional = true }
+wonopui-pagination = { path = "../wonopui-pagination", optional = true }
+wonopui-paint-canvas = { path = "../wonopui-paint-canvas", optional = true }
+wonopui-placeholder = { path = "../wonopui-placeholder", optional = true }
+wonopui-popover = { path = "../wonopui-popover", optional = true }
+wonopui-resizable = { path = "../wonopui-resizable", optional = true }
+wonopui-select = { path = "../wonopui-select", optional = true }
+wonopui-selectable = { path = "../wonopui-selectable", optional = true }
+wonopui-sidebar = { path = "../wonopui-sidebar", optional = true }
+wonopui-switch = { path = "../wonopui-switch", optional = true }
+wonopui-table = { path = "../wonopui-table", optional = true }
+wonopui-tabs = { path = "../wonopui-tabs", optional = true }
+wonopui-tag-input = { path = "../wonopui-tag-input", optional = true }
+wonopui-tailwind-color-picker = { path = "../wonopui-tailwind-color-picker", optional = true }
+wonopui-textarea = { path = "../wonopui-textarea", optional = true }
+wonopui-toggle = { path = "../wonopui-toggle", optional = true }
+wonopui-topbar = { path = "../wonopui-topbar", optional = true }
+wonopui-typography = { path = "../wonopui-typography", optional = true }
+wonopui-window-provider = { path = "../wonopui-window-provider", optional = true }
