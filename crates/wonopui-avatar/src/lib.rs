@@ -7,20 +7,21 @@ use wonopui_core::*;
 /// Default CSS classes for avatar styling.
 pub mod classes {
     /// Base avatar styles.
-    pub const BASE: &str = "rounded-full object-cover border-2 border-white dark:border-zinc-800 shadow-sm";
-    
+    pub const BASE: &str =
+        "rounded-full object-cover border-2 border-white dark:border-zinc-800 shadow-sm";
+
     /// Small avatar size.
     pub const SIZE_SMALL: &str = "w-8 h-8";
-    
+
     /// Medium avatar size (default).
     pub const SIZE_MEDIUM: &str = "w-12 h-12";
-    
+
     /// Large avatar size.
     pub const SIZE_LARGE: &str = "w-16 h-16";
-    
+
     /// Fallback container for initials.
     pub const FALLBACK: &str = "flex items-center justify-center bg-zinc-200 dark:bg-zinc-700";
-    
+
     /// Initials text styling.
     pub const INITIALS: &str = "text-zinc-700 dark:text-zinc-200 font-medium";
 }
@@ -40,15 +41,15 @@ pub struct AvatarProps {
     /// Image source URL.
     #[prop_or_default]
     pub src: Option<String>,
-    
+
     /// Alt text, also used to generate initials fallback.
     #[prop_or_default]
     pub alt: String,
-    
+
     /// Avatar size.
     #[prop_or_default]
     pub size: AvatarSize,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
@@ -82,10 +83,10 @@ pub fn avatar(props: &AvatarProps) -> Html {
 
     match &props.src {
         Some(src) => html! {
-            <img 
-                class={classes!(classes::BASE, size_class, props.class.clone())} 
-                src={src.clone()} 
-                alt={props.alt.clone()} 
+            <img
+                class={classes!(classes::BASE, size_class, props.class.clone())}
+                src={src.clone()}
+                alt={props.alt.clone()}
             />
         },
         None => {

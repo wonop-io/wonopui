@@ -58,10 +58,7 @@ pub fn pagination(props: &PaginationProps) -> Html {
         range
     };
 
-    let container_class = merge_classes(&[
-        classes::PAGINATION_CONTAINER,
-        &class.to_string(),
-    ]);
+    let container_class = merge_classes(&[classes::PAGINATION_CONTAINER, &class.to_string()]);
 
     html! {
         <nav class={container_class} aria-label="Pagination">

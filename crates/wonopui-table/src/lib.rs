@@ -11,9 +11,11 @@ pub mod classes {
     pub const TABLE_HEAD: &str = "bg-gray-50 dark:bg-zinc-800";
     pub const TABLE_HEAD_ROW: &str = "";
     pub const TABLE_HEAD_CELL: &str = "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider";
-    pub const TABLE_BODY: &str = "bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-zinc-700";
+    pub const TABLE_BODY: &str =
+        "bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-zinc-700";
     pub const TABLE_ROW: &str = "hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors";
-    pub const TABLE_CELL: &str = "px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-zinc-100";
+    pub const TABLE_CELL: &str =
+        "px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-zinc-100";
     pub const TABLE_FOOTER: &str = "bg-gray-50 dark:bg-zinc-800";
 }
 
@@ -33,7 +35,11 @@ pub struct TableProps {
 pub fn table(props: &TableProps) -> Html {
     let container_class = merge_classes(&[
         classes::TABLE_CONTAINER,
-        if props.sticky_header { "sticky-header" } else { "" },
+        if props.sticky_header {
+            "sticky-header"
+        } else {
+            ""
+        },
         &props.class.to_string(),
     ]);
 
@@ -86,7 +92,11 @@ pub struct TableRowProps {
 #[function_component(TableRow)]
 pub fn table_row(props: &TableRowProps) -> Html {
     let class = merge_classes(&[
-        if props.head { classes::TABLE_HEAD_ROW } else { classes::TABLE_ROW },
+        if props.head {
+            classes::TABLE_HEAD_ROW
+        } else {
+            classes::TABLE_ROW
+        },
         &props.class.to_string(),
     ]);
 
@@ -113,10 +123,7 @@ pub struct TableHeadCellProps {
 
 #[function_component(TableHeadCell)]
 pub fn table_head_cell(props: &TableHeadCellProps) -> Html {
-    let class = merge_classes(&[
-        classes::TABLE_HEAD_CELL,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::TABLE_HEAD_CELL, &props.class.to_string()]);
 
     html! {
         <th
@@ -146,10 +153,7 @@ pub struct TableCellProps {
 
 #[function_component(TableCell)]
 pub fn table_cell(props: &TableCellProps) -> Html {
-    let class = merge_classes(&[
-        classes::TABLE_CELL,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::TABLE_CELL, &props.class.to_string()]);
 
     html! {
         <td
@@ -173,10 +177,7 @@ pub struct TableBodyProps {
 
 #[function_component(TableBody)]
 pub fn table_body(props: &TableBodyProps) -> Html {
-    let class = merge_classes(&[
-        classes::TABLE_BODY,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::TABLE_BODY, &props.class.to_string()]);
 
     html! {
         <tbody class={class}>
@@ -195,10 +196,7 @@ pub struct TableFooterProps {
 
 #[function_component(TableFooter)]
 pub fn table_footer(props: &TableFooterProps) -> Html {
-    let class = merge_classes(&[
-        classes::TABLE_FOOTER,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::TABLE_FOOTER, &props.class.to_string()]);
 
     html! {
         <tfoot class={class}>

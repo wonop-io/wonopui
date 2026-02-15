@@ -7,25 +7,29 @@ use wonopui_core::*;
 /// Default CSS classes for typography styling.
 pub mod classes {
     /// H1 heading styles.
-    pub const H1: &str = "mt-6 mb-10 text-zinc-800 dark:text-zinc-100 text-4xl font-bold tracking-tight";
-    
+    pub const H1: &str =
+        "mt-6 mb-10 text-zinc-800 dark:text-zinc-100 text-4xl font-bold tracking-tight";
+
     /// H2 heading styles.
-    pub const H2: &str = "mt-5 mb-8 text-zinc-800 dark:text-zinc-100 text-3xl font-semibold tracking-tight";
-    
+    pub const H2: &str =
+        "mt-5 mb-8 text-zinc-800 dark:text-zinc-100 text-3xl font-semibold tracking-tight";
+
     /// H3 heading styles.
-    pub const H3: &str = "mt-4 mb-6 text-zinc-800 dark:text-zinc-100 text-2xl font-semibold tracking-tight";
-    
+    pub const H3: &str =
+        "mt-4 mb-6 text-zinc-800 dark:text-zinc-100 text-2xl font-semibold tracking-tight";
+
     /// H4 heading styles.
     pub const H4: &str = "mt-3 mb-4 text-zinc-800 dark:text-zinc-100 text-xl font-semibold";
-    
+
     /// H5 heading styles.
     pub const H5: &str = "mt-2 mb-3 text-zinc-800 dark:text-zinc-100 text-lg font-medium";
-    
+
     /// H6 heading styles.
     pub const H6: &str = "mt-2 mb-2 text-zinc-800 dark:text-zinc-100 text-base font-medium";
-    
+
     /// Paragraph styles.
-    pub const P: &str = "my-2 text-zinc-800 dark:text-zinc-100 text-base font-normal mb-4 leading-relaxed";
+    pub const P: &str =
+        "my-2 text-zinc-800 dark:text-zinc-100 text-base font-normal mb-4 leading-relaxed";
 }
 
 /// Heading level for typography components.
@@ -46,11 +50,11 @@ pub struct HeadingProps {
     /// Heading level.
     #[prop_or_default]
     pub level: HeadingLevel,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
-    
+
     /// Heading content (children).
     #[prop_or_default]
     pub children: Children,
@@ -67,9 +71,9 @@ pub fn heading(props: &HeadingProps) -> Html {
         HeadingLevel::H5 => ("h5", classes::H5),
         HeadingLevel::H6 => ("h6", classes::H6),
     };
-    
+
     let classes = classes!(class, props.class.clone());
-    
+
     html! {
         <@{tag} class={classes}>
             { for props.children.iter() }
@@ -83,7 +87,7 @@ pub struct ParagraphProps {
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
-    
+
     /// Paragraph content (children).
     #[prop_or_default]
     pub children: Children,

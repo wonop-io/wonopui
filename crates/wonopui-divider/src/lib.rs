@@ -7,8 +7,10 @@ use yew::prelude::*;
 pub mod classes {
     pub const DIVIDER_CONTAINER: &str = "relative my-6";
     pub const DIVIDER_LINE: &str = "w-full border-t border-gray-200 dark:border-zinc-700";
-    pub const DIVIDER_TEXT_CONTAINER: &str = "relative flex justify-center text-sm font-medium leading-6";
-    pub const DIVIDER_TEXT: &str = "bg-white dark:bg-zinc-900 px-6 text-gray-500 dark:text-zinc-400";
+    pub const DIVIDER_TEXT_CONTAINER: &str =
+        "relative flex justify-center text-sm font-medium leading-6";
+    pub const DIVIDER_TEXT: &str =
+        "bg-white dark:bg-zinc-900 px-6 text-gray-500 dark:text-zinc-400";
 }
 
 #[derive(Properties, PartialEq)]

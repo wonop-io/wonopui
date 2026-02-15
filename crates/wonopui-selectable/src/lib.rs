@@ -3,8 +3,8 @@
 //! A component that enables selection of child elements with visual indicators.
 
 use std::rc::Rc;
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the Selectable component
 pub mod classes {
@@ -156,9 +156,9 @@ pub struct SelectableProps {
 pub fn selectable(props: &SelectableProps) -> Html {
     let state = use_context::<SelectableContext>().expect("SelectableContext not found");
     let node_ref = use_node_ref();
-    
+
     let is_selected = state.selected_id.as_ref() == Some(&props.id);
-    
+
     let onclick = {
         let state = state.clone();
         let id = props.id.clone();
@@ -166,7 +166,7 @@ pub fn selectable(props: &SelectableProps) -> Html {
         Callback::from(move |_: MouseEvent| {
             if state.select_mode {
                 state.dispatch(SelectableAction::SetSelectedId(Some(id.clone())));
-                
+
                 // Update selected area
                 if let Some(element) = node_ref.cast::<web_sys::HtmlElement>() {
                     let rect = element.get_bounding_client_rect();

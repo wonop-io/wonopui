@@ -8,7 +8,8 @@ use wonopui_core::merge_classes;
 use yew::prelude::*;
 
 pub mod classes {
-    pub const LAYOUT_CONTAINER: &str = "h-dvh w-screen flex flex-col bg-white text-black dark:bg-zinc-900 dark:text-zinc-100";
+    pub const LAYOUT_CONTAINER: &str =
+        "h-dvh w-screen flex flex-col bg-white text-black dark:bg-zinc-900 dark:text-zinc-100";
     pub const LAYOUT_CONTENT: &str = "flex-1 overflow-y-auto";
     pub const LAYOUT_CONTENT_HORIZONTAL: &str = "flex-1 flex flex-row overflow-hidden";
     pub const LAYOUT_CONTENT_VERTICAL: &str = "flex-1 flex flex-col overflow-hidden";
@@ -63,7 +64,7 @@ pub enum LayoutAction {
 
 impl Reducible for LayoutState {
     type Action = LayoutAction;
-    
+
     fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
         let mut state = (*self).clone();
         match action {
@@ -85,7 +86,8 @@ pub type LayoutContext = UseReducerHandle<LayoutState>;
 /// Hook to access the layout context
 #[hook]
 pub fn use_layout() -> LayoutContext {
-    use_context::<LayoutContext>().expect("LayoutContext not found. Wrap your app in LayoutProvider.")
+    use_context::<LayoutContext>()
+        .expect("LayoutContext not found. Wrap your app in LayoutProvider.")
 }
 
 // Layout Provider
@@ -141,7 +143,7 @@ pub struct LayoutProps {
 #[function_component(Layout)]
 pub fn layout(props: &LayoutProps) -> Html {
     let layout_context = use_layout();
-    
+
     let sidebar_size = if layout_context.sidebar_folded {
         layout_context.folded_menu_size
     } else {
@@ -165,10 +167,7 @@ pub fn layout(props: &LayoutProps) -> Html {
         LayoutDirection::Vertical => classes::LAYOUT_CONTENT_VERTICAL,
     };
 
-    let container_class = merge_classes(&[
-        classes::LAYOUT_CONTAINER,
-        &props.class.to_string(),
-    ]);
+    let container_class = merge_classes(&[classes::LAYOUT_CONTAINER, &props.class.to_string()]);
 
     html! {
         <div>

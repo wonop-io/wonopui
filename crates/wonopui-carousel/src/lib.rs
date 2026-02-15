@@ -3,8 +3,8 @@
 //! A carousel/slideshow component that cycles through content.
 
 use gloo_timers::callback::Interval;
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the Carousel component
 pub mod classes {
@@ -15,8 +15,10 @@ pub mod classes {
     pub const CONTROLS: &str = "absolute inset-0 flex items-center justify-between p-4";
     pub const CONTROL_BUTTON: &str = "inline-flex items-center justify-center rounded-full bg-white/80 dark:bg-gray-800/80 p-2 text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors";
     pub const INDICATORS: &str = "absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2";
-    pub const INDICATOR: &str = "w-2 h-2 rounded-full bg-white/50 hover:bg-white/75 transition-colors cursor-pointer";
-    pub const INDICATOR_ACTIVE: &str = "w-2 h-2 rounded-full bg-white transition-colors cursor-pointer";
+    pub const INDICATOR: &str =
+        "w-2 h-2 rounded-full bg-white/50 hover:bg-white/75 transition-colors cursor-pointer";
+    pub const INDICATOR_ACTIVE: &str =
+        "w-2 h-2 rounded-full bg-white transition-colors cursor-pointer";
 }
 
 #[derive(Properties, PartialEq)]
@@ -48,24 +50,21 @@ pub fn carousel(props: &CarouselProps) -> Html {
     // Auto-advance effect
     {
         let current_index = current_index.clone();
-        use_effect_with(
-            (interval, total_items),
-            move |(interval, total_items)| {
-                let interval = *interval;
-                let total_items = *total_items;
-                
-                let interval_handle: Option<Interval> = if interval == 0 || total_items == 0 {
-                    None
-                } else {
-                    let current_index = current_index.clone();
-                    Some(Interval::new(interval, move || {
-                        current_index.set((*current_index + 1) % total_items);
-                    }))
-                };
-                
-                move || drop(interval_handle)
-            },
-        );
+        use_effect_with((interval, total_items), move |(interval, total_items)| {
+            let interval = *interval;
+            let total_items = *total_items;
+
+            let interval_handle: Option<Interval> = if interval == 0 || total_items == 0 {
+                None
+            } else {
+                let current_index = current_index.clone();
+                Some(Interval::new(interval, move || {
+                    current_index.set((*current_index + 1) % total_items);
+                }))
+            };
+
+            move || drop(interval_handle)
+        });
     }
 
     let on_prev = {
@@ -104,7 +103,7 @@ pub fn carousel(props: &CarouselProps) -> Html {
                     }
                 }) }
             </div>
-            
+
             // Controls
             <div class={classes::CONTROLS}>
                 if let Some(prev) = &props.prev {
@@ -118,7 +117,7 @@ pub fn carousel(props: &CarouselProps) -> Html {
                         </svg>
                     </button>
                 }
-                
+
                 if let Some(next) = &props.next {
                     <button class={classes::CONTROL_BUTTON} onclick={on_next.clone()}>
                         { next.clone() }
@@ -131,7 +130,7 @@ pub fn carousel(props: &CarouselProps) -> Html {
                     </button>
                 }
             </div>
-            
+
             // Indicators
             if props.show_indicators && total_items > 1 {
                 <div class={classes::INDICATORS}>

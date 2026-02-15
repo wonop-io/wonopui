@@ -4,9 +4,9 @@
 
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
-use yew::prelude::*;
 use web_sys::PointerEvent;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the DragPoint component
 pub mod classes {
@@ -53,7 +53,7 @@ pub fn drag_point(props: &DragPointProps) -> Html {
             let active_pointer_clone = active_pointer.clone();
             let drag_point_ref_clone = drag_point_ref.clone();
             let onstop_clone = onstop.clone();
-            
+
             let onpointerup = Closure::wrap(Box::new(move |e: PointerEvent| {
                 if Some(e.pointer_id()) == *active_pointer_clone {
                     if let Some(element) = drag_point_ref_clone.cast::<web_sys::Element>() {
@@ -72,7 +72,7 @@ pub fn drag_point(props: &DragPointProps) -> Html {
 
             // Keep the closure alive and clean up on drop
             onpointerup.forget();
-            
+
             || ()
         });
     }

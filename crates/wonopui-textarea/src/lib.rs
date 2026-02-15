@@ -44,7 +44,11 @@ pub struct TextareaProps {
 pub fn textarea(props: &TextareaProps) -> Html {
     let class = merge_classes(&[
         classes::TEXTAREA_BASE,
-        if props.disabled { classes::TEXTAREA_DISABLED } else { "" },
+        if props.disabled {
+            classes::TEXTAREA_DISABLED
+        } else {
+            ""
+        },
         &props.class.to_string(),
     ]);
 

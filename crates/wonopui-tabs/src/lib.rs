@@ -9,28 +9,30 @@ use wonopui_core::*;
 pub mod classes {
     /// Tabs container.
     pub const CONTAINER: &str = "";
-    
+
     /// Tabs list base styles.
     pub const LIST: &str = "inline-flex h-10 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-400";
-    
+
     /// Tabs list row direction.
     pub const LIST_ROW: &str = "flex-row";
-    
+
     /// Tabs list column direction.
     pub const LIST_COLUMN: &str = "flex-col h-auto";
-    
+
     /// Tab trigger base styles.
     pub const TRIGGER: &str = "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-white transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-zinc-950 dark:focus-visible:ring-zinc-300";
-    
+
     /// Active tab trigger styles.
-    pub const TRIGGER_ACTIVE: &str = "bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 shadow-sm";
-    
+    pub const TRIGGER_ACTIVE: &str =
+        "bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 shadow-sm";
+
     /// Inactive tab trigger styles.
-    pub const TRIGGER_INACTIVE: &str = "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100";
-    
+    pub const TRIGGER_INACTIVE: &str =
+        "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100";
+
     /// Disabled tab trigger styles.
     pub const TRIGGER_DISABLED: &str = "opacity-50 cursor-not-allowed";
-    
+
     /// Tab content container.
     pub const CONTENT: &str = "mt-2";
 }
@@ -92,8 +94,8 @@ pub fn tabs_provider(props: &TabsProviderProps) -> Html {
 /// - A callback to set the active tab
 #[hook]
 pub fn use_tabs() -> (String, Callback<String>) {
-    let state = use_context::<Rc<TabsState>>()
-        .expect("use_tabs must be used within a TabsProvider");
+    let state =
+        use_context::<Rc<TabsState>>().expect("use_tabs must be used within a TabsProvider");
     (state.active_tab.clone(), state.set_active_tab.clone())
 }
 
@@ -150,7 +152,7 @@ pub fn tabs_list(props: &TabsListProps) -> Html {
         TabsDirection::Auto | TabsDirection::Row => classes::LIST_ROW,
         TabsDirection::Column => classes::LIST_COLUMN,
     };
-    
+
     html! {
         <div class={classes!(classes::LIST, direction_class, props.class.clone())}>
             { for props.children.iter() }
@@ -190,7 +192,11 @@ pub fn tabs_trigger(props: &TabsTriggerProps) -> Html {
     } else {
         classes::TRIGGER_INACTIVE
     };
-    let disabled_class = if props.disabled { classes::TRIGGER_DISABLED } else { "" };
+    let disabled_class = if props.disabled {
+        classes::TRIGGER_DISABLED
+    } else {
+        ""
+    };
 
     html! {
         <button

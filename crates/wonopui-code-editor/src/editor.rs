@@ -398,10 +398,7 @@ impl CodeEditor {
                 event.prevent_default();
                 let tab_spaces = " ".repeat(ctx.props().tab_size as usize);
 
-                let start = textarea
-                    .selection_start()
-                    .unwrap_or(Some(0))
-                    .unwrap_or(0) as usize;
+                let start = textarea.selection_start().unwrap_or(Some(0)).unwrap_or(0) as usize;
                 let end = textarea.selection_end().unwrap_or(Some(0)).unwrap_or(0) as usize;
                 let value = textarea.value();
 
@@ -525,7 +522,12 @@ impl CodeEditor {
             .collect::<Html>()
     }
 
-    fn render_diff_backgrounds(&self, ctx: &Context<Self>, font_size: u8, line_height: f32) -> Html {
+    fn render_diff_backgrounds(
+        &self,
+        ctx: &Context<Self>,
+        font_size: u8,
+        line_height: f32,
+    ) -> Html {
         let props = ctx.props();
         let lines = self.code.lines().collect::<Vec<_>>();
 
@@ -600,10 +602,18 @@ impl CodeEditor {
             } else {
                 // Tooltip annotation
                 let annotation_color = match annotation.annotation_type {
-                    AnnotationType::Error => "from-rose-400 to-red-500 shadow-rose-200 dark:shadow-rose-800",
-                    AnnotationType::Warning => "from-amber-400 to-yellow-500 shadow-amber-200 dark:shadow-amber-800",
-                    AnnotationType::Info => "from-sky-400 to-blue-500 shadow-sky-200 dark:shadow-sky-800",
-                    AnnotationType::Success => "from-emerald-400 to-green-500 shadow-emerald-200 dark:shadow-emerald-800",
+                    AnnotationType::Error => {
+                        "from-rose-400 to-red-500 shadow-rose-200 dark:shadow-rose-800"
+                    }
+                    AnnotationType::Warning => {
+                        "from-amber-400 to-yellow-500 shadow-amber-200 dark:shadow-amber-800"
+                    }
+                    AnnotationType::Info => {
+                        "from-sky-400 to-blue-500 shadow-sky-200 dark:shadow-sky-800"
+                    }
+                    AnnotationType::Success => {
+                        "from-emerald-400 to-green-500 shadow-emerald-200 dark:shadow-emerald-800"
+                    }
                 };
 
                 elements.push(html! {

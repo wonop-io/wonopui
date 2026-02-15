@@ -21,6 +21,7 @@ rust_library(
 rust_test(
     name = "wonopui-core_test",
     crate = ":wonopui-core",
+    size = "small",
 )
 
 # Source files for Tailwind CSS scanning

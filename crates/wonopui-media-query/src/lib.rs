@@ -46,7 +46,7 @@ pub fn use_media_query(query: &str) -> bool {
             let mut listener_option: Option<EventListener> = None;
 
             if let Some(window) = web_sys::window() {
-                if let Ok(Some(media_query_list)) = window.match_media(&query) {
+                if let Ok(Some(media_query_list)) = window.match_media(query) {
                     // Set initial state
                     state.set(media_query_list.matches());
 
@@ -82,18 +82,18 @@ pub mod breakpoints {
     pub const XL: &str = "(max-width: 1280px)";
     /// Large desktops (max-width: 1536px)
     pub const XXL: &str = "(max-width: 1536px)";
-    
+
     /// Minimum width breakpoints (Tailwind-style)
     pub const MIN_SM: &str = "(min-width: 640px)";
     pub const MIN_MD: &str = "(min-width: 768px)";
     pub const MIN_LG: &str = "(min-width: 1024px)";
     pub const MIN_XL: &str = "(min-width: 1280px)";
     pub const MIN_XXL: &str = "(min-width: 1536px)";
-    
+
     /// Color scheme preferences
     pub const PREFERS_DARK: &str = "(prefers-color-scheme: dark)";
     pub const PREFERS_LIGHT: &str = "(prefers-color-scheme: light)";
-    
+
     /// Motion preferences
     pub const PREFERS_REDUCED_MOTION: &str = "(prefers-reduced-motion: reduce)";
 }

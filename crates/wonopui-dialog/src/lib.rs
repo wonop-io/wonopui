@@ -9,21 +9,23 @@ use wonopui_core::*;
 pub mod classes {
     /// Dialog overlay/backdrop container.
     pub const CONTAINER: &str = "fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/80 dark:bg-zinc-950/90 backdrop-blur-sm overflow-auto pointer-events-auto";
-    
+
     /// Dialog content container.
     pub const CONTENT: &str = "bg-white dark:bg-zinc-800 rounded-md shadow-md max-w-md w-full border border-zinc-200 dark:border-zinc-700 transition-all duration-300 ease-out transform";
-    
+
     /// Dialog header.
-    pub const HEADER: &str = "p-4 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between";
-    
+    pub const HEADER: &str =
+        "p-4 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between";
+
     /// Dialog title.
     pub const TITLE: &str = "text-lg font-semibold text-zinc-900 dark:text-zinc-100";
-    
+
     /// Dialog description/body.
     pub const DESCRIPTION: &str = "text-sm text-zinc-600 dark:text-zinc-400 p-4";
-    
+
     /// Dialog footer.
-    pub const FOOTER: &str = "p-4 border-t border-zinc-200 dark:border-zinc-700 flex justify-end space-x-2";
+    pub const FOOTER: &str =
+        "p-4 border-t border-zinc-200 dark:border-zinc-700 flex justify-end space-x-2";
 }
 
 /// Context for managing dialog state.

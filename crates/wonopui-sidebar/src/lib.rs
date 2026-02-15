@@ -4,7 +4,7 @@
 //! and can be folded/expanded.
 
 use wonopui_core::merge_classes;
-use wonopui_layout::{LayoutContext, LayoutAction};
+use wonopui_layout::{LayoutAction, LayoutContext};
 use yew::prelude::*;
 use yew_router::prelude::{use_location, use_navigator};
 use yew_router::Routable;
@@ -16,16 +16,20 @@ pub mod classes {
     pub const SIDEBAR_STANDARD: &str = "w-72";
     pub const SIDEBAR_FOLDED: &str = "w-18";
     pub const SIDEBAR_HIDDEN: &str = "hidden lg:flex";
-    
-    pub const SIDEBAR_HEADER: &str = "flex h-16 shrink-0 items-center px-6 border-b border-zinc-200 dark:border-zinc-800";
+
+    pub const SIDEBAR_HEADER: &str =
+        "flex h-16 shrink-0 items-center px-6 border-b border-zinc-200 dark:border-zinc-800";
     pub const SIDEBAR_CONTENT: &str = "flex-1 flex flex-col gap-y-5 overflow-y-auto px-6 py-4";
-    pub const SIDEBAR_FOOTER: &str = "flex shrink-0 items-center px-6 py-4 border-t border-zinc-200 dark:border-zinc-800";
-    
-    pub const SIDEBAR_HEADING: &str = "text-xs font-semibold leading-6 text-gray-400 dark:text-zinc-500 uppercase tracking-wider";
+    pub const SIDEBAR_FOOTER: &str =
+        "flex shrink-0 items-center px-6 py-4 border-t border-zinc-200 dark:border-zinc-800";
+
+    pub const SIDEBAR_HEADING: &str =
+        "text-xs font-semibold leading-6 text-gray-400 dark:text-zinc-500 uppercase tracking-wider";
     pub const SIDEBAR_NAV: &str = "flex flex-col gap-y-1";
     pub const SIDEBAR_MENU: &str = "flex flex-col gap-y-1";
     pub const SIDEBAR_ITEM: &str = "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-zinc-800";
-    pub const SIDEBAR_ITEM_ACTIVE: &str = "bg-gray-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400";
+    pub const SIDEBAR_ITEM_ACTIVE: &str =
+        "bg-gray-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400";
     pub const SIDEBAR_ITEM_ICON: &str = "h-6 w-6 shrink-0";
     pub const SIDEBAR_LINK: &str = "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-zinc-800 cursor-pointer";
 }
@@ -78,7 +82,11 @@ pub fn sidebar(props: &SidebarProps) -> Html {
         classes::SIDEBAR_CONTAINER,
         props.position.to_class(),
         size_class,
-        if props.hidden_on_mobile { classes::SIDEBAR_HIDDEN } else { "" },
+        if props.hidden_on_mobile {
+            classes::SIDEBAR_HIDDEN
+        } else {
+            ""
+        },
         &props.class.to_string(),
     ]);
 
@@ -107,10 +115,7 @@ pub struct SidebarHeaderProps {
 
 #[function_component(SidebarHeader)]
 pub fn sidebar_header(props: &SidebarHeaderProps) -> Html {
-    let class = merge_classes(&[
-        classes::SIDEBAR_HEADER,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::SIDEBAR_HEADER, &props.class.to_string()]);
 
     html! {
         <div class={class}>
@@ -129,10 +134,7 @@ pub struct SidebarContentProps {
 
 #[function_component(SidebarContent)]
 pub fn sidebar_content(props: &SidebarContentProps) -> Html {
-    let class = merge_classes(&[
-        classes::SIDEBAR_CONTENT,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::SIDEBAR_CONTENT, &props.class.to_string()]);
 
     html! {
         <nav class={class}>
@@ -151,10 +153,7 @@ pub struct SidebarFooterProps {
 
 #[function_component(SidebarFooter)]
 pub fn sidebar_footer(props: &SidebarFooterProps) -> Html {
-    let class = merge_classes(&[
-        classes::SIDEBAR_FOOTER,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::SIDEBAR_FOOTER, &props.class.to_string()]);
 
     html! {
         <div class={class}>
@@ -173,10 +172,7 @@ pub struct SidebarHeadingProps {
 
 #[function_component(SidebarHeading)]
 pub fn sidebar_heading(props: &SidebarHeadingProps) -> Html {
-    let class = merge_classes(&[
-        classes::SIDEBAR_HEADING,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::SIDEBAR_HEADING, &props.class.to_string()]);
 
     html! {
         <h2 class={class}>
@@ -195,10 +191,7 @@ pub struct SidebarNavProps {
 
 #[function_component(SidebarNav)]
 pub fn sidebar_nav(props: &SidebarNavProps) -> Html {
-    let class = merge_classes(&[
-        classes::SIDEBAR_NAV,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::SIDEBAR_NAV, &props.class.to_string()]);
 
     html! {
         <ul class={class} role="list">
@@ -227,7 +220,11 @@ pub struct SidebarItemProps {
 pub fn sidebar_item(props: &SidebarItemProps) -> Html {
     let class = merge_classes(&[
         classes::SIDEBAR_ITEM,
-        if props.active { classes::SIDEBAR_ITEM_ACTIVE } else { "" },
+        if props.active {
+            classes::SIDEBAR_ITEM_ACTIVE
+        } else {
+            ""
+        },
         &props.class.to_string(),
     ]);
 
@@ -272,10 +269,7 @@ pub struct SidebarMenuProps {
 
 #[function_component(SidebarMenu)]
 pub fn sidebar_menu(props: &SidebarMenuProps) -> Html {
-    let class = merge_classes(&[
-        classes::SIDEBAR_MENU,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::SIDEBAR_MENU, &props.class.to_string()]);
 
     html! {
         <div class={class}>
@@ -298,8 +292,11 @@ pub struct SidebarLinkProps<R: Routable + 'static> {
 #[function_component]
 pub fn SidebarLink<R: Routable + 'static>(props: &SidebarLinkProps<R>) -> Html {
     let layout_context = use_context::<LayoutContext>();
-    let folded = layout_context.as_ref().map(|ctx| ctx.sidebar_folded).unwrap_or(false);
-    
+    let folded = layout_context
+        .as_ref()
+        .map(|ctx| ctx.sidebar_folded)
+        .unwrap_or(false);
+
     let justify = if folded {
         "justify-center"
     } else {
@@ -324,7 +321,11 @@ pub fn SidebarLink<R: Routable + 'static>(props: &SidebarLinkProps<R>) -> Html {
     let class = merge_classes(&[
         classes::SIDEBAR_LINK,
         justify,
-        if is_active { classes::SIDEBAR_ITEM_ACTIVE } else { "" },
+        if is_active {
+            classes::SIDEBAR_ITEM_ACTIVE
+        } else {
+            ""
+        },
         &props.class.to_string(),
     ]);
 

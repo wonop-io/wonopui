@@ -8,22 +8,26 @@ use wonopui_core::*;
 pub mod classes {
     /// Base alert styles.
     pub const BASE: &str = "mx-auto max-w-4xl w-full p-4 rounded-md bg-zinc-50 dark:bg-zinc-800 border-l-8 border border-zinc-200 dark:border-zinc-700";
-    
+
     /// Success alert variant.
-    pub const SUCCESS: &str = "text-zinc-800 dark:text-zinc-100 border-l-emerald-500 dark:border-l-emerald-500";
-    
+    pub const SUCCESS: &str =
+        "text-zinc-800 dark:text-zinc-100 border-l-emerald-500 dark:border-l-emerald-500";
+
     /// Warning alert variant.
-    pub const WARNING: &str = "text-zinc-800 dark:text-zinc-100 border-l-amber-500 dark:border-l-amber-500";
-    
+    pub const WARNING: &str =
+        "text-zinc-800 dark:text-zinc-100 border-l-amber-500 dark:border-l-amber-500";
+
     /// Error alert variant.
-    pub const ERROR: &str = "text-zinc-800 dark:text-zinc-100 border-l-red-500 dark:border-l-red-500";
-    
+    pub const ERROR: &str =
+        "text-zinc-800 dark:text-zinc-100 border-l-red-500 dark:border-l-red-500";
+
     /// Info alert variant.
-    pub const INFO: &str = "text-zinc-800 dark:text-zinc-100 border-l-indigo-500 dark:border-l-indigo-500";
-    
+    pub const INFO: &str =
+        "text-zinc-800 dark:text-zinc-100 border-l-indigo-500 dark:border-l-indigo-500";
+
     /// Alert title styles.
     pub const TITLE: &str = "font-semibold text-lg mb-2";
-    
+
     /// Alert description styles.
     pub const DESCRIPTION: &str = "text-sm";
 }
@@ -47,19 +51,19 @@ pub struct AlertProps {
     /// Alert variant.
     #[prop_or_default]
     pub variant: AlertVariant,
-    
+
     /// Backwards compatibility alias for variant.
     #[prop_or_default]
     pub alert_type: Option<AlertVariant>,
-    
+
     /// Alert title (optional).
     #[prop_or_default]
     pub title: Option<String>,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
-    
+
     /// Alert content (children).
     #[prop_or_default]
     pub children: Children,
@@ -89,7 +93,7 @@ pub struct AlertProps {
 pub fn alert(props: &AlertProps) -> Html {
     // Support both `variant` and `alert_type` props for backwards compatibility
     let variant = props.alert_type.unwrap_or(props.variant);
-    
+
     let variant_class = match variant {
         AlertVariant::Info => classes::INFO,
         AlertVariant::Success => classes::SUCCESS,

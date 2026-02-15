@@ -4,8 +4,8 @@
 //! Note: This is a basic implementation. A full-featured data table
 //! would include column resizing, row selection, and more.
 
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the DataTable component
 pub mod classes {
@@ -13,7 +13,8 @@ pub mod classes {
     pub const TABLE: &str = "w-full caption-bottom text-sm";
     pub const HEADER: &str = "border-b";
     pub const HEADER_ROW: &str = "";
-    pub const HEADER_CELL: &str = "h-12 px-4 text-left align-middle font-medium text-muted-foreground";
+    pub const HEADER_CELL: &str =
+        "h-12 px-4 text-left align-middle font-medium text-muted-foreground";
     pub const HEADER_CELL_SORTABLE: &str = "h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer hover:bg-accent";
     pub const BODY: &str = "";
     pub const ROW: &str = "border-b transition-colors hover:bg-muted/50";
@@ -55,12 +56,13 @@ pub struct DataTableProps<T: Clone + PartialEq + 'static> {
 #[function_component(DataTable)]
 pub fn data_table<T: Clone + PartialEq + 'static>(props: &DataTableProps<T>) -> Html {
     let current_page = use_state(|| 0usize);
-    let sort_column = use_state(|| Option::<String>::None);
-    let sort_direction = use_state(|| SortDirection::Ascending);
+    // TODO: Implement sorting functionality
+    let _sort_column = use_state(|| Option::<String>::None);
+    let _sort_direction = use_state(|| SortDirection::Ascending);
 
     let page_size = props.page_size.unwrap_or(10);
-    let total_pages = (props.data.len() + page_size - 1) / page_size;
-    
+    let total_pages = props.data.len().div_ceil(page_size);
+
     let start_idx = *current_page * page_size;
     let end_idx = std::cmp::min(start_idx + page_size, props.data.len());
     let page_data = &props.data[start_idx..end_idx];
@@ -113,7 +115,7 @@ pub fn data_table<T: Clone + PartialEq + 'static>(props: &DataTableProps<T>) -> 
                         } else {
                             classes::ROW
                         };
-                        
+
                         let on_click = {
                             let row = row.clone();
                             let on_row_click = props.on_row_click.clone();
@@ -123,7 +125,7 @@ pub fn data_table<T: Clone + PartialEq + 'static>(props: &DataTableProps<T>) -> 
                                 }
                             })
                         };
-                        
+
                         html! {
                             <tr class={row_class} onclick={on_click}>
                                 { for props.columns.iter().map(|col| {
@@ -138,7 +140,7 @@ pub fn data_table<T: Clone + PartialEq + 'static>(props: &DataTableProps<T>) -> 
                     }) }
                 </tbody>
             </table>
-            
+
             if props.page_size.is_some() && total_pages > 1 {
                 <div class={classes::PAGINATION}>
                     <span class="text-sm text-muted-foreground">

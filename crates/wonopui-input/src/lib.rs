@@ -17,87 +17,87 @@ pub struct InputProps {
     /// Current input value.
     #[prop_or_default]
     pub value: String,
-    
+
     /// Callback fired on input events.
     #[prop_or_default]
     pub oninput: Callback<InputEvent>,
-    
+
     /// Callback fired with the text value on input.
     #[prop_or_default]
     pub ontext: Callback<String>,
-    
+
     /// Callback fired on change events.
     #[prop_or_default]
     pub onchange: Callback<Event>,
-    
+
     /// Callback fired on keypress events.
     #[prop_or_default]
     pub onkeypress: Callback<KeyboardEvent>,
-    
+
     /// Callback fired on keydown events.
     #[prop_or_default]
     pub onkeydown: Callback<KeyboardEvent>,
-    
+
     /// Callback fired on keyup events.
     #[prop_or_default]
     pub onkeyup: Callback<KeyboardEvent>,
-    
+
     /// Callback fired on focus events.
     #[prop_or_default]
     pub onfocus: Callback<FocusEvent>,
-    
+
     /// Callback fired on blur events.
     #[prop_or_default]
     pub onblur: Callback<FocusEvent>,
-    
+
     /// Placeholder text.
     #[prop_or_default]
     pub placeholder: String,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
-    
+
     /// Input ID attribute.
     #[prop_or_default]
     pub id: String,
-    
+
     /// Input name attribute.
     #[prop_or_default]
     pub name: String,
-    
+
     /// Input type (e.g., "text", "password", "email").
     #[prop_or("text".to_string())]
     pub kind: String,
-    
+
     /// Maximum input length.
     #[prop_or_default]
     pub maxlength: Option<i32>,
-    
+
     /// Whether the input is read-only.
     #[prop_or_default]
     pub readonly: bool,
-    
+
     /// Minimum value (for number inputs).
     #[prop_or_default]
     pub min: Option<String>,
-    
+
     /// Maximum value (for number inputs).
     #[prop_or_default]
     pub max: Option<String>,
-    
+
     /// Step value (for number inputs).
     #[prop_or_default]
     pub step: Option<String>,
-    
+
     /// Node reference for direct DOM access.
     #[prop_or_default]
     pub node_ref: NodeRef,
-    
+
     /// Whether the input is disabled.
     #[prop_or_default]
     pub disabled: bool,
-    
+
     /// Whether the input is required.
     #[prop_or_default]
     pub required: bool,

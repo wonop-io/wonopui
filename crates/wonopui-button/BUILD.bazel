@@ -18,6 +18,7 @@ rust_library(
 rust_test(
     name = "wonopui-button_test",
     crate = ":wonopui-button",
+    size = "small",
 )
 
 # Source files for Tailwind CSS scanning

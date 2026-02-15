@@ -4,9 +4,9 @@
 
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
-use yew::prelude::*;
 use web_sys::PointerEvent;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the Resizable component
 pub mod classes {
@@ -199,7 +199,7 @@ pub fn resizable(props: &ResizableProps) -> Html {
     html! {
         <div ref={container_ref} class={container_class} style={style}>
             { for props.children.iter() }
-            
+
             // Resize handles
             if props.north {
                 <div

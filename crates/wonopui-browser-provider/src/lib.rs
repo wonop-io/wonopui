@@ -7,7 +7,7 @@ use wasm_bindgen::JsCast;
 use yew::prelude::*;
 
 /// Browser context that provides safe access to browser APIs
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Default)]
 pub struct BrowserContext {
     pub window: Option<web_sys::Window>,
     pub document: Option<web_sys::Document>,
@@ -15,19 +15,6 @@ pub struct BrowserContext {
     pub location: Option<web_sys::Location>,
     pub local_storage: Option<web_sys::Storage>,
     pub session_storage: Option<web_sys::Storage>,
-}
-
-impl Default for BrowserContext {
-    fn default() -> Self {
-        Self {
-            window: None,
-            document: None,
-            navigator: None,
-            location: None,
-            local_storage: None,
-            session_storage: None,
-        }
-    }
 }
 
 impl BrowserContext {
@@ -185,16 +172,16 @@ pub struct ClipboardOps {
 impl ClipboardOps {
     /// Copy text to clipboard (returns a promise-like Future)
     pub fn copy_text(&self, text: &str) -> Option<js_sys::Promise> {
-        self.navigator.as_ref().map(|nav| {
-            nav.clipboard().write_text(text)
-        })
+        self.navigator
+            .as_ref()
+            .map(|nav| nav.clipboard().write_text(text))
     }
 
     /// Read text from clipboard (returns a promise-like Future)
     pub fn read_text(&self) -> Option<js_sys::Promise> {
-        self.navigator.as_ref().map(|nav| {
-            nav.clipboard().read_text()
-        })
+        self.navigator
+            .as_ref()
+            .map(|nav| nav.clipboard().read_text())
     }
 }
 

@@ -9,14 +9,17 @@ use yew_router::Routable;
 /// Default CSS classes for breadcrumb styling.
 pub mod classes {
     /// Nav container styles.
-    pub const NAV: &str = "flex flex-wrap items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300";
-    
+    pub const NAV: &str =
+        "flex flex-wrap items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300";
+
     /// List container styles.
-    pub const LIST: &str = "flex flex-wrap items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300";
-    
+    pub const LIST: &str =
+        "flex flex-wrap items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300";
+
     /// Item styles.
-    pub const ITEM: &str = "inline-flex items-center gap-2 hover:text-indigo-500 transition-colors duration-150";
-    
+    pub const ITEM: &str =
+        "inline-flex items-center gap-2 hover:text-indigo-500 transition-colors duration-150";
+
     /// Separator styles.
     pub const SEPARATOR: &str = "[&>svg]:size-4 text-zinc-400";
 }
@@ -27,11 +30,11 @@ pub struct BreadcrumbProps {
     /// Breadcrumb items as children.
     #[prop_or_default]
     pub children: Children,
-    
+
     /// Custom separator icon.
     #[prop_or_default]
     pub separator_icon: Option<Html>,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
@@ -42,11 +45,11 @@ pub struct BreadcrumbProps {
 pub struct BreadcrumbItemProps {
     /// Display label.
     pub label: String,
-    
+
     /// Optional href for linking.
     #[prop_or_default]
     pub href: Option<String>,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
@@ -57,10 +60,10 @@ pub struct BreadcrumbItemProps {
 pub struct BreadcrumbRouteItemProps<R: Routable + 'static> {
     /// Display label.
     pub label: String,
-    
+
     /// Route to navigate to.
     pub to: R,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
@@ -72,10 +75,10 @@ pub struct BreadcrumbLinkProps<R: Routable + 'static> {
     /// Link content.
     #[prop_or_default]
     pub children: Children,
-    
+
     /// Route to navigate to.
     pub to: R,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,

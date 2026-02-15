@@ -8,13 +8,13 @@ use wonopui_core::*;
 pub mod classes {
     /// Card container styles.
     pub const CONTAINER: &str = "rounded-md border border-zinc-200 dark:border-zinc-700 shadow-md bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100";
-    
+
     /// Card header styles.
     pub const HEADER: &str = "p-6 border-b border-zinc-200 dark:border-zinc-700";
-    
+
     /// Card title styles.
     pub const TITLE: &str = "text-xl font-semibold leading-none tracking-tight";
-    
+
     /// Card body/content styles.
     pub const BODY: &str = "p-6";
 }
@@ -25,11 +25,11 @@ pub struct CardProps {
     /// Card content.
     #[prop_or_default]
     pub children: Children,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
-    
+
     /// Optional click handler.
     #[prop_or_default]
     pub onclick: Option<Callback<MouseEvent>>,
@@ -54,7 +54,7 @@ pub struct CardHeaderProps {
     /// Header content.
     #[prop_or_default]
     pub children: Children,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
@@ -76,7 +76,7 @@ pub struct CardTitleProps {
     /// Title content.
     #[prop_or_default]
     pub children: Children,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
@@ -98,7 +98,7 @@ pub struct CardContentProps {
     /// Body content.
     #[prop_or_default]
     pub children: Children,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,

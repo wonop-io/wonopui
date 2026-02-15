@@ -10,11 +10,13 @@ use yew::prelude::*;
 pub mod classes {
     pub const DROPDOWN_CONTENT: &str = "py-1 min-w-[160px]";
     pub const DROPDOWN_ITEM: &str = "flex items-center px-4 py-2 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer";
-    pub const DROPDOWN_ITEM_DISABLED: &str = "opacity-50 cursor-not-allowed hover:bg-transparent dark:hover:bg-transparent";
+    pub const DROPDOWN_ITEM_DISABLED: &str =
+        "opacity-50 cursor-not-allowed hover:bg-transparent dark:hover:bg-transparent";
     pub const DROPDOWN_ITEM_ICON: &str = "mr-2 w-4 h-4";
     pub const DROPDOWN_ITEM_WIDGET: &str = "px-4 py-2";
     pub const DROPDOWN_SEPARATOR: &str = "my-1 border-t border-gray-200 dark:border-zinc-600";
-    pub const DROPDOWN_HEADING: &str = "px-4 py-2 text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider";
+    pub const DROPDOWN_HEADING: &str =
+        "px-4 py-2 text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider";
 }
 
 // Re-export PopoverPosition for convenience
@@ -117,7 +119,11 @@ fn dropdown_item_component(props: &DropdownItemComponentProps) -> Html {
             let item_class = merge_classes(&[
                 classes::DROPDOWN_ITEM,
                 if props.full_width { "w-full" } else { "" },
-                if *disabled { classes::DROPDOWN_ITEM_DISABLED } else { "" },
+                if *disabled {
+                    classes::DROPDOWN_ITEM_DISABLED
+                } else {
+                    ""
+                },
             ]);
 
             html! {

@@ -26,10 +26,7 @@ pub struct LabelProps {
 
 #[function_component(Label)]
 pub fn label(props: &LabelProps) -> Html {
-    let class = merge_classes(&[
-        classes::LABEL_BASE,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::LABEL_BASE, &props.class.to_string()]);
 
     html! {
         <label

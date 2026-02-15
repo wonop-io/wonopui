@@ -2,12 +2,13 @@
 //!
 //! A sidebar component that supports multiple columns with collapsible behavior.
 
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the MultiColumnSidebar component
 pub mod classes {
-    pub const SIDEBAR: &str = "h-dvh inset-y-0 absolute bg-white text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300";
+    pub const SIDEBAR: &str =
+        "h-dvh inset-y-0 absolute bg-white text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300";
     pub const SIDEBAR_LEFT: &str = "left-0";
     pub const SIDEBAR_RIGHT: &str = "right-0";
     pub const CURTAIN: &str = "inset-0 fixed lg:hidden";
@@ -122,12 +123,15 @@ pub fn multi_column_sidebar(props: &MultiColumnSidebarProps) -> Html {
     } else {
         props.width
     };
-    
+
     let sidebar_style = format!("width: {}px;", total_width);
-    
+
     let (order_class, curtain_style) = match props.position {
         SidebarPosition::Left => ("", format!("padding-left: {}px;", total_width)),
-        SidebarPosition::Right => ("flex-row-reverse", format!("padding-right: {}px;", total_width)),
+        SidebarPosition::Right => (
+            "flex-row-reverse",
+            format!("padding-right: {}px;", total_width),
+        ),
     };
 
     let show_mobile_class = if props.mobile_open {
@@ -150,10 +154,7 @@ pub fn multi_column_sidebar(props: &MultiColumnSidebarProps) -> Html {
         &props.class.to_string(),
     ]);
 
-    let curtain_class = merge_classes(&[
-        show_mobile_class,
-        classes::CURTAIN,
-    ]);
+    let curtain_class = merge_classes(&[show_mobile_class, classes::CURTAIN]);
 
     html! {
         <>
@@ -164,7 +165,7 @@ pub fn multi_column_sidebar(props: &MultiColumnSidebarProps) -> Html {
                     { props.curtain_content.clone() }
                 </div>
             </div>
-            
+
             // Sidebar
             <div class={sidebar_class} style={sidebar_style}>
                 { for props.children.iter() }

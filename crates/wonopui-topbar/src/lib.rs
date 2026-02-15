@@ -70,10 +70,7 @@ pub struct TopbarStartProps {
 
 #[function_component(TopbarStart)]
 pub fn topbar_start(props: &TopbarStartProps) -> Html {
-    let class = merge_classes(&[
-        "flex items-center gap-x-4 px-4",
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&["flex items-center gap-x-4 px-4", &props.class.to_string()]);
 
     html! {
         <div class={class}>
@@ -114,10 +111,7 @@ pub struct TopbarEndProps {
 
 #[function_component(TopbarEnd)]
 pub fn topbar_end(props: &TopbarEndProps) -> Html {
-    let class = merge_classes(&[
-        "flex items-center gap-x-4 px-4",
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&["flex items-center gap-x-4 px-4", &props.class.to_string()]);
 
     html! {
         <div class={class}>

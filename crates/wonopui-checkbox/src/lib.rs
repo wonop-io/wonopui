@@ -8,16 +8,17 @@ use wonopui_core::*;
 pub mod classes {
     /// Base checkbox styles.
     pub const BASE: &str = "h-4 w-4 shrink-0 rounded-sm border border-zinc-700 ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 text-indigo-600 dark:text-indigo-400";
-    
+
     /// Checked state styles.
-    pub const CHECKED: &str = "bg-indigo-500/90 dark:bg-indigo-600 text-zinc-100 border-transparent";
-    
+    pub const CHECKED: &str =
+        "bg-indigo-500/90 dark:bg-indigo-600 text-zinc-100 border-transparent";
+
     /// Unchecked state styles.
     pub const UNCHECKED: &str = "border-zinc-300 dark:border-zinc-600";
-    
+
     /// Disabled state styles.
     pub const DISABLED: &str = "opacity-50 cursor-not-allowed";
-    
+
     /// Label styles.
     pub const LABEL: &str = "ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70";
 }
@@ -28,19 +29,19 @@ pub struct CheckboxProps {
     /// Checkbox ID attribute.
     #[prop_or_default]
     pub id: String,
-    
+
     /// Whether the checkbox is checked.
     #[prop_or_default]
     pub checked: bool,
-    
+
     /// Callback when toggled.
     #[prop_or_default]
     pub on_toggle: Callback<MouseEvent>,
-    
+
     /// Whether the checkbox is disabled.
     #[prop_or_default]
     pub disabled: bool,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
@@ -61,7 +62,7 @@ pub struct CheckboxProps {
 ///         let checked = checked.clone();
 ///         Callback::from(move |_| checked.set(!*checked))
 ///     };
-///     
+///
 ///     html! {
 ///         <Checkbox checked={*checked} on_toggle={on_toggle} />
 ///     }

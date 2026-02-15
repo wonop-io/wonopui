@@ -11,7 +11,7 @@ pub mod classes {
     pub const POPOVER_CONTAINER: &str = "relative inline-block";
     pub const POPOVER_TRIGGER: &str = "cursor-pointer";
     pub const POPOVER_CONTENT: &str = "absolute z-50 min-w-[8rem] bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-600 rounded-md shadow-lg";
-    
+
     // Position classes
     pub const POSITION_NORTH_START: &str = "bottom-full left-0 mb-2";
     pub const POSITION_NORTH_MIDDLE: &str = "bottom-full left-1/2 -translate-x-1/2 mb-2";
@@ -125,10 +125,7 @@ pub fn popover(props: &PopoverProps) -> Html {
         toggle,
     });
 
-    let class = merge_classes(&[
-        classes::POPOVER_CONTAINER,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::POPOVER_CONTAINER, &props.class.to_string()]);
 
     html! {
         <ContextProvider<Rc<PopoverState>> context={state}>
@@ -157,10 +154,7 @@ pub fn popover_trigger(props: &PopoverTriggerProps) -> Html {
         Callback::from(move |_| toggle.emit(()))
     };
 
-    let class = merge_classes(&[
-        classes::POPOVER_TRIGGER,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::POPOVER_TRIGGER, &props.class.to_string()]);
 
     html! {
         <div class={class} {onclick}>

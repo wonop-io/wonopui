@@ -2,6 +2,7 @@
 //!
 //! A customizable select/dropdown component with keyboard navigation.
 
+use std::fmt;
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
 use wonopui_core::merge_classes;
@@ -24,9 +25,9 @@ pub struct SelectOption {
     pub label: String,
 }
 
-impl ToString for SelectOption {
-    fn to_string(&self) -> String {
-        self.label.clone()
+impl fmt::Display for SelectOption {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.label)
     }
 }
 
@@ -140,7 +141,11 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
     let container_class = merge_classes(&[
         classes::SELECT_CONTAINER,
         &props.class.to_string(),
-        if props.disabled { "opacity-50 cursor-not-allowed" } else { "" },
+        if props.disabled {
+            "opacity-50 cursor-not-allowed"
+        } else {
+            ""
+        },
     ]);
 
     html! {

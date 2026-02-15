@@ -7,8 +7,8 @@
 //! Note: ThemeProvider, BrandGuide, and ComponentEditor have been moved to their
 //! respective crates and require the `theme-provider` and `component-editor` features.
 
-use yew::prelude::*;
 use web_sys;
+use yew::prelude::*;
 
 // ============================================================================
 // CodeEditor types - stubs for gallery compatibility
@@ -26,15 +26,27 @@ pub mod code_editor {
 
     impl Diff {
         pub fn added(line: usize) -> Self {
-            Self { line, diff_type: DiffType::Added, message: None }
+            Self {
+                line,
+                diff_type: DiffType::Added,
+                message: None,
+            }
         }
 
         pub fn removed(line: usize) -> Self {
-            Self { line, diff_type: DiffType::Removed, message: None }
+            Self {
+                line,
+                diff_type: DiffType::Removed,
+                message: None,
+            }
         }
 
         pub fn modified(line: usize) -> Self {
-            Self { line, diff_type: DiffType::Modified, message: None }
+            Self {
+                line,
+                diff_type: DiffType::Modified,
+                message: None,
+            }
         }
 
         pub fn with_message(mut self, message: &str) -> Self {
@@ -174,16 +186,21 @@ pub mod code_editor {
     /// Stub CodeEditor - displays code in a pre block
     #[function_component(CodeEditor)]
     pub fn code_editor(props: &CodeEditorProps) -> Html {
-        let base_class = "bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono";
+        let base_class =
+            "bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono";
         let combined_class = if props.class.is_empty() {
             base_class.to_string()
         } else {
             format!("{} {}", base_class, props.class.to_string())
         };
-        
+
         // Use code as alias for value
-        let content = if !props.code.is_empty() { &props.code } else { &props.value };
-        
+        let content = if !props.code.is_empty() {
+            &props.code
+        } else {
+            &props.value
+        };
+
         html! {
             <pre class={combined_class}>
                 <code>{ content }</code>
@@ -232,11 +249,19 @@ pub mod code_editor {
         } else {
             format!("{} {}", base_class, props.class.to_string())
         };
-        
+
         // Use old_text/new_text if provided, otherwise fall back to original/modified
-        let old = if !props.old_text.is_empty() { &props.old_text } else { &props.original };
-        let new = if !props.new_text.is_empty() { &props.new_text } else { &props.modified };
-        
+        let old = if !props.old_text.is_empty() {
+            &props.old_text
+        } else {
+            &props.original
+        };
+        let new = if !props.new_text.is_empty() {
+            &props.new_text
+        } else {
+            &props.modified
+        };
+
         html! {
             <div class={combined_class}>
                 <div>
@@ -311,18 +336,18 @@ pub struct ContentEditableWithCommands<T: Clone + PartialEq + 'static>(std::mark
 impl<T: Clone + PartialEq + 'static> yew::Component for ContentEditableWithCommands<T> {
     type Message = ();
     type Properties = ContentEditableWithCommandsProps<T>;
-    
+
     fn create(_ctx: &yew::Context<Self>) -> Self {
         Self(std::marker::PhantomData)
     }
-    
+
     fn view(&self, ctx: &yew::Context<Self>) -> Html {
         let props = ctx.props();
         let class = format!("{} {}", props.class.to_string(), "outline-none");
-        
+
         html! {
-            <div 
-                class={class} 
+            <div
+                class={class}
                 contenteditable="true"
             >
                 { &props.content }
@@ -341,30 +366,30 @@ use yew::Html;
 pub trait BlockTrait: Clone + PartialEq + Sized + 'static {
     /// Create a new empty block
     fn new_block() -> Self;
-    
+
     /// Convert the block to markdown
     fn to_markdown(&self) -> String;
-    
+
     /// Get the icon for this block type
     fn icon(&self) -> Html;
-    
+
     /// Get the human-readable name of this block type
     fn name(&self) -> String;
-    
+
     /// Get command triggers that activate the block menu
     fn command_triggers() -> Vec<String>;
-    
+
     /// Search for block types matching a query
     fn search(query: Option<String>) -> Vec<Self>;
-    
+
     /// Check if this block can be deleted (e.g., empty)
     fn can_delete(&self) -> bool;
-    
+
     /// Get the block type identifier
     fn block_type(&self) -> &'static str {
         "unknown"
     }
-    
+
     /// Render the block with all editor callbacks
     fn render(
         &self,

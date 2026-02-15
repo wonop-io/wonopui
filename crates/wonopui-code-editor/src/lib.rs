@@ -18,14 +18,14 @@
 //! #[function_component(App)]
 //! fn app() -> Html {
 //!     let code = use_state(|| "fn main() {\n    println!(\"Hello, world!\");\n}".to_string());
-//!     
+//!
 //!     let on_change = {
 //!         let code = code.clone();
 //!         Callback::from(move |new_code: String| {
 //!             code.set(new_code);
 //!         })
 //!     };
-//!     
+//!
 //!     html! {
 //!         <CodeEditor
 //!             code={(*code).clone()}
@@ -51,7 +51,9 @@ pub mod type_hint;
 // Re-export main types
 pub use annotation::{Annotation, AnnotationType};
 pub use diff::{Diff, DiffType};
-pub use diff_types::{ChangeType, DiffHunk, DiffLine, DiffLineInfo, DiffSide, DiffViewMode, WordChange};
+pub use diff_types::{
+    ChangeType, DiffHunk, DiffLine, DiffLineInfo, DiffSide, DiffViewMode, WordChange,
+};
 pub use editor::{CodeEditor, CodeEditorMsg, CodeEditorProps};
 pub use styles::CodeEditorStyles;
 pub use syntax_highlighter::*;

@@ -2,8 +2,8 @@
 //!
 //! A header component for pages with title and action buttons.
 
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the PageHeader component
 pub mod classes {
@@ -24,7 +24,7 @@ pub struct PageHeaderProps {
 #[function_component(PageHeader)]
 pub fn page_header(props: &PageHeaderProps) -> Html {
     let container_class = merge_classes(&[classes::CONTAINER, &props.class.to_string()]);
-    
+
     html! {
         <div class={container_class}>
             <span class={classes::TITLE}>{ &props.title }</span>

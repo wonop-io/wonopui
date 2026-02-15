@@ -10,9 +10,12 @@ use yew::prelude::*;
 
 pub mod classes {
     pub const CONTEXT_MENU_CONTENT: &str = "bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-md shadow-lg p-1 z-50 min-w-[8rem]";
-    pub const CONTEXT_MENU_ITEM: &str = "flex items-center px-2 py-1.5 text-sm outline-none cursor-pointer rounded-sm";
-    pub const CONTEXT_MENU_ITEM_DEFAULT: &str = "text-gray-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-700";
-    pub const CONTEXT_MENU_ITEM_DISABLED: &str = "text-gray-400 dark:text-zinc-500 cursor-not-allowed";
+    pub const CONTEXT_MENU_ITEM: &str =
+        "flex items-center px-2 py-1.5 text-sm outline-none cursor-pointer rounded-sm";
+    pub const CONTEXT_MENU_ITEM_DEFAULT: &str =
+        "text-gray-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-700";
+    pub const CONTEXT_MENU_ITEM_DISABLED: &str =
+        "text-gray-400 dark:text-zinc-500 cursor-not-allowed";
     pub const CONTEXT_MENU_SEPARATOR: &str = "h-px my-1 bg-gray-200 dark:bg-zinc-700";
     pub const CONTEXT_MENU_LABEL: &str = "px-2 py-1.5 text-sm text-gray-500 dark:text-zinc-400";
     pub const CONTEXT_MENU_SHORTCUT: &str = "ml-auto pl-5 text-xs text-gray-500 dark:text-zinc-400";
@@ -62,10 +65,7 @@ pub fn context_menu(props: &ContextMenuProps) -> Html {
         close: close.clone(),
     });
 
-    let class = merge_classes(&[
-        "relative",
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&["relative", &props.class.to_string()]);
 
     html! {
         <ContextProvider<Rc<ContextMenuState>> context={state}>
@@ -96,10 +96,7 @@ pub fn context_menu_trigger(props: &ContextMenuTriggerProps) -> Html {
         })
     };
 
-    let class = merge_classes(&[
-        "cursor-pointer",
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&["cursor-pointer", &props.class.to_string()]);
 
     html! {
         <div {oncontextmenu} class={class}>
@@ -170,10 +167,7 @@ pub fn context_menu_content(props: &ContextMenuContentProps) -> Html {
         })
     };
 
-    let class = merge_classes(&[
-        classes::CONTEXT_MENU_CONTENT,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::CONTEXT_MENU_CONTENT, &props.class.to_string()]);
 
     html! {
         <div
@@ -225,7 +219,11 @@ pub fn context_menu_item(props: &ContextMenuItemProps) -> Html {
 
     let class = merge_classes(&[
         classes::CONTEXT_MENU_ITEM,
-        if props.disabled { classes::CONTEXT_MENU_ITEM_DISABLED } else { classes::CONTEXT_MENU_ITEM_DEFAULT },
+        if props.disabled {
+            classes::CONTEXT_MENU_ITEM_DISABLED
+        } else {
+            classes::CONTEXT_MENU_ITEM_DEFAULT
+        },
         if props.inset { "pl-8" } else { "" },
         &props.class.to_string(),
     ]);

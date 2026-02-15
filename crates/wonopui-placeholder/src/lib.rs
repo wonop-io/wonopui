@@ -8,7 +8,8 @@ use yew::prelude::*;
 
 pub mod classes {
     pub const PLACEHOLDER_CONTAINER: &str = "relative overflow-hidden rounded-md border w-full h-full text-zinc-700 dark:text-zinc-300 dark:border-zinc-600 flex justify-center items-center min-h-[100px]";
-    pub const PLACEHOLDER_SVG: &str = "absolute inset-0 h-full w-full stroke-gray-900/10 dark:stroke-zinc-200/10";
+    pub const PLACEHOLDER_SVG: &str =
+        "absolute inset-0 h-full w-full stroke-gray-900/10 dark:stroke-zinc-200/10";
     pub const PLACEHOLDER_TEXT: &str = "p-2 z-10 bg-white dark:bg-zinc-800 rounded-md text-sm";
 }
 
@@ -24,10 +25,8 @@ pub struct PlaceholderProps {
 
 #[function_component(Placeholder)]
 pub fn placeholder(props: &PlaceholderProps) -> Html {
-    let container_class = merge_classes(&[
-        classes::PLACEHOLDER_CONTAINER,
-        &props.class.to_string(),
-    ]);
+    let container_class =
+        merge_classes(&[classes::PLACEHOLDER_CONTAINER, &props.class.to_string()]);
 
     html! {
         <div class={container_class}>

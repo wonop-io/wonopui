@@ -55,7 +55,6 @@ pub fn dark_mode_provider(props: &DarkModeProviderProps) -> Html {
 
     // Update body class when dark mode changes
     {
-        let is_dark = is_dark;
         let dark_class = props.dark_class.clone();
         use_effect_with((is_dark, dark_class), move |(is_dark, dark_class)| {
             if let Some(window) = web_sys::window() {
@@ -97,7 +96,8 @@ pub fn dark_mode_provider(props: &DarkModeProviderProps) -> Html {
 /// Hook to access the dark mode context
 #[hook]
 pub fn use_dark_mode() -> Rc<DarkModeContext> {
-    use_context::<Rc<DarkModeContext>>().expect("DarkModeContext not found. Wrap your app in DarkModeProvider.")
+    use_context::<Rc<DarkModeContext>>()
+        .expect("DarkModeContext not found. Wrap your app in DarkModeProvider.")
 }
 
 /// Hook to check if dark mode is currently active
@@ -112,7 +112,7 @@ pub fn use_toggle_dark_mode() -> Callback<()> {
     let ctx = use_dark_mode();
     let set_mode = ctx.set_mode.clone();
     let current_is_dark = ctx.is_dark;
-    
+
     Callback::from(move |_| {
         if current_is_dark {
             set_mode.emit(ColorMode::Light);

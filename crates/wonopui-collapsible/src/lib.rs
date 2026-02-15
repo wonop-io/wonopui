@@ -52,10 +52,7 @@ pub fn collapsible(props: &CollapsibleProps) -> Html {
         toggle,
     });
 
-    let class = merge_classes(&[
-        classes::COLLAPSIBLE_CONTAINER,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::COLLAPSIBLE_CONTAINER, &props.class.to_string()]);
 
     html! {
         <ContextProvider<Rc<CollapsibleState>> context={state}>
@@ -85,10 +82,7 @@ pub fn collapsible_trigger(props: &CollapsibleTriggerProps) -> Html {
         Callback::from(move |_: MouseEvent| toggle.emit(()))
     };
 
-    let class = merge_classes(&[
-        classes::COLLAPSIBLE_TRIGGER,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::COLLAPSIBLE_TRIGGER, &props.class.to_string()]);
 
     html! {
         <div {onclick} class={class}>
@@ -113,10 +107,7 @@ pub fn collapsible_content(props: &CollapsibleContentProps) -> Html {
         return html! {};
     }
 
-    let class = merge_classes(&[
-        classes::COLLAPSIBLE_CONTENT,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::COLLAPSIBLE_CONTENT, &props.class.to_string()]);
 
     html! {
         <div class={class}>
@@ -135,10 +126,7 @@ pub struct CollapsibleHeaderProps {
 
 #[function_component(CollapsibleHeader)]
 pub fn collapsible_header(props: &CollapsibleHeaderProps) -> Html {
-    let class = merge_classes(&[
-        classes::COLLAPSIBLE_HEADER,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::COLLAPSIBLE_HEADER, &props.class.to_string()]);
 
     html! {
         <div class={class}>
@@ -157,10 +145,7 @@ pub struct CollapsibleTitleProps {
 
 #[function_component(CollapsibleTitle)]
 pub fn collapsible_title(props: &CollapsibleTitleProps) -> Html {
-    let class = merge_classes(&[
-        classes::COLLAPSIBLE_TITLE,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::COLLAPSIBLE_TITLE, &props.class.to_string()]);
 
     html! {
         <h4 class={class}>
@@ -179,10 +164,7 @@ pub struct CollapsibleItemProps {
 
 #[function_component(CollapsibleItem)]
 pub fn collapsible_item(props: &CollapsibleItemProps) -> Html {
-    let class = merge_classes(&[
-        classes::COLLAPSIBLE_ITEM,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::COLLAPSIBLE_ITEM, &props.class.to_string()]);
 
     html! {
         <div class={class}>

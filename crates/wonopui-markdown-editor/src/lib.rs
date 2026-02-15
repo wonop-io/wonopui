@@ -3,8 +3,8 @@
 //! A basic markdown editor with preview support.
 //! Note: Full markdown parsing would require a markdown library.
 
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the MarkdownEditor component
 pub mod classes {
@@ -17,17 +17,12 @@ pub mod classes {
     pub const SPLIT: &str = "w-px bg-border";
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Default)]
 pub enum EditorMode {
+    #[default]
     Edit,
     Preview,
     Split,
-}
-
-impl Default for EditorMode {
-    fn default() -> Self {
-        EditorMode::Edit
-    }
 }
 
 #[derive(Properties, PartialEq)]
@@ -93,7 +88,10 @@ pub fn markdown_editor(props: &MarkdownEditorProps) -> Html {
     let preview_html = simple_markdown_to_html(&content);
 
     let container_class = merge_classes(&[classes::CONTAINER, &props.class.to_string()]);
-    let placeholder = props.placeholder.clone().unwrap_or_else(|| "Write markdown here...".to_string());
+    let placeholder = props
+        .placeholder
+        .clone()
+        .unwrap_or_else(|| "Write markdown here...".to_string());
 
     html! {
         <div class={container_class}>
@@ -158,18 +156,21 @@ pub fn markdown_editor(props: &MarkdownEditorProps) -> Html {
 /// For production use, consider using a proper markdown library
 fn simple_markdown_to_html(markdown: &str) -> String {
     let mut html = String::new();
-    
+
     for line in markdown.lines() {
         let trimmed = line.trim();
-        
-        if trimmed.starts_with("# ") {
-            html.push_str(&format!("<h1>{}</h1>", &trimmed[2..]));
-        } else if trimmed.starts_with("## ") {
-            html.push_str(&format!("<h2>{}</h2>", &trimmed[3..]));
-        } else if trimmed.starts_with("### ") {
-            html.push_str(&format!("<h3>{}</h3>", &trimmed[4..]));
-        } else if trimmed.starts_with("- ") || trimmed.starts_with("* ") {
-            html.push_str(&format!("<li>{}</li>", &trimmed[2..]));
+
+        if let Some(content) = trimmed.strip_prefix("# ") {
+            html.push_str(&format!("<h1>{}</h1>", content));
+        } else if let Some(content) = trimmed.strip_prefix("## ") {
+            html.push_str(&format!("<h2>{}</h2>", content));
+        } else if let Some(content) = trimmed.strip_prefix("### ") {
+            html.push_str(&format!("<h3>{}</h3>", content));
+        } else if let Some(content) = trimmed
+            .strip_prefix("- ")
+            .or_else(|| trimmed.strip_prefix("* "))
+        {
+            html.push_str(&format!("<li>{}</li>", content));
         } else if trimmed.starts_with("```") {
             html.push_str("<pre><code>");
         } else if trimmed == "```" {
@@ -179,11 +180,11 @@ fn simple_markdown_to_html(markdown: &str) -> String {
         } else {
             // Handle inline formatting
             let formatted = trimmed
-                .replace("**", "<strong>")  // Bold (simplified)
-                .replace("*", "<em>");       // Italic (simplified)
+                .replace("**", "<strong>") // Bold (simplified)
+                .replace("*", "<em>"); // Italic (simplified)
             html.push_str(&format!("<p>{}</p>", formatted));
         }
     }
-    
+
     html
 }

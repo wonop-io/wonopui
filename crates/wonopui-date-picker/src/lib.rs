@@ -3,23 +3,26 @@
 //! A date selection component that combines an input with a calendar popup.
 
 use chrono::prelude::*;
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the DatePicker component
 pub mod classes {
     pub const CONTAINER: &str = "relative inline-block";
     pub const INPUT: &str = "w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring";
-    pub const CALENDAR_POPUP: &str = "absolute z-50 mt-1 bg-background border rounded-md shadow-lg p-3";
+    pub const CALENDAR_POPUP: &str =
+        "absolute z-50 mt-1 bg-background border rounded-md shadow-lg p-3";
     pub const CALENDAR_HEADER: &str = "flex justify-between items-center mb-2";
     pub const NAV_BUTTON: &str = "p-1 hover:bg-accent rounded";
     pub const MONTH_YEAR: &str = "text-sm font-medium";
     pub const WEEKDAYS: &str = "grid grid-cols-7 gap-1 mb-1";
     pub const WEEKDAY: &str = "text-center text-xs text-muted-foreground";
     pub const DAYS: &str = "grid grid-cols-7 gap-1";
-    pub const DAY: &str = "w-8 h-8 flex items-center justify-center text-sm rounded hover:bg-accent cursor-pointer";
+    pub const DAY: &str =
+        "w-8 h-8 flex items-center justify-center text-sm rounded hover:bg-accent cursor-pointer";
     pub const DAY_SELECTED: &str = "w-8 h-8 flex items-center justify-center text-sm rounded bg-primary text-primary-foreground cursor-pointer";
-    pub const DAY_TODAY: &str = "w-8 h-8 flex items-center justify-center text-sm rounded bg-accent cursor-pointer";
+    pub const DAY_TODAY: &str =
+        "w-8 h-8 flex items-center justify-center text-sm rounded bg-accent cursor-pointer";
 }
 
 #[derive(Properties, PartialEq)]
@@ -129,7 +132,10 @@ pub fn date_picker(props: &DatePickerProps) -> Html {
         .map(|d| d.format("%Y-%m-%d").to_string())
         .unwrap_or_default();
 
-    let placeholder = props.placeholder.clone().unwrap_or_else(|| "Select date".to_string());
+    let placeholder = props
+        .placeholder
+        .clone()
+        .unwrap_or_else(|| "Select date".to_string());
 
     let container_class = merge_classes(&[classes::CONTAINER, &props.class.to_string()]);
 
@@ -144,7 +150,7 @@ pub fn date_picker(props: &DatePickerProps) -> Html {
                 onclick={toggle_calendar}
                 disabled={props.disabled}
             />
-            
+
             if *is_open {
                 <div class={classes::CALENDAR_POPUP}>
                     <div class={classes::CALENDAR_HEADER}>
@@ -176,7 +182,7 @@ pub fn date_picker(props: &DatePickerProps) -> Html {
                             let is_selected = *selected_date == date;
                             let is_today = date == Some(today);
                             let on_click = on_date_click.clone();
-                            
+
                             let day_class = if is_selected {
                                 classes::DAY_SELECTED
                             } else if is_today {
@@ -184,7 +190,7 @@ pub fn date_picker(props: &DatePickerProps) -> Html {
                             } else {
                                 classes::DAY
                             };
-                            
+
                             html! {
                                 <div class={day_class} onclick={Callback::from(move |_| on_click.emit(day))}>
                                     { day }

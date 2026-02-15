@@ -2,8 +2,8 @@
 //!
 //! A text input that supports @mentions with autocomplete suggestions.
 
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the MentionInput component
 pub mod classes {
@@ -61,13 +61,13 @@ pub fn mention_input(props: &MentionInputProps) -> Html {
         let search_query = search_query.clone();
         let get_candidates = props.get_candidates.clone();
         let trigger = props.trigger.clone();
-        
+
         Callback::from(move |e: InputEvent| {
             if let Some(input) = e.target_dyn_into::<web_sys::HtmlInputElement>() {
                 let value = input.value();
                 input_value.set(value.clone());
                 onchange.emit(value.clone());
-                
+
                 // Check for trigger character
                 if let Some(trigger_pos) = value.rfind(&trigger) {
                     let query = &value[trigger_pos + trigger.len()..];
@@ -94,9 +94,9 @@ pub fn mention_input(props: &MentionInputProps) -> Html {
         let selected_index = selected_index.clone();
         let input_value = input_value.clone();
         let onchange = props.onchange.clone();
-        let search_query = search_query.clone();
+        let _search_query = search_query.clone(); // TODO: Use for filtering
         let trigger = props.trigger.clone();
-        
+
         Callback::from(move |e: KeyboardEvent| {
             if *is_showing_suggestions {
                 match e.key().as_str() {
@@ -109,7 +109,8 @@ pub fn mention_input(props: &MentionInputProps) -> Html {
                     "ArrowUp" => {
                         e.prevent_default();
                         if suggestions.len() > 0 {
-                            selected_index.set((*selected_index + suggestions.len() - 1) % suggestions.len());
+                            selected_index
+                                .set((*selected_index + suggestions.len() - 1) % suggestions.len());
                         }
                     }
                     "Enter" | "Tab" => {
@@ -118,7 +119,11 @@ pub fn mention_input(props: &MentionInputProps) -> Html {
                             // Replace the mention query with the selected item
                             let value = (*input_value).clone();
                             if let Some(trigger_pos) = value.rfind(&trigger) {
-                                let new_value = format!("{}{} ", &value[..trigger_pos + trigger.len()], selected);
+                                let new_value = format!(
+                                    "{}{} ",
+                                    &value[..trigger_pos + trigger.len()],
+                                    selected
+                                );
                                 input_value.set(new_value.clone());
                                 onchange.emit(new_value);
                             }
@@ -139,17 +144,18 @@ pub fn mention_input(props: &MentionInputProps) -> Html {
         let input_value = input_value.clone();
         let onchange = props.onchange.clone();
         let trigger = props.trigger.clone();
-        
+
         move |suggestion: String| {
             let is_showing_suggestions = is_showing_suggestions.clone();
             let input_value = input_value.clone();
             let onchange = onchange.clone();
             let trigger = trigger.clone();
-            
+
             Callback::from(move |_: MouseEvent| {
                 let value = (*input_value).clone();
                 if let Some(trigger_pos) = value.rfind(&trigger) {
-                    let new_value = format!("{}{} ", &value[..trigger_pos + trigger.len()], suggestion);
+                    let new_value =
+                        format!("{}{} ", &value[..trigger_pos + trigger.len()], suggestion);
                     input_value.set(new_value.clone());
                     onchange.emit(new_value);
                 }
@@ -171,7 +177,7 @@ pub fn mention_input(props: &MentionInputProps) -> Html {
                 onkeydown={onkeydown}
                 placeholder={props.placeholder.clone()}
             />
-            
+
             if *is_showing_suggestions && !suggestions.is_empty() {
                 <div class={classes::SUGGESTIONS}>
                     { for suggestions.iter().enumerate().map(|(idx, suggestion)| {

@@ -7,9 +7,9 @@ use gloo_utils::document;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
 use web_sys::HtmlIFrameElement;
+pub use wonopui_core::merge_classes;
 use yew::prelude::*;
 use yew::virtual_dom::VNode;
-pub use wonopui_core::merge_classes;
 
 /// CSS classes for the Iframe component
 pub mod classes {
@@ -62,39 +62,57 @@ pub fn iframe(props: &IframeProps) -> Html {
                     // Set up event propagation for mousemove
                     {
                         let iframe = iframe.clone();
-                        let onmousemove = Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {
-                            let options = web_sys::CustomEventInit::new();
-                            options.set_bubbles(true);
-                            options.set_cancelable(false);
-                            if let Ok(evt) = web_sys::CustomEvent::new_with_event_init_dict("mousemove", &options) {
-                                let _ = iframe.dispatch_event(&evt);
-                            }
-                        }) as Box<dyn FnMut(_)>);
-                        let _ = body.add_event_listener_with_callback("mousemove", onmousemove.as_ref().unchecked_ref());
+                        let onmousemove =
+                            Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {
+                                let options = web_sys::CustomEventInit::new();
+                                options.set_bubbles(true);
+                                options.set_cancelable(false);
+                                if let Ok(evt) = web_sys::CustomEvent::new_with_event_init_dict(
+                                    "mousemove",
+                                    &options,
+                                ) {
+                                    let _ = iframe.dispatch_event(&evt);
+                                }
+                            }) as Box<dyn FnMut(_)>);
+                        let _ = body.add_event_listener_with_callback(
+                            "mousemove",
+                            onmousemove.as_ref().unchecked_ref(),
+                        );
                         onmousemove.forget();
                     }
 
                     // Set up event propagation for pointerup
                     {
                         let iframe = iframe.clone();
-                        let onpointerup = Closure::wrap(Box::new(move |_event: web_sys::PointerEvent| {
-                            let options = web_sys::CustomEventInit::new();
-                            options.set_bubbles(true);
-                            options.set_cancelable(false);
-                            if let Ok(evt) = web_sys::CustomEvent::new_with_event_init_dict("pointerup", &options) {
-                                let _ = iframe.dispatch_event(&evt);
-                            }
-                        }) as Box<dyn FnMut(_)>);
-                        let _ = body.add_event_listener_with_callback("pointerup", onpointerup.as_ref().unchecked_ref());
+                        let onpointerup =
+                            Closure::wrap(Box::new(move |_event: web_sys::PointerEvent| {
+                                let options = web_sys::CustomEventInit::new();
+                                options.set_bubbles(true);
+                                options.set_cancelable(false);
+                                if let Ok(evt) = web_sys::CustomEvent::new_with_event_init_dict(
+                                    "pointerup",
+                                    &options,
+                                ) {
+                                    let _ = iframe.dispatch_event(&evt);
+                                }
+                            }) as Box<dyn FnMut(_)>);
+                        let _ = body.add_event_listener_with_callback(
+                            "pointerup",
+                            onpointerup.as_ref().unchecked_ref(),
+                        );
                         onpointerup.forget();
                     }
 
                     // Set up keydown callback if provided
                     if let Some(onkeydown_cb) = onkeydown {
-                        let onkeydown = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
-                            onkeydown_cb.emit(event);
-                        }) as Box<dyn FnMut(_)>);
-                        let _ = body.add_event_listener_with_callback("keydown", onkeydown.as_ref().unchecked_ref());
+                        let onkeydown =
+                            Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
+                                onkeydown_cb.emit(event);
+                            }) as Box<dyn FnMut(_)>);
+                        let _ = body.add_event_listener_with_callback(
+                            "keydown",
+                            onkeydown.as_ref().unchecked_ref(),
+                        );
                         onkeydown.forget();
                     }
 
@@ -154,10 +172,7 @@ pub fn iframe(props: &IframeProps) -> Html {
                     }
                 }
             }
-            create_portal(
-                html! { <>{ for link_html }</> },
-                head.clone().into(),
-            )
+            create_portal(html! { <>{ for link_html }</> }, head.clone())
         } else {
             html! {}
         }
@@ -168,7 +183,7 @@ pub fn iframe(props: &IframeProps) -> Html {
     // Create portal for body content
     let body_portal: VNode = if let Some(ref body) = *body_ref {
         if props.srcdoc.is_none() {
-            create_portal(props.children.clone().into(), body.clone().into())
+            create_portal(props.children.clone().into(), body.clone())
         } else {
             html! {}
         }

@@ -7,11 +7,14 @@ use wonopui_core::merge_classes;
 use yew::prelude::*;
 
 pub mod classes {
-    pub const GROUP_BUTTON_CONTAINER: &str = "inline-flex rounded-lg bg-gray-100 dark:bg-zinc-800 p-1";
+    pub const GROUP_BUTTON_CONTAINER: &str =
+        "inline-flex rounded-lg bg-gray-100 dark:bg-zinc-800 p-1";
     pub const GROUP_BUTTON_VERTICAL: &str = "flex-col";
     pub const GROUP_BUTTON_TRIGGER: &str = "inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium rounded-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
-    pub const GROUP_BUTTON_TRIGGER_ACTIVE: &str = "bg-white dark:bg-zinc-700 text-gray-900 dark:text-zinc-100 shadow-sm";
-    pub const GROUP_BUTTON_TRIGGER_INACTIVE: &str = "text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200";
+    pub const GROUP_BUTTON_TRIGGER_ACTIVE: &str =
+        "bg-white dark:bg-zinc-700 text-gray-900 dark:text-zinc-100 shadow-sm";
+    pub const GROUP_BUTTON_TRIGGER_INACTIVE: &str =
+        "text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200";
 }
 
 #[derive(Clone, PartialEq, Default)]
@@ -114,7 +117,11 @@ pub fn group_button_trigger(props: &GroupButtonTriggerProps) -> Html {
 
     let class = merge_classes(&[
         classes::GROUP_BUTTON_TRIGGER,
-        if is_active { classes::GROUP_BUTTON_TRIGGER_ACTIVE } else { classes::GROUP_BUTTON_TRIGGER_INACTIVE },
+        if is_active {
+            classes::GROUP_BUTTON_TRIGGER_ACTIVE
+        } else {
+            classes::GROUP_BUTTON_TRIGGER_INACTIVE
+        },
         &props.class.to_string(),
     ]);
 

@@ -8,22 +8,22 @@ use wonopui_core::*;
 pub mod classes {
     /// Horizontal padding styles.
     pub const PADDING_X: &str = "px-4 sm:px-6 lg:px-8";
-    
+
     /// Vertical padding styles.
     pub const PADDING_Y: &str = "py-4 sm:py-6 lg:py-8";
-    
+
     /// Expanding container (flex-grow).
     pub const EXPANDING: &str = "grow-1";
-    
+
     /// Small container width.
     pub const SMALL: &str = "mx-auto w-full max-w-96";
-    
+
     /// Narrow container width.
     pub const NARROW: &str = "mx-auto w-full max-w-3xl";
-    
+
     /// Large container width.
     pub const LARGE: &str = "mx-auto w-full max-w-7xl";
-    
+
     /// Responsive container width.
     pub const RESPONSIVE: &str = "mx-auto container";
 }
@@ -50,31 +50,31 @@ pub struct ContainerProps {
     /// Container content.
     #[prop_or_default]
     pub children: Children,
-    
+
     /// Additional CSS classes.
     #[prop_or_default]
     pub class: Classes,
-    
+
     /// HTML tag to use (default: "div").
     #[prop_or("div".to_string())]
     pub tag: String,
-    
+
     /// Whether the container should expand to fill available space.
     #[prop_or(true)]
     pub expanding: bool,
-    
+
     /// Whether to apply horizontal padding.
     #[prop_or(true)]
     pub padding_x: bool,
-    
+
     /// Whether to apply vertical padding.
     #[prop_or(true)]
     pub padding_y: bool,
-    
+
     /// Container width variant.
     #[prop_or_default]
     pub variant: ContainerVariant,
-    
+
     /// Inline style attribute.
     #[prop_or_default]
     pub style: Option<String>,
@@ -99,10 +99,22 @@ pub struct ContainerProps {
 /// ```
 #[function_component(Container)]
 pub fn container(props: &ContainerProps) -> Html {
-    let padding_x = if props.padding_x { classes::PADDING_X } else { "" };
-    let padding_y = if props.padding_y { classes::PADDING_Y } else { "" };
-    let expanding = if props.expanding { classes::EXPANDING } else { "" };
-    
+    let padding_x = if props.padding_x {
+        classes::PADDING_X
+    } else {
+        ""
+    };
+    let padding_y = if props.padding_y {
+        classes::PADDING_Y
+    } else {
+        ""
+    };
+    let expanding = if props.expanding {
+        classes::EXPANDING
+    } else {
+        ""
+    };
+
     let variant = match props.variant {
         ContainerVariant::Small => classes::SMALL,
         ContainerVariant::Narrow => classes::NARROW,
@@ -111,7 +123,13 @@ pub fn container(props: &ContainerProps) -> Html {
         ContainerVariant::None => "",
     };
 
-    let container_class = classes!(padding_x, padding_y, expanding, variant, props.class.clone());
+    let container_class = classes!(
+        padding_x,
+        padding_y,
+        expanding,
+        variant,
+        props.class.clone()
+    );
 
     html!(
         <@{props.tag.clone()} class={container_class} style={props.style.clone()}>

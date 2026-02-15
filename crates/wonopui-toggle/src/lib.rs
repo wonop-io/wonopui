@@ -7,12 +7,14 @@ use yew::prelude::*;
 
 pub mod classes {
     pub const TOGGLE_BASE: &str = "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
-    pub const TOGGLE_DEFAULT: &str = "bg-transparent hover:bg-gray-100 dark:hover:bg-zinc-800 h-10 px-3";
+    pub const TOGGLE_DEFAULT: &str =
+        "bg-transparent hover:bg-gray-100 dark:hover:bg-zinc-800 h-10 px-3";
     pub const TOGGLE_OUTLINE: &str = "border border-gray-200 dark:border-zinc-700 bg-transparent hover:bg-gray-100 dark:hover:bg-zinc-800 h-10 px-3";
-    pub const TOGGLE_CHECKED: &str = "bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-zinc-100";
+    pub const TOGGLE_CHECKED: &str =
+        "bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-zinc-100";
     pub const TOGGLE_UNCHECKED: &str = "text-gray-500 dark:text-zinc-400";
     pub const TOGGLE_DISABLED: &str = "opacity-50 cursor-not-allowed";
-    
+
     // Size variants
     pub const TOGGLE_SM: &str = "h-9 px-2.5";
     pub const TOGGLE_LG: &str = "h-11 px-5";
@@ -119,7 +121,11 @@ pub fn toggle(props: &ToggleProps) -> Html {
         classes::TOGGLE_BASE,
         props.variant.to_class(),
         state_class,
-        if props.disabled { classes::TOGGLE_DISABLED } else { "" },
+        if props.disabled {
+            classes::TOGGLE_DISABLED
+        } else {
+            ""
+        },
         &props.class.to_string(),
     ]);
 

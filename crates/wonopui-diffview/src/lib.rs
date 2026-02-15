@@ -17,8 +17,7 @@ use yew::prelude::*;
 pub mod classes {
     pub const CONTAINER: &str = "font-mono text-sm overflow-auto border rounded";
     pub const LINE: &str = "flex";
-    pub const LINE_NUMBER: &str =
-        "w-12 text-right pr-2 text-muted-foreground select-none border-r";
+    pub const LINE_NUMBER: &str = "w-12 text-right pr-2 text-muted-foreground select-none border-r";
     pub const LINE_CONTENT: &str = "pl-2 flex-1 whitespace-pre";
     pub const LINE_ADDED: &str = "bg-green-50 dark:bg-green-900/20";
     pub const LINE_REMOVED: &str = "bg-red-50 dark:bg-red-900/20";
@@ -26,7 +25,8 @@ pub mod classes {
     pub const LINE_NUMBER_ADDED: &str = "w-12 text-right pr-2 text-green-600 dark:text-green-400 select-none border-r bg-green-50 dark:bg-green-900/20";
     pub const LINE_NUMBER_REMOVED: &str = "w-12 text-right pr-2 text-red-600 dark:text-red-400 select-none border-r bg-red-50 dark:bg-red-900/20";
     pub const CONTENT_ADDED: &str = "pl-2 flex-1 whitespace-pre bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200";
-    pub const CONTENT_REMOVED: &str = "pl-2 flex-1 whitespace-pre bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200";
+    pub const CONTENT_REMOVED: &str =
+        "pl-2 flex-1 whitespace-pre bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200";
 }
 
 /// View mode for the diff viewer
@@ -176,8 +176,14 @@ pub fn compute_diff(old_text: &str, new_text: &str, context_lines: usize) -> Vec
 
     for group in diff.grouped_ops(context_lines) {
         let mut lines = Vec::new();
-        let mut old_line_no = group.first().map(|op| op.old_range().start + 1).unwrap_or(1);
-        let mut new_line_no = group.first().map(|op| op.new_range().start + 1).unwrap_or(1);
+        let mut old_line_no = group
+            .first()
+            .map(|op| op.old_range().start + 1)
+            .unwrap_or(1);
+        let mut new_line_no = group
+            .first()
+            .map(|op| op.new_range().start + 1)
+            .unwrap_or(1);
 
         let old_start = old_line_no;
         let new_start = new_line_no;
@@ -521,7 +527,9 @@ fn render_side_line(
     }
 }
 
-fn prepare_side_by_side_lines(lines: &[DiffLine]) -> (Vec<Option<DiffLine>>, Vec<Option<DiffLine>>) {
+fn prepare_side_by_side_lines(
+    lines: &[DiffLine],
+) -> (Vec<Option<DiffLine>>, Vec<Option<DiffLine>>) {
     let mut left_lines = Vec::new();
     let mut right_lines = Vec::new();
 

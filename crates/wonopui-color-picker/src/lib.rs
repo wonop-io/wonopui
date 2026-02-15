@@ -2,8 +2,8 @@
 //!
 //! A color selection component with canvas-based gradient picker.
 
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the ColorPicker component
 pub mod classes {

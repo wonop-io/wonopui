@@ -3,8 +3,8 @@
 //! A date picker calendar component.
 
 use chrono::prelude::*;
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the Calendar component
 pub mod classes {
@@ -18,10 +18,12 @@ pub mod classes {
     pub const GRID: &str = "w-full border-collapse space-y-1";
     pub const THEAD: &str = "";
     pub const WEEKDAYS: &str = "flex";
-    pub const WEEKDAY: &str = "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem] text-center";
+    pub const WEEKDAY: &str =
+        "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem] text-center";
     pub const TBODY: &str = "";
     pub const WEEK: &str = "flex w-full mt-2";
-    pub const DAY: &str = "h-9 w-9 text-center text-sm p-0 relative focus-within:relative focus-within:z-20";
+    pub const DAY: &str =
+        "h-9 w-9 text-center text-sm p-0 relative focus-within:relative focus-within:z-20";
     pub const DAY_BUTTON: &str = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9 p-0 font-normal";
     pub const DAY_TODAY: &str = "bg-accent text-accent-foreground";
     pub const DAY_SELECTED: &str = "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground";
@@ -47,7 +49,7 @@ pub struct CalendarProps {
 #[function_component(Calendar)]
 pub fn calendar(props: &CalendarProps) -> Html {
     let today = Local::now().date_naive();
-    
+
     let viewing_year = use_state(|| props.year.unwrap_or(today.year()));
     let viewing_month = use_state(|| props.month.unwrap_or(today.month()));
 
@@ -72,7 +74,7 @@ pub fn calendar(props: &CalendarProps) -> Html {
     let month = *viewing_month;
 
     let current_month_first = NaiveDate::from_ymd_opt(year, month, 1).unwrap();
-    
+
     // Calculate days in month
     let next_month = if month == 12 {
         NaiveDate::from_ymd_opt(year + 1, 1, 1)
@@ -120,12 +122,12 @@ pub fn calendar(props: &CalendarProps) -> Html {
     // Build weeks
     let mut days_vec: Vec<Option<u32>> = vec![None; first_day_of_month as usize];
     days_vec.extend((1..=days_in_month).map(Some));
-    
+
     // Pad to complete last week
     while days_vec.len() % 7 != 0 {
         days_vec.push(None);
     }
-    
+
     let weeks: Vec<Vec<Option<u32>>> = days_vec.chunks(7).map(|c| c.to_vec()).collect();
 
     let container_class = merge_classes(&[classes::CONTAINER, &props.class.to_string()]);
@@ -177,8 +179,8 @@ pub fn calendar(props: &CalendarProps) -> Html {
                                     <tr key={week_index} class={classes::WEEK}>
                                         { for week.iter().enumerate().map(|(day_index, &day)| {
                                             let date = day.and_then(|d| NaiveDate::from_ymd_opt(year, month, d));
-                                            let is_today = date.map_or(false, |d| d == today);
-                                            let is_selected = props.selected_date.map_or(false, |selected| date.map_or(false, |d| d == selected));
+                                            let is_today = date == Some(today);
+                                            let is_selected = props.selected_date.is_some_and(|selected| date == Some(selected));
                                             let is_outside_month = day.is_none();
 
                                             let day_classes = merge_classes(&[

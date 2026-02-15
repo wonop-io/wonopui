@@ -5,14 +5,15 @@
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
 use web_sys::DragEvent;
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the Kanban component
 pub mod classes {
     pub const CONTAINER: &str = "flex overflow-x-auto gap-6 p-6";
     pub const COLUMN: &str = "flex flex-col min-w-[300px] border rounded-md bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 shadow-sm";
-    pub const COLUMN_HEADER: &str = "p-4 font-semibold border-b border-zinc-200 dark:border-zinc-700";
+    pub const COLUMN_HEADER: &str =
+        "p-4 font-semibold border-b border-zinc-200 dark:border-zinc-700";
     pub const COLUMN_CONTENT: &str = "p-3 flex-1 flex flex-col gap-3 min-h-[100px] overflow-y-auto";
     pub const COLUMN_OVER: &str = "border-2 border-blue-500 dark:border-blue-400";
     pub const CARD: &str = "border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-800 p-4 cursor-grab active:cursor-grabbing shadow-sm";
@@ -64,7 +65,7 @@ pub struct KanbanProps {
 #[function_component(Kanban)]
 pub fn kanban(props: &KanbanProps) -> Html {
     let drag_state = use_state(DragState::default);
-    
+
     // Cleanup effect
     {
         let drag_state = drag_state.clone();
@@ -74,50 +75,64 @@ pub fn kanban(props: &KanbanProps) -> Html {
             }
         });
     }
-    
+
     let ondragstart: DragStartCallback = {
         let drag_state = drag_state.clone();
         let user_callback = props.ondragstart.clone();
-        Callback::from(move |(id, title, content, column_id): (String, Option<String>, Option<String>, Option<String>)| {
-            let mut state = (*drag_state).clone();
-            state.dragging_card_id = Some(id.clone());
-            state.dragging_card_title = title.clone();
-            state.dragging_card_content = content.clone();
-            state.source_column_id = column_id.clone();
-            drag_state.set(state);
-            
-            if let Some(callback) = &user_callback {
-                callback.emit((id, title, content, column_id));
-            }
-        })
+        Callback::from(
+            move |(id, title, content, column_id): (
+                String,
+                Option<String>,
+                Option<String>,
+                Option<String>,
+            )| {
+                let mut state = (*drag_state).clone();
+                state.dragging_card_id = Some(id.clone());
+                state.dragging_card_title = title.clone();
+                state.dragging_card_content = content.clone();
+                state.source_column_id = column_id.clone();
+                drag_state.set(state);
+
+                if let Some(callback) = &user_callback {
+                    callback.emit((id, title, content, column_id));
+                }
+            },
+        )
     };
-    
+
     let ondragend: Callback<()> = {
         let drag_state = drag_state.clone();
         let user_callback = props.ondragend.clone();
         Callback::from(move |_| {
             drag_state.set(DragState::default());
-            
+
             if let Some(callback) = &user_callback {
                 callback.emit(());
             }
         })
     };
-    
+
     let onhover: HoverCallback = {
         let drag_state = drag_state.clone();
-        Callback::from(move |(column_id, card_id, position): (Option<String>, Option<String>, Option<DropPosition>)| {
-            let mut state = (*drag_state).clone();
-            
-            if state.hover_column_id != column_id || 
-               state.hover_card_id != card_id || 
-               state.drop_position != position {
-                state.hover_column_id = column_id;
-                state.hover_card_id = card_id;
-                state.drop_position = position;
-                drag_state.set(state);
-            }
-        })
+        Callback::from(
+            move |(column_id, card_id, position): (
+                Option<String>,
+                Option<String>,
+                Option<DropPosition>,
+            )| {
+                let mut state = (*drag_state).clone();
+
+                if state.hover_column_id != column_id
+                    || state.hover_card_id != card_id
+                    || state.drop_position != position
+                {
+                    state.hover_column_id = column_id;
+                    state.hover_card_id = card_id;
+                    state.drop_position = position;
+                    drag_state.set(state);
+                }
+            },
+        )
     };
 
     let container_class = merge_classes(&[classes::CONTAINER, &props.class.to_string()]);
@@ -178,12 +193,13 @@ pub fn kanban_column(props: &KanbanColumnProps) -> Html {
 
             drag_counter.set(*drag_counter + 1);
             is_over.set(true);
-            
-            let is_column_target = e.target()
+
+            let is_column_target = e
+                .target()
                 .and_then(|t| t.dyn_into::<web_sys::Element>().ok())
                 .map(|elem| elem.get_attribute("data-column-id").is_some())
                 .unwrap_or(false);
-            
+
             if is_column_target {
                 if let Some(ref hover_cb) = onhover {
                     if drag_state.hover_column_id != Some(column_id.to_string()) {
@@ -232,17 +248,18 @@ pub fn kanban_column(props: &KanbanColumnProps) -> Html {
         Callback::from(move |e: DragEvent| {
             e.prevent_default();
             e.stop_propagation();
-            
+
             is_over.set(false);
             drag_counter.set(0);
-            
+
             if let Some(ref hover_cb) = onhover {
                 hover_cb.emit((None, None, None));
             }
 
             if let Some(data_transfer) = e.data_transfer() {
                 if let Ok(card_id) = data_transfer.get_data("text/plain") {
-                    let target_card_id = e.target()
+                    let target_card_id = e
+                        .target()
                         .and_then(|t| t.dyn_into::<web_sys::Element>().ok())
                         .and_then(|elem| {
                             let mut current = Some(elem);
@@ -259,7 +276,7 @@ pub fn kanban_column(props: &KanbanColumnProps) -> Html {
                     if let Some(callback) = &user_callback {
                         callback.emit((card_id, column_id.to_string(), target_card_id));
                     }
-                    
+
                     if let Some(ref global_cb) = global_ondragend {
                         global_cb.emit(());
                     }
@@ -346,13 +363,13 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
             }
 
             is_dragging.set(true);
-            
+
             if let Some(ref global_cb) = global_ondragstart {
                 global_cb.emit((
-                    card_id.to_string(), 
-                    title.clone().map(|t| t.to_string()), 
+                    card_id.to_string(),
+                    title.clone().map(|t| t.to_string()),
                     description.clone().map(|d| d.to_string()),
-                    column_id.clone().map(|c| c.to_string())
+                    column_id.clone().map(|c| c.to_string()),
                 ));
             }
         })
@@ -368,7 +385,7 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
             is_dragging.set(false);
             is_drag_over.set(false);
             drag_counter.set(0);
-            
+
             if let Some(ref global_cb) = global_ondragend {
                 global_cb.emit(());
             }
@@ -397,12 +414,12 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
 
             drag_counter.set(*drag_counter + 1);
             is_drag_over.set(true);
-            
+
             let position = if let Some(card_elem) = card_ref.cast::<web_sys::HtmlElement>() {
                 let rect = card_elem.get_bounding_client_rect();
                 let mouse_y = e.client_y() as f64;
                 let card_middle = rect.top() + (rect.height() / 2.0);
-                
+
                 if mouse_y < card_middle {
                     Some(DropPosition::Above)
                 } else {
@@ -411,9 +428,13 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
             } else {
                 Some(DropPosition::Above)
             };
-            
+
             if let Some(ref hover_cb) = onhover {
-                hover_cb.emit((column_id.clone().map(|c| c.to_string()), Some(card_id.to_string()), position));
+                hover_cb.emit((
+                    column_id.clone().map(|c| c.to_string()),
+                    Some(card_id.to_string()),
+                    position,
+                ));
             }
         })
     };
@@ -449,8 +470,16 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
 
     let card_class = merge_classes(&[
         classes::CARD,
-        if *is_dragging { classes::CARD_DRAGGING } else { "" },
-        if *is_drag_over { classes::CARD_DRAG_TARGET } else { "" },
+        if *is_dragging {
+            classes::CARD_DRAGGING
+        } else {
+            ""
+        },
+        if *is_drag_over {
+            classes::CARD_DRAG_TARGET
+        } else {
+            ""
+        },
         &props.class.to_string(),
     ]);
 
@@ -473,7 +502,7 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
                 <div class={classes::CARD_TITLE}>{ title.clone() }</div>
             }
             <div class={classes::CARD_CONTENT}>
-                { 
+                {
                     if let Some(description) = &props.description {
                         html! { { description.clone() } }
                     } else {

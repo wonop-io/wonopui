@@ -7,14 +7,17 @@ use wonopui_core::merge_classes;
 use yew::prelude::*;
 
 pub mod classes {
-    pub const NOTIFICATION_LIST_CONTAINER: &str = "fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm";
+    pub const NOTIFICATION_LIST_CONTAINER: &str =
+        "fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm";
     pub const NOTIFICATION_CONTAINER: &str = "bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-600 rounded-lg shadow-lg p-4";
     pub const NOTIFICATION_CONTENT: &str = "flex items-start justify-between gap-4";
     pub const NOTIFICATION_TITLE: &str = "text-sm font-semibold text-gray-900 dark:text-zinc-100";
     pub const NOTIFICATION_DESCRIPTION: &str = "text-sm text-gray-600 dark:text-zinc-400 mt-1";
-    pub const NOTIFICATION_CLOSE_BUTTON: &str = "text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300";
+    pub const NOTIFICATION_CLOSE_BUTTON: &str =
+        "text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300";
     pub const NOTIFICATION_CLOSE_ICON: &str = "w-5 h-5";
-    pub const NOTIFICATION_ACTION_CONTAINER: &str = "mt-3 pt-3 border-t border-gray-100 dark:border-zinc-700";
+    pub const NOTIFICATION_ACTION_CONTAINER: &str =
+        "mt-3 pt-3 border-t border-gray-100 dark:border-zinc-700";
 }
 
 #[derive(Clone, PartialEq)]
@@ -53,10 +56,8 @@ pub fn notification(props: &NotificationProps) -> Html {
         })
     };
 
-    let container_class = merge_classes(&[
-        classes::NOTIFICATION_CONTAINER,
-        &props.class.to_string(),
-    ]);
+    let container_class =
+        merge_classes(&[classes::NOTIFICATION_CONTAINER, &props.class.to_string()]);
 
     html! {
         <div class={container_class}>
@@ -144,14 +145,14 @@ pub fn notification_provider(props: &NotificationProviderProps) -> Html {
             <div class={list_class}>
                 { for notifications.iter().rev().map(|notification| {
                     let on_close = remove_notification.clone();
-                    html! { 
+                    html! {
                         <Notification
                             id={notification.id}
                             title={notification.title.clone()}
                             description={notification.description.clone()}
                             action={notification.action.clone()}
                             on_close={on_close}
-                        /> 
+                        />
                     }
                 })}
             </div>
@@ -171,6 +172,5 @@ pub fn use_notify() -> Callback<(String, String, Option<Html>)> {
 /// Hook to get the full notification context
 #[hook]
 pub fn use_notification_context() -> Rc<NotificationContext> {
-    use_context::<Rc<NotificationContext>>()
-        .expect("NotificationContext not found")
+    use_context::<Rc<NotificationContext>>().expect("NotificationContext not found")
 }

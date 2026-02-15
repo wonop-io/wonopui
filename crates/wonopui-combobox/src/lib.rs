@@ -6,8 +6,8 @@ use gloo_events::EventListener;
 use gloo_timers::callback::Timeout;
 use wasm_bindgen::JsCast;
 use web_sys::FocusEvent;
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the Combobox component
 pub mod classes {
@@ -16,8 +16,10 @@ pub mod classes {
     pub const BUTTON_OPEN: &str = "bg-accent text-accent-foreground";
     pub const BUTTON_DISABLED: &str = "opacity-50 cursor-not-allowed";
     pub const LIST: &str = "absolute z-50 mt-1 w-full bg-background border border-input rounded-md shadow-md max-h-60 overflow-auto";
-    pub const ITEM: &str = "px-4 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground text-sm";
-    pub const ITEM_SELECTED: &str = "px-4 py-2 cursor-pointer bg-accent text-accent-foreground text-sm";
+    pub const ITEM: &str =
+        "px-4 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground text-sm";
+    pub const ITEM_SELECTED: &str =
+        "px-4 py-2 cursor-pointer bg-accent text-accent-foreground text-sm";
     pub const HEADING: &str = "px-4 py-1 text-xs font-semibold text-foreground/70 uppercase";
     pub const CHEVRON_ICON: &str = "ml-2 h-4 w-4 shrink-0 opacity-50";
 }
@@ -88,7 +90,7 @@ pub fn combobox(props: &ComboboxProps) -> Html {
         use_effect_with((), move |_| {
             let open = open.clone();
             let container_ref = container_ref.clone();
-            
+
             let document = web_sys::window().unwrap().document().unwrap();
             let listener = EventListener::new(&document, "mousedown", move |event| {
                 if let Some(container) = container_ref.get() {
@@ -177,7 +179,11 @@ pub fn combobox(props: &ComboboxProps) -> Html {
     let button_class = merge_classes(&[
         classes::BUTTON,
         if *open { classes::BUTTON_OPEN } else { "" },
-        if props.disabled { classes::BUTTON_DISABLED } else { "" },
+        if props.disabled {
+            classes::BUTTON_DISABLED
+        } else {
+            ""
+        },
     ]);
 
     let container_class = merge_classes(&[classes::CONTAINER, &props.class.to_string()]);

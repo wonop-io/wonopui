@@ -3,9 +3,9 @@
 //! An input field for entering multiple tags/labels.
 
 use web_sys::HtmlInputElement;
-use yew::TargetCast;
 use wonopui_core::merge_classes;
 use yew::prelude::*;
+use yew::TargetCast;
 
 pub mod classes {
     pub const TAG_INPUT_CONTAINER: &str = "flex flex-wrap gap-2 p-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600 rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500";
@@ -52,14 +52,14 @@ pub fn tag_input(props: &TagInputProps) -> Html {
 
         Callback::from(move |tag: String| {
             let mut new_tags = (*tags).clone();
-            
+
             // Check if we've reached max tags
             if let Some(max) = max_tags {
                 if new_tags.len() >= max {
                     return;
                 }
             }
-            
+
             // Don't add duplicates
             if !new_tags.contains(&tag) {
                 new_tags.push(tag);
@@ -67,7 +67,7 @@ pub fn tag_input(props: &TagInputProps) -> Html {
                 candidate_tags.set(Vec::new());
                 onchange.emit(new_tags);
             }
-            
+
             // Clear the input
             if let Some(input) = input_ref.cast::<HtmlInputElement>() {
                 input.set_value("");
@@ -144,7 +144,11 @@ pub fn tag_input(props: &TagInputProps) -> Html {
 
     let container_class = merge_classes(&[
         classes::TAG_INPUT_CONTAINER,
-        if props.disabled { "opacity-50 cursor-not-allowed" } else { "cursor-text" },
+        if props.disabled {
+            "opacity-50 cursor-not-allowed"
+        } else {
+            "cursor-text"
+        },
         &props.class.to_string(),
     ]);
 
@@ -164,8 +168,8 @@ pub fn tag_input(props: &TagInputProps) -> Html {
                         <span class={classes::TAG_INPUT_TAG}>
                             { tag }
                             if !props.disabled {
-                                <button 
-                                    onclick={onclick} 
+                                <button
+                                    onclick={onclick}
                                     class={classes::TAG_INPUT_REMOVE_BUTTON}
                                     type="button"
                                 >
@@ -193,8 +197,8 @@ pub fn tag_input(props: &TagInputProps) -> Html {
                         let add_tag = add_tag.clone();
                         let onclick = Callback::from(move |_| add_tag.emit(candidate_clone.clone()));
                         html! {
-                            <button 
-                                onclick={onclick} 
+                            <button
+                                onclick={onclick}
                                 class={classes::TAG_INPUT_CANDIDATE_BUTTON}
                                 type="button"
                             >

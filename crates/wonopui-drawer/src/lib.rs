@@ -14,7 +14,7 @@ pub mod classes {
     pub const DRAWER_DESCRIPTION: &str = "text-sm text-gray-600 dark:text-zinc-400 mt-1";
     pub const DRAWER_CONTENT: &str = "p-4 flex-1 overflow-auto";
     pub const DRAWER_FOOTER: &str = "p-4 border-t border-gray-200 dark:border-zinc-700";
-    
+
     // Side-specific classes
     pub const DRAWER_LEFT: &str = "inset-y-0 left-0 w-80 max-w-full";
     pub const DRAWER_RIGHT: &str = "inset-y-0 right-0 w-80 max-w-full";
@@ -176,10 +176,7 @@ pub struct DrawerHeaderProps {
 
 #[function_component(DrawerHeader)]
 pub fn drawer_header(props: &DrawerHeaderProps) -> Html {
-    let class = merge_classes(&[
-        classes::DRAWER_HEADER,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::DRAWER_HEADER, &props.class.to_string()]);
 
     html! {
         <div class={class}>
@@ -197,10 +194,7 @@ pub struct DrawerTitleProps {
 
 #[function_component(DrawerTitle)]
 pub fn drawer_title(props: &DrawerTitleProps) -> Html {
-    let class = merge_classes(&[
-        classes::DRAWER_TITLE,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::DRAWER_TITLE, &props.class.to_string()]);
 
     html! {
         <h2 class={class}>
@@ -218,10 +212,7 @@ pub struct DrawerDescriptionProps {
 
 #[function_component(DrawerDescription)]
 pub fn drawer_description(props: &DrawerDescriptionProps) -> Html {
-    let class = merge_classes(&[
-        classes::DRAWER_DESCRIPTION,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::DRAWER_DESCRIPTION, &props.class.to_string()]);
 
     html! {
         <p class={class}>
@@ -239,10 +230,7 @@ pub struct DrawerContentProps {
 
 #[function_component(DrawerContent)]
 pub fn drawer_content(props: &DrawerContentProps) -> Html {
-    let class = merge_classes(&[
-        classes::DRAWER_CONTENT,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::DRAWER_CONTENT, &props.class.to_string()]);
 
     html! {
         <div class={class}>
@@ -260,10 +248,7 @@ pub struct DrawerFooterProps {
 
 #[function_component(DrawerFooter)]
 pub fn drawer_footer(props: &DrawerFooterProps) -> Html {
-    let class = merge_classes(&[
-        classes::DRAWER_FOOTER,
-        &props.class.to_string(),
-    ]);
+    let class = merge_classes(&[classes::DRAWER_FOOTER, &props.class.to_string()]);
 
     html! {
         <div class={class}>

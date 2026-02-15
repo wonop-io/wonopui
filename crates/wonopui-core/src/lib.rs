@@ -3,10 +3,10 @@
 //! This crate provides shared functionality used across all WonopUI components.
 
 /// A utility for merging CSS class strings.
-/// 
+///
 /// This function takes an array of class strings and combines them
 /// into a single space-separated string, filtering out empty strings.
-/// 
+///
 /// # Example
 /// ```
 /// use wonopui_core::merge_classes;
@@ -23,7 +23,7 @@ pub fn merge_classes(classes: &[&str]) -> String {
 }
 
 /// A utility for merging a base class with optional additional classes.
-/// 
+///
 /// This is a convenience function for the common case of having a base class
 /// and optionally adding more classes.
 pub fn merge_classes_opt(base: &str, additional: Option<&str>) -> String {

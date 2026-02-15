@@ -31,8 +31,16 @@ pub struct MainContentProps {
 pub fn main_content(props: &MainContentProps) -> Html {
     let main_class = merge_classes(&[
         classes::CONTENT_MAIN,
-        if props.padding { classes::CONTENT_PADDING } else { "" },
-        if props.aside.is_some() { classes::CONTENT_WITH_ASIDE } else { "" },
+        if props.padding {
+            classes::CONTENT_PADDING
+        } else {
+            ""
+        },
+        if props.aside.is_some() {
+            classes::CONTENT_WITH_ASIDE
+        } else {
+            ""
+        },
         &props.class.to_string(),
     ]);
 
@@ -68,7 +76,11 @@ pub struct ContentProps {
 pub fn content(props: &ContentProps) -> Html {
     let class = merge_classes(&[
         classes::CONTENT_MAIN,
-        if props.padding { classes::CONTENT_PADDING } else { "" },
+        if props.padding {
+            classes::CONTENT_PADDING
+        } else {
+            ""
+        },
         &props.class.to_string(),
     ]);
 

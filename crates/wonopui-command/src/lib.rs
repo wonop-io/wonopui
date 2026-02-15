@@ -4,12 +4,13 @@
 
 use wasm_bindgen::JsCast;
 use web_sys::KeyboardEvent;
-use yew::prelude::*;
 pub use wonopui_core::merge_classes;
+use yew::prelude::*;
 
 /// CSS classes for the Command component
 pub mod classes {
-    pub const CONTAINER: &str = "flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground";
+    pub const CONTAINER: &str =
+        "flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground";
     pub const INPUT_WRAPPER: &str = "flex items-center border-b px-3";
     pub const ICON: &str = "mr-2 h-4 w-4 shrink-0 opacity-50";
     pub const INPUT: &str = "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50";
@@ -128,41 +129,42 @@ pub fn command<T: Clone + PartialEq + 'static>(props: &CommandProps<T>) -> Html 
         let filtered_options = filtered_options.clone();
         let selected_index = selected_index.clone();
         let on_select = on_select.clone();
-        Callback::from(move |e: KeyboardEvent| {
-            match e.key().as_str() {
-                "Escape" => {
-                    is_open.set(false);
+        Callback::from(move |e: KeyboardEvent| match e.key().as_str() {
+            "Escape" => {
+                is_open.set(false);
+                e.prevent_default();
+            }
+            "Enter" => {
+                if *is_open {
+                    if let Some((val, _, _, _)) = filtered_options.get(*selected_index) {
+                        on_select.emit(val.clone());
+                    }
                     e.prevent_default();
                 }
-                "Enter" => {
-                    if *is_open {
-                        if let Some((val, _, _, _)) = filtered_options.get(*selected_index) {
-                            on_select.emit(val.clone());
-                        }
-                        e.prevent_default();
-                    }
-                }
-                "ArrowDown" => {
-                    if *is_open && !filtered_options.is_empty() {
-                        selected_index.set((*selected_index + 1) % filtered_options.len());
-                        e.prevent_default();
-                    }
-                }
-                "ArrowUp" => {
-                    if *is_open && !filtered_options.is_empty() {
-                        selected_index.set(
-                            (*selected_index + filtered_options.len() - 1) % filtered_options.len(),
-                        );
-                        e.prevent_default();
-                    }
-                }
-                _ => {}
             }
+            "ArrowDown" => {
+                if *is_open && !filtered_options.is_empty() {
+                    selected_index.set((*selected_index + 1) % filtered_options.len());
+                    e.prevent_default();
+                }
+            }
+            "ArrowUp" => {
+                if *is_open && !filtered_options.is_empty() {
+                    selected_index.set(
+                        (*selected_index + filtered_options.len() - 1) % filtered_options.len(),
+                    );
+                    e.prevent_default();
+                }
+            }
+            _ => {}
         })
     };
 
     let container_class = merge_classes(&[classes::CONTAINER, &props.class.to_string()]);
-    let empty_message = props.empty_message.clone().unwrap_or_else(|| "No results found.".to_string());
+    let empty_message = props
+        .empty_message
+        .clone()
+        .unwrap_or_else(|| "No results found.".to_string());
 
     html! {
         <div ref={div_ref} class={container_class} tabindex="0" onfocusout={close}>
