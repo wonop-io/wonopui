@@ -11,6 +11,53 @@ build --disk_cache=~/.cache/bazel
 
 # Test settings
 test --test_output=errors
+test --test_summary=terse
 
 # Platform configuration for WASM builds
 build:wasm --platforms=@rules_rust//rust/platform:wasm
+
+# =============================================================================
+# Clippy configuration
+# =============================================================================
+# Enable clippy for all targets with: bazel build --config=clippy //...
+build:clippy --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
+build:clippy --output_groups=+clippy_checks
+
+# Use our clippy.toml configuration
+build:clippy --@rules_rust//rust/settings:clippy.toml=//:clippy.toml
+
+# Fail on clippy warnings in CI
+build:clippy-strict --config=clippy
+build:clippy-strict --@rules_rust//rust/settings:clippy_flags=-Dwarnings
+
+# =============================================================================
+# Rustfmt configuration  
+# =============================================================================
+# Enable rustfmt for all targets with: bazel build --config=rustfmt //...
+build:rustfmt --aspects=@rules_rust//rust:defs.bzl%rustfmt_aspect
+build:rustfmt --output_groups=+rustfmt_checks
+
+# =============================================================================
+# CI configuration
+# =============================================================================
+# Combined CI checks
+build:ci --config=clippy-strict
+build:ci --config=rustfmt
+
+# =============================================================================
+# Coverage configuration
+# =============================================================================
+coverage --combined_report=lcov
+coverage --instrumentation_filter="//crates[/:]"
+
+# =============================================================================
+# Developer convenience
+# =============================================================================
+# Fast builds during development
+build:dev --compilation_mode=fastbuild
+
+# Debug builds
+build:debug --compilation_mode=dbg
+
+# Local user overrides (not checked in)
+try-import %workspace%/user.bazelrc

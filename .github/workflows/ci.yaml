@@ -1,4 +1,4 @@
-name: Rust
+name: CI
 
 on:
   push:
@@ -12,30 +12,199 @@ env:
 permissions: read-all
 
 jobs:
-  build:
+  # ==========================================================================
+  # Bazel-based checks
+  # ==========================================================================
+  bazel-build:
+    name: Bazel Build
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache Rust dependencies
-        uses: actions/cache@v3
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v3
+
+      - name: Mount Bazel cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: ${{ runner.os }}-bazel-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bazel-
+
+      - name: Build all targets
+        run: bazel build //...
+
+      - name: Run tests
+        run: bazel test //...
+
+  bazel-clippy:
+    name: Clippy (Bazel)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v3
+
+      - name: Mount Bazel cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: ${{ runner.os }}-bazel-clippy-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bazel-clippy-
+            ${{ runner.os }}-bazel-
+
+      - name: Run Clippy
+        run: bazel build --config=clippy-strict //crates/...
+
+  bazel-rustfmt:
+    name: Rustfmt (Bazel)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v3
+
+      - name: Mount Bazel cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: ${{ runner.os }}-bazel-fmt-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bazel-fmt-
+            ${{ runner.os }}-bazel-
+
+      - name: Check formatting
+        run: bazel build --config=rustfmt //crates/...
+
+  bazel-wasm:
+    name: WASM Build (Bazel)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v3
+
+      - name: Mount Bazel cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: ${{ runner.os }}-bazel-wasm-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bazel-wasm-
+            ${{ runner.os }}-bazel-
+
+      - name: Build WASM gallery
+        run: bazel build //examples/gallery:gallery_wasm
+
+  # ==========================================================================
+  # Cargo-based checks (for tools not yet integrated with Bazel)
+  # ==========================================================================
+  cargo-deny:
+    name: Cargo Deny
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check licenses and advisories
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check
+          arguments: --all-features
+
+  cargo-udeps:
+    name: Unused Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust nightly
+        uses: dtolnay/rust-action@nightly
+        with:
+          components: rustc
+
+      - name: Cache cargo
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-udeps-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-udeps-
+
+      - name: Install cargo-udeps
+        run: cargo install cargo-udeps --locked
+
+      - name: Check for unused dependencies
+        run: cargo +nightly udeps --all-targets --all-features
+        continue-on-error: true  # Advisory, not blocking
+
+  cargo-machete:
+    name: Machete (Fast Unused Deps)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-action@stable
+
+      - name: Install cargo-machete
+        run: cargo install cargo-machete --locked
+
+      - name: Check for unused dependencies
+        run: cargo machete
+        continue-on-error: true  # Advisory, not blocking
+
+  # ==========================================================================
+  # Legacy Cargo build (for compatibility verification)
+  # ==========================================================================
+  cargo-build:
+    name: Cargo Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-action@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Installing trunk
-        run: |
-          rustup target add wasm32-unknown-unknown
-          cargo install --locked trunk
-          mv ~/.cargo/bin/trunk ~/.cargo/bin/wasm-trunk
-
-      - name: Testing wonopui
-        run: cargo test
-
-      - name: Building
+      - name: Build
         run: cargo build --target wasm32-unknown-unknown --release --features everything
+
+      - name: Test
+        run: cargo test --all-features
+
+  # ==========================================================================
+  # Summary job for branch protection
+  # ==========================================================================
+  ci-success:
+    name: CI Success
+    runs-on: ubuntu-latest
+    needs:
+      - bazel-build
+      - bazel-clippy
+      - bazel-rustfmt
+      - bazel-wasm
+      - cargo-deny
+      - cargo-build
+    steps:
+      - name: All checks passed
+        run: echo "All CI checks passed!"
