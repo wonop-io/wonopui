@@ -18,3 +18,9 @@ rust_library(
         "@crates//:yew",
     ],
 )
+
+# Source files for Tailwind CSS scanning
+filegroup(
+    name = "srcs",
+    srcs = glob(["src/**/*.rs"]),
+)

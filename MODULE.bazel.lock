@@ -143,7 +143,7 @@
           "@@//crates/wonopui-breadcrumb/Cargo.toml": "58722bd5177f1d92bf2000b343c41e4c5b39d9a8e81b7575a27ee2a1c3e9f82a",
           "@@//examples/gallery/Cargo.toml": "4616691d5be35721b213725a97ecf458707fc240c2cae97d1b285494b41cfa04",
           "@@//crates/wonopui-kanban/Cargo.toml": "71d400832150a5e85c667aa23dfc06c045190a866d054f9f0111d99559d1b583",
-          "@@//MODULE.bazel": "acb76f4ef9a7748672ec82b38891a60611d2b4be49d63e7021e8768d9548c567",
+          "@@//MODULE.bazel": "3ce5d07c530d534a9aa629e162d951950b9d9259b25a892414fc72c76c7c3aaf",
           "@@//crates/wonopui-button/Cargo.toml": "b38f94fef651f1a8fbb313965455cbc7994bd78939647569c89ac3641d313986",
           "@@//crates/wonopui-dialog/Cargo.toml": "fdb917065544378c048144e28b93d1f9f3d6110e7bcd8e11f9163026529c0b0d",
           "@@//crates/wonopui-component-editor/Cargo.toml": "43441467d9e0426912a116c912ef65f233664b2bdcb35bec69d75651b739e4f6",
