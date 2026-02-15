@@ -93,3 +93,88 @@ pub enum Position {
 
 // Re-export commonly used yew types for convenience
 pub use yew::prelude::*;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_merge_classes_basic() {
+        let result = merge_classes(&["btn", "btn-primary"]);
+        assert_eq!(result, "btn btn-primary");
+    }
+
+    #[test]
+    fn test_merge_classes_filters_empty() {
+        let result = merge_classes(&["btn", "", "btn-primary", ""]);
+        assert_eq!(result, "btn btn-primary");
+    }
+
+    #[test]
+    fn test_merge_classes_empty_input() {
+        let result = merge_classes(&[]);
+        assert_eq!(result, "");
+    }
+
+    #[test]
+    fn test_merge_classes_all_empty() {
+        let result = merge_classes(&["", "", ""]);
+        assert_eq!(result, "");
+    }
+
+    #[test]
+    fn test_merge_classes_opt_with_additional() {
+        let result = merge_classes_opt("base", Some("extra"));
+        assert_eq!(result, "base extra");
+    }
+
+    #[test]
+    fn test_merge_classes_opt_without_additional() {
+        let result = merge_classes_opt("base", None);
+        assert_eq!(result, "base");
+    }
+
+    #[test]
+    fn test_merge_classes_opt_empty_additional() {
+        let result = merge_classes_opt("base", Some(""));
+        assert_eq!(result, "base");
+    }
+
+    #[test]
+    fn test_size_default() {
+        assert_eq!(Size::default(), Size::Medium);
+    }
+
+    #[test]
+    fn test_variant_default() {
+        assert_eq!(Variant::default(), Variant::Default);
+    }
+
+    #[test]
+    fn test_status_default() {
+        assert_eq!(Status::default(), Status::Info);
+    }
+
+    #[test]
+    fn test_direction_default() {
+        assert_eq!(Direction::default(), Direction::Horizontal);
+    }
+
+    #[test]
+    fn test_position_default() {
+        assert_eq!(Position::default(), Position::Bottom);
+    }
+
+    #[test]
+    fn test_size_equality() {
+        assert_eq!(Size::Small, Size::Small);
+        assert_ne!(Size::Small, Size::Large);
+    }
+
+    #[test]
+    fn test_variant_clone() {
+        let v = Variant::Primary;
+        let v2 = v;
+        assert_eq!(v, v2);
+    }
+}

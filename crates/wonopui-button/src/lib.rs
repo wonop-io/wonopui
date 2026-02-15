@@ -146,3 +146,59 @@ pub fn button(props: &ButtonProps) -> Html {
         </button>
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_button_variant_default() {
+        assert_eq!(ButtonVariant::default(), ButtonVariant::Default);
+    }
+
+    #[test]
+    fn test_button_size_default() {
+        assert_eq!(ButtonSize::default(), ButtonSize::Medium);
+    }
+
+    #[test]
+    fn test_button_variant_equality() {
+        assert_eq!(ButtonVariant::Primary, ButtonVariant::Primary);
+        assert_ne!(ButtonVariant::Primary, ButtonVariant::Secondary);
+    }
+
+    #[test]
+    fn test_button_size_equality() {
+        assert_eq!(ButtonSize::Small, ButtonSize::Small);
+        assert_ne!(ButtonSize::Small, ButtonSize::Large);
+    }
+
+    #[test]
+    fn test_button_variant_clone() {
+        let v = ButtonVariant::Danger;
+        let v2 = v;
+        assert_eq!(v, v2);
+    }
+
+    #[test]
+    fn test_button_size_clone() {
+        let s = ButtonSize::Large;
+        let s2 = s;
+        assert_eq!(s, s2);
+    }
+
+    #[test]
+    fn test_classes_constants_not_empty() {
+        assert!(!classes::BASE.is_empty());
+        assert!(!classes::PRIMARY.is_empty());
+        assert!(!classes::SECONDARY.is_empty());
+        assert!(!classes::DANGER.is_empty());
+        assert!(!classes::SUCCESS.is_empty());
+        assert!(!classes::WARNING.is_empty());
+        assert!(!classes::GHOST.is_empty());
+        assert!(!classes::DEFAULT.is_empty());
+        assert!(!classes::SIZE_SMALL.is_empty());
+        assert!(!classes::SIZE_MEDIUM.is_empty());
+        assert!(!classes::SIZE_LARGE.is_empty());
+    }
+}

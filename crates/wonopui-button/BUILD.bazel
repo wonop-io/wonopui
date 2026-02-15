@@ -1,4 +1,4 @@
-load("@rules_rust//rust:defs.bzl", "rust_library")
+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -13,6 +13,11 @@ rust_library(
         "//crates/wonopui-core:wonopui-core",
         "@crates//:yew",
     ],
+)
+
+rust_test(
+    name = "wonopui-button_test",
+    crate = ":wonopui-button",
 )
 
 # Source files for Tailwind CSS scanning
