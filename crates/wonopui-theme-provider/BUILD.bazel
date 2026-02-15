@@ -1,0 +1,16 @@
+load("@rules_rust//rust:defs.bzl", "rust_library")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+rust_library(
+    name = "wonopui-theme-provider",
+    srcs = glob(["src/**/*.rs"]),
+    crate_name = "wonopui_theme_provider",
+    edition = "2021",
+    deps = [
+        "//crates/wonopui-core:wonopui-core",
+        "@crates//:yew",
+    ],
+)

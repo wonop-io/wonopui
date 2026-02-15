@@ -1,0 +1,18 @@
+load("@rules_rust//rust:defs.bzl", "rust_library")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+rust_library(
+    name = "wonopui-breadcrumb",
+    srcs = glob(["src/**/*.rs"]),
+    crate_name = "wonopui_breadcrumb",
+    edition = "2021",
+    deps = [
+        "//crates/wonopui-core:wonopui-core",
+        "@crates//:yew",
+        "@crates//:web-sys",
+        "@crates//:wasm-bindgen",
+    ],
+)

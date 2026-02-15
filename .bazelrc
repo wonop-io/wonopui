@@ -1,0 +1,16 @@
+# Bazel configuration for WonopUI
+
+# Use Bzlmod (default in Bazel 7+)
+common --enable_bzlmod
+
+# Build with optimizations for release
+build:release --compilation_mode=opt
+
+# Cache settings
+build --disk_cache=~/.cache/bazel
+
+# Test settings
+test --test_output=errors
+
+# Platform configuration for WASM builds
+build:wasm --platforms=@rules_rust//rust/platform:wasm

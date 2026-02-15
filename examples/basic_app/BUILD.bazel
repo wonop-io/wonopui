@@ -1,0 +1,19 @@
+load("@rules_rust//rust:defs.bzl", "rust_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+rust_binary(
+    name = "basic_app",
+    srcs = glob(["src/**/*.rs"]),
+    crate_name = "basic_app",
+    edition = "2021",
+    deps = [
+        "//crates/wonopui:wonopui",
+        "@crates//:yew",
+        "@crates//:web-sys",
+        "@crates//:wasm-bindgen",
+        "@crates//:gloo",
+    ],
+)

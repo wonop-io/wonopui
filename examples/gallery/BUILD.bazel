@@ -1,0 +1,103 @@
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_library")
+load("@rules_rust_wasm_bindgen//:defs.bzl", "rust_wasm_bindgen")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+# Gallery library
+rust_library(
+    name = "gallery_lib",
+    srcs = glob(
+        ["src/**/*.rs"],
+        exclude = ["src/bin/**"],
+    ),
+    crate_name = "gallery",
+    edition = "2021",
+    deps = [
+        "//crates/wonopui:wonopui",
+        "@crates//:bytes",
+        "@crates//:chrono",
+        "@crates//:chrono-humanize",
+        "@crates//:futures",
+        "@crates//:gloo-console",
+        "@crates//:gloo-events",
+        "@crates//:gloo-timers",
+        "@crates//:gloo-utils",
+        "@crates//:lazy_static",
+        "@crates//:log",
+        "@crates//:reqwasm",
+        "@crates//:scraper",
+        "@crates//:serde",
+        "@crates//:serde-wasm-bindgen",
+        "@crates//:serde_json",
+        "@crates//:tailwind-css",
+        "@crates//:tera",
+        "@crates//:tracing-subscriber",
+        "@crates//:tracing-web",
+        "@crates//:uuid",
+        "@crates//:validator",
+        "@crates//:wasm-bindgen",
+        "@crates//:wasm-bindgen-futures",
+        "@crates//:web-sys",
+        "@crates//:yew",
+        "@crates//:yew-router",
+        "@crates//:yewdux",
+    ],
+)
+
+# Gallery WASM binary (compiled for wasm32-unknown-unknown)
+rust_binary(
+    name = "gallery_wasm_bin",
+    srcs = ["src/bin/main.rs"],
+    crate_name = "gallery",
+    edition = "2021",
+    platform = "@rules_rust//rust/platform:wasm",
+    deps = [
+        ":gallery_lib",
+        "//crates/wonopui:wonopui",
+        "@crates//:serde",
+        "@crates//:tracing-subscriber",
+        "@crates//:tracing-web",
+        "@crates//:wasm-bindgen",
+        "@crates//:web-sys",
+        "@crates//:yew",
+        "@crates//:yew-router",
+    ],
+)
+
+# Generate JS bindings for the WASM binary
+rust_wasm_bindgen(
+    name = "gallery_wasm",
+    target = "web",
+    wasm_file = ":gallery_wasm_bin",
+)
+
+# Main runnable target - serves the WASM app (use: bazel run //examples/gallery)
+sh_binary(
+    name = "gallery",
+    srcs = ["serve.sh"],
+    data = [
+        ":gallery_wasm",
+        "index_bazel.html",
+    ],
+)
+
+# Native binary (for type checking only - not runnable as WASM app)
+rust_binary(
+    name = "gallery_native",
+    srcs = ["src/bin/main.rs"],
+    crate_name = "main",
+    edition = "2021",
+    deps = [
+        ":gallery_lib",
+        "//crates/wonopui:wonopui",
+        "@crates//:serde",
+        "@crates//:tracing-subscriber",
+        "@crates//:tracing-web",
+        "@crates//:wasm-bindgen",
+        "@crates//:web-sys",
+        "@crates//:yew",
+        "@crates//:yew-router",
+    ],
+)

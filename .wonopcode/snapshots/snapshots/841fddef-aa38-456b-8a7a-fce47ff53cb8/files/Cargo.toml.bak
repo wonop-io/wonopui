@@ -1,9 +1,5 @@
 [workspace]
 resolver = "2"
-exclude = [
-    ".wonopcode",
-    "examples/enhanced_code_editor",
-]
 members = [
     "crates/wonopui",
     "crates/wonopui-core",

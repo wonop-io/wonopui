@@ -1,0 +1,13 @@
+# Root BUILD file for WonopUI
+
+# Make Cargo files visible to Bazel
+exports_files([
+    "Cargo.toml",
+    "Cargo.lock",
+])
+
+# Alias for building all crates
+alias(
+    name = "all",
+    actual = "//crates/wonopui:wonopui",
+)

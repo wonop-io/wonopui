@@ -1,0 +1,61 @@
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_library")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+# Gallery library
+rust_library(
+    name = "gallery_lib",
+    srcs = glob(
+        ["src/**/*.rs"],
+        exclude = ["src/bin/**"],
+    ),
+    crate_name = "gallery",
+    edition = "2021",
+    deps = [
+        "//crates/wonopui:wonopui",
+        "@crates//:yew",
+        "@crates//:yew-router",
+        "@crates//:web-sys",
+        "@crates//:wasm-bindgen",
+        "@crates//:wasm-bindgen-futures",
+        "@crates//:gloo-console",
+        "@crates//:gloo-utils",
+        "@crates//:gloo-timers",
+        "@crates//:gloo-events",
+        "@crates//:serde",
+        "@crates//:serde_json",
+        "@crates//:yewdux",
+        "@crates//:chrono",
+        "@crates//:uuid",
+        "@crates//:futures",
+        "@crates//:lazy_static",
+        "@crates//:log",
+        "@crates//:scraper",
+        "@crates//:tera",
+        "@crates//:tracing-subscriber",
+        "@crates//:tracing-web",
+        "@crates//:validator",
+        "@crates//:serde-wasm-bindgen",
+        "@crates//:tailwind-css",
+        "@crates//:chrono-humanize",
+        "@crates//:reqwasm",
+        "@crates//:bytes",
+    ],
+)
+
+# Gallery binary
+rust_binary(
+    name = "gallery",
+    srcs = ["src/bin/main.rs"],
+    crate_name = "main",
+    edition = "2021",
+    deps = [
+        ":gallery_lib",
+        "//crates/wonopui:wonopui",
+        "@crates//:yew",
+        "@crates//:web-sys",
+        "@crates//:wasm-bindgen",
+    ],
+)
