@@ -18,21 +18,11 @@ pub fn collapsible_demo() -> Html {
         })
     };
 
-    let toggle_open = {
-        let is_open = is_open.clone();
-        let on_open_change = on_open_change.clone();
-        Callback::from(move |_| {
-            let new_state = !*is_open;
-            is_open.set(new_state);
-            on_open_change.emit(new_state);
-        })
-    };
-
     html! {
         <Collapsible open={*is_open} on_open_change={on_open_change}>
             <CollapsibleHeader>
                 <CollapsibleTitle>{"@peduarte starred 3 repositories"}</CollapsibleTitle>
-                <CollapsibleTrigger as_child=true onclick={toggle_open}>
+                <CollapsibleTrigger as_child=true>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-up-down h-4 w-4">
                         <path d="m7 15 5 5 5-5"></path>
                         <path d="m7 9 5-5 5 5"></path>
@@ -40,7 +30,7 @@ pub fn collapsible_demo() -> Html {
                     <span class="sr-only">{"Toggle"}</span>
                 </CollapsibleTrigger>
             </CollapsibleHeader>
-            <CollapsibleContent is_open={*is_open}>
+            <CollapsibleContent>
                 <CollapsibleItem>
                     {"@radix-ui/primitives"}
                 </CollapsibleItem>

@@ -1,0 +1,13 @@
+[package]
+name = "wonopui-selectable"
+version = "0.1.0"
+edition = "2021"
+authors = ["Troels F. Rønnow <troels@wonop.com>"]
+description = "selectable component for WonopUI"
+license = "MIT"
+repository = "https://github.com/wonop-io/wonopui"
+
+[dependencies]
+wonopui-core = { path = "../wonopui-core" }
+yew = { version = "0.21", features = ["csr"] }
+web-sys = { version = "0.3", features = ["HtmlElement", "DomRect"] }

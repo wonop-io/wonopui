@@ -91,16 +91,10 @@ pub fn markdown_editor_theme_editor() -> Html {
     ];
 
     let preview = html! {
-        <MarkdownEditor<EditorBlockType>
-            auto_focus={true}
+        <MarkdownEditor
             class="h-[400px]"
-            placeholder="Start typing..."
-            initial_content={vec![
-                EditorBlockType::Paragraph("Start typing here...".to_string()),
-                EditorBlockType::Heading2("Example Heading".to_string()),
-                EditorBlockType::BulletList("List item example".to_string()),
-                EditorBlockType::Role(crate::components::markdown_editor::RoleType::System, "System message".to_string()),
-            ]}
+            placeholder={"Start typing..."}
+            value="# Example Heading\n\nStart typing here...\n\n- List item example\n\n**System**: System message"
         />
     };
 

@@ -2,12 +2,9 @@
 name = "gallery"
 version = "0.1.0"
 edition = "2021"
-description = "Template for starting a Yew project using Trunk"
-readme = "README.md"
-repository = "https://github.com/yewstack/yew-trunk-minimal-template"
+description = "WonopUI component gallery and demo application"
 license = "MIT OR Apache-2.0"
-keywords = ["yew", "trunk"]
-categories = ["gui", "wasm", "web-programming"]
+publish = false
 
 [dependencies]
 yew = { version = "0.21", features = ["csr"] }
@@ -71,13 +68,79 @@ scraper = "0.19.0"
 reqwasm = "0.5.0"
 tailwind-css = "0.13.0"
 lazy_static = "1.5.0"
-wonopui = { path = "../../../wonopui", features = [
-    "everything",
-    "ThemeProvider",
-] }
 log = "0.4.20"
 
+# Use the new wonopui with feature-gated components
+wonopui = { path = "../../crates/wonopui", features = [
+    "accordion",
+    "component-editor",
+    "theme-provider",
+    "alert",
+    "avatar",
+    "badge",
+    "breadcrumb",
+    "browser-provider",
+    "button",
+    "calendar",
+    "card",
+    "carousel",
+    "checkbox",
+    "col",
+    "collapsible",
+    "color-picker",
+    "combobox",
+    "command",
+    "container",
+    "content",
+    "context-menu",
+    "copy-button",
+    "dark-mode-provider",
+    "data-table",
+    "date-picker",
+    "dialog",
+    "diffview",
+    "divider",
+    "drag-point",
+    "drawer",
+    "dropdown",
+    "group-button",
+    "iframe",
+    "input",
+    "kanban",
+    "label",
+    "layout",
+    "markdown-editor",
+    "media-query",
+    "mention-input",
+    "multicol-sidebar",
+    "notification",
+    "page-content",
+    "page-header",
+    "pagination",
+    "paint-canvas",
+    "placeholder",
+    "popover",
+    "resizable",
+    "select",
+    "selectable",
+    "sidebar",
+    "switch",
+    "table",
+    "tabs",
+    "tag-input",
+    "tailwind-color-picker",
+    "textarea",
+    "toggle",
+    "topbar",
+    "typography",
+    "window-provider",
+] }
+
 # This is needed for fixing compatibility after the reorganization
+# Enable wasm_js feature for getrandom when targeting WASM
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.3", features = ["wasm_js"] }
+
 [features]
 default = []
 compat_hooks = []

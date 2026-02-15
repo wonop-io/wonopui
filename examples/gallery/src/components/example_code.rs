@@ -38,9 +38,9 @@ pub fn example_code(props: &ExampleCodeProps) -> Html {
                         language={props.language.clone()}
                         theme={theme}
                         show_line_numbers={true}
-                        read_only={true}
-                        font_size={14}
-                        line_height={1.6}
+                        readonly={true}
+                        font_size={"14px"}
+                        line_height={"1.6"}
                     />
                 </div>
             </TabsContent>

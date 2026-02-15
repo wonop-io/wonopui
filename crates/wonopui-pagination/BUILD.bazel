@@ -1,0 +1,22 @@
+load("@rules_rust//rust:defs.bzl", "rust_library")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+rust_library(
+    name = "wonopui-pagination",
+    srcs = glob(["src/**/*.rs"]),
+    crate_name = "wonopui_pagination",
+    edition = "2021",
+    deps = [
+        "//crates/wonopui-core:wonopui-core",
+        "@crates//:yew",
+    ],
+)
+
+# Source files for Tailwind CSS scanning
+filegroup(
+    name = "srcs",
+    srcs = glob(["src/**/*.rs"]),
+)

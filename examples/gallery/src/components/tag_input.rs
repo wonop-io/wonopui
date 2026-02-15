@@ -41,7 +41,7 @@ pub fn tag_input_documentation() -> Html {
             <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
                 <TagInput
                     placeholder="Add tags to see console output"
-                    onupdate={Callback::from(|tags: Vec<String>| {
+                    onchange={Callback::from(|tags: Vec<String>| {
                         // In a real app, you would use this callback to update your state
                         web_sys::console::log_1(&format!("Tags updated: {:?}", tags).into());
                     })}

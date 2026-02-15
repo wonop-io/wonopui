@@ -52,10 +52,10 @@ pub fn calendar_theme_editor() -> Html {
 #[function_component(CalendarDemo)]
 pub fn calendar_demo() -> Html {
     let today = Local::now().date_naive();
-    let selected_date = use_state(|| None);
+    let selected_date = use_state(|| None::<chrono::NaiveDate>);
     let on_date_click = {
         let selected_date = selected_date.clone();
-        Callback::from(move |date: (i32, u32, u32)| {
+        Callback::from(move |date: chrono::NaiveDate| {
             selected_date.set(Some(date));
         })
     };
@@ -66,11 +66,11 @@ pub fn calendar_demo() -> Html {
                 year={today.year()}
                 month={today.month()}
                 on_date_click={on_date_click.clone()}
-                selected_date={(*selected_date).map(|(y, m, d)| chrono::NaiveDate::from_ymd_opt(y, m, d).unwrap_or_default())}
+                selected_date={*selected_date}
             />
             {
-                if let Some((year, month, day)) = *selected_date {
-                    html! { <p>{ format!("Selected date: {}-{:02}-{:02}", year, month, day) }</p> }
+                if let Some(date) = *selected_date {
+                    html! { <p>{ format!("Selected date: {}", date.format("%Y-%m-%d")) }</p> }
                 } else {
                     html! { <p>{ "No date selected" }</p> }
                 }

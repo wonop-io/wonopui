@@ -14,7 +14,7 @@ pub fn mention_input_documentation() -> Html {
             <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
                 <MentionInput
                     placeholder="Type @ to mention someone"
-                    default_value="Try typing @user in this input"
+                    value="Try typing @user in this input"
                 />
             </div>
 
@@ -22,8 +22,8 @@ pub fn mention_input_documentation() -> Html {
             <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
                 <MentionInput
                     placeholder="Type @ to see suggestions"
-                    default_value="You can mention @john or others"
-                    candidates={Callback::from(|input: String| {
+                    value="You can mention @john or others"
+                    get_candidates={Callback::from(|input: String| {
                         let users = vec![
                             "john", "jane", "alice", "bob",
                             "charlie", "dave", "emma", "frank", "grace", "hank"
@@ -41,7 +41,7 @@ pub fn mention_input_documentation() -> Html {
             <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
                 <MentionInput
                     placeholder="Type @ to mention someone"
-                    onupdate={Callback::from(|text: String| {
+                    onchange={Callback::from(|text: String| {
                         // In a real app, you would use this callback to update your state
                         web_sys::console::log_1(&format!("Text updated: {}", text).into());
                     })}

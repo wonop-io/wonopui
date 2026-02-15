@@ -31,7 +31,7 @@ pub fn checkbox_theme_editor() -> Html {
             <Checkbox id="terms" checked={false} on_toggle={Callback::from(|_| {})} />
             <label
                 for="terms"
-                class={BRANDGUIDE.checkbox_label}
+                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
                 { "Accept terms and conditions" }
             </label>
@@ -60,7 +60,7 @@ pub fn checkbox_documentation() -> Html {
                         <Checkbox id="terms" checked={false} on_toggle={Callback::from(|_| {})} />
                         <label
                             for="terms"
-                            class={BRANDGUIDE.checkbox_label}
+                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                             { "Accept terms and conditions" }
                         </label>

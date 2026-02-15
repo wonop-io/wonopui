@@ -1,0 +1,31 @@
+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+rust_library(
+    name = "wonopui-core",
+    srcs = glob(["src/**/*.rs"]),
+    crate_name = "wonopui_core",
+    edition = "2021",
+    deps = [
+        "@crates//:gloo",
+        "@crates//:log",
+        "@crates//:wasm-bindgen",
+        "@crates//:web-sys",
+        "@crates//:yew",
+    ],
+)
+
+rust_test(
+    name = "wonopui-core_test",
+    crate = ":wonopui-core",
+    size = "small",
+)
+
+# Source files for Tailwind CSS scanning
+filegroup(
+    name = "srcs",
+    srcs = glob(["src/**/*.rs"]),
+)

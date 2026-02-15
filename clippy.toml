@@ -1,0 +1,34 @@
+# Clippy configuration for WonopUI
+# https://doc.rust-lang.org/clippy/configuration.html
+
+# Minimum Supported Rust Version
+msrv = "1.75.0"
+
+# Allow certain patterns that are common in UI component libraries
+cognitive-complexity-threshold = 30
+
+# Yew components often have many arguments
+too-many-arguments-threshold = 10
+
+# UI components can have deep type nesting
+type-complexity-threshold = 300
+
+# Common words used in the codebase that shouldn't trigger doc_markdown
+doc-valid-idents = [
+    "GitHub",
+    "JavaScript",
+    "TypeScript",
+    "WebAssembly",
+    "WASM",
+    "CSS",
+    "HTML",
+    "DOM",
+    "UI",
+    "API",
+    "URL",
+    "SVG",
+    "RGB",
+    "HSL",
+    "Yew",
+    "TailwindCSS",
+]

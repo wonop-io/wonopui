@@ -83,3 +83,4 @@ _tmp*
 **/_tmp*/**
 lib/
 lib/**
+.wonopcode
