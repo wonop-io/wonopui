@@ -4,3 +4,13 @@ package(default_visibility = ["//visibility:public"])
 
 # Export all .bzl files
 exports_files(glob(["*.bzl"]))
+
+# Platform-specific Tailwind CSS binary alias
+alias(
+    name = "tailwindcss",
+    actual = select({
+        "@platforms//os:macos": "@tailwindcss_macos_arm64//file",
+        "@platforms//os:linux": "@tailwindcss_linux_x64//file",
+        "//conditions:default": "@tailwindcss_linux_x64//file",
+    }),
+)

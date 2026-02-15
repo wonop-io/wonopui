@@ -28,9 +28,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/bazel
-          key: ${{ runner.os }}-bazel-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-bazel-build-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-
+            ${{ runner.os }}-${{ runner.arch }}-bazel-build-
 
       - name: Build all targets
         run: bazel build //...
@@ -51,10 +51,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/bazel
-          key: ${{ runner.os }}-bazel-clippy-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-bazel-clippy-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-clippy-
-            ${{ runner.os }}-bazel-
+            ${{ runner.os }}-${{ runner.arch }}-bazel-clippy-
 
       - name: Run Clippy
         run: bazel build --config=clippy-strict //crates/...
@@ -72,10 +71,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/bazel
-          key: ${{ runner.os }}-bazel-fmt-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-bazel-fmt-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-fmt-
-            ${{ runner.os }}-bazel-
+            ${{ runner.os }}-${{ runner.arch }}-bazel-fmt-
 
       - name: Check formatting
         run: bazel build --config=rustfmt //crates/...
@@ -93,10 +91,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/bazel
-          key: ${{ runner.os }}-bazel-wasm-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-bazel-wasm-${{ hashFiles('MODULE.bazel', 'Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-wasm-
-            ${{ runner.os }}-bazel-
+            ${{ runner.os }}-${{ runner.arch }}-bazel-wasm-
 
       - name: Build WASM gallery
         run: bazel build //examples/gallery:gallery_wasm
