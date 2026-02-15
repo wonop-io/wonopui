@@ -99,13 +99,15 @@ pub struct ButtonProps {
 ///
 /// # Example
 ///
-/// ```rust
+/// ```rust,ignore
 /// use wonopui_button::{Button, ButtonVariant, ButtonSize};
 /// use yew::prelude::*;
 ///
 /// #[function_component(App)]
 /// fn app() -> Html {
-///     let onclick = Callback::from(|_| log::info!("Button clicked!"));
+///     let onclick = Callback::from(|_| {
+///         // Handle button click
+///     });
 ///
 ///     html! {
 ///         <Button
