@@ -35,7 +35,7 @@ ColorPickerLight = []
 ColorPickerSaturation = []
 ColorPickerWheel = []
 ContentEditableCommands = []
-MarkdownEditor = []
+MarkdownEditor = ["ContentEditableCommands"]
 Combobox = []
 Kanban = []
 Command = []
@@ -180,8 +180,9 @@ web-sys = { version = "0.3.68", features = [
     "Storage",
     "Location",
     "Clipboard",
-    "DragEvent",
+    "ClipboardEvent",
     "DataTransfer",
+    "DragEvent",
     "HtmlStyleElement",
     "HtmlLinkElement",
     "ResizeObserver",

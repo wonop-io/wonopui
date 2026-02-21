@@ -71,7 +71,7 @@ scraper = "0.19.0"
 reqwasm = "0.5.0"
 tailwind-css = "0.13.0"
 lazy_static = "1.5.0"
-wonopui = { path = "../../../wonopui", features = [
+wonopui = { path = "../..", features = [
     "everything",
     "ThemeProvider",
 ] }

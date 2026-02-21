@@ -114,6 +114,31 @@ pub fn divider_icon() -> Html {
     }
 }
 
+#[function_component(ChecklistIcon)]
+pub fn checklist_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="6" height="6" rx="1"></rect>
+            <path d="m3 17 2 2 4-4"></path>
+            <path d="M13 6h8"></path>
+            <path d="M13 12h8"></path>
+            <path d="M13 18h8"></path>
+        </svg>
+    }
+}
+
+#[function_component(TableIcon)]
+pub fn table_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v18"></path>
+            <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+            <path d="M3 9h18"></path>
+            <path d="M3 15h18"></path>
+        </svg>
+    }
+}
+
 #[function_component(FileBlockIcon)]
 pub fn file_block_icon() -> Html {
     html! {
@@ -704,6 +729,89 @@ pub fn divider_block(props: &DividerProps) -> Html {
     }
 }
 
+// Component for checklist block rendering
+#[derive(Properties, PartialEq)]
+pub struct ChecklistProps {
+    pub content: String,
+    pub checked: bool,
+    pub on_input: Callback<String>,
+    pub on_toggle: Callback<bool>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+    #[prop_or_default]
+    pub command_triggers: Vec<String>,
+    #[prop_or_default]
+    pub command_options: Vec<(EditorBlockType, String, String, Option<Html>)>,
+    #[prop_or_default]
+    pub on_command_select: Callback<EditorBlockType>,
+}
+
+#[function_component(ChecklistBlock)]
+pub fn checklist_block(props: &ChecklistProps) -> Html {
+    let checked = props.checked;
+    let on_toggle = props.on_toggle.clone();
+    
+    let on_checkbox_click = Callback::from(move |_: MouseEvent| {
+        on_toggle.emit(!checked);
+    });
+
+    html! {
+        <div class="flex items-start gap-2 p-2">
+            <button
+                type="button"
+                onclick={on_checkbox_click}
+                class={classes!(
+                    "flex-shrink-0",
+                    "w-5",
+                    "h-5",
+                    "mt-0.5",
+                    "rounded",
+                    "border-2",
+                    "border-zinc-300",
+                    "dark:border-zinc-600",
+                    "flex",
+                    "items-center",
+                    "justify-center",
+                    "cursor-pointer",
+                    "transition-colors",
+                    if props.checked { "bg-blue-500 border-blue-500" } else { "bg-transparent" }
+                )}
+            >
+                if props.checked {
+                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                }
+            </button>
+            <div class={classes!(
+                "flex-1",
+                if props.checked { "line-through text-zinc-400 dark:text-zinc-500" } else { "" }
+            )}>
+                <GenericBlock<EditorBlockType>
+                    tag="div"
+                    content={props.content.clone()}
+                    classes={classes!(
+                        "min-h-[1.5em]",
+                        "w-full",
+                        "outline-hidden",
+                        "focus:outline-hidden"
+                    )}
+                    on_input={props.on_input.clone()}
+                    onkeydown={props.onkeydown.clone()}
+                    onfocus={props.onfocus.clone()}
+                    onblur={props.onblur.clone()}
+                    has_focus={props.has_focus}
+                    command_triggers={props.command_triggers.clone()}
+                    command_options={props.command_options.clone()}
+                    on_command_select={props.on_command_select.clone()}
+                />
+            </div>
+        </div>
+    }
+}
+
 // Component for file block rendering
 #[derive(Properties, PartialEq)]
 pub struct FileBlockProps {
@@ -909,6 +1017,304 @@ pub fn role_block(props: &RoleProps) -> Html {
             tabindex="0"  // Make the div focusable
         >
             {props.role_type.to_string()}
+        </div>
+    }
+}
+
+// Table data structure
+#[derive(Debug, Clone, PartialEq)]
+pub struct TableData {
+    pub headers: Vec<String>,
+    pub rows: Vec<Vec<String>>,
+}
+
+impl Default for TableData {
+    fn default() -> Self {
+        Self {
+            headers: vec!["Column 1".to_string(), "Column 2".to_string(), "Column 3".to_string()],
+            rows: vec![
+                vec!["".to_string(), "".to_string(), "".to_string()],
+                vec!["".to_string(), "".to_string(), "".to_string()],
+            ],
+        }
+    }
+}
+
+impl TableData {
+    /// Parse table data from markdown table format
+    pub fn from_content(content: &str) -> Self {
+        let lines: Vec<&str> = content.lines().collect();
+        if lines.is_empty() {
+            return Self::default();
+        }
+
+        // Parse header row
+        let headers: Vec<String> = lines[0]
+            .split('|')
+            .filter(|s| !s.trim().is_empty())
+            .map(|s| s.trim().to_string())
+            .collect();
+
+        if headers.is_empty() {
+            return Self::default();
+        }
+
+        // Skip separator line if present
+        let data_start = if lines.len() > 1 && lines[1].contains('-') { 2 } else { 1 };
+
+        // Parse data rows
+        let rows: Vec<Vec<String>> = lines[data_start..]
+            .iter()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| {
+                let cells: Vec<String> = line
+                    .split('|')
+                    .filter(|s| !s.trim().is_empty())
+                    .map(|s| s.trim().to_string())
+                    .collect();
+                // Pad with empty strings if needed
+                let mut padded = cells;
+                while padded.len() < headers.len() {
+                    padded.push(String::new());
+                }
+                padded
+            })
+            .collect();
+
+        if rows.is_empty() {
+            let num_cols = headers.len();
+            Self {
+                headers,
+                rows: vec![vec!["".to_string(); num_cols]],
+            }
+        } else {
+            Self { headers, rows }
+        }
+    }
+
+    /// Convert table data to markdown table format
+    pub fn to_content(&self) -> String {
+        let mut result = String::new();
+
+        // Header row
+        result.push_str("| ");
+        result.push_str(&self.headers.join(" | "));
+        result.push_str(" |\n");
+
+        // Separator row
+        result.push_str("| ");
+        result.push_str(&self.headers.iter().map(|_| "---").collect::<Vec<_>>().join(" | "));
+        result.push_str(" |\n");
+
+        // Data rows
+        for row in &self.rows {
+            result.push_str("| ");
+            result.push_str(&row.join(" | "));
+            result.push_str(" |\n");
+        }
+
+        result.trim_end().to_string()
+    }
+
+    /// Add a new row to the table
+    pub fn add_row(&mut self) {
+        self.rows.push(vec!["".to_string(); self.headers.len()]);
+    }
+
+    /// Add a new column to the table
+    pub fn add_column(&mut self) {
+        self.headers.push(format!("Column {}", self.headers.len() + 1));
+        for row in &mut self.rows {
+            row.push(String::new());
+        }
+    }
+
+    /// Remove a row from the table
+    pub fn remove_row(&mut self, index: usize) {
+        if self.rows.len() > 1 && index < self.rows.len() {
+            self.rows.remove(index);
+        }
+    }
+
+    /// Remove a column from the table
+    pub fn remove_column(&mut self, index: usize) {
+        if self.headers.len() > 1 && index < self.headers.len() {
+            self.headers.remove(index);
+            for row in &mut self.rows {
+                if index < row.len() {
+                    row.remove(index);
+                }
+            }
+        }
+    }
+}
+
+// Component for table block rendering
+#[derive(Properties, PartialEq)]
+pub struct TableProps {
+    pub content: String,
+    pub on_update: Callback<String>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(TableBlock)]
+pub fn table_block(props: &TableProps) -> Html {
+    let table_data = use_state(|| TableData::from_content(&props.content));
+    let node_ref = use_node_ref();
+
+    // Effect to parse content changes
+    {
+        let table_data = table_data.clone();
+        let content = props.content.clone();
+        use_effect_with(content, move |content| {
+            table_data.set(TableData::from_content(content));
+            || ()
+        });
+    }
+
+    // Effect for focus management
+    use_effect_with(
+        (props.has_focus, node_ref.clone()),
+        |(has_focus, node_ref)| {
+            if let Some(element) = node_ref.cast::<HtmlElement>() {
+                if *has_focus {
+                    let _ = element.focus();
+                }
+            }
+            || ()
+        },
+    );
+
+    let on_header_change = {
+        let table_data = table_data.clone();
+        let on_update = props.on_update.clone();
+        Callback::from(move |(index, value): (usize, String)| {
+            let mut data = (*table_data).clone();
+            if index < data.headers.len() {
+                data.headers[index] = value;
+                on_update.emit(data.to_content());
+                table_data.set(data);
+            }
+        })
+    };
+
+    let on_cell_change = {
+        let table_data = table_data.clone();
+        let on_update = props.on_update.clone();
+        Callback::from(move |(row, col, value): (usize, usize, String)| {
+            let mut data = (*table_data).clone();
+            if row < data.rows.len() && col < data.rows[row].len() {
+                data.rows[row][col] = value;
+                on_update.emit(data.to_content());
+                table_data.set(data);
+            }
+        })
+    };
+
+    let on_add_row = {
+        let table_data = table_data.clone();
+        let on_update = props.on_update.clone();
+        Callback::from(move |_: MouseEvent| {
+            let mut data = (*table_data).clone();
+            data.add_row();
+            on_update.emit(data.to_content());
+            table_data.set(data);
+        })
+    };
+
+    let on_add_column = {
+        let table_data = table_data.clone();
+        let on_update = props.on_update.clone();
+        Callback::from(move |_: MouseEvent| {
+            let mut data = (*table_data).clone();
+            data.add_column();
+            on_update.emit(data.to_content());
+            table_data.set(data);
+        })
+    };
+
+    html! {
+        <div 
+            ref={node_ref}
+            tabindex="0"
+            class="w-full overflow-x-auto p-2"
+            onkeydown={props.onkeydown.clone()}
+            onfocus={props.onfocus.clone()}
+            onblur={props.onblur.clone()}
+        >
+            <table class="w-full border-collapse border border-zinc-300 dark:border-zinc-600">
+                <thead>
+                    <tr class="bg-zinc-100 dark:bg-zinc-800">
+                        {
+                            table_data.headers.iter().enumerate().map(|(i, header)| {
+                                let on_header_change = on_header_change.clone();
+                                let value = header.clone();
+                                html! {
+                                    <th class="border border-zinc-300 dark:border-zinc-600 p-2">
+                                        <input
+                                            type="text"
+                                            value={value}
+                                            class="w-full bg-transparent border-none outline-none font-bold text-center"
+                                            oninput={Callback::from(move |e: InputEvent| {
+                                                let input = e.target_unchecked_into::<web_sys::HtmlInputElement>();
+                                                on_header_change.emit((i, input.value()));
+                                            })}
+                                        />
+                                    </th>
+                                }
+                            }).collect::<Html>()
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        table_data.rows.iter().enumerate().map(|(row_idx, row)| {
+                            html! {
+                                <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                                    {
+                                        row.iter().enumerate().map(|(col_idx, cell)| {
+                                            let on_cell_change = on_cell_change.clone();
+                                            let value = cell.clone();
+                                            html! {
+                                                <td class="border border-zinc-300 dark:border-zinc-600 p-2">
+                                                    <input
+                                                        type="text"
+                                                        value={value}
+                                                        class="w-full bg-transparent border-none outline-none"
+                                                        oninput={Callback::from(move |e: InputEvent| {
+                                                            let input = e.target_unchecked_into::<web_sys::HtmlInputElement>();
+                                                            on_cell_change.emit((row_idx, col_idx, input.value()));
+                                                        })}
+                                                    />
+                                                </td>
+                                            }
+                                        }).collect::<Html>()
+                                    }
+                                </tr>
+                            }
+                        }).collect::<Html>()
+                    }
+                </tbody>
+            </table>
+            <div class="flex gap-2 mt-2">
+                <button
+                    type="button"
+                    onclick={on_add_row}
+                    class="text-xs px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded hover:bg-zinc-300 dark:hover:bg-zinc-600"
+                >
+                    {"+ Add Row"}
+                </button>
+                <button
+                    type="button"
+                    onclick={on_add_column}
+                    class="text-xs px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded hover:bg-zinc-300 dark:hover:bg-zinc-600"
+                >
+                    {"+ Add Column"}
+                </button>
+            </div>
         </div>
     }
 }

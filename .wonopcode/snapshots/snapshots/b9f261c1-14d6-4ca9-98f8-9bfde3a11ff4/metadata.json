@@ -1,0 +1,11 @@
+{
+  "id": "b9f261c1-14d6-4ca9-98f8-9bfde3a11ff4",
+  "session_id": "native-agent-mcp",
+  "message_id": "native-mcp",
+  "timestamp": "2026-02-21T07:58:36.140426Z",
+  "description": "Before edit: /Users/tfr/Documents/Projects/.worktrees/feature-376--finish-markdown-editor-in-wonopui/src/components/data_display/markdown_editor/mod.rs",
+  "files": [
+    "src/components/data_display/markdown_editor/mod.rs"
+  ],
+  "trigger": null
+}

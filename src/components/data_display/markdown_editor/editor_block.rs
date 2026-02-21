@@ -1,10 +1,9 @@
 // editor_block.rs
-use crate::components::data_display::contenteditable_commands::ContentEditableWithCommands;
 #[cfg(not(feature = "ThemeProvider"))]
 use crate::config::get_brandguide;
 #[cfg(feature = "ThemeProvider")]
 use crate::config::use_brandguide;
-use crate::config::BrandGuideType;
+use std::rc::Rc;
 use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{DragEvent, HtmlElement};
 use yew::prelude::*;
@@ -34,11 +33,15 @@ pub struct EditorBlockProps<T: BlockTrait> {
     #[prop_or_default]
     pub on_select: Callback<(usize, MouseEvent)>,
     #[prop_or_default]
-    pub on_drag_start: Callback<usize>,
+    pub on_drag_start: Callback<(usize, web_sys::DragEvent)>,
     #[prop_or_default]
     pub on_drag_over: Callback<(usize, web_sys::DragEvent)>,
     #[prop_or_default]
     pub on_drop: Callback<(usize, web_sys::DragEvent)>,
+    #[prop_or_default]
+    pub on_drag_end: Callback<web_sys::DragEvent>,
+    #[prop_or_default]
+    pub on_drag_leave: Callback<web_sys::DragEvent>,
 }
 
 #[function_component(EditorBlock)]
@@ -51,32 +54,42 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
     let node_ref = use_node_ref();
     let dropdown_open = use_state(|| false);
 
-    // Close dropdown when clicking outside
+    // Close dropdown when clicking outside - properly managed closure to avoid memory leak
     {
         let dropdown_open = dropdown_open.clone();
-        use_effect_with(dropdown_open.clone(), move |dropdown_open| {
-            let cleanup: Box<dyn FnOnce()> = if **dropdown_open {
+        let is_open = *dropdown_open;
+
+        use_effect_with(is_open, move |is_open| {
+            let cleanup: Box<dyn FnOnce()> = if *is_open {
                 let dropdown_open_clone = dropdown_open.clone();
-                let closure = Closure::wrap(Box::new(move |e: web_sys::Event| {
-                    // Prevent the dropdown toggle button from closing the dropdown
-                    e.stop_propagation();
+
+                // Create closure and immediately get a raw pointer for cleanup
+                let closure = Rc::new(Closure::wrap(Box::new(move |_e: web_sys::Event| {
                     dropdown_open_clone.set(false);
-                }) as Box<dyn FnMut(web_sys::Event)>);
-                
+                }) as Box<dyn FnMut(web_sys::Event)>));
+
                 if let Some(document) = web_sys::window().and_then(|w| w.document()) {
-                    let _ = document.add_event_listener_with_callback("click", closure.as_ref().unchecked_ref());
+                    let _ = document.add_event_listener_with_callback(
+                        "click",
+                        closure.as_ref().as_ref().unchecked_ref(),
+                    );
                 }
-                
-                let closure = Box::leak(Box::new(closure));
-                
+
+                // Return cleanup that removes the listener
+                let closure_for_cleanup = closure.clone();
                 Box::new(move || {
                     if let Some(document) = web_sys::window().and_then(|w| w.document()) {
-                        let _ = document.remove_event_listener_with_callback("click", closure.as_ref().unchecked_ref());
+                        let _ = document.remove_event_listener_with_callback(
+                            "click",
+                            closure_for_cleanup.as_ref().as_ref().unchecked_ref(),
+                        );
                     }
+                    // closure is dropped here, cleaning up the Closure
                 })
             } else {
                 Box::new(|| {})
             };
+
             cleanup
         });
     }
@@ -196,10 +209,7 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
         let on_drag_start = props.on_drag_start.clone();
         let index = props.index;
         Callback::from(move |e: web_sys::DragEvent| {
-            e.data_transfer()
-                .unwrap()
-                .set_effect_allowed("move");
-            on_drag_start.emit(index);
+            on_drag_start.emit((index, e));
         })
     };
 
@@ -207,10 +217,6 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
         let on_drag_over = props.on_drag_over.clone();
         let index = props.index;
         Callback::from(move |e: web_sys::DragEvent| {
-            e.prevent_default();
-            e.data_transfer()
-                .unwrap()
-                .set_drop_effect("move");
             on_drag_over.emit((index, e));
         })
     };
@@ -219,8 +225,42 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
         let on_drop = props.on_drop.clone();
         let index = props.index;
         Callback::from(move |e: web_sys::DragEvent| {
-            e.prevent_default();
             on_drop.emit((index, e));
+        })
+    };
+
+    let on_drag_end = {
+        let on_drag_end = props.on_drag_end.clone();
+        Callback::from(move |e: web_sys::DragEvent| {
+            on_drag_end.emit(e);
+        })
+    };
+
+    let on_drag_leave = {
+        let on_drag_leave = props.on_drag_leave.clone();
+        Callback::from(move |e: web_sys::DragEvent| {
+            on_drag_leave.emit(e);
+        })
+    };
+
+    // Check if this block is being dragged
+    let is_dragging = use_state(|| false);
+    
+    let on_drag_start_with_style = {
+        let on_drag_start = on_drag_start.clone();
+        let is_dragging = is_dragging.clone();
+        Callback::from(move |e: web_sys::DragEvent| {
+            is_dragging.set(true);
+            on_drag_start.emit(e);
+        })
+    };
+
+    let on_drag_end_with_style = {
+        let on_drag_end = on_drag_end.clone();
+        let is_dragging = is_dragging.clone();
+        Callback::from(move |e: web_sys::DragEvent| {
+            is_dragging.set(false);
+            on_drag_end.emit(e);
         })
     };
 
@@ -228,10 +268,12 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
         <div 
             class={classes!(
                 "block-container", "group", "relative", "flex", "gap-2",
-                if props.is_selected { "bg-blue-50 dark:bg-blue-950/30 ring-2 ring-blue-500/50" } else { "" }
+                if props.is_selected { "bg-blue-50 dark:bg-blue-950/30 ring-2 ring-blue-500/50" } else { "" },
+                if *is_dragging { "opacity-50" } else { "" }
             )}
             ondragover={on_drag_over}
             ondrop={on_drop}
+            ondragleave={on_drag_leave}
         >
             // Selection checkbox and drag handle on the left
             <div class="flex flex-col items-center gap-1 mt-2">
@@ -260,8 +302,9 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                 // Drag handle
                 <div
                     draggable="true"
-                    ondragstart={on_drag_start}
-                    class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-move p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    ondragstart={on_drag_start_with_style}
+                    ondragend={on_drag_end_with_style}
+                    class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     title="Drag to reorder"
                 >
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
