@@ -379,8 +379,16 @@ pub use wonopui_layout::{
 
 #[cfg(feature = "markdown-editor")]
 pub use wonopui_markdown_editor::{
-    self as markdown_editor, EditorMode, MarkdownEditor, MarkdownEditorProps,
+    self as markdown_editor, MarkdownEditor, MarkdownEditorProps,
 };
+
+// Re-export markdown editor types separately to avoid conflict with compat module
+#[cfg(feature = "markdown-editor")]
+pub mod markdown_editor_types {
+    pub use wonopui_markdown_editor::{
+        BlockTrait, ContentEditableWithCommands, ContentEditableWithCommandsProps,
+    };
+}
 
 #[cfg(feature = "media-query")]
 pub use wonopui_media_query::{self, breakpoints, use_media_query};

@@ -3,7 +3,8 @@ use std::str::FromStr;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, KeyboardEvent};
 use wonopui::prelude::*;
-use wonopui::*;
+// Import the real ContentEditableWithCommands from markdown_editor_types, not the compat stub
+use wonopui::markdown_editor_types::ContentEditableWithCommands;
 use yew::prelude::*;
 
 // Icon components for each block type
@@ -110,6 +111,31 @@ pub fn divider_icon() -> Html {
     html! {
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"></line>
+        </svg>
+    }
+}
+
+#[function_component(ChecklistIcon)]
+pub fn checklist_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="6" height="6" rx="1"></rect>
+            <path d="m3 17 2 2 4-4"></path>
+            <path d="M13 6h8"></path>
+            <path d="M13 12h8"></path>
+            <path d="M13 18h8"></path>
+        </svg>
+    }
+}
+
+#[function_component(TableIcon)]
+pub fn table_icon() -> Html {
+    html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v18"></path>
+            <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+            <path d="M3 9h18"></path>
+            <path d="M3 15h18"></path>
         </svg>
     }
 }
@@ -339,11 +365,16 @@ pub fn paragraph_block(props: &ParagraphProps) -> Html {
             tag="div"
             content={props.content.clone()}
             classes={classes!(
-                "p-2",
-                "min-h-[1.5em]",
+                "px-3",
+                "py-2",
+                "min-h-[1.75em]",
                 "w-full",
-                "outline-hidden",
-                "focus:outline-hidden"
+                "text-sm",
+                "leading-relaxed",
+                "text-zinc-900",
+                "dark:text-zinc-100",
+                "outline-none",
+                "focus:outline-none"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -381,13 +412,17 @@ pub fn heading1_block(props: &Heading1Props) -> Html {
             tag="div"
             content={props.content.clone()}
             classes={classes!(
-                "p-2",
-                "min-h-[1.5em]",
+                "px-3",
+                "py-2",
+                "min-h-[1.75em]",
                 "w-full",
                 "text-3xl",
                 "font-bold",
-                "outline-hidden",
-                "focus:outline-hidden"
+                "tracking-tight",
+                "text-zinc-900",
+                "dark:text-zinc-100",
+                "outline-none",
+                "focus:outline-none"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -425,13 +460,21 @@ pub fn heading2_block(props: &Heading2Props) -> Html {
             tag="div"
             content={props.content.clone()}
             classes={classes!(
-                "p-2",
-                "min-h-[1.5em]",
+                "px-3",
+                "py-2",
+                "min-h-[1.75em]",
                 "w-full",
                 "text-2xl",
-                "font-bold",
-                "outline-hidden",
-                "focus:outline-hidden"
+                "font-semibold",
+                "tracking-tight",
+                "text-zinc-900",
+                "dark:text-zinc-100",
+                "border-b",
+                "border-zinc-200",
+                "dark:border-zinc-700",
+                "pb-2",
+                "outline-none",
+                "focus:outline-none"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -469,13 +512,17 @@ pub fn heading3_block(props: &Heading3Props) -> Html {
             tag="div"
             content={props.content.clone()}
             classes={classes!(
-                "p-2",
-                "min-h-[1.5em]",
+                "px-3",
+                "py-2",
+                "min-h-[1.75em]",
                 "w-full",
                 "text-xl",
-                "font-bold",
-                "outline-hidden",
-                "focus:outline-hidden"
+                "font-semibold",
+                "tracking-tight",
+                "text-zinc-900",
+                "dark:text-zinc-100",
+                "outline-none",
+                "focus:outline-none"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -509,27 +556,33 @@ pub struct BulletListProps {
 #[function_component(BulletListBlock)]
 pub fn bullet_list_block(props: &BulletListProps) -> Html {
     html! {
-        <GenericBlock<EditorBlockType>
-            tag="div"
-            content={props.content.clone()}
-            classes={classes!(
-                "p-2",
-                "min-h-[1.5em]",
-                "w-full",
-                "pl-8",
-                "list-disc",
-                "outline-hidden",
-                "focus:outline-hidden"
-            )}
-            on_input={props.on_input.clone()}
-            onkeydown={props.onkeydown.clone()}
-            onfocus={props.onfocus.clone()}
-            onblur={props.onblur.clone()}
-            has_focus={props.has_focus}
-            command_triggers={props.command_triggers.clone()}
-            command_options={props.command_options.clone()}
-            on_command_select={props.on_command_select.clone()}
-        />
+        <div class="flex items-start gap-2 px-3 py-1">
+            // Bullet point
+            <div class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-900 dark:bg-zinc-100" />
+            <GenericBlock<EditorBlockType>
+                tag="div"
+                content={props.content.clone()}
+                classes={classes!(
+                    "py-1",
+                    "min-h-[1.75em]",
+                    "w-full",
+                    "text-sm",
+                    "leading-relaxed",
+                    "text-zinc-900",
+                    "dark:text-zinc-100",
+                    "outline-none",
+                    "focus:outline-none"
+                )}
+                on_input={props.on_input.clone()}
+                onkeydown={props.onkeydown.clone()}
+                onfocus={props.onfocus.clone()}
+                onblur={props.onblur.clone()}
+                has_focus={props.has_focus}
+                command_triggers={props.command_triggers.clone()}
+                command_options={props.command_options.clone()}
+                on_command_select={props.on_command_select.clone()}
+            />
+        </div>
     }
 }
 
@@ -553,27 +606,33 @@ pub struct NumberedListProps {
 #[function_component(NumberedListBlock)]
 pub fn numbered_list_block(props: &NumberedListProps) -> Html {
     html! {
-        <GenericBlock<EditorBlockType>
-            tag="div"
-            content={props.content.clone()}
-            classes={classes!(
-                "p-2",
-                "min-h-[1.5em]",
-                "w-full",
-                "pl-8",
-                "list-decimal",
-                "outline-hidden",
-                "focus:outline-hidden"
-            )}
-            on_input={props.on_input.clone()}
-            onkeydown={props.onkeydown.clone()}
-            onfocus={props.onfocus.clone()}
-            onblur={props.onblur.clone()}
-            has_focus={props.has_focus}
-            command_triggers={props.command_triggers.clone()}
-            command_options={props.command_options.clone()}
-            on_command_select={props.on_command_select.clone()}
-        />
+        <div class="flex items-start gap-2 px-3 py-1">
+            // Number indicator (would need actual number from parent in real impl)
+            <span class="mt-1 text-sm font-medium text-zinc-500 dark:text-zinc-400 select-none min-w-[1.5em]">{"1."}</span>
+            <GenericBlock<EditorBlockType>
+                tag="div"
+                content={props.content.clone()}
+                classes={classes!(
+                    "py-1",
+                    "min-h-[1.75em]",
+                    "w-full",
+                    "text-sm",
+                    "leading-relaxed",
+                    "text-zinc-900",
+                    "dark:text-zinc-100",
+                    "outline-none",
+                    "focus:outline-none"
+                )}
+                on_input={props.on_input.clone()}
+                onkeydown={props.onkeydown.clone()}
+                onfocus={props.onfocus.clone()}
+                onblur={props.onblur.clone()}
+                has_focus={props.has_focus}
+                command_triggers={props.command_triggers.clone()}
+                command_options={props.command_options.clone()}
+                on_command_select={props.on_command_select.clone()}
+            />
+        </div>
     }
 }
 
@@ -601,18 +660,21 @@ pub fn quote_block(props: &QuoteProps) -> Html {
             tag="div"
             content={props.content.clone()}
             classes={classes!(
-                "p-2",
-                "min-h-[1.5em]",
+                "px-4",
+                "py-2",
+                "min-h-[1.75em]",
                 "w-full",
-                "pl-4",
-                "border-l-4",
+                "border-l-2",
                 "border-zinc-300",
                 "dark:border-zinc-600",
                 "bg-zinc-50",
                 "dark:bg-zinc-800/50",
+                "text-sm",
                 "italic",
-                "outline-hidden",
-                "focus:outline-hidden"
+                "text-zinc-600",
+                "dark:text-zinc-400",
+                "outline-none",
+                "focus:outline-none"
             )}
             on_input={props.on_input.clone()}
             onkeydown={props.onkeydown.clone()}
@@ -646,30 +708,39 @@ pub struct CodeBlockProps {
 #[function_component(CodeBlockBlock)]
 pub fn code_block_block(props: &CodeBlockProps) -> Html {
     html! {
-        <GenericBlock<EditorBlockType>
-            tag="div"
-            content={props.content.clone()}
-            classes={classes!(
-                "p-2",
-                "min-h-[1.5em]",
-                "w-full",
-                "font-mono",
-                "text-sm",
-                "bg-zinc-100",
-                "dark:bg-zinc-800",
-                "rounded-md",
-                "outline-hidden",
-                "focus:outline-hidden"
-            )}
-            on_input={props.on_input.clone()}
-            onkeydown={props.onkeydown.clone()}
-            onfocus={props.onfocus.clone()}
-            onblur={props.onblur.clone()}
-            has_focus={props.has_focus}
-            command_triggers={props.command_triggers.clone()}
-            command_options={props.command_options.clone()}
-            on_command_select={props.on_command_select.clone()}
-        />
+        <div class="relative mx-1 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800">
+            // Code language badge
+            <div class="absolute right-2 top-2">
+                <span class="text-xs text-zinc-500 dark:text-zinc-400 font-medium px-2 py-0.5 rounded bg-white/50 dark:bg-zinc-900/50">
+                    {"code"}
+                </span>
+            </div>
+            <GenericBlock<EditorBlockType>
+                tag="div"
+                content={props.content.clone()}
+                classes={classes!(
+                    "p-4",
+                    "min-h-[3em]",
+                    "w-full",
+                    "font-mono",
+                    "text-sm",
+                    "leading-relaxed",
+                    "text-zinc-900",
+                    "dark:text-zinc-100",
+                    "whitespace-pre-wrap",
+                    "outline-none",
+                    "focus:outline-none"
+                )}
+                on_input={props.on_input.clone()}
+                onkeydown={props.onkeydown.clone()}
+                onfocus={props.onfocus.clone()}
+                onblur={props.onblur.clone()}
+                has_focus={props.has_focus}
+                command_triggers={props.command_triggers.clone()}
+                command_options={props.command_options.clone()}
+                on_command_select={props.on_command_select.clone()}
+            />
+        </div>
     }
 }
 
@@ -685,22 +756,113 @@ pub struct DividerProps {
 #[function_component(DividerBlock)]
 pub fn divider_block(props: &DividerProps) -> Html {
     html! {
-        <GenericBlock<EditorBlockType>
-            tag="hr"
-            content={"".to_string()}
-            classes={classes!(
-                "w-full",
-                "border-t-2",
-                "border-zinc-200",
-                "dark:border-zinc-700",
-                "my-4"
-            )}
-            contenteditable={false}
+        <div 
+            class="px-3 py-4"
+            tabindex="0"
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
-            has_focus={props.has_focus}
-        />
+        >
+            <hr class="border-t border-zinc-200 dark:border-zinc-700" />
+        </div>
+    }
+}
+
+// Component for checklist block rendering
+#[derive(Properties, PartialEq)]
+pub struct ChecklistProps {
+    pub content: String,
+    pub checked: bool,
+    pub on_input: Callback<String>,
+    pub on_toggle: Callback<bool>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+    #[prop_or_default]
+    pub command_triggers: Vec<String>,
+    #[prop_or_default]
+    pub command_options: Vec<(EditorBlockType, String, String, Option<Html>)>,
+    #[prop_or_default]
+    pub on_command_select: Callback<EditorBlockType>,
+}
+
+#[function_component(ChecklistBlock)]
+pub fn checklist_block(props: &ChecklistProps) -> Html {
+    let checked = props.checked;
+    let on_toggle = props.on_toggle.clone();
+    
+    let on_checkbox_click = Callback::from(move |_: MouseEvent| {
+        on_toggle.emit(!checked);
+    });
+
+    // Lucide check icon
+    let check_icon = html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6 9 17l-5-5"/>
+        </svg>
+    };
+
+    html! {
+        <div class="flex items-start gap-3 px-3 py-1">
+            // Checkbox
+            <button
+                type="button"
+                onclick={on_checkbox_click}
+                class={classes!(
+                    "h-4",
+                    "w-4",
+                    "shrink-0",
+                    "rounded-sm",
+                    "border",
+                    "shadow-sm",
+                    "mt-1",
+                    "flex",
+                    "items-center",
+                    "justify-center",
+                    "transition-colors",
+                    "focus-visible:outline-none",
+                    "focus-visible:ring-1",
+                    "focus-visible:ring-zinc-400",
+                    if props.checked { 
+                        "border-blue-600 bg-blue-600 text-white" 
+                    } else { 
+                        "border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800" 
+                    }
+                )}
+            >
+                if props.checked {
+                    {check_icon}
+                }
+            </button>
+            <div class={classes!(
+                "flex-1",
+                "min-w-0",
+                if props.checked { "line-through text-zinc-400 dark:text-zinc-500" } else { "" }
+            )}>
+                <GenericBlock<EditorBlockType>
+                    tag="div"
+                    content={props.content.clone()}
+                    classes={classes!(
+                        "py-0.5",
+                        "min-h-[1.75em]",
+                        "w-full",
+                        "text-sm",
+                        "leading-relaxed",
+                        "outline-none",
+                        "focus:outline-none"
+                    )}
+                    on_input={props.on_input.clone()}
+                    onkeydown={props.onkeydown.clone()}
+                    onfocus={props.onfocus.clone()}
+                    onblur={props.onblur.clone()}
+                    has_focus={props.has_focus}
+                    command_triggers={props.command_triggers.clone()}
+                    command_options={props.command_options.clone()}
+                    on_command_select={props.on_command_select.clone()}
+                />
+            </div>
+        </div>
     }
 }
 
@@ -733,44 +895,44 @@ pub fn file_block_block(props: &FileBlockProps) -> Html {
         },
     );
 
+    // Lucide Upload icon
+    let upload_icon = html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-400 dark:text-zinc-500">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" x2="12" y1="3" y2="15"/>
+        </svg>
+    };
+
+    // Lucide File icon
+    let file_icon = html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-400 dark:text-zinc-500">
+            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+            <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+        </svg>
+    };
+
     html! {
         <div
             ref={node_ref}
             tabindex="0"
-            class={classes!(
-                "p-2",
-                "min-h-[1.5em]",
-                "w-full",
-                "border-2",
-                "border-dashed",
-                "border-zinc-300",
-                "dark:border-zinc-600",
-                "bg-zinc-50",
-                "dark:bg-zinc-800/50",
-                "rounded-md",
-                "flex",
-                "items-center",
-                "gap-2",
-                "outline-hidden",
-                "focus:outline-hidden"
-            )}
+            class="mx-3 my-2 px-4 py-6 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-zinc-300 dark:border-zinc-600 bg-zinc-50/50 dark:bg-zinc-800/30 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-zinc-400"
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
         >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="12" y1="18" x2="12" y2="12"></line>
-                <line x1="9" y1="15" x2="15" y2="15"></line>
-            </svg>
-            <div>
-                if props.content.is_empty() {
-                    <span>{"Click to upload a file"}</span>
-                } else {
-                    <span>{props.content.clone()}</span>
-                }
-            </div>
+            if props.content.is_empty() {
+                {upload_icon}
+                <div class="text-center">
+                    <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">{"Click to upload"}</p>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">{"or drag and drop"}</p>
+                </div>
+            } else {
+                <div class="flex items-center gap-3">
+                    {file_icon}
+                    <span class="text-sm text-zinc-900 dark:text-zinc-100">{props.content.clone()}</span>
+                </div>
+            }
         </div>
     }
 }
@@ -809,37 +971,42 @@ pub fn url_block_block(props: &UrlBlockProps) -> Html {
         },
     );
 
+    // Lucide Link icon
+    let link_icon = html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+    };
+
+    // Lucide External Link icon
+    let external_link_icon = html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 opacity-70">
+            <path d="M15 3h6v6"/>
+            <path d="M10 14 21 3"/>
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+        </svg>
+    };
+
     html! {
         <div
             ref={node_ref}
             tabindex="0"
-            class={classes!(
-                "p-2",
-                "min-h-[1.5em]",
-                "w-full",
-                "border",
-                "border-zinc-300",
-                "dark:border-zinc-600",
-                "bg-zinc-50",
-                "dark:bg-zinc-800/50",
-                "rounded-md",
-                "flex",
-                "items-center",
-                "gap-2",
-                "outline-hidden",
-                "focus:outline-hidden"
-            )}
+            class="mx-3 my-1 px-3 py-2 flex items-center gap-2 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors outline-none focus-visible:ring-1 focus-visible:ring-zinc-400"
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
         >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-            </svg>
-            <a href={url.clone()} target="_blank" class="text-blue-500 hover:underline">
+            <span class="text-zinc-400 dark:text-zinc-500">{link_icon}</span>
+            <a 
+                href={url.clone()} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex-1 text-sm text-blue-600 dark:text-blue-400 hover:underline underline-offset-4 truncate"
+            >
                 {url}
             </a>
+            {external_link_icon}
         </div>
     }
 }
@@ -859,14 +1026,42 @@ pub struct RoleProps {
 #[function_component(RoleBlock)]
 pub fn role_block(props: &RoleProps) -> Html {
     let node_ref = use_node_ref();
-    let badge_color = match props.role_type {
-        RoleType::System => {
-            "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
-        }
-        RoleType::Assistant => {
-            "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
-        }
-        RoleType::User => "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+    
+    // Badge variants with standard Tailwind colors
+    let (badge_color, icon) = match props.role_type {
+        RoleType::System => (
+            "border-purple-200 dark:border-purple-800 bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900",
+            html! {
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="8" x="2" y="2" rx="2" ry="2"/>
+                    <rect width="20" height="8" x="2" y="14" rx="2" ry="2"/>
+                    <line x1="6" x2="6.01" y1="6" y2="6"/>
+                    <line x1="6" x2="6.01" y1="18" y2="18"/>
+                </svg>
+            }
+        ),
+        RoleType::Assistant => (
+            "border-green-200 dark:border-green-800 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900",
+            html! {
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 8V4H8"/>
+                    <rect width="16" height="12" x="4" y="8" rx="2"/>
+                    <path d="M2 14h2"/>
+                    <path d="M20 14h2"/>
+                    <path d="M15 13v2"/>
+                    <path d="M9 13v2"/>
+                </svg>
+            }
+        ),
+        RoleType::User => (
+            "border-blue-200 dark:border-blue-800 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900",
+            html! {
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            }
+        ),
     };
 
     // Effect to handle focusing/blurring based on has_focus prop
@@ -885,30 +1080,349 @@ pub fn role_block(props: &RoleProps) -> Html {
     );
 
     html! {
-        <div
+        <div class="px-3 py-2">
+            <div
+                ref={node_ref}
+                class={classes!(
+                    "inline-flex",
+                    "items-center",
+                    "gap-1.5",
+                    "rounded-md",
+                    "border",
+                    "px-2.5",
+                    "py-0.5",
+                    "text-xs",
+                    "font-semibold",
+                    "transition-colors",
+                    "cursor-pointer",
+                    "select-none",
+                    "focus:outline-none",
+                    "focus-visible:ring-1",
+                    "focus-visible:ring-zinc-400",
+                    badge_color
+                )}
+                data-role={props.role_type.to_string()}
+                onclick={props.onclick.clone()}
+                onkeydown={props.onkeydown.clone()}
+                onfocus={props.onfocus.clone()}
+                onblur={props.onblur.clone()}
+                tabindex="0"
+            >
+                {icon}
+                {props.role_type.to_string()}
+            </div>
+        </div>
+    }
+}
+
+// Table data structure
+#[derive(Debug, Clone, PartialEq)]
+pub struct TableData {
+    pub headers: Vec<String>,
+    pub rows: Vec<Vec<String>>,
+}
+
+impl Default for TableData {
+    fn default() -> Self {
+        Self {
+            headers: vec!["Column 1".to_string(), "Column 2".to_string(), "Column 3".to_string()],
+            rows: vec![
+                vec!["".to_string(), "".to_string(), "".to_string()],
+                vec!["".to_string(), "".to_string(), "".to_string()],
+            ],
+        }
+    }
+}
+
+impl TableData {
+    /// Parse table data from markdown table format
+    pub fn from_content(content: &str) -> Self {
+        let lines: Vec<&str> = content.lines().collect();
+        if lines.is_empty() {
+            return Self::default();
+        }
+
+        // Parse header row
+        let headers: Vec<String> = lines[0]
+            .split('|')
+            .filter(|s| !s.trim().is_empty())
+            .map(|s| s.trim().to_string())
+            .collect();
+
+        if headers.is_empty() {
+            return Self::default();
+        }
+
+        // Skip separator line if present
+        let data_start = if lines.len() > 1 && lines[1].contains('-') { 2 } else { 1 };
+
+        // Parse data rows
+        let rows: Vec<Vec<String>> = lines[data_start..]
+            .iter()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| {
+                let cells: Vec<String> = line
+                    .split('|')
+                    .filter(|s| !s.trim().is_empty())
+                    .map(|s| s.trim().to_string())
+                    .collect();
+                // Pad with empty strings if needed
+                let mut padded = cells;
+                while padded.len() < headers.len() {
+                    padded.push(String::new());
+                }
+                padded
+            })
+            .collect();
+
+        if rows.is_empty() {
+            let num_cols = headers.len();
+            Self {
+                headers,
+                rows: vec![vec!["".to_string(); num_cols]],
+            }
+        } else {
+            Self { headers, rows }
+        }
+    }
+
+    /// Convert table data to markdown table format
+    pub fn to_content(&self) -> String {
+        let mut result = String::new();
+
+        // Header row
+        result.push_str("| ");
+        result.push_str(&self.headers.join(" | "));
+        result.push_str(" |\n");
+
+        // Separator row
+        result.push_str("| ");
+        result.push_str(&self.headers.iter().map(|_| "---").collect::<Vec<_>>().join(" | "));
+        result.push_str(" |\n");
+
+        // Data rows
+        for row in &self.rows {
+            result.push_str("| ");
+            result.push_str(&row.join(" | "));
+            result.push_str(" |\n");
+        }
+
+        result.trim_end().to_string()
+    }
+
+    /// Add a new row to the table
+    pub fn add_row(&mut self) {
+        self.rows.push(vec!["".to_string(); self.headers.len()]);
+    }
+
+    /// Add a new column to the table
+    pub fn add_column(&mut self) {
+        self.headers.push(format!("Column {}", self.headers.len() + 1));
+        for row in &mut self.rows {
+            row.push(String::new());
+        }
+    }
+
+    /// Remove a row from the table
+    pub fn remove_row(&mut self, index: usize) {
+        if self.rows.len() > 1 && index < self.rows.len() {
+            self.rows.remove(index);
+        }
+    }
+
+    /// Remove a column from the table
+    pub fn remove_column(&mut self, index: usize) {
+        if self.headers.len() > 1 && index < self.headers.len() {
+            self.headers.remove(index);
+            for row in &mut self.rows {
+                if index < row.len() {
+                    row.remove(index);
+                }
+            }
+        }
+    }
+}
+
+// Component for table block rendering
+#[derive(Properties, PartialEq)]
+pub struct TableProps {
+    pub content: String,
+    pub on_update: Callback<String>,
+    pub onkeydown: Callback<KeyboardEvent>,
+    pub onfocus: Callback<FocusEvent>,
+    pub onblur: Callback<FocusEvent>,
+    pub has_focus: bool,
+}
+
+#[function_component(TableBlock)]
+pub fn table_block(props: &TableProps) -> Html {
+    let table_data = use_state(|| TableData::from_content(&props.content));
+    let node_ref = use_node_ref();
+
+    // Effect to parse content changes
+    {
+        let table_data = table_data.clone();
+        let content = props.content.clone();
+        use_effect_with(content, move |content| {
+            table_data.set(TableData::from_content(content));
+            || ()
+        });
+    }
+
+    // Effect for focus management
+    use_effect_with(
+        (props.has_focus, node_ref.clone()),
+        |(has_focus, node_ref)| {
+            if let Some(element) = node_ref.cast::<HtmlElement>() {
+                if *has_focus {
+                    let _ = element.focus();
+                }
+            }
+            || ()
+        },
+    );
+
+    let on_header_change = {
+        let table_data = table_data.clone();
+        let on_update = props.on_update.clone();
+        Callback::from(move |(index, value): (usize, String)| {
+            let mut data = (*table_data).clone();
+            if index < data.headers.len() {
+                data.headers[index] = value;
+                on_update.emit(data.to_content());
+                table_data.set(data);
+            }
+        })
+    };
+
+    let on_cell_change = {
+        let table_data = table_data.clone();
+        let on_update = props.on_update.clone();
+        Callback::from(move |(row, col, value): (usize, usize, String)| {
+            let mut data = (*table_data).clone();
+            if row < data.rows.len() && col < data.rows[row].len() {
+                data.rows[row][col] = value;
+                on_update.emit(data.to_content());
+                table_data.set(data);
+            }
+        })
+    };
+
+    let on_add_row = {
+        let table_data = table_data.clone();
+        let on_update = props.on_update.clone();
+        Callback::from(move |_: MouseEvent| {
+            let mut data = (*table_data).clone();
+            data.add_row();
+            on_update.emit(data.to_content());
+            table_data.set(data);
+        })
+    };
+
+    let on_add_column = {
+        let table_data = table_data.clone();
+        let on_update = props.on_update.clone();
+        Callback::from(move |_: MouseEvent| {
+            let mut data = (*table_data).clone();
+            data.add_column();
+            on_update.emit(data.to_content());
+            table_data.set(data);
+        })
+    };
+
+    // Lucide Plus icon
+    let plus_icon = html! {
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/>
+            <path d="M12 5v14"/>
+        </svg>
+    };
+
+    html! {
+        <div 
             ref={node_ref}
-            class={classes!(
-                "inline-flex",
-                "items-center",
-                "justify-center",
-                "px-2.5",
-                "py-1",
-                "rounded-md",
-                "text-sm",
-                "font-medium",
-                "cursor-pointer",
-                "mb-3",
-                badge_color,
-                "outline-hidden"  // Add this to remove focus outline if needed
-            )}
-            data-role={props.role_type.to_string()}
-            onclick={props.onclick.clone()}
+            tabindex="0"
+            class="mx-3 my-2 outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 rounded-lg"
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
-            tabindex="0"  // Make the div focusable
         >
-            {props.role_type.to_string()}
+            // Table wrapper with rounded border
+            <div class="relative w-full overflow-auto rounded-md border border-zinc-200 dark:border-zinc-700">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50">
+                            {
+                                table_data.headers.iter().enumerate().map(|(i, header)| {
+                                    let on_header_change = on_header_change.clone();
+                                    let value = header.clone();
+                                    html! {
+                                        <th class="h-10 px-2 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">
+                                            <input
+                                                type="text"
+                                                value={value}
+                                                class="w-full bg-transparent border-none outline-none font-medium text-zinc-900 dark:text-zinc-100"
+                                                oninput={Callback::from(move |e: InputEvent| {
+                                                    let input = e.target_unchecked_into::<web_sys::HtmlInputElement>();
+                                                    on_header_change.emit((i, input.value()));
+                                                })}
+                                            />
+                                        </th>
+                                    }
+                                }).collect::<Html>()
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            table_data.rows.iter().enumerate().map(|(row_idx, row)| {
+                                html! {
+                                    <tr class="border-b border-zinc-200 dark:border-zinc-700 last:border-0 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                                        {
+                                            row.iter().enumerate().map(|(col_idx, cell)| {
+                                                let on_cell_change = on_cell_change.clone();
+                                                let value = cell.clone();
+                                                html! {
+                                                    <td class="p-2 align-middle">
+                                                        <input
+                                                            type="text"
+                                                            value={value}
+                                                            class="w-full bg-transparent border-none outline-none text-zinc-900 dark:text-zinc-100"
+                                                            oninput={Callback::from(move |e: InputEvent| {
+                                                                let input = e.target_unchecked_into::<web_sys::HtmlInputElement>();
+                                                                on_cell_change.emit((row_idx, col_idx, input.value()));
+                                                            })}
+                                                        />
+                                                    </td>
+                                                }
+                                            }).collect::<Html>()
+                                        }
+                                    </tr>
+                                }
+                            }).collect::<Html>()
+                        }
+                    </tbody>
+                </table>
+            </div>
+            // Action buttons
+            <div class="flex gap-1 mt-2">
+                <button
+                    type="button"
+                    onclick={on_add_row}
+                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                >
+                    {plus_icon.clone()}
+                    {"Row"}
+                </button>
+                <button
+                    type="button"
+                    onclick={on_add_column}
+                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                >
+                    {plus_icon}
+                    {"Column"}
+                </button>
+            </div>
         </div>
     }
 }

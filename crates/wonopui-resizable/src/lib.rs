@@ -113,7 +113,7 @@ pub fn resizable(props: &ResizableProps) -> Html {
             Callback::from(move |e: PointerEvent| {
                 e.prevent_default();
                 mode.set(resize_mode);
-                start_pos.set((e.client_x(), e.client_y()));
+                start_pos.set((e.client_x() as i32, e.client_y() as i32));
                 start_coords.set(*coordinates);
             })
         }
@@ -137,8 +137,8 @@ pub fn resizable(props: &ResizableProps) -> Html {
                     return;
                 }
 
-                let dx = e.client_x() - start_pos.0;
-                let dy = e.client_y() - start_pos.1;
+                let dx = e.client_x() as i32 - start_pos.0;
+                let dy = e.client_y() as i32 - start_pos.1;
                 let (sx, sy, ex, ey) = *start_coords;
 
                 let mut new_coords = match current_mode {

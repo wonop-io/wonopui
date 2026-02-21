@@ -1,9 +1,4 @@
-use crate::api_section::ApiSection;
-use crate::components::example_code::ExampleCode;
 use crate::components::markdown_editor::EditorBlockType;
-use crate::features_section::Features;
-use crate::notes_section::NotesSection;
-use crate::styling_section::StylingSection;
 use wonopui::prelude::{BrandGuideType as BrandGuide, ClassesStr, ComponentEditor};
 use wonopui::*;
 use yew::prelude::*;
@@ -90,11 +85,22 @@ pub fn markdown_editor_theme_editor() -> Html {
         ),
     ];
 
+    // Initial blocks for the preview
+    let initial_blocks = vec![
+        EditorBlockType::Heading1("Example Heading".to_string()),
+        EditorBlockType::Paragraph("Start typing here...".to_string()),
+        EditorBlockType::BulletList("List item example".to_string()),
+        EditorBlockType::Role(
+            crate::components::markdown_editor::blocks::RoleType::System,
+            "System message".to_string(),
+        ),
+    ];
+
     let preview = html! {
-        <MarkdownEditor
+        <MarkdownEditor<EditorBlockType>
             class="h-[400px]"
-            placeholder={"Start typing..."}
-            value="# Example Heading\n\nStart typing here...\n\n- List item example\n\n**System**: System message"
+            initial_content={initial_blocks}
+            show_block_actions={true}
         />
     };
 
