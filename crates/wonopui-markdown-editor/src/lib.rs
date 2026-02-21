@@ -361,7 +361,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                 dt.set_drop_effect("move");
             }
             
-            // Calculate the new indicator position
+            // Calculate the new indicator position based on mouse Y relative to block midpoint
             let new_indicator = if let Some(target) = e.current_target() {
                 if let Ok(element) = target.dyn_into::<web_sys::HtmlElement>() {
                     let rect = element.get_bounding_client_rect();
@@ -391,11 +391,10 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                     *raf_scheduled.borrow_mut() = false;
                     
                     // Only update state if value actually changed
-                    if let Some(new_val) = *pending_drop_indicator.borrow() {
-                        // Compare with current value to avoid unnecessary renders
+                    if let Some(new_idx) = *pending_drop_indicator.borrow() {
                         let current = *drop_indicator_index;
-                        if current != Some(new_val) {
-                            drop_indicator_index.set(Some(new_val));
+                        if current != Some(new_idx) {
+                            drop_indicator_index.set(Some(new_idx));
                         }
                     }
                 });
@@ -459,7 +458,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
             
             if let Some(drag_index) = *dragging_index {
                 // Use the most up-to-date indicator position (pending or committed)
-                let actual_drop_index = pending_drop_indicator.borrow()
+                let actual_drop_index = (*pending_drop_indicator.borrow())
                     .or(*drop_indicator_index)
                     .unwrap_or(drop_index);
                 
@@ -509,7 +508,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
             
             if let Some(drag_index) = *dragging_index {
                 // Use the most up-to-date indicator position
-                let target_index = pending_drop_indicator.borrow()
+                let target_index = (*pending_drop_indicator.borrow())
                     .or(*drop_indicator_index)
                     .unwrap_or(blocks.len());
                 
@@ -564,8 +563,8 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                 if let Ok(element) = target.dyn_into::<web_sys::HtmlElement>() {
                     // Check if we're on the container itself (not a block)
                     if element.class_list().contains("markdown-editor-blocks") {
-                        let new_val = blocks.len();
-                        *pending_drop_indicator.borrow_mut() = Some(new_val);
+                        let new_idx = blocks.len();
+                        *pending_drop_indicator.borrow_mut() = Some(new_idx);
                         
                         // Schedule RAF update
                         if !*raf_scheduled.borrow() {
@@ -577,10 +576,10 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                             
                             let closure = Closure::once_into_js(move || {
                                 *raf_scheduled.borrow_mut() = false;
-                                if let Some(val) = *pending_drop_indicator.borrow() {
+                                if let Some(idx) = *pending_drop_indicator.borrow() {
                                     let current = *drop_indicator_index;
-                                    if current != Some(val) {
-                                        drop_indicator_index.set(Some(val));
+                                    if current != Some(idx) {
+                                        drop_indicator_index.set(Some(idx));
                                     }
                                 }
                             });
@@ -1089,23 +1088,35 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
         })
         .collect::<Vec<_>>();
 
-    // Render the drop indicator
-    let drop_indicator = if let Some(indicator_index) = *drop_indicator_index {
-        let style = format!(
-            "top: {}px",
-            indicator_index as i32 * 40 // Approximate block height
-        );
-        html! {
-            <div 
-                class="absolute left-0 right-0 h-0.5 bg-blue-600 z-10 pointer-events-none"
-                style={style}
-            >
-                <div class="absolute -left-1 -top-1 w-2 h-2 rounded-full bg-blue-600"></div>
-                <div class="absolute -right-1 -top-1 w-2 h-2 rounded-full bg-blue-600"></div>
-            </div>
+    // Render the drop indicator inline between blocks
+    let indicator_idx = *drop_indicator_index;
+    let drop_indicator_html = html! {
+        <div class="relative h-1 -my-0.5 mx-2">
+            <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-0.5 bg-blue-600 rounded-full"></div>
+            <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-600"></div>
+            <div class="absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-600"></div>
+        </div>
+    };
+
+    // Build the final block list with indicator inserted at the right position
+    let blocks_with_indicator: Vec<Html> = if let Some(idx) = indicator_idx {
+        let mut result = Vec::with_capacity(blocks_html.len() + 1);
+        for (i, block_html) in blocks_html.into_iter().enumerate() {
+            if i == idx {
+                result.push(drop_indicator_html.clone());
+            }
+            result.push(block_html);
         }
+        // If indicator should be at the end
+        if idx >= result.len() - (if idx > 0 { 1 } else { 0 }) {
+            // Check if we haven't added it yet (when idx == blocks.len())
+            if idx == blocks.len() {
+                result.push(drop_indicator_html.clone());
+            }
+        }
+        result
     } else {
-        html! {}
+        blocks_html
     };
 
     html! {
@@ -1126,8 +1137,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
             ondrop={on_container_drop}
         >
             <div class="markdown-editor-blocks relative p-2 min-h-[100px]">
-                { drop_indicator }
-                { for blocks_html }
+                { for blocks_with_indicator }
             </div>
         </div>
     }

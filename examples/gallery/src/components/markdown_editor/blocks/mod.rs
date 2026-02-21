@@ -3,7 +3,8 @@ use std::str::FromStr;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, KeyboardEvent};
 use wonopui::prelude::*;
-use wonopui::*;
+// Import the real ContentEditableWithCommands from markdown_editor_types, not the compat stub
+use wonopui::markdown_editor_types::ContentEditableWithCommands;
 use yew::prelude::*;
 
 // Icon components for each block type

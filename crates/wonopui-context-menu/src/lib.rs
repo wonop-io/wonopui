@@ -92,7 +92,7 @@ pub fn context_menu_trigger(props: &ContextMenuTriggerProps) -> Html {
         let toggle = state.toggle.clone();
         Callback::from(move |event: MouseEvent| {
             event.prevent_default();
-            toggle.emit((event.client_x(), event.client_y()));
+            toggle.emit((event.client_x() as i32, event.client_y() as i32));
         })
     };
 
