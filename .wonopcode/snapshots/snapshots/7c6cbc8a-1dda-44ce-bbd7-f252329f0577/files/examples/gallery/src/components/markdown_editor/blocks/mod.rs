@@ -1341,26 +1341,26 @@ pub fn table_block(props: &TableProps) -> Html {
         <div 
             ref={node_ref}
             tabindex="0"
-            class="mx-3 my-2 outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 rounded-lg"
+            class="mx-3 my-2 outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-lg"
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
         >
-            // Table wrapper with rounded border
-            <div class="relative w-full overflow-auto rounded-md border border-zinc-200 dark:border-zinc-700">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50">
+            // shadcn table wrapper with rounded border
+            <div class="relative w-full overflow-auto rounded-md border border-border">
+                <table class="w-full caption-bottom text-sm">
+                    <thead class="[&_tr]:border-b">
+                        <tr class="border-b border-border transition-colors bg-muted/50">
                             {
                                 table_data.headers.iter().enumerate().map(|(i, header)| {
                                     let on_header_change = on_header_change.clone();
                                     let value = header.clone();
                                     html! {
-                                        <th class="h-10 px-2 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">
+                                        <th class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
                                             <input
                                                 type="text"
                                                 value={value}
-                                                class="w-full bg-transparent border-none outline-none font-medium text-zinc-900 dark:text-zinc-100"
+                                                class="w-full bg-transparent border-none outline-none font-medium text-foreground"
                                                 oninput={Callback::from(move |e: InputEvent| {
                                                     let input = e.target_unchecked_into::<web_sys::HtmlInputElement>();
                                                     on_header_change.emit((i, input.value()));
@@ -1372,21 +1372,21 @@ pub fn table_block(props: &TableProps) -> Html {
                             }
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="[&_tr:last-child]:border-0">
                         {
                             table_data.rows.iter().enumerate().map(|(row_idx, row)| {
                                 html! {
-                                    <tr class="border-b border-zinc-200 dark:border-zinc-700 last:border-0 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                                    <tr class="border-b border-border transition-colors hover:bg-muted/50">
                                         {
                                             row.iter().enumerate().map(|(col_idx, cell)| {
                                                 let on_cell_change = on_cell_change.clone();
                                                 let value = cell.clone();
                                                 html! {
-                                                    <td class="p-2 align-middle">
+                                                    <td class="p-2 align-middle [&:has([role=checkbox])]:pr-0">
                                                         <input
                                                             type="text"
                                                             value={value}
-                                                            class="w-full bg-transparent border-none outline-none text-zinc-900 dark:text-zinc-100"
+                                                            class="w-full bg-transparent border-none outline-none text-foreground"
                                                             oninput={Callback::from(move |e: InputEvent| {
                                                                 let input = e.target_unchecked_into::<web_sys::HtmlInputElement>();
                                                                 on_cell_change.emit((row_idx, col_idx, input.value()));
@@ -1403,12 +1403,12 @@ pub fn table_block(props: &TableProps) -> Html {
                     </tbody>
                 </table>
             </div>
-            // Action buttons
+            // Action buttons - shadcn ghost button style
             <div class="flex gap-1 mt-2">
                 <button
                     type="button"
                     onclick={on_add_row}
-                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
                     {plus_icon.clone()}
                     {"Row"}
@@ -1416,7 +1416,7 @@ pub fn table_block(props: &TableProps) -> Html {
                 <button
                     type="button"
                     onclick={on_add_column}
-                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
                     {plus_icon}
                     {"Column"}

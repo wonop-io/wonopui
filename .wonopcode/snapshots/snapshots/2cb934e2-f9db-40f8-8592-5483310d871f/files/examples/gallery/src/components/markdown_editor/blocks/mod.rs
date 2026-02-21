@@ -1026,10 +1026,10 @@ pub struct RoleProps {
 pub fn role_block(props: &RoleProps) -> Html {
     let node_ref = use_node_ref();
     
-    // Badge variants with standard Tailwind colors
+    // shadcn badge variants - using semantic colors
     let (badge_color, icon) = match props.role_type {
         RoleType::System => (
-            "border-purple-200 dark:border-purple-800 bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900",
+            "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
             html! {
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect width="20" height="8" x="2" y="2" rx="2" ry="2"/>
@@ -1040,7 +1040,7 @@ pub fn role_block(props: &RoleProps) -> Html {
             }
         ),
         RoleType::Assistant => (
-            "border-green-200 dark:border-green-800 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900",
+            "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
             html! {
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 8V4H8"/>
@@ -1053,7 +1053,7 @@ pub fn role_block(props: &RoleProps) -> Html {
             }
         ),
         RoleType::User => (
-            "border-blue-200 dark:border-blue-800 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900",
+            "border-transparent bg-accent text-accent-foreground hover:bg-accent/80",
             html! {
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
@@ -1097,7 +1097,7 @@ pub fn role_block(props: &RoleProps) -> Html {
                     "select-none",
                     "focus:outline-none",
                     "focus-visible:ring-1",
-                    "focus-visible:ring-zinc-400",
+                    "focus-visible:ring-ring",
                     badge_color
                 )}
                 data-role={props.role_type.to_string()}
@@ -1341,26 +1341,26 @@ pub fn table_block(props: &TableProps) -> Html {
         <div 
             ref={node_ref}
             tabindex="0"
-            class="mx-3 my-2 outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 rounded-lg"
+            class="mx-3 my-2 outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-lg"
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
         >
-            // Table wrapper with rounded border
-            <div class="relative w-full overflow-auto rounded-md border border-zinc-200 dark:border-zinc-700">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50">
+            // shadcn table wrapper with rounded border
+            <div class="relative w-full overflow-auto rounded-md border border-border">
+                <table class="w-full caption-bottom text-sm">
+                    <thead class="[&_tr]:border-b">
+                        <tr class="border-b border-border transition-colors bg-muted/50">
                             {
                                 table_data.headers.iter().enumerate().map(|(i, header)| {
                                     let on_header_change = on_header_change.clone();
                                     let value = header.clone();
                                     html! {
-                                        <th class="h-10 px-2 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">
+                                        <th class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
                                             <input
                                                 type="text"
                                                 value={value}
-                                                class="w-full bg-transparent border-none outline-none font-medium text-zinc-900 dark:text-zinc-100"
+                                                class="w-full bg-transparent border-none outline-none font-medium text-foreground"
                                                 oninput={Callback::from(move |e: InputEvent| {
                                                     let input = e.target_unchecked_into::<web_sys::HtmlInputElement>();
                                                     on_header_change.emit((i, input.value()));
@@ -1372,21 +1372,21 @@ pub fn table_block(props: &TableProps) -> Html {
                             }
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="[&_tr:last-child]:border-0">
                         {
                             table_data.rows.iter().enumerate().map(|(row_idx, row)| {
                                 html! {
-                                    <tr class="border-b border-zinc-200 dark:border-zinc-700 last:border-0 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                                    <tr class="border-b border-border transition-colors hover:bg-muted/50">
                                         {
                                             row.iter().enumerate().map(|(col_idx, cell)| {
                                                 let on_cell_change = on_cell_change.clone();
                                                 let value = cell.clone();
                                                 html! {
-                                                    <td class="p-2 align-middle">
+                                                    <td class="p-2 align-middle [&:has([role=checkbox])]:pr-0">
                                                         <input
                                                             type="text"
                                                             value={value}
-                                                            class="w-full bg-transparent border-none outline-none text-zinc-900 dark:text-zinc-100"
+                                                            class="w-full bg-transparent border-none outline-none text-foreground"
                                                             oninput={Callback::from(move |e: InputEvent| {
                                                                 let input = e.target_unchecked_into::<web_sys::HtmlInputElement>();
                                                                 on_cell_change.emit((row_idx, col_idx, input.value()));
@@ -1403,12 +1403,12 @@ pub fn table_block(props: &TableProps) -> Html {
                     </tbody>
                 </table>
             </div>
-            // Action buttons
+            // Action buttons - shadcn ghost button style
             <div class="flex gap-1 mt-2">
                 <button
                     type="button"
                     onclick={on_add_row}
-                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
                     {plus_icon.clone()}
                     {"Row"}
@@ -1416,7 +1416,7 @@ pub fn table_block(props: &TableProps) -> Html {
                 <button
                     type="button"
                     onclick={on_add_column}
-                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
                     {plus_icon}
                     {"Column"}

@@ -293,7 +293,7 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
     html! {
         <div 
             class={classes!(
-                // Base styles
+                // Base styles - shadcn-inspired block container
                 "group",
                 "relative",
                 "flex",
@@ -301,9 +301,9 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                 "rounded-lg",
                 "transition-colors",
                 "duration-150",
-                // Selection state
+                // Selection state - shadcn accent colors
                 if props.is_selected { 
-                    "bg-blue-50 dark:bg-blue-950/30 ring-1 ring-blue-500/50" 
+                    "bg-accent/50 ring-1 ring-ring" 
                 } else { 
                     "" 
                 },
@@ -316,9 +316,25 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
         >
             // Left toolbar - selection & drag handle
             <div class="flex flex-col items-center gap-0.5 pt-2.5 pl-1">
-                // Selection checkbox
+                // Selection checkbox - shadcn checkbox style
                 <button
-                    class="h-6 w-6 flex items-center justify-center rounded-md opacity-0 group-hover:opacity-100 transition-all duration-150 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400"
+                    class={classes!(
+                        "h-6",
+                        "w-6",
+                        "flex",
+                        "items-center",
+                        "justify-center",
+                        "rounded-md",
+                        "opacity-0",
+                        "group-hover:opacity-100",
+                        "transition-all",
+                        "duration-150",
+                        "hover:bg-accent",
+                        "focus-visible:opacity-100",
+                        "focus-visible:outline-none",
+                        "focus-visible:ring-1",
+                        "focus-visible:ring-ring"
+                    )}
                     onclick={on_select_click}
                     title="Select block"
                 >
@@ -332,9 +348,9 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                         "transition-colors",
                         "duration-150",
                         if props.is_selected { 
-                            "border-blue-600 bg-blue-600 text-white" 
+                            "border-primary bg-primary text-primary-foreground" 
                         } else { 
-                            "border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900" 
+                            "border-input bg-background" 
                         }
                     )}>
                         if props.is_selected {
@@ -345,12 +361,28 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                     </div>
                 </button>
 
-                // Drag handle
+                // Drag handle - shadcn ghost button style
                 <div
                     draggable="true"
                     ondragstart={on_drag_start_with_style}
                     ondragend={on_drag_end_with_style}
-                    class="h-6 w-6 flex items-center justify-center rounded-md opacity-0 group-hover:opacity-100 cursor-grab active:cursor-grabbing transition-all duration-150 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+                    class={classes!(
+                        "h-6",
+                        "w-6",
+                        "flex",
+                        "items-center",
+                        "justify-center",
+                        "rounded-md",
+                        "opacity-0",
+                        "group-hover:opacity-100",
+                        "cursor-grab",
+                        "active:cursor-grabbing",
+                        "transition-all",
+                        "duration-150",
+                        "hover:bg-accent",
+                        "text-muted-foreground",
+                        "hover:text-foreground"
+                    )}
                     title="Drag to reorder"
                 >
                     {grip_vertical_icon}
@@ -358,27 +390,81 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
             </div>
 
             <div class="flex items-start gap-1 flex-1 min-w-0">
-                // Block actions dropdown
+                // Block actions dropdown - shadcn dropdown style
                 if props.show_block_actions {
                     <div class="relative pt-2">
                         <button
-                            class="h-6 w-6 flex items-center justify-center rounded-md opacity-0 group-hover:opacity-100 transition-all duration-150 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400"
+                            class={classes!(
+                                "h-6",
+                                "w-6",
+                                "flex",
+                                "items-center",
+                                "justify-center",
+                                "rounded-md",
+                                "opacity-0",
+                                "group-hover:opacity-100",
+                                "transition-all",
+                                "duration-150",
+                                "hover:bg-accent",
+                                "text-muted-foreground",
+                                "hover:text-foreground",
+                                "focus-visible:opacity-100",
+                                "focus-visible:outline-none",
+                                "focus-visible:ring-1",
+                                "focus-visible:ring-ring"
+                            )}
                             onclick={toggle_dropdown}
                             title="Block actions"
                         >
                             {ellipsis_vertical_icon}
                         </button>
                         
-                        // Dropdown menu
+                        // Dropdown menu - shadcn dropdown menu style
                         if *dropdown_open {
-                            <div class="absolute left-0 top-9 z-50 min-w-[160px] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-1 shadow-lg">
+                            <div class={classes!(
+                                "absolute",
+                                "left-0",
+                                "top-9",
+                                "z-50",
+                                "min-w-[160px]",
+                                "overflow-hidden",
+                                "rounded-md",
+                                "border",
+                                "border-border",
+                                "bg-popover",
+                                "p-1",
+                                "text-popover-foreground",
+                                "shadow-md",
+                                // Animation
+                                "animate-in",
+                                "fade-in-0",
+                                "zoom-in-95",
+                                "data-[side=bottom]:slide-in-from-top-2"
+                            )}>
                                 {
                                     props.block.get_block_actions().iter().map(|(action, label)| {
                                         let action_clone = action.to_string();
                                         let on_action = on_action.clone();
                                         html! {
                                             <button
-                                                class="relative flex w-full cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-zinc-700 dark:text-zinc-300 outline-none transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:bg-zinc-100 dark:focus:bg-zinc-800"
+                                                class={classes!(
+                                                    "relative",
+                                                    "flex",
+                                                    "w-full",
+                                                    "cursor-pointer",
+                                                    "select-none",
+                                                    "items-center",
+                                                    "rounded-sm",
+                                                    "px-2",
+                                                    "py-1.5",
+                                                    "text-sm",
+                                                    "outline-none",
+                                                    "transition-colors",
+                                                    "hover:bg-accent",
+                                                    "hover:text-accent-foreground",
+                                                    "focus:bg-accent",
+                                                    "focus:text-accent-foreground"
+                                                )}
                                                 onclick={Callback::from(move |_| {
                                                     on_action.emit(action_clone.clone());
                                                 })}
@@ -407,10 +493,10 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                             "duration-150",
                             if props.is_active { 
                                 // Active block - subtle ring
-                                "ring-1 ring-blue-500/40 bg-blue-50/50 dark:bg-blue-950/20" 
+                                "ring-1 ring-ring/40 bg-accent/30" 
                             } else { 
                                 // Hover state
-                                "hover:bg-zinc-50 dark:hover:bg-zinc-800/50" 
+                                "hover:bg-accent/50" 
                             }
                         )}
                     >

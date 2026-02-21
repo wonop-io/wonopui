@@ -264,83 +264,37 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
         })
     };
 
-    // Lucide icons as inline SVG components
-    let check_icon = html! {
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 6 9 17l-5-5"/>
-        </svg>
-    };
-
-    let grip_vertical_icon = html! {
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="9" cy="12" r="1"/>
-            <circle cx="9" cy="5" r="1"/>
-            <circle cx="9" cy="19" r="1"/>
-            <circle cx="15" cy="12" r="1"/>
-            <circle cx="15" cy="5" r="1"/>
-            <circle cx="15" cy="19" r="1"/>
-        </svg>
-    };
-
-    let ellipsis_vertical_icon = html! {
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="1"/>
-            <circle cx="12" cy="5" r="1"/>
-            <circle cx="12" cy="19" r="1"/>
-        </svg>
-    };
-
     html! {
         <div 
             class={classes!(
-                // Base styles
-                "group",
-                "relative",
-                "flex",
-                "gap-1",
-                "rounded-lg",
-                "transition-colors",
-                "duration-150",
-                // Selection state
-                if props.is_selected { 
-                    "bg-blue-50 dark:bg-blue-950/30 ring-1 ring-blue-500/50" 
-                } else { 
-                    "" 
-                },
-                // Dragging state
+                "block-container", "group", "relative", "flex", "gap-2",
+                if props.is_selected { "bg-blue-50 dark:bg-blue-950/30 ring-2 ring-blue-500/50" } else { "" },
                 if *is_dragging { "opacity-50" } else { "" }
             )}
             ondragover={on_drag_over}
             ondrop={on_drop}
             ondragleave={on_drag_leave}
         >
-            // Left toolbar - selection & drag handle
-            <div class="flex flex-col items-center gap-0.5 pt-2.5 pl-1">
+            // Selection checkbox and drag handle on the left
+            <div class="flex flex-col items-center gap-1 mt-2">
                 // Selection checkbox
                 <button
-                    class="h-6 w-6 flex items-center justify-center rounded-md opacity-0 group-hover:opacity-100 transition-all duration-150 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400"
+                    class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm"
                     onclick={on_select_click}
                     title="Select block"
                 >
                     <div class={classes!(
-                        "h-4",
-                        "w-4",
-                        "shrink-0",
-                        "rounded-sm",
-                        "border",
-                        "shadow-sm",
-                        "transition-colors",
-                        "duration-150",
+                        "w-4", "h-4", "border-2", "rounded-sm",
                         if props.is_selected { 
-                            "border-blue-600 bg-blue-600 text-white" 
+                            "bg-blue-500 border-blue-500" 
                         } else { 
-                            "border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900" 
+                            "border-gray-400 dark:border-gray-600" 
                         }
                     )}>
                         if props.is_selected {
-                            <div class="flex items-center justify-center h-full">
-                                {check_icon}
-                            </div>
+                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
                         }
                     </div>
                 </button>
@@ -350,44 +304,50 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                     draggable="true"
                     ondragstart={on_drag_start_with_style}
                     ondragend={on_drag_end_with_style}
-                    class="h-6 w-6 flex items-center justify-center rounded-md opacity-0 group-hover:opacity-100 cursor-grab active:cursor-grabbing transition-all duration-150 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+                    class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     title="Drag to reorder"
                 >
-                    {grip_vertical_icon}
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M7 2a2 2 0 11-4 0 2 2 0 014 0zM7 6a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0zM7 14a2 2 0 11-4 0 2 2 0 014 0zM7 18a2 2 0 11-4 0 2 2 0 014 0zM17 2a2 2 0 11-4 0 2 2 0 014 0zM17 6a2 2 0 11-4 0 2 2 0 014 0zM17 10a2 2 0 11-4 0 2 2 0 014 0zM17 14a2 2 0 11-4 0 2 2 0 014 0zM17 18a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
                 </div>
             </div>
 
-            <div class="flex items-start gap-1 flex-1 min-w-0">
-                // Block actions dropdown
+            <div class="flex items-start gap-2 flex-1">
+                // Optional dropdown button for block actions
                 if props.show_block_actions {
-                    <div class="relative pt-2">
+                    <div class="relative">
                         <button
-                            class="h-6 w-6 flex items-center justify-center rounded-md opacity-0 group-hover:opacity-100 transition-all duration-150 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400"
+                            class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                             onclick={toggle_dropdown}
                             title="Block actions"
                         >
-                            {ellipsis_vertical_icon}
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                            </svg>
                         </button>
                         
                         // Dropdown menu
                         if *dropdown_open {
-                            <div class="absolute left-0 top-9 z-50 min-w-[160px] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-1 shadow-lg">
-                                {
-                                    props.block.get_block_actions().iter().map(|(action, label)| {
-                                        let action_clone = action.to_string();
-                                        let on_action = on_action.clone();
-                                        html! {
-                                            <button
-                                                class="relative flex w-full cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-zinc-700 dark:text-zinc-300 outline-none transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:bg-zinc-100 dark:focus:bg-zinc-800"
-                                                onclick={Callback::from(move |_| {
-                                                    on_action.emit(action_clone.clone());
-                                                })}
-                                            >
-                                                {label}
-                                            </button>
-                                        }
-                                    }).collect::<Html>()
-                                }
+                            <div class="absolute left-0 top-8 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-md min-w-[150px] z-50 animate-in fade-in-0 zoom-in-95 duration-200">
+                                <div class="p-1">
+                                    {
+                                        props.block.get_block_actions().iter().map(|(action, label)| {
+                                            let action_clone = action.to_string();
+                                            let on_action = on_action.clone();
+                                            html! {
+                                                <button
+                                                    class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-150 flex items-center gap-2"
+                                                    onclick={Callback::from(move |_| {
+                                                        on_action.emit(action_clone.clone());
+                                                    })}
+                                                >
+                                                    <span class="flex-1">{label}</span>
+                                                </button>
+                                            }
+                                        }).collect::<Html>()
+                                    }
+                                </div>
                             </div>
                         }
                     </div>
@@ -402,15 +362,11 @@ pub fn editor_block<T: BlockTrait>(props: &EditorBlockProps<T>) -> Html {
                         onclick={on_click}
                         onkeydown={props.on_keydown.clone()}
                         class={classes!(
-                            "rounded-md",
-                            "transition-all",
-                            "duration-150",
+                            "p-2", "rounded-md", "transition-all", "duration-200",
                             if props.is_active { 
-                                // Active block - subtle ring
-                                "ring-1 ring-blue-500/40 bg-blue-50/50 dark:bg-blue-950/20" 
+                                "ring-2 ring-blue-500/50 bg-blue-50/50 dark:bg-blue-950/20" 
                             } else { 
-                                // Hover state
-                                "hover:bg-zinc-50 dark:hover:bg-zinc-800/50" 
+                                "hover:bg-gray-50 dark:hover:bg-gray-800/50" 
                             }
                         )}
                     >

@@ -1114,42 +1114,14 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
         }
     }
 
-    // Drop indicator component
-    let drop_indicator = html! {
-        <div class="relative h-0.5 mx-10 my-1">
-            <div class="absolute inset-0 bg-blue-500 rounded-full" />
-            <div class="absolute -left-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-blue-500" />
-            <div class="absolute -right-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-blue-500" />
-        </div>
-    };
-
     html! {
         <div 
-            class={classes!(
-                // Card-like container
-                "rounded-lg",
-                "border",
-                "border-zinc-200",
-                "dark:border-zinc-800",
-                "bg-white",
-                "dark:bg-zinc-950",
-                "shadow-sm",
-                "focus:outline-none",
-                "focus-visible:ring-1",
-                "focus-visible:ring-zinc-400",
-                &brandguide.markdown_editor_container, 
-                props.class.clone()
-            )}
+            class={classes!(&brandguide.markdown_editor_container, props.class.clone())}
             onkeydown={on_global_keydown}
             tabindex="0"
         >
             <div 
-                class={classes!(
-                    "p-4",
-                    "space-y-1",
-                    "markdown-editor-blocks",
-                    &brandguide.markdown_editor_blocks_container
-                )}
+                class={classes!(&brandguide.markdown_editor_blocks_container, "markdown-editor-blocks")}
                 ondragover={on_container_drag_over}
                 ondrop={on_container_drop}
             >
@@ -1182,9 +1154,9 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                         
                         html! {
                             <>
-                                // Drop indicator line - shadcn primary color
+                                // Drop indicator line
                                 if show_drop_indicator {
-                                    {drop_indicator.clone()}
+                                    <div class="h-1 bg-blue-500 rounded-full mx-2 my-1 animate-pulse" />
                                 }
                                 
                                 <div key={format!("block-{}", index)}>
@@ -1193,7 +1165,7 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
                                 
                                 // Show drop indicator at the end if needed
                                 if blocks.len() == index + 1 && drop_indicator_index.map_or(false, |idx| idx == index + 1) {
-                                    {drop_indicator.clone()}
+                                    <div class="h-1 bg-blue-500 rounded-full mx-2 my-1 animate-pulse" />
                                 }
                             </>
                         }

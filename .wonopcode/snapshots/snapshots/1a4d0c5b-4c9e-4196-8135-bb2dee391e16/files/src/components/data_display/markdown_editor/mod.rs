@@ -1114,29 +1114,28 @@ pub fn markdown_editor<T: BlockTrait>(props: &MarkdownEditorProps<T>) -> Html {
         }
     }
 
-    // Drop indicator component
+    // Drop indicator component - shadcn style
     let drop_indicator = html! {
         <div class="relative h-0.5 mx-10 my-1">
-            <div class="absolute inset-0 bg-blue-500 rounded-full" />
-            <div class="absolute -left-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-blue-500" />
-            <div class="absolute -right-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-blue-500" />
+            <div class="absolute inset-0 bg-primary rounded-full" />
+            <div class="absolute -left-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-primary" />
+            <div class="absolute -right-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-primary" />
         </div>
     };
 
     html! {
         <div 
             class={classes!(
-                // Card-like container
+                // shadcn card-like container
                 "rounded-lg",
                 "border",
-                "border-zinc-200",
-                "dark:border-zinc-800",
-                "bg-white",
-                "dark:bg-zinc-950",
+                "border-border",
+                "bg-card",
+                "text-card-foreground",
                 "shadow-sm",
                 "focus:outline-none",
                 "focus-visible:ring-1",
-                "focus-visible:ring-zinc-400",
+                "focus-visible:ring-ring",
                 &brandguide.markdown_editor_container, 
                 props.class.clone()
             )}

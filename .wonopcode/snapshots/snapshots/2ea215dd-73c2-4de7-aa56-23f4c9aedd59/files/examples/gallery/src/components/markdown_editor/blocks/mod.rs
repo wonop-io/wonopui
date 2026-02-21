@@ -415,11 +415,11 @@ pub fn heading1_block(props: &Heading1Props) -> Html {
                 "py-2",
                 "min-h-[1.75em]",
                 "w-full",
+                "scroll-m-20",
                 "text-3xl",
                 "font-bold",
                 "tracking-tight",
-                "text-zinc-900",
-                "dark:text-zinc-100",
+                "text-foreground",
                 "outline-none",
                 "focus:outline-none"
             )}
@@ -463,14 +463,13 @@ pub fn heading2_block(props: &Heading2Props) -> Html {
                 "py-2",
                 "min-h-[1.75em]",
                 "w-full",
+                "scroll-m-20",
                 "text-2xl",
                 "font-semibold",
                 "tracking-tight",
-                "text-zinc-900",
-                "dark:text-zinc-100",
+                "text-foreground",
                 "border-b",
-                "border-zinc-200",
-                "dark:border-zinc-700",
+                "border-border",
                 "pb-2",
                 "outline-none",
                 "focus:outline-none"
@@ -515,11 +514,11 @@ pub fn heading3_block(props: &Heading3Props) -> Html {
                 "py-2",
                 "min-h-[1.75em]",
                 "w-full",
+                "scroll-m-20",
                 "text-xl",
                 "font-semibold",
                 "tracking-tight",
-                "text-zinc-900",
-                "dark:text-zinc-100",
+                "text-foreground",
                 "outline-none",
                 "focus:outline-none"
             )}
@@ -557,7 +556,7 @@ pub fn bullet_list_block(props: &BulletListProps) -> Html {
     html! {
         <div class="flex items-start gap-2 px-3 py-1">
             // Bullet point
-            <div class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-900 dark:bg-zinc-100" />
+            <div class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground" />
             <GenericBlock<EditorBlockType>
                 tag="div"
                 content={props.content.clone()}
@@ -567,8 +566,7 @@ pub fn bullet_list_block(props: &BulletListProps) -> Html {
                     "w-full",
                     "text-sm",
                     "leading-relaxed",
-                    "text-zinc-900",
-                    "dark:text-zinc-100",
+                    "text-foreground",
                     "outline-none",
                     "focus:outline-none"
                 )}
@@ -607,7 +605,7 @@ pub fn numbered_list_block(props: &NumberedListProps) -> Html {
     html! {
         <div class="flex items-start gap-2 px-3 py-1">
             // Number indicator (would need actual number from parent in real impl)
-            <span class="mt-1 text-sm font-medium text-zinc-500 dark:text-zinc-400 select-none min-w-[1.5em]">{"1."}</span>
+            <span class="mt-1 text-sm font-medium text-muted-foreground select-none min-w-[1.5em]">{"1."}</span>
             <GenericBlock<EditorBlockType>
                 tag="div"
                 content={props.content.clone()}
@@ -617,8 +615,7 @@ pub fn numbered_list_block(props: &NumberedListProps) -> Html {
                     "w-full",
                     "text-sm",
                     "leading-relaxed",
-                    "text-zinc-900",
-                    "dark:text-zinc-100",
+                    "text-foreground",
                     "outline-none",
                     "focus:outline-none"
                 )}
@@ -664,14 +661,11 @@ pub fn quote_block(props: &QuoteProps) -> Html {
                 "min-h-[1.75em]",
                 "w-full",
                 "border-l-2",
-                "border-zinc-300",
-                "dark:border-zinc-600",
-                "bg-zinc-50",
-                "dark:bg-zinc-800/50",
+                "border-border",
+                "bg-muted/50",
                 "text-sm",
                 "italic",
-                "text-zinc-600",
-                "dark:text-zinc-400",
+                "text-muted-foreground",
                 "outline-none",
                 "focus:outline-none"
             )}
@@ -707,10 +701,10 @@ pub struct CodeBlockProps {
 #[function_component(CodeBlockBlock)]
 pub fn code_block_block(props: &CodeBlockProps) -> Html {
     html! {
-        <div class="relative mx-1 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800">
-            // Code language badge
+        <div class="relative rounded-lg border border-border bg-muted">
+            // Code language badge (optional - for future enhancement)
             <div class="absolute right-2 top-2">
-                <span class="text-xs text-zinc-500 dark:text-zinc-400 font-medium px-2 py-0.5 rounded bg-white/50 dark:bg-zinc-900/50">
+                <span class="text-xs text-muted-foreground font-medium px-2 py-0.5 rounded bg-background/50">
                     {"code"}
                 </span>
             </div>
@@ -724,8 +718,7 @@ pub fn code_block_block(props: &CodeBlockProps) -> Html {
                     "font-mono",
                     "text-sm",
                     "leading-relaxed",
-                    "text-zinc-900",
-                    "dark:text-zinc-100",
+                    "text-foreground",
                     "whitespace-pre-wrap",
                     "outline-none",
                     "focus:outline-none"
@@ -762,7 +755,7 @@ pub fn divider_block(props: &DividerProps) -> Html {
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
         >
-            <hr class="border-t border-zinc-200 dark:border-zinc-700" />
+            <hr class="border-t border-border" />
         </div>
     }
 }
@@ -804,11 +797,12 @@ pub fn checklist_block(props: &ChecklistProps) -> Html {
 
     html! {
         <div class="flex items-start gap-3 px-3 py-1">
-            // Checkbox
+            // shadcn checkbox style
             <button
                 type="button"
                 onclick={on_checkbox_click}
                 class={classes!(
+                    "peer",
                     "h-4",
                     "w-4",
                     "shrink-0",
@@ -822,11 +816,11 @@ pub fn checklist_block(props: &ChecklistProps) -> Html {
                     "transition-colors",
                     "focus-visible:outline-none",
                     "focus-visible:ring-1",
-                    "focus-visible:ring-zinc-400",
+                    "focus-visible:ring-ring",
                     if props.checked { 
-                        "border-blue-600 bg-blue-600 text-white" 
+                        "border-primary bg-primary text-primary-foreground" 
                     } else { 
-                        "border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800" 
+                        "border-input bg-background hover:bg-accent hover:border-accent-foreground/20" 
                     }
                 )}
             >
@@ -837,7 +831,7 @@ pub fn checklist_block(props: &ChecklistProps) -> Html {
             <div class={classes!(
                 "flex-1",
                 "min-w-0",
-                if props.checked { "line-through text-zinc-400 dark:text-zinc-500" } else { "" }
+                if props.checked { "line-through text-muted-foreground" } else { "" }
             )}>
                 <GenericBlock<EditorBlockType>
                     tag="div"
@@ -896,7 +890,7 @@ pub fn file_block_block(props: &FileBlockProps) -> Html {
 
     // Lucide Upload icon
     let upload_icon = html! {
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-400 dark:text-zinc-500">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
             <polyline points="17 8 12 3 7 8"/>
             <line x1="12" x2="12" y1="3" y2="15"/>
@@ -905,7 +899,7 @@ pub fn file_block_block(props: &FileBlockProps) -> Html {
 
     // Lucide File icon
     let file_icon = html! {
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-400 dark:text-zinc-500">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground">
             <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
             <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
         </svg>
@@ -915,7 +909,28 @@ pub fn file_block_block(props: &FileBlockProps) -> Html {
         <div
             ref={node_ref}
             tabindex="0"
-            class="mx-3 my-2 px-4 py-6 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-zinc-300 dark:border-zinc-600 bg-zinc-50/50 dark:bg-zinc-800/30 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-zinc-400"
+            class={classes!(
+                "mx-3",
+                "my-2",
+                "px-4",
+                "py-6",
+                "flex",
+                "flex-col",
+                "items-center",
+                "justify-center",
+                "gap-2",
+                "rounded-lg",
+                "border-2",
+                "border-dashed",
+                "border-border",
+                "bg-muted/30",
+                "hover:bg-muted/50",
+                "transition-colors",
+                "cursor-pointer",
+                "outline-none",
+                "focus-visible:ring-1",
+                "focus-visible:ring-ring"
+            )}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
@@ -923,13 +938,13 @@ pub fn file_block_block(props: &FileBlockProps) -> Html {
             if props.content.is_empty() {
                 {upload_icon}
                 <div class="text-center">
-                    <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">{"Click to upload"}</p>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">{"or drag and drop"}</p>
+                    <p class="text-sm font-medium text-foreground">{"Click to upload"}</p>
+                    <p class="text-xs text-muted-foreground">{"or drag and drop"}</p>
                 </div>
             } else {
                 <div class="flex items-center gap-3">
                     {file_icon}
-                    <span class="text-sm text-zinc-900 dark:text-zinc-100">{props.content.clone()}</span>
+                    <span class="text-sm text-foreground">{props.content.clone()}</span>
                 </div>
             }
         </div>
@@ -991,17 +1006,34 @@ pub fn url_block_block(props: &UrlBlockProps) -> Html {
         <div
             ref={node_ref}
             tabindex="0"
-            class="mx-3 my-1 px-3 py-2 flex items-center gap-2 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors outline-none focus-visible:ring-1 focus-visible:ring-zinc-400"
+            class={classes!(
+                "mx-3",
+                "my-1",
+                "px-3",
+                "py-2",
+                "flex",
+                "items-center",
+                "gap-2",
+                "rounded-md",
+                "border",
+                "border-border",
+                "bg-card",
+                "hover:bg-accent/50",
+                "transition-colors",
+                "outline-none",
+                "focus-visible:ring-1",
+                "focus-visible:ring-ring"
+            )}
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
         >
-            <span class="text-zinc-400 dark:text-zinc-500">{link_icon}</span>
+            <span class="text-muted-foreground">{link_icon}</span>
             <a 
                 href={url.clone()} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                class="flex-1 text-sm text-blue-600 dark:text-blue-400 hover:underline underline-offset-4 truncate"
+                class="flex-1 text-sm text-primary hover:underline underline-offset-4 truncate"
             >
                 {url}
             </a>
@@ -1026,10 +1058,10 @@ pub struct RoleProps {
 pub fn role_block(props: &RoleProps) -> Html {
     let node_ref = use_node_ref();
     
-    // Badge variants with standard Tailwind colors
+    // shadcn badge variants - using semantic colors
     let (badge_color, icon) = match props.role_type {
         RoleType::System => (
-            "border-purple-200 dark:border-purple-800 bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900",
+            "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
             html! {
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect width="20" height="8" x="2" y="2" rx="2" ry="2"/>
@@ -1040,7 +1072,7 @@ pub fn role_block(props: &RoleProps) -> Html {
             }
         ),
         RoleType::Assistant => (
-            "border-green-200 dark:border-green-800 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900",
+            "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
             html! {
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 8V4H8"/>
@@ -1053,7 +1085,7 @@ pub fn role_block(props: &RoleProps) -> Html {
             }
         ),
         RoleType::User => (
-            "border-blue-200 dark:border-blue-800 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900",
+            "border-transparent bg-accent text-accent-foreground hover:bg-accent/80",
             html! {
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
@@ -1097,7 +1129,7 @@ pub fn role_block(props: &RoleProps) -> Html {
                     "select-none",
                     "focus:outline-none",
                     "focus-visible:ring-1",
-                    "focus-visible:ring-zinc-400",
+                    "focus-visible:ring-ring",
                     badge_color
                 )}
                 data-role={props.role_type.to_string()}
@@ -1341,26 +1373,26 @@ pub fn table_block(props: &TableProps) -> Html {
         <div 
             ref={node_ref}
             tabindex="0"
-            class="mx-3 my-2 outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 rounded-lg"
+            class="mx-3 my-2 outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-lg"
             onkeydown={props.onkeydown.clone()}
             onfocus={props.onfocus.clone()}
             onblur={props.onblur.clone()}
         >
-            // Table wrapper with rounded border
-            <div class="relative w-full overflow-auto rounded-md border border-zinc-200 dark:border-zinc-700">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50">
+            // shadcn table wrapper with rounded border
+            <div class="relative w-full overflow-auto rounded-md border border-border">
+                <table class="w-full caption-bottom text-sm">
+                    <thead class="[&_tr]:border-b">
+                        <tr class="border-b border-border transition-colors bg-muted/50">
                             {
                                 table_data.headers.iter().enumerate().map(|(i, header)| {
                                     let on_header_change = on_header_change.clone();
                                     let value = header.clone();
                                     html! {
-                                        <th class="h-10 px-2 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">
+                                        <th class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
                                             <input
                                                 type="text"
                                                 value={value}
-                                                class="w-full bg-transparent border-none outline-none font-medium text-zinc-900 dark:text-zinc-100"
+                                                class="w-full bg-transparent border-none outline-none font-medium text-foreground"
                                                 oninput={Callback::from(move |e: InputEvent| {
                                                     let input = e.target_unchecked_into::<web_sys::HtmlInputElement>();
                                                     on_header_change.emit((i, input.value()));
@@ -1372,21 +1404,21 @@ pub fn table_block(props: &TableProps) -> Html {
                             }
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="[&_tr:last-child]:border-0">
                         {
                             table_data.rows.iter().enumerate().map(|(row_idx, row)| {
                                 html! {
-                                    <tr class="border-b border-zinc-200 dark:border-zinc-700 last:border-0 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                                    <tr class="border-b border-border transition-colors hover:bg-muted/50">
                                         {
                                             row.iter().enumerate().map(|(col_idx, cell)| {
                                                 let on_cell_change = on_cell_change.clone();
                                                 let value = cell.clone();
                                                 html! {
-                                                    <td class="p-2 align-middle">
+                                                    <td class="p-2 align-middle [&:has([role=checkbox])]:pr-0">
                                                         <input
                                                             type="text"
                                                             value={value}
-                                                            class="w-full bg-transparent border-none outline-none text-zinc-900 dark:text-zinc-100"
+                                                            class="w-full bg-transparent border-none outline-none text-foreground"
                                                             oninput={Callback::from(move |e: InputEvent| {
                                                                 let input = e.target_unchecked_into::<web_sys::HtmlInputElement>();
                                                                 on_cell_change.emit((row_idx, col_idx, input.value()));
@@ -1403,12 +1435,12 @@ pub fn table_block(props: &TableProps) -> Html {
                     </tbody>
                 </table>
             </div>
-            // Action buttons
+            // Action buttons - shadcn ghost button style
             <div class="flex gap-1 mt-2">
                 <button
                     type="button"
                     onclick={on_add_row}
-                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
                     {plus_icon.clone()}
                     {"Row"}
@@ -1416,7 +1448,7 @@ pub fn table_block(props: &TableProps) -> Html {
                 <button
                     type="button"
                     onclick={on_add_column}
-                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                    class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
                     {plus_icon}
                     {"Column"}
