@@ -1,0 +1,10 @@
+[package]
+name = "wonopui-theme-provider"
+version = "0.1.0"
+edition = "2021"
+description = "Theme provider component for WonopUI"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+yew = { version = "0.21", features = ["csr"] }
+wonopui-core = { path = "../wonopui-core" }

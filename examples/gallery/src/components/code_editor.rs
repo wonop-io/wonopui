@@ -113,8 +113,8 @@ fn main() {
                                 type_hints={vec![
                                     TypeHint::new(4, "HashMap<&str, &str>").at_column(23)
                                 ]}
-                                font_size={14}
-                                line_height={1.5}
+                                font_size={"14px"}
+                                line_height={"1.5"}
                                 class="border border-gray-300 dark:border-gray-700 rounded-sm shadow-xs"
                             />
                         </div>
@@ -142,7 +142,6 @@ fn main() {
                                 language="rust"
                                 theme="light"
                                 show_line_numbers=true
-                                diff_view=true
                                 diffs={vec![
                                     // First diff block - variable rename
                                     Diff::modified(4).with_message("Improved variable name"),
@@ -172,8 +171,8 @@ fn main() {
                                     TypeHint::new(4, "HashMap<&str, &str>").at_column(36),
                                     TypeHint::new(14, "Option<&&str>").at_column(8)
                                 ]}
-                                font_size={14}
-                                line_height={1.5}
+                                font_size={"14px"}
+                                line_height={"1.5"}
                                 class="border border-emerald-300 dark:border-emerald-700 rounded-sm shadow-md bg-emerald-50 dark:bg-emerald-950"
                             />
                         </div>

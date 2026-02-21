@@ -1,0 +1,36 @@
+[package]
+name = "wonopui-markdown-editor"
+version = "0.1.0"
+edition = "2021"
+authors = ["Troels F. Rønnow <troels@wonop.com>"]
+description = "Block-based markdown editor component for WonopUI"
+license = "MIT"
+repository = "https://github.com/wonop-io/wonopui"
+
+[dependencies]
+wonopui-core = { path = "../wonopui-core" }
+yew = { version = "0.21", features = ["csr"] }
+wasm-bindgen = { version = "0.2.90", features = ["serde-serialize"] }
+web-sys = { version = "0.3", features = [
+    "Window",
+    "Document",
+    "Selection",
+    "Range",
+    "HtmlElement",
+    "HtmlTextAreaElement",
+    "DomRect",
+    "DragEvent",
+    "DataTransfer",
+    "ClipboardEvent",
+    "KeyboardEvent",
+    "MouseEvent",
+    "FocusEvent",
+    "InputEvent",
+    "Node",
+    "Element",
+    "Text",
+    "EventTarget",
+    "Navigator",
+    "Clipboard",
+    "DomTokenList",
+] }

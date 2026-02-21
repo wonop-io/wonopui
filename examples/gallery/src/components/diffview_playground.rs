@@ -371,8 +371,8 @@ pub fn diffview_playground() -> Html {
                         show_line_numbers={*show_line_numbers}
                         unified_diff={*unified_diff}
                         context_lines={*context_lines}
-                        font_size={*font_size}
-                        line_height={*line_height}
+                        font_size={format!("{}px", *font_size)}
+                        line_height={format!("{}", *line_height)}
                         class="shadow-inner"
                     />
                 </div>

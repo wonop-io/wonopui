@@ -11,7 +11,7 @@ use std::str::FromStr;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, KeyboardEvent};
 use wonopui::prelude::*;
-use wonopui::ContentEditableWithCommands;
+use wonopui::markdown_editor_types::{BlockTrait, ContentEditableWithCommands};
 use wonopui::*;
 use yew::prelude::*;
 //

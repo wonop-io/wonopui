@@ -1,0 +1,31 @@
+[package]
+name = "wonopui-code-editor"
+version = "0.1.0"
+edition = "2021"
+description = "Code editor component for WonopUI with syntax highlighting, diffs, and annotations"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+yew = { version = "0.21", features = ["csr"] }
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = [
+    "HtmlTextAreaElement",
+    "FocusEvent",
+    "KeyboardEvent",
+    "Element",
+    "HtmlElement",
+] }
+gloo = { version = "0.11", features = ["events"] }
+wonopui-core = { path = "../wonopui-core" }
+
+# Optional syntax highlighting with syntect
+# Note: regex-fancy is required for WASM compatibility (pure Rust regex implementation)
+syntect = { version = "5", optional = true, default-features = false, features = ["default-syntaxes", "default-themes", "html", "regex-fancy"] }
+once_cell = { version = "1.19", optional = true }
+
+# Diff computation
+similar = "2.4"
+
+[features]
+default = []
+syntax-highlighting = ["syntect", "once_cell"]

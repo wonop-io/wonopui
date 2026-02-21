@@ -285,8 +285,8 @@ pub fn language_showcase() -> Html {
                     mode={wonopui::code_editor::DiffViewMode::SideBySide}
                     show_line_numbers={true}
                     theme="auto"
-                    font_size={13}
-                    line_height={1.5}
+                    font_size={"13px"}
+                    line_height={"1.5"}
                 />
             </div>
         </div>

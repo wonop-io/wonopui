@@ -34,8 +34,8 @@ impl DiffExample {
                     unified_diff={self.show_unified}
                     context_lines={self.context_lines}
                     theme={theme.to_string()}
-                    font_size={13}
-                    line_height={1.5}
+                    font_size={"13px"}
+                    line_height={"1.5"}
                     class="shadow-md"
                 />
             </div>
@@ -404,8 +404,8 @@ pub fn use_case_examples() -> Html {
         let mode = mode.clone();
         Callback::from(move |_| {
             mode.set(match *mode {
-                DiffViewMode::SideBySide => DiffViewMode::Inline,
-                DiffViewMode::Inline => DiffViewMode::SideBySide,
+                DiffViewMode::SideBySide | DiffViewMode::Split => DiffViewMode::Inline,
+                DiffViewMode::Inline | DiffViewMode::Unified => DiffViewMode::SideBySide,
             });
         })
     };

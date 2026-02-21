@@ -2,14 +2,15 @@
 name = "basic_app"
 version = "0.1.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
+publish = false
 
 [dependencies]
 yew = { version = "0.21", features = ["csr"] }
-wonopui = { path = "../../", features = [
-    "Button",
-    "Typography",
-    "Card",
-    "Alert",
-    "ThemeProvider",
+wonopui = { path = "../../crates/wonopui", features = [
+    "button",
+    "typography",
+    "card",
+    "alert",
 ] }
 web-sys = "0.3.68"

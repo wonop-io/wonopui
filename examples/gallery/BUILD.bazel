@@ -1,0 +1,179 @@
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_library")
+load("@rules_rust_wasm_bindgen//:defs.bzl", "rust_wasm_bindgen")
+load("//build:tailwind.bzl", "tailwind_css")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+# Gallery library
+rust_library(
+    name = "gallery_lib",
+    srcs = glob(
+        ["src/**/*.rs"],
+        exclude = ["src/bin/**"],
+    ),
+    crate_name = "gallery",
+    edition = "2021",
+    deps = [
+        "//crates/wonopui:wonopui",
+        "@crates//:bytes",
+        "@crates//:chrono",
+        "@crates//:chrono-humanize",
+        "@crates//:futures",
+        "@crates//:gloo-console",
+        "@crates//:gloo-events",
+        "@crates//:gloo-timers",
+        "@crates//:gloo-utils",
+        "@crates//:lazy_static",
+        "@crates//:log",
+        "@crates//:reqwasm",
+        "@crates//:scraper",
+        "@crates//:serde",
+        "@crates//:serde-wasm-bindgen",
+        "@crates//:serde_json",
+        "@crates//:tailwind-css",
+        "@crates//:tera",
+        "@crates//:tracing-subscriber",
+        "@crates//:tracing-web",
+        "@crates//:uuid",
+        "@crates//:validator",
+        "@crates//:wasm-bindgen",
+        "@crates//:wasm-bindgen-futures",
+        "@crates//:web-sys",
+        "@crates//:yew",
+        "@crates//:yew-router",
+        "@crates//:yewdux",
+    ],
+)
+
+# Gallery WASM binary (compiled for wasm32-unknown-unknown)
+rust_binary(
+    name = "gallery_wasm_bin",
+    srcs = ["src/bin/main.rs"],
+    crate_name = "gallery",
+    edition = "2021",
+    platform = "@rules_rust//rust/platform:wasm",
+    deps = [
+        ":gallery_lib",
+        "//crates/wonopui:wonopui",
+        "@crates//:serde",
+        "@crates//:tracing-subscriber",
+        "@crates//:tracing-web",
+        "@crates//:wasm-bindgen",
+        "@crates//:web-sys",
+        "@crates//:yew",
+        "@crates//:yew-router",
+    ],
+)
+
+# Generate JS bindings for the WASM binary
+rust_wasm_bindgen(
+    name = "gallery_wasm",
+    target = "web",
+    wasm_file = ":gallery_wasm_bin",
+)
+
+# Build Tailwind CSS from component sources
+tailwind_css(
+    name = "styles",
+    input = "tailwind_bazel.css",
+    out = "styles.css",
+    minify = True,
+    srcs = glob(["src/**/*.rs"]) + [
+        "//crates/wonopui-accordion:srcs",
+        "//crates/wonopui-alert:srcs",
+        "//crates/wonopui-avatar:srcs",
+        "//crates/wonopui-badge:srcs",
+        "//crates/wonopui-breadcrumb:srcs",
+        "//crates/wonopui-browser-provider:srcs",
+        "//crates/wonopui-button:srcs",
+        "//crates/wonopui-calendar:srcs",
+        "//crates/wonopui-card:srcs",
+        "//crates/wonopui-carousel:srcs",
+        "//crates/wonopui-checkbox:srcs",
+        "//crates/wonopui-code-editor:srcs",
+        "//crates/wonopui-col:srcs",
+        "//crates/wonopui-collapsible:srcs",
+        "//crates/wonopui-color-picker:srcs",
+        "//crates/wonopui-combobox:srcs",
+        "//crates/wonopui-command:srcs",
+        "//crates/wonopui-component-editor:srcs",
+        "//crates/wonopui-container:srcs",
+        "//crates/wonopui-content:srcs",
+        "//crates/wonopui-context-menu:srcs",
+        "//crates/wonopui-copy-button:srcs",
+        "//crates/wonopui-core:srcs",
+        "//crates/wonopui-dark-mode-provider:srcs",
+        "//crates/wonopui-data-table:srcs",
+        "//crates/wonopui-date-picker:srcs",
+        "//crates/wonopui-dialog:srcs",
+        "//crates/wonopui-diffview:srcs",
+        "//crates/wonopui-divider:srcs",
+        "//crates/wonopui-drag-point:srcs",
+        "//crates/wonopui-drawer:srcs",
+        "//crates/wonopui-dropdown:srcs",
+        "//crates/wonopui-group-button:srcs",
+        "//crates/wonopui-iframe:srcs",
+        "//crates/wonopui-input:srcs",
+        "//crates/wonopui-kanban:srcs",
+        "//crates/wonopui-label:srcs",
+        "//crates/wonopui-layout:srcs",
+        "//crates/wonopui-markdown-editor:srcs",
+        "//crates/wonopui-media-query:srcs",
+        "//crates/wonopui-mention-input:srcs",
+        "//crates/wonopui-multicol-sidebar:srcs",
+        "//crates/wonopui-notification:srcs",
+        "//crates/wonopui-page-content:srcs",
+        "//crates/wonopui-page-header:srcs",
+        "//crates/wonopui-pagination:srcs",
+        "//crates/wonopui-paint-canvas:srcs",
+        "//crates/wonopui-placeholder:srcs",
+        "//crates/wonopui-popover:srcs",
+        "//crates/wonopui-resizable:srcs",
+        "//crates/wonopui-select:srcs",
+        "//crates/wonopui-selectable:srcs",
+        "//crates/wonopui-sidebar:srcs",
+        "//crates/wonopui-switch:srcs",
+        "//crates/wonopui-table:srcs",
+        "//crates/wonopui-tabs:srcs",
+        "//crates/wonopui-tag-input:srcs",
+        "//crates/wonopui-tailwind-color-picker:srcs",
+        "//crates/wonopui-textarea:srcs",
+        "//crates/wonopui-theme-provider:srcs",
+        "//crates/wonopui-toggle:srcs",
+        "//crates/wonopui-topbar:srcs",
+        "//crates/wonopui-typography:srcs",
+        "//crates/wonopui-window-provider:srcs",
+    ],
+)
+
+# Main runnable target - serves the WASM app (use: bazel run //examples/gallery)
+sh_binary(
+    name = "gallery",
+    srcs = ["serve.sh"],
+    data = [
+        ":gallery_wasm",
+        ":styles",
+        "index_bazel.html",
+    ],
+)
+
+# Native binary (for type checking only - not runnable as WASM app)
+rust_binary(
+    name = "gallery_native",
+    srcs = ["src/bin/main.rs"],
+    crate_name = "main",
+    edition = "2021",
+    deps = [
+        ":gallery_lib",
+        "//crates/wonopui:wonopui",
+        "@crates//:serde",
+        "@crates//:tracing-subscriber",
+        "@crates//:tracing-web",
+        "@crates//:wasm-bindgen",
+        "@crates//:web-sys",
+        "@crates//:yew",
+        "@crates//:yew-router",
+    ],
+)
