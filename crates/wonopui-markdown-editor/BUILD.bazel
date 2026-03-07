@@ -11,6 +11,7 @@ rust_library(
     edition = "2021",
     deps = [
         "//crates/wonopui-core:wonopui-core",
+        "@crates//:wasm-bindgen",
         "@crates//:web-sys",
         "@crates//:yew",
     ],

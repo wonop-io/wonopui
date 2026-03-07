@@ -7,25 +7,29 @@ use wonopui_core::*;
 
 /// Default CSS classes for dialog styling.
 pub mod classes {
-    /// Dialog overlay/backdrop container.
-    pub const CONTAINER: &str = "fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/80 dark:bg-zinc-950/90 backdrop-blur-sm overflow-auto pointer-events-auto";
+    /// Dialog overlay/backdrop container - shadcn v4 style.
+    pub const OVERLAY: &str = "fixed inset-0 z-50 bg-black/50 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0";
 
-    /// Dialog content container.
-    pub const CONTENT: &str = "bg-white dark:bg-zinc-800 rounded-md shadow-md max-w-md w-full border border-zinc-200 dark:border-zinc-700 transition-all duration-300 ease-out transform";
+    /// Dialog container for centering content.
+    pub const CONTAINER: &str = "fixed inset-0 z-50 flex items-center justify-center overflow-auto";
 
-    /// Dialog header.
-    pub const HEADER: &str =
-        "p-4 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between";
+    /// Dialog content container - shadcn v4 style with animations.
+    pub const CONTENT: &str = "relative bg-white dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50 grid w-full max-w-[calc(100%-2rem)] sm:max-w-lg gap-4 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 shadow-lg outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200";
 
-    /// Dialog title.
-    pub const TITLE: &str = "text-lg font-semibold text-zinc-900 dark:text-zinc-100";
+    /// Dialog close button - shadcn v4 style.
+    pub const CLOSE_BUTTON: &str = "absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus-visible:ring-zinc-950/50 dark:focus-visible:ring-zinc-300/50 focus-visible:ring-[3px] disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50";
 
-    /// Dialog description/body.
-    pub const DESCRIPTION: &str = "text-sm text-zinc-600 dark:text-zinc-400 p-4";
+    /// Dialog header - shadcn v4 style.
+    pub const HEADER: &str = "flex flex-col gap-2 text-center sm:text-left";
 
-    /// Dialog footer.
-    pub const FOOTER: &str =
-        "p-4 border-t border-zinc-200 dark:border-zinc-700 flex justify-end space-x-2";
+    /// Dialog title - shadcn v4 style.
+    pub const TITLE: &str = "text-lg leading-none font-semibold text-zinc-950 dark:text-zinc-50";
+
+    /// Dialog description/body - shadcn v4 style.
+    pub const DESCRIPTION: &str = "text-sm text-zinc-500 dark:text-zinc-400";
+
+    /// Dialog footer - shadcn v4 style.
+    pub const FOOTER: &str = "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end";
 }
 
 /// Context for managing dialog state.
@@ -146,18 +150,22 @@ pub struct DialogProps {
 pub fn dialog(props: &DialogProps) -> Html {
     let context = use_context::<Rc<DialogContext>>().expect("no context found");
 
-    let extra_classes = if context.open_id.is_empty() || context.open_id.last() != Some(&props.id) {
-        "hidden"
-    } else {
-        ""
-    };
+    let is_open = !context.open_id.is_empty() && context.open_id.last() == Some(&props.id);
+    let state = if is_open { "open" } else { "closed" };
+
+    if !is_open {
+        return html! {};
+    }
 
     html! {
-        <div class={classes!(classes::CONTAINER, extra_classes)}>
-            <div class={classes::CONTENT} ref={props.node_ref.clone()}>
-                { for props.children.iter() }
+        <>
+            <div data-slot="dialog-overlay" data-state={state} class={classes::OVERLAY} />
+            <div data-slot="dialog-portal" class={classes::CONTAINER}>
+                <div data-slot="dialog-content" data-state={state} class={classes::CONTENT} ref={props.node_ref.clone()}>
+                    { for props.children.iter() }
+                </div>
             </div>
-        </div>
+        </>
     }
 }
 
@@ -171,7 +179,7 @@ pub struct DialogHeaderProps {
 #[function_component(DialogHeader)]
 pub fn dialog_header(props: &DialogHeaderProps) -> Html {
     html! {
-        <div class={classes!(classes::HEADER, props.class.clone())}>
+        <div data-slot="dialog-header" class={classes!(classes::HEADER, props.class.clone())}>
             { for props.children.iter() }
         </div>
     }
@@ -187,7 +195,7 @@ pub struct DialogTitleProps {
 #[function_component(DialogTitle)]
 pub fn dialog_title(props: &DialogTitleProps) -> Html {
     html! {
-        <h2 class={classes!(classes::TITLE, props.class.clone())}>
+        <h2 data-slot="dialog-title" class={classes!(classes::TITLE, props.class.clone())}>
             { for props.children.iter() }
         </h2>
     }
@@ -203,7 +211,7 @@ pub struct DialogBodyProps {
 #[function_component(DialogBody)]
 pub fn dialog_body(props: &DialogBodyProps) -> Html {
     html! {
-        <p class={classes!(classes::DESCRIPTION, props.class.clone())}>
+        <p data-slot="dialog-description" class={classes!(classes::DESCRIPTION, props.class.clone())}>
             { for props.children.iter() }
         </p>
     }
@@ -219,7 +227,7 @@ pub struct DialogFooterProps {
 #[function_component(DialogFooter)]
 pub fn dialog_footer(props: &DialogFooterProps) -> Html {
     html! {
-        <div class={classes!(classes::FOOTER, props.class.clone())}>
+        <div data-slot="dialog-footer" class={classes!(classes::FOOTER, props.class.clone())}>
             { for props.children.iter() }
         </div>
     }
@@ -248,8 +256,8 @@ pub fn dialog_close(props: &DialogCloseProps) -> Html {
     };
 
     html! {
-        <div class={props.class.clone()} {onclick}>
+        <button data-slot="dialog-close" type="button" class={classes!(classes::CLOSE_BUTTON, props.class.clone())} {onclick}>
             { for props.children.iter() }
-        </div>
+        </button>
     }
 }

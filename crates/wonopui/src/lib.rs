@@ -325,7 +325,7 @@ pub use wonopui_dark_mode_provider::{
 pub use wonopui_data_table as data_table;
 
 #[cfg(feature = "date-picker")]
-pub use wonopui_date_picker as date_picker;
+pub use wonopui_date_picker::{self as date_picker, DatePicker, DatePickerProps};
 
 #[cfg(feature = "dialog")]
 pub use wonopui_dialog::{

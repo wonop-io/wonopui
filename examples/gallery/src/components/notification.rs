@@ -5,6 +5,7 @@ use crate::notes_section::NotesSection;
 use crate::styling_section::StylingSection;
 use wonopui::prelude::{BrandGuideType as BrandGuide, ClassesStr, ComponentEditor};
 use wonopui::*;
+use wonopui_button::{Button, ButtonVariant, ButtonSize};
 use yew::prelude::*;
 
 #[function_component(NotificationThemeEditor)]
@@ -84,7 +85,7 @@ fn notification_demo() -> Html {
                 "Notification with Action".to_string(),
                 "This notification includes an action button.".to_string(),
                 Some(html! {
-                    <button class="text-blue-500 hover:text-blue-700">{"Take Action"}</button>
+                    <Button variant={ButtonVariant::Link} size={ButtonSize::Small}>{"Take Action"}</Button>
                 }),
             ));
         })
@@ -97,23 +98,23 @@ fn notification_demo() -> Html {
                 "Long Notification".to_string(),
                 "This is a longer notification to demonstrate how the component handles more content. It might wrap to multiple lines depending on the width of the notification.".to_string(),
                 Some(html! {
-                    <button class="text-green-500 hover:text-green-700">{"Dismiss"}</button>
+                    <Button variant={ButtonVariant::Ghost} size={ButtonSize::Small}>{"Dismiss"}</Button>
                 }),
             ));
         })
     };
 
     html! {
-        <div class="space-x-4">
-            <button class="border border-gray-300 rounded-sm px-4 py-2" onclick={on_click_simple}>
+        <div class="flex flex-wrap gap-3">
+            <Button variant={ButtonVariant::Outline} size={ButtonSize::Medium} onclick={on_click_simple}>
                 { "Show Simple Notification" }
-            </button>
-            <button class="border border-gray-300 rounded-sm px-4 py-2" onclick={on_click_with_action}>
+            </Button>
+            <Button variant={ButtonVariant::Outline} size={ButtonSize::Medium} onclick={on_click_with_action}>
                 { "Show Notification with Action" }
-            </button>
-            <button class="border border-gray-300 rounded-sm px-4 py-2" onclick={on_click_long}>
+            </Button>
+            <Button variant={ButtonVariant::Outline} size={ButtonSize::Medium} onclick={on_click_long}>
                 { "Show Long Notification" }
-            </button>
+            </Button>
         </div>
     }
 }

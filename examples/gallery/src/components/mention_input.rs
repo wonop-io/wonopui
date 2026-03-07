@@ -10,39 +10,43 @@ pub fn mention_input_documentation() -> Html {
                 { "The MentionInput component allows users to input text with support for mentions, like @username, with autocomplete suggestions." }
             </Paragraph>
 
-            <H2>{ "Basic Usage" }</H2>
-            <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
+            <H2>{ "Interactive Demo" }</H2>
+            <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 mb-6 bg-zinc-50 dark:bg-zinc-900/50">
+                <div class="mb-4 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p class="text-sm text-blue-800 dark:text-blue-300">
+                        <strong>{"Try it!"}</strong>{" Type @ followed by any letter to see autocomplete suggestions. Use arrow keys to navigate, Enter to select."}
+                    </p>
+                </div>
                 <MentionInput
-                    placeholder="Type @ to mention someone"
-                    value="Try typing @user in this input"
-                />
-            </div>
-
-            <H2>{ "With Autocomplete" }</H2>
-            <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
-                <MentionInput
-                    placeholder="Type @ to see suggestions"
-                    value="You can mention @john or others"
-                    get_candidates={Callback::from(|input: String| {
+                    placeholder="Type @j to mention john, jane, or @a for alice..."
+                    get_candidates={Callback::from(|query: String| {
                         let users = vec![
-                            "john", "jane", "alice", "bob",
-                            "charlie", "dave", "emma", "frank", "grace", "hank"
+                            ("john", "John Doe"),
+                            ("jane", "Jane Smith"),
+                            ("alice", "Alice Johnson"),
+                            ("bob", "Bob Williams"),
+                            ("charlie", "Charlie Brown"),
+                            ("dave", "Dave Wilson"),
+                            ("emma", "Emma Davis"),
+                            ("frank", "Frank Miller"),
                         ];
 
                         users.into_iter()
-                            .filter(|&user| user.to_lowercase().contains(&input.to_lowercase()))
-                            .map(|s| s.to_string())
+                            .filter(|(username, _)| username.to_lowercase().contains(&query.to_lowercase()))
+                            .map(|(username, _fullname)| username.to_string())
                             .collect::<Vec<_>>()
+                    })}
+                    onchange={Callback::from(|text: String| {
+                        web_sys::console::log_1(&format!("Value: {}", text).into());
                     })}
                 />
             </div>
 
-            <H2>{ "With Update Callback" }</H2>
-            <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
+            <H2>{ "Basic Usage (No Autocomplete)" }</H2>
+            <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
                 <MentionInput
-                    placeholder="Type @ to mention someone"
+                    placeholder="Type freely - no autocomplete in this example"
                     onchange={Callback::from(|text: String| {
-                        // In a real app, you would use this callback to update your state
                         web_sys::console::log_1(&format!("Text updated: {}", text).into());
                     })}
                 />

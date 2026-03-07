@@ -5,10 +5,11 @@
 pub use wonopui_core::merge_classes;
 use yew::prelude::*;
 
-/// CSS classes for the PageContent component
+/// CSS classes for the PageContent component (premium styling)
 pub mod classes {
+    /// Main container with padding and premium styling.
     pub const CONTAINER: &str =
-        "bg-white dark:bg-zinc-900 overflow-y-auto h-full min-h-full rounded-md";
+        "bg-white dark:bg-zinc-950 overflow-y-auto h-full min-h-full rounded-xl p-6 md:p-8 lg:p-10 shadow-sm border border-zinc-100 dark:border-zinc-800/50";
 }
 
 #[derive(Properties, PartialEq, Clone)]

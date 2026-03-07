@@ -8,21 +8,32 @@ use web_sys::DragEvent;
 pub use wonopui_core::merge_classes;
 use yew::prelude::*;
 
-/// CSS classes for the Kanban component
+/// CSS classes for the Kanban component (shadcn v4 style)
 pub mod classes {
-    pub const CONTAINER: &str = "flex overflow-x-auto gap-6 p-6";
-    pub const COLUMN: &str = "flex flex-col min-w-[300px] border rounded-md bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 shadow-sm";
-    pub const COLUMN_HEADER: &str =
-        "p-4 font-semibold border-b border-zinc-200 dark:border-zinc-700";
-    pub const COLUMN_CONTENT: &str = "p-3 flex-1 flex flex-col gap-3 min-h-[100px] overflow-y-auto";
-    pub const COLUMN_OVER: &str = "border-2 border-blue-500 dark:border-blue-400";
-    pub const CARD: &str = "border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-800 p-4 cursor-grab active:cursor-grabbing shadow-sm";
-    pub const CARD_TITLE: &str = "font-medium pb-2";
-    pub const CARD_CONTENT: &str = "text-sm text-zinc-600 dark:text-zinc-400";
-    pub const CARD_DRAGGING: &str = "opacity-50 shadow-md";
-    pub const CARD_DRAG_TARGET: &str = "border-t-2 border-blue-500 dark:border-blue-400";
-    pub const GHOST_CARD: &str = "border-2 border-dashed border-blue-400 dark:border-blue-500 rounded-md bg-blue-50 dark:bg-blue-900/20 p-4 opacity-60 transition-all duration-200 ease-in-out";
-    pub const DRAG_HANDLE: &str = "cursor-move text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors";
+    /// Main container - horizontal scroll with proper spacing
+    pub const CONTAINER: &str = "flex overflow-x-auto gap-6 p-6 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700";
+    /// Column container - clean rounded design, no border
+    pub const COLUMN: &str = "flex flex-col min-w-[300px] max-w-[300px] rounded-xl bg-zinc-50 dark:bg-zinc-900/50 transition-all duration-200";
+    /// Column header - clear hierarchy
+    pub const COLUMN_HEADER: &str = "px-4 py-3 font-semibold text-zinc-900 dark:text-zinc-100";
+    /// Column content area
+    pub const COLUMN_CONTENT: &str = "p-3 flex-1 flex flex-col gap-3 min-h-[150px] overflow-y-auto";
+    /// Column when being dragged over - subtle feedback
+    pub const COLUMN_OVER: &str = "bg-zinc-100 dark:bg-zinc-800/50";
+    /// Card - clean shadcn style without border on hover
+    pub const CARD: &str = "relative rounded-lg bg-white dark:bg-zinc-800 p-4 cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-shadow duration-200 border border-zinc-200/50 dark:border-zinc-700/50";
+    /// Card title
+    pub const CARD_TITLE: &str = "font-medium text-zinc-900 dark:text-zinc-100 pb-1.5";
+    /// Card content/description
+    pub const CARD_CONTENT: &str = "text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed";
+    /// Card when being dragged
+    pub const CARD_DRAGGING: &str = "opacity-50 shadow-lg scale-[1.02] rotate-1";
+    /// Card when another card is dragged over it - line indicator only
+    pub const CARD_DRAG_TARGET: &str = "before:absolute before:left-0 before:right-0 before:-top-1.5 before:h-0.5 before:bg-blue-500 dark:before:bg-blue-400 before:rounded-full";
+    /// Ghost card placeholder
+    pub const GHOST_CARD: &str = "border-2 border-dashed border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-100/50 dark:bg-zinc-800/30 p-4 opacity-70 transition-all duration-200 ease-in-out";
+    /// Drag handle icon
+    pub const DRAG_HANDLE: &str = "absolute top-3 right-3 cursor-move text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors text-sm";
 }
 
 /// Position relative to a card
@@ -48,6 +59,12 @@ pub struct DragState {
 pub type DragStartCallback = Callback<(String, Option<String>, Option<String>, Option<String>)>;
 /// Type alias for hover callback
 pub type HoverCallback = Callback<(Option<String>, Option<String>, Option<DropPosition>)>;
+
+/// Context for providing column ID to child cards
+#[derive(Clone, PartialEq)]
+pub struct ColumnContext {
+    pub column_id: AttrValue,
+}
 
 // Main Kanban component
 #[derive(Properties, PartialEq)]
@@ -294,22 +311,28 @@ pub fn kanban_column(props: &KanbanColumnProps) -> Html {
     let header_class = merge_classes(&[classes::COLUMN_HEADER, &props.header_class.to_string()]);
     let content_class = merge_classes(&[classes::COLUMN_CONTENT, &props.body_class.to_string()]);
 
+    let column_context = ColumnContext {
+        column_id: props.id.clone(),
+    };
+
     html! {
-        <div
-            class={column_class}
-            ondragenter={ondragenter}
-            ondragleave={ondragleave}
-            ondragover={ondragover}
-            ondrop={ondrop}
-            data-column-id={props.id.clone()}
-        >
-            <div class={header_class}>
-                <div class="font-medium text-lg">{ props.title.clone() }</div>
+        <ContextProvider<ColumnContext> context={column_context}>
+            <div
+                class={column_class}
+                ondragenter={ondragenter}
+                ondragleave={ondragleave}
+                ondragover={ondragover}
+                ondrop={ondrop}
+                data-column-id={props.id.clone()}
+            >
+                <div class={header_class}>
+                    <div class="font-medium text-lg">{ props.title.clone() }</div>
+                </div>
+                <div class={content_class}>
+                    { for props.children.iter() }
+                </div>
             </div>
-            <div class={content_class}>
-                { for props.children.iter() }
-            </div>
-        </div>
+        </ContextProvider<ColumnContext>>
     }
 }
 
@@ -339,17 +362,23 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
     let global_ondragstart = use_context::<DragStartCallback>();
     let global_ondragend = use_context::<Callback<()>>();
     let onhover = use_context::<HoverCallback>();
+    let column_context = use_context::<ColumnContext>();
     let card_ref = use_node_ref();
 
     let is_dragging = use_state(|| false);
     let is_drag_over = use_state(|| false);
     let drag_counter = use_state(|| 0_u32);
     let card_id = props.id.clone();
+    
+    // Use column_id from props, or fall back to context
+    let column_id = props.column_id.clone().or_else(|| {
+        column_context.map(|ctx| ctx.column_id.clone())
+    });
 
     let ondragstart = {
         let is_dragging = is_dragging.clone();
         let card_id = card_id.clone();
-        let column_id = props.column_id.clone();
+        let column_id = column_id.clone();
         let global_ondragstart = global_ondragstart.clone();
         let title = props.title.clone();
         let description = props.description.clone();
@@ -396,7 +425,7 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
         let is_drag_over = is_drag_over.clone();
         let drag_counter = drag_counter.clone();
         let card_id = card_id.clone();
-        let column_id = props.column_id.clone();
+        let column_id = column_id.clone();
         let onhover = onhover.clone();
         let card_ref = card_ref.clone();
 
@@ -443,7 +472,7 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
         let is_drag_over = is_drag_over.clone();
         let drag_counter = drag_counter.clone();
         let onhover = onhover.clone();
-        let column_id = props.column_id.clone();
+        let column_id = column_id.clone();
 
         Callback::from(move |e: DragEvent| {
             e.prevent_default();
@@ -495,7 +524,7 @@ pub fn kanban_card(props: &KanbanCardProps) -> Html {
             ondragover={ondragover}
             onclick={props.onclick.clone()}
             data-card-id={props.id.clone()}
-            data-column-id={props.column_id.clone()}
+            data-column-id={column_id.clone()}
         >
             <span class={classes::DRAG_HANDLE}>{"≡"}</span>
             if let Some(title) = &props.title {

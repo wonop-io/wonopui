@@ -5,12 +5,28 @@
 use wonopui_core::merge_classes;
 use yew::prelude::*;
 
+/// Default CSS classes for pagination styling (shadcn v4 style).
 pub mod classes {
-    pub const PAGINATION_CONTAINER: &str = "flex justify-center mt-8";
-    pub const PAGINATION_LIST: &str = "inline-flex items-center -space-x-px";
-    pub const PAGINATION_ITEM: &str = "px-3 py-2 leading-tight text-gray-500 dark:text-zinc-400 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-700 dark:hover:text-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed";
-    pub const PAGINATION_ITEM_CURRENT: &str = "z-10 px-3 py-2 leading-tight text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-700 dark:hover:text-blue-300";
-    pub const PAGINATION_ELLIPSIS: &str = "px-3 py-2 leading-tight text-gray-500 dark:text-zinc-400 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600";
+    /// Container styles - shadcn v4 Pagination.
+    pub const PAGINATION_CONTAINER: &str = "mx-auto flex w-full justify-center";
+    
+    /// List styles - with better spacing.
+    pub const PAGINATION_LIST: &str = "flex flex-row items-center gap-1.5";
+    
+    /// Base item styles - button ghost variant with focus ring.
+    pub const PAGINATION_ITEM_BASE: &str = "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 outline-none focus-visible:ring-zinc-950/50 dark:focus-visible:ring-zinc-300/50 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 text-zinc-700 dark:text-zinc-300";
+    
+    /// Ghost variant (non-active).
+    pub const PAGINATION_ITEM_GHOST: &str = "hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-950 dark:hover:text-zinc-50 size-10";
+    
+    /// Outline variant (active) - premium with better contrast.
+    pub const PAGINATION_ITEM_OUTLINE: &str = "border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-zinc-50 shadow-sm size-10";
+    
+    /// Navigation button styles (prev/next) - with minimum width to prevent overlap.
+    pub const PAGINATION_NAV: &str = "gap-2 px-4 h-10 min-w-[5rem] sm:min-w-[6rem]";
+    
+    /// Ellipsis styles.
+    pub const PAGINATION_ELLIPSIS: &str = "flex size-10 items-center justify-center text-zinc-400 dark:text-zinc-500";
 }
 
 #[derive(Properties, PartialEq)]
@@ -59,13 +75,15 @@ pub fn pagination(props: &PaginationProps) -> Html {
     };
 
     let container_class = merge_classes(&[classes::PAGINATION_CONTAINER, &class.to_string()]);
+    let nav_button_class = merge_classes(&[classes::PAGINATION_ITEM_BASE, classes::PAGINATION_ITEM_GHOST, classes::PAGINATION_NAV]);
 
     html! {
-        <nav class={container_class} aria-label="Pagination">
-            <ul class={classes::PAGINATION_LIST}>
-                <li>
+        <nav data-slot="pagination" role="navigation" aria-label="pagination" class={container_class}>
+            <ul data-slot="pagination-content" class={classes::PAGINATION_LIST}>
+                <li data-slot="pagination-item">
                     <button
-                        class={classes::PAGINATION_ITEM}
+                        aria-label="Go to previous page"
+                        class={&nav_button_class}
                         onclick={{
                             let on_page_change = on_page_change.clone();
                             let current_page = *current_page;
@@ -73,28 +91,30 @@ pub fn pagination(props: &PaginationProps) -> Html {
                         }}
                         disabled={*current_page == 1}
                     >
-                        {prev.clone().unwrap_or_else(|| html!("Prev"))}
+                        {prev.clone().unwrap_or_else(|| html!(<><span class="hidden sm:block">{"Previous"}</span></>))}
                     </button>
                 </li>
                 {
                     page_range.iter().map(|&page| {
                         if page == 0 {
                             html! {
-                                <li>
-                                    <span class={classes::PAGINATION_ELLIPSIS}>{"..."}</span>
+                                <li data-slot="pagination-item">
+                                    <span data-slot="pagination-ellipsis" aria-hidden="true" class={classes::PAGINATION_ELLIPSIS}>{"..."}</span>
                                 </li>
                             }
                         } else {
                             let is_current = page == *current_page;
                             let page_class = if is_current {
-                                classes::PAGINATION_ITEM_CURRENT
+                                merge_classes(&[classes::PAGINATION_ITEM_BASE, classes::PAGINATION_ITEM_OUTLINE])
                             } else {
-                                classes::PAGINATION_ITEM
+                                merge_classes(&[classes::PAGINATION_ITEM_BASE, classes::PAGINATION_ITEM_GHOST])
                             };
 
                             html! {
-                                <li key={page}>
+                                <li data-slot="pagination-item" key={page}>
                                     <button
+                                        data-slot="pagination-link"
+                                        data-active={is_current.to_string()}
                                         class={page_class}
                                         aria-current={if is_current { "page" } else { "false" }}
                                         onclick={{
@@ -109,9 +129,10 @@ pub fn pagination(props: &PaginationProps) -> Html {
                         }
                     }).collect::<Html>()
                 }
-                <li>
+                <li data-slot="pagination-item">
                     <button
-                        class={classes::PAGINATION_ITEM}
+                        aria-label="Go to next page"
+                        class={&nav_button_class}
                         onclick={{
                             let on_page_change = on_page_change.clone();
                             let current_page = *current_page;
@@ -120,7 +141,7 @@ pub fn pagination(props: &PaginationProps) -> Html {
                         }}
                         disabled={*current_page == *total_pages}
                     >
-                        {next.clone().unwrap_or_else(|| html!("Next"))}
+                        {next.clone().unwrap_or_else(|| html!(<><span class="hidden sm:block">{"Next"}</span></>))}
                     </button>
                 </li>
             </ul>

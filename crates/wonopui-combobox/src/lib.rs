@@ -9,19 +9,32 @@ use web_sys::FocusEvent;
 pub use wonopui_core::merge_classes;
 use yew::prelude::*;
 
-/// CSS classes for the Combobox component
+/// CSS classes for the Combobox component (shadcn v4)
 pub mod classes {
+    /// Root container
     pub const CONTAINER: &str = "relative";
-    pub const BUTTON: &str = "inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full justify-between";
-    pub const BUTTON_OPEN: &str = "bg-accent text-accent-foreground";
-    pub const BUTTON_DISABLED: &str = "opacity-50 cursor-not-allowed";
-    pub const LIST: &str = "absolute z-50 mt-1 w-full bg-background border border-input rounded-md shadow-md max-h-60 overflow-auto";
-    pub const ITEM: &str =
-        "px-4 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground text-sm";
-    pub const ITEM_SELECTED: &str =
-        "px-4 py-2 cursor-pointer bg-accent text-accent-foreground text-sm";
-    pub const HEADING: &str = "px-4 py-1 text-xs font-semibold text-foreground/70 uppercase";
-    pub const CHEVRON_ICON: &str = "ml-2 h-4 w-4 shrink-0 opacity-50";
+    /// Trigger button - premium outline style with smooth transitions
+    pub const BUTTON: &str = "flex h-9 w-full items-center justify-between gap-2 whitespace-nowrap rounded-md border border-zinc-200 bg-transparent px-3 py-2 text-sm shadow-xs transition-all duration-200 placeholder:text-zinc-500 focus-visible:border-zinc-950 focus-visible:ring-zinc-950/50 focus-visible:ring-[3px] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:placeholder:text-zinc-400 dark:focus-visible:border-zinc-300 dark:focus-visible:ring-zinc-300/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 text-zinc-900 dark:text-zinc-50 *:data-[slot=combobox-icon]:text-zinc-500 dark:*:data-[slot=combobox-icon]:text-zinc-400";
+    /// Open state styling
+    pub const BUTTON_OPEN: &str = "border-zinc-950 ring-zinc-950/50 ring-[3px] dark:border-zinc-300 dark:ring-zinc-300/50";
+    /// Disabled state
+    pub const BUTTON_DISABLED: &str = "cursor-not-allowed opacity-50";
+    /// Dropdown list container - premium popover style
+    pub const LIST: &str = "absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-zinc-200 bg-white text-zinc-950 shadow-lg dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95";
+    /// List inner wrapper - more padding for premium feel
+    pub const LIST_INNER: &str = "max-h-60 overflow-y-auto overflow-x-hidden p-1.5";
+    /// Individual item - premium interactive styling with better spacing
+    pub const ITEM: &str = "relative flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 text-zinc-700 dark:text-zinc-300";
+    /// Selected item with check indicator
+    pub const ITEM_SELECTED: &str = "relative flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm outline-none bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50 font-medium";
+    /// Group heading with proper spacing
+    pub const HEADING: &str = "px-3 py-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide";
+    /// Chevron icon
+    pub const CHEVRON_ICON: &str = "size-4 shrink-0 opacity-50";
+    /// Check icon for selected items
+    pub const CHECK_ICON: &str = "size-4 shrink-0";
+    /// Empty state
+    pub const EMPTY: &str = "py-6 text-center text-sm text-zinc-500 dark:text-zinc-400";
 }
 
 /// Represents an item in the combobox
@@ -190,17 +203,22 @@ pub fn combobox(props: &ComboboxProps) -> Html {
 
     html! {
         <div
+            data-slot="combobox"
             class={container_class}
             ref={container_ref}
             onmousedown={on_mousedown}
             onmouseup={on_mouseup}
         >
             <button
+                data-slot="combobox-trigger"
+                data-state={if *open { "open" } else { "closed" }}
                 id={props.id.clone()}
                 name={props.name.clone()}
                 class={button_class}
+                type="button"
                 role="combobox"
                 aria-expanded={open.to_string()}
+                aria-haspopup="listbox"
                 aria-label={props.aria_label.clone()}
                 onclick={toggle_open}
                 onblur={on_blur}
@@ -208,45 +226,63 @@ pub fn combobox(props: &ComboboxProps) -> Html {
                 tabindex={props.tabindex.map(|t| t.to_string())}
                 style={custom_style.clone()}
             >
-                { selected_label }
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={classes::CHEVRON_ICON}>
-                    <path d="m7 15 5 5 5-5"/>
-                    <path d="m7 9 5-5 5 5"/>
+                <span data-slot="combobox-value">{ selected_label }</span>
+                <svg data-slot="combobox-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={classes::CHEVRON_ICON} aria-hidden="true">
+                    <path d="m6 9 6 6 6-6"/>
                 </svg>
             </button>
             {
                 if *open {
                     html! {
-                        <div class={classes::LIST} style={custom_style}>
-                            { for props.options.iter().map(|item| {
-                                match item {
-                                    ComboboxItem::Option(val, label) => {
-                                        let on_select = on_select.clone();
-                                        let val = val.clone();
-                                        let is_selected = *value == val;
-                                        let item_class = if is_selected {
-                                            classes::ITEM_SELECTED
-                                        } else {
-                                            classes::ITEM
-                                        };
-                                        html! {
-                                            <div
-                                                class={item_class}
-                                                onclick={Callback::from(move |_| on_select.emit(val.clone()))}
-                                            >
-                                                { label }
-                                            </div>
-                                        }
-                                    },
-                                    ComboboxItem::Heading(heading_text) => {
-                                        html! {
-                                            <div class={classes::HEADING}>
-                                                { heading_text }
-                                            </div>
+                        <div
+                            data-slot="combobox-content"
+                            data-state="open"
+                            class={classes::LIST}
+                            style={custom_style}
+                            role="listbox"
+                        >
+                            <div data-slot="combobox-list" class={classes::LIST_INNER}>
+                                { for props.options.iter().map(|item| {
+                                    match item {
+                                        ComboboxItem::Option(val, label) => {
+                                            let on_select = on_select.clone();
+                                            let val = val.clone();
+                                            let is_selected = *value == val;
+                                            let item_class = if is_selected {
+                                                classes::ITEM_SELECTED
+                                            } else {
+                                                classes::ITEM
+                                            };
+                                            html! {
+                                                <div
+                                                    data-slot="combobox-item"
+                                                    data-selected={is_selected.then_some("true")}
+                                                    class={item_class}
+                                                    role="option"
+                                                    aria-selected={is_selected.to_string()}
+                                                    onclick={Callback::from(move |_| on_select.emit(val.clone()))}
+                                                >
+                                                    if is_selected {
+                                                        <svg data-slot="combobox-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={classes::CHECK_ICON} aria-hidden="true">
+                                                            <path d="M20 6 9 17l-5-5"/>
+                                                        </svg>
+                                                    } else {
+                                                        <span class="size-4"></span>
+                                                    }
+                                                    <span>{ label }</span>
+                                                </div>
+                                            }
+                                        },
+                                        ComboboxItem::Heading(heading_text) => {
+                                            html! {
+                                                <div data-slot="combobox-group-heading" class={classes::HEADING}>
+                                                    { heading_text }
+                                                </div>
+                                            }
                                         }
                                     }
-                                }
-                            }) }
+                                }) }
+                            </div>
                         </div>
                     }
                 } else {

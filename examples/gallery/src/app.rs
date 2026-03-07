@@ -1,4 +1,5 @@
 use crate::app_layout::AppLayout;
+use crate::blocks;
 use crate::components::*;
 use crate::routes::{AppRoute, Route};
 use gloo_console as console;
@@ -206,6 +207,9 @@ pub fn app() -> Html {
         Route::TypographyExample => {
             html! { <TypographyDocumentation /> }
         }
+        Route::UIBlocksExample => {
+            html! { <UIBlocksDocumentation /> }
+        }
         Route::WindowProviderExample => {
             html! { <WindowProviderDocumentation /> }
         }
@@ -214,6 +218,40 @@ pub fn app() -> Html {
         }
         Route::MarkdownEditorExample => {
             html! { <MarkdownEditorDocumentation /> }
+        }
+        // Blocks routes
+        Route::BlocksIndex => {
+            html! { <blocks::BlocksIndex /> }
+        }
+        Route::BlocksElements => {
+            html! { <blocks::elements::ElementsBlocks /> }
+        }
+        Route::BlocksForms => {
+            html! { <blocks::forms::FormsBlocks /> }
+        }
+        Route::BlocksNavigation => {
+            html! { <blocks::navigation::NavigationBlocks /> }
+        }
+        Route::BlocksFeedback => {
+            html! { <blocks::feedback::FeedbackBlocks /> }
+        }
+        Route::BlocksApplicationShells => {
+            html! { <blocks::application_shells::ApplicationShellsBlocks /> }
+        }
+        Route::BlocksPageExamples => {
+            html! { <blocks::page_examples::PageExamplesBlocks /> }
+        }
+        Route::BlocksMarketing => {
+            html! { <blocks::marketing::MarketingBlocks /> }
+        }
+        Route::BlocksHeadings => {
+            html! { <blocks::headings::HeadingsBlocks /> }
+        }
+        Route::BlocksDataDisplay => {
+            html! { <blocks::data_display::DataDisplayBlocks /> }
+        }
+        Route::BlocksLists => {
+            html! { <blocks::lists::ListsBlocks /> }
         }
     };
 

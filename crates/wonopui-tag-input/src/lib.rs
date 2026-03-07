@@ -7,14 +7,22 @@ use wonopui_core::merge_classes;
 use yew::prelude::*;
 use yew::TargetCast;
 
+/// CSS classes for the TagInput component (shadcn v4)
 pub mod classes {
-    pub const TAG_INPUT_CONTAINER: &str = "flex flex-wrap gap-2 p-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600 rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500";
-    pub const TAG_INPUT_TAGS_CONTAINER: &str = "flex flex-wrap gap-2";
-    pub const TAG_INPUT_TAG: &str = "inline-flex items-center gap-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-medium px-2.5 py-0.5 rounded";
-    pub const TAG_INPUT_REMOVE_BUTTON: &str = "text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 cursor-pointer";
-    pub const TAG_INPUT_INPUT: &str = "flex-1 min-w-[120px] bg-transparent outline-none text-sm text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500";
-    pub const TAG_INPUT_CANDIDATES_CONTAINER: &str = "flex flex-wrap gap-2 mt-2";
-    pub const TAG_INPUT_CANDIDATE_BUTTON: &str = "text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 font-medium rounded-md text-sm px-3 py-1.5";
+    /// Container - premium input field appearance
+    pub const TAG_INPUT_CONTAINER: &str = "flex flex-wrap items-center gap-1.5 min-h-9 w-full rounded-md border border-zinc-200 bg-transparent px-2.5 py-1.5 text-sm shadow-xs transition-all duration-200 focus-within:border-zinc-950 focus-within:ring-zinc-950/50 focus-within:ring-[3px] focus-within:outline-none dark:border-zinc-800 dark:focus-within:border-zinc-300 dark:focus-within:ring-zinc-300/50";
+    /// Tags wrapper
+    pub const TAG_INPUT_TAGS_CONTAINER: &str = "flex flex-wrap gap-1.5";
+    /// Individual tag - badge-like styling
+    pub const TAG_INPUT_TAG: &str = "inline-flex items-center gap-1 rounded-md border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-900 transition-colors dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
+    /// Remove button on tag
+    pub const TAG_INPUT_REMOVE_BUTTON: &str = "ml-0.5 rounded-sm text-zinc-500 transition-colors hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50 dark:focus-visible:ring-zinc-300";
+    /// Input field within container
+    pub const TAG_INPUT_INPUT: &str = "flex-1 min-w-[80px] bg-transparent outline-none text-sm text-zinc-900 placeholder:text-zinc-500 dark:text-zinc-50 dark:placeholder:text-zinc-400";
+    /// Candidates container
+    pub const TAG_INPUT_CANDIDATES_CONTAINER: &str = "flex flex-wrap gap-1.5 mt-2";
+    /// Candidate suggestion button
+    pub const TAG_INPUT_CANDIDATE_BUTTON: &str = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 border border-zinc-200 bg-white shadow-xs hover:bg-zinc-50 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 h-7 px-2.5 focus-visible:border-zinc-950 dark:focus-visible:border-zinc-300 focus-visible:ring-zinc-950/50 dark:focus-visible:ring-zinc-300/50 focus-visible:ring-[3px] focus-visible:outline-none text-zinc-700 dark:text-zinc-300";
 }
 
 #[derive(Properties, PartialEq, Clone)]

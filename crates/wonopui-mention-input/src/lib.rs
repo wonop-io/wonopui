@@ -5,14 +5,20 @@
 pub use wonopui_core::merge_classes;
 use yew::prelude::*;
 
-/// CSS classes for the MentionInput component
+/// CSS classes for the MentionInput component (shadcn v4)
 pub mod classes {
+    /// Root container
     pub const CONTAINER: &str = "relative";
-    pub const INPUT: &str = "w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring";
-    pub const SUGGESTIONS: &str = "absolute z-50 mt-1 w-full bg-background border rounded-md shadow-lg max-h-48 overflow-auto";
-    pub const SUGGESTION: &str = "px-3 py-2 cursor-pointer hover:bg-accent text-sm";
-    pub const SUGGESTION_SELECTED: &str = "px-3 py-2 cursor-pointer bg-accent text-sm";
-    pub const TAG: &str = "inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium bg-primary/10 text-primary";
+    /// Input field - premium styling
+    pub const INPUT: &str = "flex h-10 w-full rounded-lg border border-zinc-200 bg-transparent px-3 py-2 text-sm shadow-xs transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-zinc-950 placeholder:text-zinc-500 focus-visible:border-zinc-950 focus-visible:ring-zinc-950/50 focus-visible:ring-[3px] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:file:text-zinc-50 dark:placeholder:text-zinc-400 dark:focus-visible:border-zinc-300 dark:focus-visible:ring-zinc-300/50 text-zinc-900 dark:text-zinc-50";
+    /// Suggestions dropdown - premium popover style with higher z-index
+    pub const SUGGESTIONS: &str = "absolute z-[9999] mt-2 w-full overflow-hidden rounded-xl border border-zinc-200 bg-white p-1.5 text-zinc-950 shadow-xl dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 max-h-60 overflow-y-auto animate-in fade-in-0 zoom-in-95";
+    /// Individual suggestion item - premium spacing
+    pub const SUGGESTION: &str = "relative flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm outline-none transition-all duration-150 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 text-zinc-700 dark:text-zinc-300";
+    /// Selected suggestion - highlighted state
+    pub const SUGGESTION_SELECTED: &str = "relative flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm outline-none bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50 font-medium";
+    /// Mention tag display
+    pub const TAG: &str = "inline-flex items-center rounded-md border border-zinc-200 bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-900 transition-colors dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
 }
 
 #[derive(Properties, PartialEq)]

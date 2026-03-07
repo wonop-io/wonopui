@@ -120,8 +120,34 @@ pub enum Route {
     TopbarExample,
     #[at("/typography")]
     TypographyExample,
+    #[at("/ui-blocks")]
+    UIBlocksExample,
     #[at("/window-provider")]
     WindowProviderExample,
+    
+    // Blocks routes
+    #[at("/blocks")]
+    BlocksIndex,
+    #[at("/blocks/elements")]
+    BlocksElements,
+    #[at("/blocks/forms")]
+    BlocksForms,
+    #[at("/blocks/navigation")]
+    BlocksNavigation,
+    #[at("/blocks/feedback")]
+    BlocksFeedback,
+    #[at("/blocks/application-shells")]
+    BlocksApplicationShells,
+    #[at("/blocks/page-examples")]
+    BlocksPageExamples,
+    #[at("/blocks/marketing")]
+    BlocksMarketing,
+    #[at("/blocks/headings")]
+    BlocksHeadings,
+    #[at("/blocks/data-display")]
+    BlocksDataDisplay,
+    #[at("/blocks/lists")]
+    BlocksLists,
 }
 
 #[derive(Clone, Routable, PartialEq)]

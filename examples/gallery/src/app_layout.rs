@@ -128,8 +128,20 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
             <SidebarHeading>{"Getting started"}</SidebarHeading>
             <SidebarMenu>
                 <SidebarLink<Route> label="Introduction" to={Route::GettingStarted} />
-                // <SidebarLink<Route> label="Installation" to={Route::Installation} />
-                // <SidebarLink<Route> label="Usage" to={Route::Usage} />
+            </SidebarMenu>
+            <SidebarHeading>{"Blocks"}</SidebarHeading>
+            <SidebarMenu>
+                <SidebarLink<Route> label="All Blocks" to={Route::BlocksIndex} />
+                <SidebarLink<Route> label="Elements" to={Route::BlocksElements} />
+                <SidebarLink<Route> label="Forms" to={Route::BlocksForms} />
+                <SidebarLink<Route> label="Navigation" to={Route::BlocksNavigation} />
+                <SidebarLink<Route> label="Feedback" to={Route::BlocksFeedback} />
+                <SidebarLink<Route> label="Application Shells" to={Route::BlocksApplicationShells} />
+                <SidebarLink<Route> label="Page Examples" to={Route::BlocksPageExamples} />
+                <SidebarLink<Route> label="Marketing" to={Route::BlocksMarketing} />
+                <SidebarLink<Route> label="Headings" to={Route::BlocksHeadings} />
+                <SidebarLink<Route> label="Data Display" to={Route::BlocksDataDisplay} />
+                <SidebarLink<Route> label="Lists" to={Route::BlocksLists} />
             </SidebarMenu>
             <SidebarHeading>{"Components"}</SidebarHeading>
             <SidebarMenu>
@@ -189,6 +201,7 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
                 <SidebarLink<Route> label="Toggle" to={Route::ToggleExample} />
                 <SidebarLink<Route> label="Topbar" to={Route::TopbarExample} />
                 <SidebarLink<Route> label="Typography" to={Route::TypographyExample} />
+                <SidebarLink<Route> label="UI Blocks" to={Route::UIBlocksExample} />
                 <SidebarLink<Route> label="Window Provider" to={Route::WindowProviderExample} />
             </SidebarMenu>
         </Sidebar>

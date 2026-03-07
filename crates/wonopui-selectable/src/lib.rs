@@ -6,11 +6,14 @@ use std::rc::Rc;
 pub use wonopui_core::merge_classes;
 use yew::prelude::*;
 
-/// CSS classes for the Selectable component
+/// CSS classes for the Selectable component (shadcn-style with zinc colors)
 pub mod classes {
-    pub const INDICATOR: &str = "border-2 border-blue-500 dark:border-blue-400 pointer-events-none";
-    pub const SELECTABLE: &str = "cursor-pointer";
-    pub const SELECTED: &str = "ring-2 ring-blue-500 dark:ring-blue-400";
+    /// Indicator border - uses zinc colors to match shadcn style.
+    pub const INDICATOR: &str = "border-2 border-zinc-950 dark:border-zinc-300 rounded-lg pointer-events-none";
+    /// Selectable item - cursor and transition.
+    pub const SELECTABLE: &str = "cursor-pointer transition-all duration-150";
+    /// Selected state - ring with zinc colors.
+    pub const SELECTED: &str = "ring-2 ring-zinc-950 dark:ring-zinc-300 ring-offset-2 ring-offset-white dark:ring-offset-zinc-950 rounded-lg";
 }
 
 /// The selected area dimensions

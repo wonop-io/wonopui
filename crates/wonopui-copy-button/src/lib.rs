@@ -5,9 +5,14 @@
 use wasm_bindgen::{closure::Closure, JsCast};
 use yew::prelude::*;
 
+/// CSS classes for the CopyButton component (shadcn v4)
 pub mod classes {
-    pub const COPY_BUTTON: &str = "inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-300 transition-colors";
-    pub const COPY_BUTTON_ICON: &str = "w-4 h-4";
+    /// Button - premium outline style
+    pub const COPY_BUTTON: &str = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 border border-zinc-200 bg-white shadow-xs hover:bg-zinc-50 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 h-9 px-3 py-2 focus-visible:border-zinc-950 dark:focus-visible:border-zinc-300 focus-visible:ring-zinc-950/50 dark:focus-visible:ring-zinc-300/50 focus-visible:ring-[3px] focus-visible:outline-none text-zinc-700 dark:text-zinc-300";
+    /// Icon styling
+    pub const COPY_BUTTON_ICON: &str = "size-4";
+    /// Icon in copied state
+    pub const COPY_BUTTON_ICON_COPIED: &str = "size-4 text-emerald-500";
 }
 
 #[derive(Properties, PartialEq)]

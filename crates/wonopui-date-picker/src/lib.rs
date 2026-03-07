@@ -6,23 +6,34 @@ use chrono::prelude::*;
 pub use wonopui_core::merge_classes;
 use yew::prelude::*;
 
-/// CSS classes for the DatePicker component
+/// CSS classes for the DatePicker component (shadcn v4)
 pub mod classes {
+    /// Root container
     pub const CONTAINER: &str = "relative inline-block";
-    pub const INPUT: &str = "w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring";
-    pub const CALENDAR_POPUP: &str =
-        "absolute z-50 mt-1 bg-background border rounded-md shadow-lg p-3";
-    pub const CALENDAR_HEADER: &str = "flex justify-between items-center mb-2";
-    pub const NAV_BUTTON: &str = "p-1 hover:bg-accent rounded";
-    pub const MONTH_YEAR: &str = "text-sm font-medium";
+    /// Trigger button - premium input styling
+    pub const INPUT: &str = "flex h-9 w-full items-center gap-2 rounded-md border border-zinc-200 bg-transparent px-3 py-2 text-sm shadow-xs transition-all duration-200 placeholder:text-zinc-500 focus-visible:border-zinc-950 focus-visible:ring-zinc-950/50 focus-visible:ring-[3px] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:placeholder:text-zinc-400 dark:focus-visible:border-zinc-300 dark:focus-visible:ring-zinc-300/50 text-zinc-900 dark:text-zinc-50 cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
+    /// Calendar popup - premium popover style
+    pub const CALENDAR_POPUP: &str = "absolute z-50 mt-1.5 overflow-hidden rounded-xl border border-zinc-200 bg-white p-3 text-zinc-950 shadow-lg dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95";
+    /// Calendar header
+    pub const CALENDAR_HEADER: &str = "relative flex items-center justify-center pt-1 mb-4";
+    /// Navigation button
+    pub const NAV_BUTTON: &str = "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 border border-zinc-200 bg-white shadow-xs hover:bg-zinc-50 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 size-7 rounded-md focus-visible:border-zinc-950 dark:focus-visible:border-zinc-300 focus-visible:ring-zinc-950/50 dark:focus-visible:ring-zinc-300/50 focus-visible:ring-[3px] focus-visible:outline-none";
+    /// Month/year display
+    pub const MONTH_YEAR: &str = "text-sm font-semibold text-zinc-900 dark:text-zinc-50 tracking-tight";
+    /// Weekdays header row
     pub const WEEKDAYS: &str = "grid grid-cols-7 gap-1 mb-1";
-    pub const WEEKDAY: &str = "text-center text-xs text-muted-foreground";
+    /// Individual weekday
+    pub const WEEKDAY: &str = "text-center text-xs font-normal text-zinc-500 dark:text-zinc-400 select-none";
+    /// Days grid
     pub const DAYS: &str = "grid grid-cols-7 gap-1";
-    pub const DAY: &str =
-        "w-8 h-8 flex items-center justify-center text-sm rounded hover:bg-accent cursor-pointer";
-    pub const DAY_SELECTED: &str = "w-8 h-8 flex items-center justify-center text-sm rounded bg-primary text-primary-foreground cursor-pointer";
-    pub const DAY_TODAY: &str =
-        "w-8 h-8 flex items-center justify-center text-sm rounded bg-accent cursor-pointer";
+    /// Regular day button
+    pub const DAY: &str = "size-8 flex items-center justify-center text-sm rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer text-zinc-900 dark:text-zinc-50 transition-all duration-200 focus-visible:border-zinc-950 dark:focus-visible:border-zinc-300 focus-visible:ring-zinc-950/50 dark:focus-visible:ring-zinc-300/50 focus-visible:ring-[3px] focus-visible:outline-none";
+    /// Selected day
+    pub const DAY_SELECTED: &str = "size-8 flex items-center justify-center text-sm rounded-md bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 cursor-pointer shadow-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all duration-200";
+    /// Today indicator
+    pub const DAY_TODAY: &str = "size-8 flex items-center justify-center text-sm rounded-md bg-zinc-100 dark:bg-zinc-800 cursor-pointer text-zinc-900 dark:text-zinc-50 font-semibold";
+    /// Calendar icon
+    pub const ICON: &str = "size-4 text-zinc-500 dark:text-zinc-400";
 }
 
 #[derive(Properties, PartialEq)]

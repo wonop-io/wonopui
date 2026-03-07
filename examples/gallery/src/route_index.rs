@@ -354,6 +354,12 @@ pub fn create_search_index() -> Vec<(Route, String, String, Option<Html>)> {
             None,
         ),
         (
+            Route::UIBlocksExample,
+            "ui blocks, templates, layouts, application, dashboard, pricing, hero, forms".to_string(),
+            "UI Blocks".to_string(),
+            None,
+        ),
+        (
             Route::WindowProviderExample,
             "window provider, context, global".to_string(),
             "Window Provider".to_string(),
