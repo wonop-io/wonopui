@@ -70,6 +70,7 @@ mod textarea;
 mod toggle;
 mod topbar;
 mod typography;
+mod ui_blocks;
 mod window_controls;
 mod window_provider;
 
@@ -138,5 +139,6 @@ pub use textarea::TextareaDocumentation;
 pub use toggle::ToggleDocumentation;
 pub use topbar::TopbarDocumentation;
 pub use typography::TypographyDocumentation;
+pub use ui_blocks::UIBlocksDocumentation;
 pub use window_controls::WindowControlsDocumentation;
 pub use window_provider::WindowProviderDocumentation;

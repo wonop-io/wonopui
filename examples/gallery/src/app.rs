@@ -1,9 +1,11 @@
 use crate::app_layout::AppLayout;
+use crate::blocks;
 use crate::components::*;
 use crate::home::Home;
 use crate::routes::Route;
 use yew::prelude::*;
 use yew_router::prelude::*;
+use wonopui::ThemeProvider;
 
 fn switch(routes: Route) -> Html {
     match routes {
@@ -72,20 +74,36 @@ fn switch(routes: Route) -> Html {
         Route::Textarea => html! { <TextareaDocumentation /> },
         Route::Toggle => html! { <ToggleDocumentation /> },
         Route::Topbar => html! { <TopbarDocumentation /> },
-        Route::Typography => html! { <TypographyDocumentation /> },
-        Route::WindowControls => html! { <WindowControlsDocumentation /> },
-        Route::WindowProvider => html! { <WindowProviderDocumentation /> },
-        Route::NotFound => html! { <h1>{ "404" }</h1> },
+        Route::TypographyExample => html! { <TypographyDocumentation /> },
+        Route::UIBlocksExample => html! { <UIBlocksDocumentation /> },
+        Route::WindowControlsExample => html! { <WindowControlsDocumentation /> },
+        Route::WindowProviderExample => html! { <WindowProviderDocumentation /> },
+        // Blocks routes
+        Route::BlocksIndex => html! { <blocks::BlocksIndex /> },
+        Route::BlocksElements => html! { <blocks::elements::ElementsBlocks /> },
+        Route::BlocksForms => html! { <blocks::forms::FormsBlocks /> },
+        Route::BlocksNavigation => html! { <blocks::navigation::NavigationBlocks /> },
+        Route::BlocksFeedback => html! { <blocks::feedback::FeedbackBlocks /> },
+        Route::BlocksApplicationShells => html! { <blocks::application_shells::ApplicationShellsBlocks /> },
+        Route::BlocksPageExamples => html! { <blocks::page_examples::PageExamplesBlocks /> },
+        Route::BlocksMarketing => html! { <blocks::marketing::MarketingBlocks /> },
+        Route::BlocksHeadings => html! { <blocks::headings::HeadingsBlocks /> },
+        Route::BlocksDataDisplay => html! { <blocks::data_display::DataDisplayBlocks /> },
+        Route::BlocksLists => html! { <blocks::lists::ListsBlocks /> },
+        Route::NotFound => html! { <div class="p-8">{"404 - Page Not Found"}</div> },
     }
 }
 
 #[function_component(App)]
 pub fn app() -> Html {
+
     html! {
+    <ThemeProvider>
         <BrowserRouter>
             <AppLayout>
                 <Switch<Route> render={switch} />
             </AppLayout>
         </BrowserRouter>
+    </ThemeProvider>
     }
 }

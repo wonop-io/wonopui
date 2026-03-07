@@ -7,21 +7,46 @@
 pub use wonopui_core::merge_classes;
 use yew::prelude::*;
 
-/// CSS classes for the DataTable component
+/// CSS classes for the DataTable component (shadcn v4 style).
 pub mod classes {
-    pub const CONTAINER: &str = "w-full overflow-auto";
+    /// Container styles - shadcn v4.
+    pub const CONTAINER: &str = "relative w-full overflow-x-auto";
+    
+    /// Table styles - shadcn v4.
     pub const TABLE: &str = "w-full caption-bottom text-sm";
-    pub const HEADER: &str = "border-b";
-    pub const HEADER_ROW: &str = "";
-    pub const HEADER_CELL: &str =
-        "h-12 px-4 text-left align-middle font-medium text-muted-foreground";
-    pub const HEADER_CELL_SORTABLE: &str = "h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer hover:bg-accent";
-    pub const BODY: &str = "";
-    pub const ROW: &str = "border-b transition-colors hover:bg-muted/50";
-    pub const ROW_SELECTED: &str = "border-b transition-colors bg-muted";
-    pub const CELL: &str = "p-4 align-middle";
-    pub const FOOTER: &str = "border-t bg-muted/50 font-medium";
-    pub const PAGINATION: &str = "flex items-center justify-between p-4";
+    
+    /// Header styles - shadcn v4.
+    pub const HEADER: &str = "[&_tr]:border-b";
+    
+    /// Header row styles.
+    pub const HEADER_ROW: &str = "border-b border-zinc-200 dark:border-zinc-800 transition-colors";
+    
+    /// Header cell styles - shadcn v4 with proper text color.
+    pub const HEADER_CELL: &str = "h-10 px-2 text-left align-middle font-medium text-zinc-950 dark:text-zinc-50 whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]";
+    
+    /// Sortable header cell styles - shadcn v4.
+    pub const HEADER_CELL_SORTABLE: &str = "h-10 px-2 text-left align-middle font-medium text-zinc-950 dark:text-zinc-50 whitespace-nowrap cursor-pointer select-none hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]";
+    
+    /// Body styles - shadcn v4.
+    pub const BODY: &str = "[&_tr:last-child]:border-0";
+    
+    /// Row styles - shadcn v4 with hover and selection states.
+    pub const ROW: &str = "border-b border-zinc-200 dark:border-zinc-800 transition-colors hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 data-[state=selected]:bg-zinc-100 dark:data-[state=selected]:bg-zinc-800";
+    
+    /// Selected row styles - shadcn v4.
+    pub const ROW_SELECTED: &str = "border-b border-zinc-200 dark:border-zinc-800 transition-colors bg-zinc-100 dark:bg-zinc-800";
+    
+    /// Cell styles - shadcn v4.
+    pub const CELL: &str = "p-2 align-middle text-zinc-900 dark:text-zinc-50 whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]";
+    
+    /// Footer styles - shadcn v4.
+    pub const FOOTER: &str = "border-t border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-800/50 font-medium text-zinc-900 dark:text-zinc-50 [&>tr]:last:border-b-0";
+    
+    /// Pagination container styles.
+    pub const PAGINATION: &str = "flex items-center justify-between gap-2 p-4 text-sm text-zinc-500 dark:text-zinc-400";
+    
+    /// Pagination button styles - shadcn v4.
+    pub const PAGINATION_BUTTON: &str = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-all outline-none h-9 px-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:pointer-events-none disabled:opacity-50";
 }
 
 /// Column definition for the data table
@@ -143,21 +168,23 @@ pub fn data_table<T: Clone + PartialEq + 'static>(props: &DataTableProps<T>) -> 
 
             if props.page_size.is_some() && total_pages > 1 {
                 <div class={classes::PAGINATION}>
-                    <span class="text-sm text-muted-foreground">
+                    <span class="text-sm text-zinc-500 dark:text-zinc-400">
                         { format!("Page {} of {}", *current_page + 1, total_pages) }
                     </span>
                     <div class="flex gap-2">
                         <button
-                            class="px-3 py-1 border rounded hover:bg-accent disabled:opacity-50"
+                            class={classes::PAGINATION_BUTTON}
                             onclick={on_prev_page}
                             disabled={*current_page == 0}
+                            type="button"
                         >
                             {"Previous"}
                         </button>
                         <button
-                            class="px-3 py-1 border rounded hover:bg-accent disabled:opacity-50"
+                            class={classes::PAGINATION_BUTTON}
                             onclick={on_next_page}
                             disabled={*current_page >= total_pages - 1}
+                            type="button"
                         >
                             {"Next"}
                         </button>

@@ -5,19 +5,33 @@
 pub use wonopui_core::merge_classes;
 use yew::prelude::*;
 
-/// CSS classes for the MultiColumnSidebar component
+/// CSS classes for the MultiColumnSidebar component (shadcn v4 style)
 pub mod classes {
+    /// Main sidebar container - premium design with subtle shadow
     pub const SIDEBAR: &str =
-        "h-dvh inset-y-0 absolute bg-white text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300";
-    pub const SIDEBAR_LEFT: &str = "left-0";
-    pub const SIDEBAR_RIGHT: &str = "right-0";
-    pub const CURTAIN: &str = "inset-0 fixed lg:hidden";
-    pub const CURTAIN_BACKDROP: &str = "absolute w-full h-full inset-0 opacity-50 bg-black";
+        "flex h-full inset-y-0 absolute bg-white dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 shadow-lg transition-all duration-300 ease-in-out z-30";
+    /// Left position
+    pub const SIDEBAR_LEFT: &str = "left-0 border-r border-zinc-200 dark:border-zinc-800";
+    /// Right position
+    pub const SIDEBAR_RIGHT: &str = "right-0 border-l border-zinc-200 dark:border-zinc-800";
+    /// Mobile curtain overlay
+    pub const CURTAIN: &str = "inset-0 fixed lg:hidden z-40";
+    /// Backdrop with smooth fade
+    pub const CURTAIN_BACKDROP: &str = "absolute w-full h-full inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300";
+    /// Curtain content container
     pub const CURTAIN_CONTENT: &str = "w-full h-full z-10 relative";
-    pub const COLUMN: &str = "flex flex-col h-full w-full border-zinc-200 dark:border-zinc-800";
-    pub const COLUMN_LEFT_BORDER: &str = "border-r";
-    pub const COLUMN_RIGHT_BORDER: &str = "border-l";
-    pub const COLUMN_CONTENT: &str = "flex-1 overflow-y-auto h-full";
+    /// Column container - premium styling with clear separation
+    pub const COLUMN: &str = "flex flex-col h-full bg-white dark:bg-zinc-950";
+    /// Left border style - clear but subtle
+    pub const COLUMN_LEFT_BORDER: &str = "border-r border-zinc-100 dark:border-zinc-800 last:border-r-0";
+    /// Right border style - clear but subtle  
+    pub const COLUMN_RIGHT_BORDER: &str = "border-l border-zinc-100 dark:border-zinc-800 first:border-l-0";
+    /// Column header - premium styling
+    pub const COLUMN_HEADER: &str = "flex-shrink-0 px-4 py-3 font-semibold text-sm text-zinc-900 dark:text-zinc-100 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50";
+    /// Column footer
+    pub const COLUMN_FOOTER: &str = "flex-shrink-0 px-4 py-3 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50";
+    /// Column content area with smooth scrolling
+    pub const COLUMN_CONTENT: &str = "flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent";
 }
 
 #[derive(Clone, PartialEq, Default)]

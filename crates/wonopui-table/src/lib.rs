@@ -5,18 +5,37 @@
 use wonopui_core::merge_classes;
 use yew::prelude::*;
 
+/// Default CSS classes for table styling (shadcn v4 style).
 pub mod classes {
-    pub const TABLE_CONTAINER: &str = "overflow-x-auto";
-    pub const TABLE: &str = "min-w-full divide-y divide-gray-200 dark:divide-zinc-700";
-    pub const TABLE_HEAD: &str = "bg-gray-50 dark:bg-zinc-800";
-    pub const TABLE_HEAD_ROW: &str = "";
-    pub const TABLE_HEAD_CELL: &str = "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider";
-    pub const TABLE_BODY: &str =
-        "bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-zinc-700";
-    pub const TABLE_ROW: &str = "hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors";
-    pub const TABLE_CELL: &str =
-        "px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-zinc-100";
-    pub const TABLE_FOOTER: &str = "bg-gray-50 dark:bg-zinc-800";
+    /// Table container styles - shadcn v4.
+    pub const TABLE_CONTAINER: &str = "relative w-full overflow-x-auto";
+    
+    /// Table element styles - shadcn v4 Table.
+    pub const TABLE: &str = "w-full caption-bottom text-sm";
+    
+    /// Table header styles - shadcn v4 TableHeader.
+    pub const TABLE_HEAD: &str = "[&_tr]:border-b";
+    
+    /// Table head row styles.
+    pub const TABLE_HEAD_ROW: &str = "border-b border-zinc-200 dark:border-zinc-800 transition-colors";
+    
+    /// Table head cell styles - shadcn v4 TableHead with proper text color.
+    pub const TABLE_HEAD_CELL: &str = "h-10 px-2 text-left align-middle font-medium text-zinc-950 dark:text-zinc-50 whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]";
+    
+    /// Table body styles - shadcn v4 TableBody.
+    pub const TABLE_BODY: &str = "[&_tr:last-child]:border-0";
+    
+    /// Table row styles - shadcn v4 TableRow with hover and selection states.
+    pub const TABLE_ROW: &str = "border-b border-zinc-200 dark:border-zinc-800 transition-colors hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 data-[state=selected]:bg-zinc-100 dark:data-[state=selected]:bg-zinc-800";
+    
+    /// Table cell styles - shadcn v4 TableCell.
+    pub const TABLE_CELL: &str = "p-2 align-middle text-zinc-900 dark:text-zinc-50 whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]";
+    
+    /// Table footer styles - shadcn v4 TableFooter.
+    pub const TABLE_FOOTER: &str = "border-t border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-800/50 font-medium [&>tr]:last:border-b-0";
+    
+    /// Table caption styles - shadcn v4 TableCaption.
+    pub const TABLE_CAPTION: &str = "mt-4 text-sm text-zinc-500 dark:text-zinc-400";
 }
 
 #[derive(Properties, PartialEq)]
@@ -44,8 +63,8 @@ pub fn table(props: &TableProps) -> Html {
     ]);
 
     html! {
-        <div class={container_class}>
-            <table class={classes::TABLE} id={props.id.clone()}>
+        <div data-slot="table-container" class={container_class}>
+            <table data-slot="table" class={classes::TABLE} id={props.id.clone()}>
                 { for props.children.iter() }
             </table>
         </div>
@@ -71,7 +90,7 @@ pub fn table_head(props: &TableHeadProps) -> Html {
     ]);
 
     html! {
-        <thead class={head_class}>
+        <thead data-slot="table-header" class={head_class}>
             { for props.children.iter() }
         </thead>
     }
@@ -101,7 +120,7 @@ pub fn table_row(props: &TableRowProps) -> Html {
     ]);
 
     html! {
-        <tr class={class} onclick={props.onclick.clone()}>
+        <tr data-slot="table-row" class={class} onclick={props.onclick.clone()}>
             { for props.children.iter() }
         </tr>
     }
@@ -127,6 +146,7 @@ pub fn table_head_cell(props: &TableHeadCellProps) -> Html {
 
     html! {
         <th
+            data-slot="table-head"
             class={class}
             colspan={props.colspan.map(|c| c.to_string())}
             rowspan={props.rowspan.map(|r| r.to_string())}
@@ -157,6 +177,7 @@ pub fn table_cell(props: &TableCellProps) -> Html {
 
     html! {
         <td
+            data-slot="table-cell"
             class={class}
             colspan={props.colspan.map(|c| c.to_string())}
             rowspan={props.rowspan.map(|r| r.to_string())}
@@ -180,7 +201,7 @@ pub fn table_body(props: &TableBodyProps) -> Html {
     let class = merge_classes(&[classes::TABLE_BODY, &props.class.to_string()]);
 
     html! {
-        <tbody class={class}>
+        <tbody data-slot="table-body" class={class}>
            { for props.children.iter() }
         </tbody>
     }
@@ -199,7 +220,7 @@ pub fn table_footer(props: &TableFooterProps) -> Html {
     let class = merge_classes(&[classes::TABLE_FOOTER, &props.class.to_string()]);
 
     html! {
-        <tfoot class={class}>
+        <tfoot data-slot="table-footer" class={class}>
             { for props.children.iter() }
         </tfoot>
     }

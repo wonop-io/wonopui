@@ -3970,6 +3970,7 @@ name = "wonopui-iframe"
 version = "0.1.0"
 dependencies = [
  "gloo-utils 0.2.0",
+ "js-sys",
  "wasm-bindgen",
  "web-sys",
  "wonopui-core",

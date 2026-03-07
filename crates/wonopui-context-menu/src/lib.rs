@@ -8,17 +8,37 @@ use wasm_bindgen::JsCast;
 use wonopui_core::merge_classes;
 use yew::prelude::*;
 
+/// Default CSS classes for context menu styling (shadcn v4 style).
 pub mod classes {
-    pub const CONTEXT_MENU_CONTENT: &str = "bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-md shadow-lg p-1 z-50 min-w-[8rem]";
-    pub const CONTEXT_MENU_ITEM: &str =
-        "flex items-center px-2 py-1.5 text-sm outline-none cursor-pointer rounded-sm";
-    pub const CONTEXT_MENU_ITEM_DEFAULT: &str =
-        "text-gray-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-700";
-    pub const CONTEXT_MENU_ITEM_DISABLED: &str =
-        "text-gray-400 dark:text-zinc-500 cursor-not-allowed";
-    pub const CONTEXT_MENU_SEPARATOR: &str = "h-px my-1 bg-gray-200 dark:bg-zinc-700";
-    pub const CONTEXT_MENU_LABEL: &str = "px-2 py-1.5 text-sm text-gray-500 dark:text-zinc-400";
-    pub const CONTEXT_MENU_SHORTCUT: &str = "ml-auto pl-5 text-xs text-gray-500 dark:text-zinc-400";
+    /// Content container styles - shadcn v4 ContextMenuContent with animations.
+    pub const CONTEXT_MENU_CONTENT: &str = "z-50 min-w-[8rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-1 text-zinc-950 dark:text-zinc-50 shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95";
+    
+    /// Item base styles - shadcn v4 ContextMenuItem with proper focus and gap.
+    pub const CONTEXT_MENU_ITEM: &str = "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
+    
+    /// Item default state styles - shadcn v4 focus styles.
+    pub const CONTEXT_MENU_ITEM_DEFAULT: &str = "text-zinc-900 dark:text-zinc-50 focus:bg-zinc-100 dark:focus:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 [&_svg:not([class*='text-'])]:text-zinc-500 dark:[&_svg:not([class*='text-'])]:text-zinc-400";
+    
+    /// Destructive item variant.
+    pub const CONTEXT_MENU_ITEM_DESTRUCTIVE: &str = "text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/50 focus:text-red-600 dark:focus:text-red-400 [&_svg]:!text-red-600 dark:[&_svg]:!text-red-400";
+    
+    /// Item disabled state styles.
+    pub const CONTEXT_MENU_ITEM_DISABLED: &str = "pointer-events-none opacity-50";
+    
+    /// Separator styles - shadcn v4 ContextMenuSeparator.
+    pub const CONTEXT_MENU_SEPARATOR: &str = "-mx-1 my-1 h-px bg-zinc-200 dark:bg-zinc-800";
+    
+    /// Label styles - shadcn v4 ContextMenuLabel.
+    pub const CONTEXT_MENU_LABEL: &str = "px-2 py-1.5 text-sm font-medium text-zinc-950 dark:text-zinc-50";
+    
+    /// Shortcut text styles - shadcn v4 ContextMenuShortcut.
+    pub const CONTEXT_MENU_SHORTCUT: &str = "ml-auto text-xs tracking-widest text-zinc-500 dark:text-zinc-400";
+    
+    /// Checkbox/radio indicator container.
+    pub const CONTEXT_MENU_INDICATOR: &str = "pointer-events-none absolute left-2 flex size-3.5 items-center justify-center";
+    
+    /// SubTrigger styles - shadcn v4.
+    pub const CONTEXT_MENU_SUB_TRIGGER: &str = "focus:bg-zinc-100 dark:focus:bg-zinc-800 data-[state=open]:bg-zinc-100 dark:data-[state=open]:bg-zinc-800";
 }
 
 #[derive(Clone, PartialEq)]
@@ -69,7 +89,7 @@ pub fn context_menu(props: &ContextMenuProps) -> Html {
 
     html! {
         <ContextProvider<Rc<ContextMenuState>> context={state}>
-            <div class={class}>
+            <div data-slot="context-menu" class={class}>
                 { for props.children.iter() }
             </div>
         </ContextProvider<Rc<ContextMenuState>>>
@@ -99,7 +119,7 @@ pub fn context_menu_trigger(props: &ContextMenuTriggerProps) -> Html {
     let class = merge_classes(&["cursor-pointer", &props.class.to_string()]);
 
     html! {
-        <div {oncontextmenu} class={class}>
+        <div data-slot="context-menu-trigger" {oncontextmenu} class={class}>
             { for props.children.iter() }
         </div>
     }
@@ -171,6 +191,8 @@ pub fn context_menu_content(props: &ContextMenuContentProps) -> Html {
 
     html! {
         <div
+            data-slot="context-menu-content"
+            data-state="open"
             ref={menu_ref}
             class={class}
             {style}
@@ -229,7 +251,7 @@ pub fn context_menu_item(props: &ContextMenuItemProps) -> Html {
     ]);
 
     html! {
-        <div class={class} role="menuitem" tabindex="-1" {onclick}>
+        <div data-slot="context-menu-item" data-inset={props.inset.to_string()} class={class} role="menuitem" tabindex="-1" {onclick}>
             { for props.children.iter() }
         </div>
     }
@@ -238,7 +260,7 @@ pub fn context_menu_item(props: &ContextMenuItemProps) -> Html {
 #[function_component(ContextMenuSeparator)]
 pub fn context_menu_separator() -> Html {
     html! {
-        <div class={classes::CONTEXT_MENU_SEPARATOR} role="separator" />
+        <div data-slot="context-menu-separator" class={classes::CONTEXT_MENU_SEPARATOR} role="separator" />
     }
 }
 
@@ -261,7 +283,7 @@ pub fn context_menu_label(props: &ContextMenuLabelProps) -> Html {
     ]);
 
     html! {
-        <div class={class}>
+        <div data-slot="context-menu-label" data-inset={props.inset.to_string()} class={class}>
             { for props.children.iter() }
         </div>
     }
@@ -276,7 +298,7 @@ pub struct ContextMenuShortcutProps {
 #[function_component(ContextMenuShortcut)]
 pub fn context_menu_shortcut(props: &ContextMenuShortcutProps) -> Html {
     html! {
-        <span class={classes::CONTEXT_MENU_SHORTCUT}>
+        <span data-slot="context-menu-shortcut" class={classes::CONTEXT_MENU_SHORTCUT}>
             { for props.children.iter() }
         </span>
     }
@@ -313,7 +335,7 @@ pub fn context_menu_sub(props: &ContextMenuSubProps) -> Html {
 
     html! {
         <ContextProvider<UseStateHandle<bool>> context={is_open}>
-            <div class="relative" {onmouseenter} {onmouseleave}>
+            <div data-slot="context-menu-sub" class="relative" {onmouseenter} {onmouseleave}>
                 { for props.children.iter() }
             </div>
         </ContextProvider<UseStateHandle<bool>>>
@@ -336,14 +358,15 @@ pub fn context_menu_sub_trigger(props: &ContextMenuSubTriggerProps) -> Html {
     let class = merge_classes(&[
         classes::CONTEXT_MENU_ITEM,
         classes::CONTEXT_MENU_ITEM_DEFAULT,
+        classes::CONTEXT_MENU_SUB_TRIGGER,
         if props.inset { "pl-8" } else { "" },
         &props.class.to_string(),
     ]);
 
     html! {
-        <div class={class}>
+        <div data-slot="context-menu-sub-trigger" data-inset={props.inset.to_string()} class={class}>
             { for props.children.iter() }
-            <span class="ml-auto">{"›"}</span>
+            <span class="ml-auto size-4">{"›"}</span>
         </div>
     }
 }
@@ -374,7 +397,7 @@ pub fn context_menu_sub_content(props: &ContextMenuSubContentProps) -> Html {
     ]);
 
     html! {
-        <div class={class}>
+        <div data-slot="context-menu-sub-content" data-state="open" class={class}>
             { for props.children.iter() }
         </div>
     }
@@ -426,8 +449,8 @@ pub fn context_menu_checkbox_item(props: &ContextMenuCheckboxItemProps) -> Html 
     ]);
 
     html! {
-        <div class={class} role="menuitemcheckbox" aria-checked={props.checked.to_string()} {onclick}>
-            <span class="w-4 h-4 mr-2 flex items-center justify-center">
+        <div data-slot="context-menu-checkbox-item" class={classes!(&class, "pl-8", "pr-2")} role="menuitemcheckbox" aria-checked={props.checked.to_string()} {onclick}>
+            <span class={classes::CONTEXT_MENU_INDICATOR}>
                 if props.checked {
                     {"✓"}
                 }
@@ -464,7 +487,7 @@ pub fn context_menu_radio_group(props: &ContextMenuRadioGroupProps) -> Html {
 
     html! {
         <ContextProvider<RadioGroupContext> context={context}>
-            <div role="radiogroup">
+            <div data-slot="context-menu-radio-group" role="radiogroup">
                 { for props.children.iter() }
             </div>
         </ContextProvider<RadioGroupContext>>
@@ -522,12 +545,10 @@ pub fn context_menu_radio_item(props: &ContextMenuRadioItemProps) -> Html {
     ]);
 
     html! {
-        <div class={class} role="menuitemradio" aria-checked={is_checked.to_string()} {onclick}>
-            <span class="w-4 h-4 mr-2 flex items-center justify-center">
+        <div data-slot="context-menu-radio-item" class={classes!(&class, "pl-8", "pr-2")} role="menuitemradio" aria-checked={is_checked.to_string()} {onclick}>
+            <span class={classes::CONTEXT_MENU_INDICATOR}>
                 if is_checked {
                     {"●"}
-                } else {
-                    {"○"}
                 }
             </span>
             { for props.children.iter() }

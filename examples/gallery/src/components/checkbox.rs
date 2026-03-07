@@ -46,6 +46,49 @@ pub fn checkbox_theme_editor() -> Html {
     }
 }
 
+#[function_component(CheckboxDemo)]
+fn checkbox_demo() -> Html {
+    let checked1 = use_state(|| false);
+    let checked2 = use_state(|| true);
+    let checked3 = use_state(|| false);
+
+    let on_toggle1 = {
+        let checked1 = checked1.clone();
+        Callback::from(move |_| checked1.set(!*checked1))
+    };
+    let on_toggle2 = {
+        let checked2 = checked2.clone();
+        Callback::from(move |_| checked2.set(!*checked2))
+    };
+    let on_toggle3 = {
+        let checked3 = checked3.clone();
+        Callback::from(move |_| checked3.set(!*checked3))
+    };
+
+    html! {
+        <div class="space-y-4">
+            <div class="flex items-center gap-3">
+                <Checkbox id="terms" checked={*checked1} on_toggle={on_toggle1} />
+                <label for="terms" class="text-sm font-medium text-zinc-900 dark:text-zinc-100 cursor-pointer">
+                    { "Accept terms and conditions" }
+                </label>
+            </div>
+            <div class="flex items-center gap-3">
+                <Checkbox id="newsletter" checked={*checked2} on_toggle={on_toggle2} />
+                <label for="newsletter" class="text-sm font-medium text-zinc-900 dark:text-zinc-100 cursor-pointer">
+                    { "Subscribe to newsletter" }
+                </label>
+            </div>
+            <div class="flex items-center gap-3">
+                <Checkbox id="disabled" checked={*checked3} on_toggle={on_toggle3} disabled={true} />
+                <label for="disabled" class="text-sm font-medium text-zinc-500 cursor-not-allowed">
+                    { "Disabled checkbox" }
+                </label>
+            </div>
+        </div>
+    }
+}
+
 #[function_component(CheckboxDocumentation)]
 pub fn checkbox_documentation() -> Html {
     html! {
@@ -56,15 +99,7 @@ pub fn checkbox_documentation() -> Html {
             <h2 class="text-2xl font-semibold mb-4 text-zinc-900 dark:text-white">{ "Example" }</h2>
             <ExampleCode
                 preview={html! {
-                    <div class="flex items-center space-x-2">
-                        <Checkbox id="terms" checked={false} on_toggle={Callback::from(|_| {})} />
-                        <label
-                            for="terms"
-                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                            { "Accept terms and conditions" }
-                        </label>
-                    </div>
+                    <CheckboxDemo />
                 }}
                 customize={html! {
                     <CheckboxThemeEditor />

@@ -125,9 +125,21 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
             }}>
             <SidebarHeading>{"Getting started"}</SidebarHeading>
             <SidebarMenu>
-                <SidebarLink<Route> label="Introduction" to={Route::Home} />
-                // <SidebarLink<Route> label="Installation" to={Route::Installation} />
-                // <SidebarLink<Route> label="Usage" to={Route::Usage} />
+                                <SidebarLink<Route> label="Introduction" to={Route::Home} />
+            </SidebarMenu>
+            <SidebarHeading>{"Blocks"}</SidebarHeading>
+            <SidebarMenu>
+                <SidebarLink<Route> label="All Blocks" to={Route::BlocksIndex} />
+                <SidebarLink<Route> label="Elements" to={Route::BlocksElements} />
+                <SidebarLink<Route> label="Forms" to={Route::BlocksForms} />
+                <SidebarLink<Route> label="Navigation" to={Route::BlocksNavigation} />
+                <SidebarLink<Route> label="Feedback" to={Route::BlocksFeedback} />
+                <SidebarLink<Route> label="Application Shells" to={Route::BlocksApplicationShells} />
+                <SidebarLink<Route> label="Page Examples" to={Route::BlocksPageExamples} />
+                <SidebarLink<Route> label="Marketing" to={Route::BlocksMarketing} />
+                <SidebarLink<Route> label="Headings" to={Route::BlocksHeadings} />
+                <SidebarLink<Route> label="Data Display" to={Route::BlocksDataDisplay} />
+                <SidebarLink<Route> label="Lists" to={Route::BlocksLists} />
             </SidebarMenu>
             <SidebarHeading>{"Components"}</SidebarHeading>
             <SidebarMenu>
@@ -169,10 +181,12 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
                 <SidebarLink<Route> label="Markdown Editor" to={Route::MarkdownEditor} />
                 <SidebarLink<Route> label="Markdown Renderer" to={Route::MarkdownRenderer} />
                 <SidebarLink<Route> label="Media Query" to={Route::MediaQuery} />
+                <SidebarLink<Route> label="Mention Input" to={Route::MentionInput} />
+                <SidebarLink<Route> label="Mermaid Diagram" to={Route::MermaidDiagram} />
                 <SidebarLink<Route> label="Multicol Sidebar" to={Route::MulticolSidebar} />
                 <SidebarLink<Route> label="Notification" to={Route::Notification} />
-                <SidebarLink<Route> label="Page Header" to={Route::PageHeader} />
                 <SidebarLink<Route> label="Page Content" to={Route::PageContent} />
+                <SidebarLink<Route> label="Page Header" to={Route::PageHeader} />
                 <SidebarLink<Route> label="Pagination" to={Route::Pagination} />
                 <SidebarLink<Route> label="Paint Canvas" to={Route::PaintCanvas} />
                 <SidebarLink<Route> label="Placeholder" to={Route::Placeholder} />
@@ -189,15 +203,14 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
                 <SidebarLink<Route> label="Table" to={Route::Table} />
                 <SidebarLink<Route> label="Tabs" to={Route::Tabs} />
                 <SidebarLink<Route> label="Tag Input" to={Route::TagInput} />
-                <SidebarLink<Route> label="Mention Input" to={Route::MentionInput} />
-                <SidebarLink<Route> label="Mermaid Diagram" to={Route::MermaidDiagram} />
                 <SidebarLink<Route> label="Tailwind Color Picker" to={Route::TailwindColorPicker} />
                 <SidebarLink<Route> label="Textarea" to={Route::Textarea} />
                 <SidebarLink<Route> label="Toggle" to={Route::Toggle} />
                 <SidebarLink<Route> label="Topbar" to={Route::Topbar} />
-                <SidebarLink<Route> label="Typography" to={Route::Typography} />
-                <SidebarLink<Route> label="Window Provider" to={Route::WindowProvider} />
-                <SidebarLink<Route> label="Window Controls" to={Route::WindowControls} />
+                <SidebarLink<Route> label="Typography" to={Route::TypographyExample} />
+                <SidebarLink<Route> label="UI Blocks" to={Route::UIBlocksExample} />
+                <SidebarLink<Route> label="Window Controls" to={Route::WindowControlsExample} />
+                <SidebarLink<Route> label="Window Provider" to={Route::WindowProviderExample} />
             </SidebarMenu>
         </Sidebar>
     };

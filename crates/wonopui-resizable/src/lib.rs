@@ -2,24 +2,33 @@
 //!
 //! A component that allows resizing its content by dragging handles.
 
-use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
 use web_sys::PointerEvent;
 pub use wonopui_core::merge_classes;
 use yew::prelude::*;
 
-/// CSS classes for the Resizable component
+/// CSS classes for the Resizable component (shadcn v4)
 pub mod classes {
-    pub const CONTAINER: &str = "relative";
-    pub const HANDLE: &str = "absolute bg-transparent";
-    pub const HANDLE_E: &str = "right-0 top-0 h-full w-2 cursor-ew-resize";
-    pub const HANDLE_S: &str = "bottom-0 left-0 w-full h-2 cursor-ns-resize";
-    pub const HANDLE_SE: &str = "right-0 bottom-0 w-4 h-4 cursor-nwse-resize";
-    pub const HANDLE_W: &str = "left-0 top-0 h-full w-2 cursor-ew-resize";
-    pub const HANDLE_N: &str = "top-0 left-0 w-full h-2 cursor-ns-resize";
-    pub const HANDLE_NW: &str = "left-0 top-0 w-4 h-4 cursor-nwse-resize";
-    pub const HANDLE_NE: &str = "right-0 top-0 w-4 h-4 cursor-nesw-resize";
-    pub const HANDLE_SW: &str = "left-0 bottom-0 w-4 h-4 cursor-nesw-resize";
+    /// Container for resizable panels
+    pub const CONTAINER: &str = "relative bg-white dark:bg-zinc-950";
+    /// Base handle style - subtle with hover effect
+    pub const HANDLE: &str = "absolute bg-transparent transition-all duration-200 hover:bg-zinc-500/10 dark:hover:bg-zinc-400/10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 dark:focus-visible:ring-zinc-300 z-10";
+    /// East (right) handle with grip indicator
+    pub const HANDLE_E: &str = "right-0 top-0 h-full w-2 cursor-ew-resize after:absolute after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:h-8 after:w-1 after:rounded-full after:bg-zinc-300 after:transition-colors hover:after:bg-zinc-400 dark:after:bg-zinc-700 dark:hover:after:bg-zinc-500";
+    /// South (bottom) handle with grip indicator
+    pub const HANDLE_S: &str = "bottom-0 left-0 w-full h-2 cursor-ns-resize after:absolute after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:h-1 after:w-8 after:rounded-full after:bg-zinc-300 after:transition-colors hover:after:bg-zinc-400 dark:after:bg-zinc-700 dark:hover:after:bg-zinc-500";
+    /// South-east (bottom-right) corner handle
+    pub const HANDLE_SE: &str = "right-0 bottom-0 w-5 h-5 cursor-nwse-resize after:absolute after:right-1 after:bottom-1 after:h-3 after:w-3 after:rounded-sm after:bg-zinc-300 after:transition-colors hover:after:bg-zinc-400 dark:after:bg-zinc-700 dark:hover:after:bg-zinc-500";
+    /// West (left) handle
+    pub const HANDLE_W: &str = "left-0 top-0 h-full w-2 cursor-ew-resize after:absolute after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:h-8 after:w-1 after:rounded-full after:bg-zinc-300 after:transition-colors hover:after:bg-zinc-400 dark:after:bg-zinc-700 dark:hover:after:bg-zinc-500";
+    /// North (top) handle
+    pub const HANDLE_N: &str = "top-0 left-0 w-full h-2 cursor-ns-resize after:absolute after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:h-1 after:w-8 after:rounded-full after:bg-zinc-300 after:transition-colors hover:after:bg-zinc-400 dark:after:bg-zinc-700 dark:hover:after:bg-zinc-500";
+    /// North-west corner handle
+    pub const HANDLE_NW: &str = "left-0 top-0 w-5 h-5 cursor-nwse-resize after:absolute after:left-1 after:top-1 after:h-3 after:w-3 after:rounded-sm after:bg-zinc-300 after:transition-colors hover:after:bg-zinc-400 dark:after:bg-zinc-700 dark:hover:after:bg-zinc-500";
+    /// North-east corner handle
+    pub const HANDLE_NE: &str = "right-0 top-0 w-5 h-5 cursor-nesw-resize after:absolute after:right-1 after:top-1 after:h-3 after:w-3 after:rounded-sm after:bg-zinc-300 after:transition-colors hover:after:bg-zinc-400 dark:after:bg-zinc-700 dark:hover:after:bg-zinc-500";
+    /// South-west corner handle
+    pub const HANDLE_SW: &str = "left-0 bottom-0 w-5 h-5 cursor-nesw-resize after:absolute after:left-1 after:bottom-1 after:h-3 after:w-3 after:rounded-sm after:bg-zinc-300 after:transition-colors hover:after:bg-zinc-400 dark:after:bg-zinc-700 dark:hover:after:bg-zinc-500";
 }
 
 /// Coordinates for the resizable element (start_x, start_y, end_x, end_y)
@@ -68,7 +77,7 @@ pub struct ResizableProps {
     pub min_height: f64,
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 enum ResizeMode {
     None,
     North,
@@ -81,13 +90,28 @@ enum ResizeMode {
     West,
 }
 
+/// Shared state for resize operations using interior mutability
+#[derive(Clone, Default)]
+struct ResizeState {
+    mode: ResizeMode,
+    start_x: f64,
+    start_y: f64,
+    start_coords: Coordinates,
+}
+
+impl Default for ResizeMode {
+    fn default() -> Self {
+        ResizeMode::None
+    }
+}
+
 #[function_component(Resizable)]
 pub fn resizable(props: &ResizableProps) -> Html {
     let container_ref = use_node_ref();
     let coordinates = use_state(|| props.coordinates);
-    let mode = use_state(|| ResizeMode::None);
-    let start_pos = use_state(|| (0_i32, 0_i32));
-    let start_coords = use_state(|| props.coordinates);
+    
+    // Use Rc<RefCell<>> for shared mutable state that closures can access
+    let resize_state = use_mut_ref(ResizeState::default);
 
     // Sync with prop changes
     {
@@ -101,90 +125,85 @@ pub fn resizable(props: &ResizableProps) -> Html {
 
     // Handle resize start
     let on_resize_start = {
-        let mode = mode.clone();
-        let start_pos = start_pos.clone();
-        let start_coords = start_coords.clone();
+        let resize_state = resize_state.clone();
         let coordinates = coordinates.clone();
         move |resize_mode: ResizeMode| {
-            let mode = mode.clone();
-            let start_pos = start_pos.clone();
-            let start_coords = start_coords.clone();
+            let resize_state = resize_state.clone();
             let coordinates = coordinates.clone();
             Callback::from(move |e: PointerEvent| {
                 e.prevent_default();
-                mode.set(resize_mode);
-                start_pos.set((e.client_x() as i32, e.client_y() as i32));
-                start_coords.set(*coordinates);
+                // Capture the pointer to ensure we get all events
+                if let Some(target) = e.target() {
+                    if let Ok(element) = target.dyn_into::<web_sys::Element>() {
+                        let _ = element.set_pointer_capture(e.pointer_id());
+                    }
+                }
+                let mut state = resize_state.borrow_mut();
+                state.mode = resize_mode;
+                state.start_x = e.client_x() as f64;
+                state.start_y = e.client_y() as f64;
+                state.start_coords = *coordinates;
             })
         }
     };
 
-    // Set up pointer move and up handlers
-    {
-        let mode_for_move = mode.clone();
-        let mode_for_up = mode.clone();
-        let start_pos = start_pos.clone();
-        let start_coords = start_coords.clone();
+    // Handle pointer move during resize
+    let on_pointer_move = {
+        let resize_state = resize_state.clone();
         let coordinates = coordinates.clone();
         let on_coordinates_change = props.on_coordinates_change.clone();
         let min_width = props.min_width;
         let min_height = props.min_height;
+        
+        Callback::from(move |e: PointerEvent| {
+            let state = resize_state.borrow();
+            let current_mode = state.mode;
+            if current_mode == ResizeMode::None {
+                return;
+            }
 
-        use_effect_with((), move |_| {
-            let onpointermove = Closure::wrap(Box::new(move |e: PointerEvent| {
-                let current_mode = *mode_for_move;
-                if current_mode == ResizeMode::None {
-                    return;
+            let dx = e.client_x() as f64 - state.start_x;
+            let dy = e.client_y() as f64 - state.start_y;
+            let (sx, sy, ex, ey) = state.start_coords;
+
+            let mut new_coords = match current_mode {
+                ResizeMode::North => (sx, sy + dy, ex, ey),
+                ResizeMode::South => (sx, sy, ex, ey + dy),
+                ResizeMode::East => (sx, sy, ex + dx, ey),
+                ResizeMode::West => (sx + dx, sy, ex, ey),
+                ResizeMode::NorthWest => (sx + dx, sy + dy, ex, ey),
+                ResizeMode::NorthEast => (sx, sy + dy, ex + dx, ey),
+                ResizeMode::SouthWest => (sx + dx, sy, ex, ey + dy),
+                ResizeMode::SouthEast => (sx, sy, ex + dx, ey + dy),
+                ResizeMode::None => (sx, sy, ex, ey),
+            };
+
+            // Enforce minimum dimensions
+            if new_coords.2 - new_coords.0 < min_width {
+                new_coords.2 = new_coords.0 + min_width;
+            }
+            if new_coords.3 - new_coords.1 < min_height {
+                new_coords.3 = new_coords.1 + min_height;
+            }
+
+            coordinates.set(new_coords);
+            on_coordinates_change.emit(new_coords);
+        })
+    };
+
+    // Handle pointer up to end resize
+    let on_pointer_up = {
+        let resize_state = resize_state.clone();
+        Callback::from(move |e: PointerEvent| {
+            // Release pointer capture
+            if let Some(target) = e.target() {
+                if let Ok(element) = target.dyn_into::<web_sys::Element>() {
+                    let _ = element.release_pointer_capture(e.pointer_id());
                 }
-
-                let dx = e.client_x() as i32 - start_pos.0;
-                let dy = e.client_y() as i32 - start_pos.1;
-                let (sx, sy, ex, ey) = *start_coords;
-
-                let mut new_coords = match current_mode {
-                    ResizeMode::North => (sx, sy + dy as f64, ex, ey),
-                    ResizeMode::South => (sx, sy, ex, ey + dy as f64),
-                    ResizeMode::East => (sx, sy, ex + dx as f64, ey),
-                    ResizeMode::West => (sx + dx as f64, sy, ex, ey),
-                    ResizeMode::NorthWest => (sx + dx as f64, sy + dy as f64, ex, ey),
-                    ResizeMode::NorthEast => (sx, sy + dy as f64, ex + dx as f64, ey),
-                    ResizeMode::SouthWest => (sx + dx as f64, sy, ex, ey + dy as f64),
-                    ResizeMode::SouthEast => (sx, sy, ex + dx as f64, ey + dy as f64),
-                    ResizeMode::None => (sx, sy, ex, ey),
-                };
-
-                // Enforce minimum dimensions
-                if new_coords.2 - new_coords.0 < min_width {
-                    new_coords.2 = new_coords.0 + min_width;
-                }
-                if new_coords.3 - new_coords.1 < min_height {
-                    new_coords.3 = new_coords.1 + min_height;
-                }
-
-                coordinates.set(new_coords);
-                on_coordinates_change.emit(new_coords);
-            }) as Box<dyn FnMut(_)>);
-
-            let onpointerup = Closure::wrap(Box::new(move |_: PointerEvent| {
-                mode_for_up.set(ResizeMode::None);
-            }) as Box<dyn FnMut(_)>);
-
-            let window = web_sys::window().expect("no global window");
-            let _ = window.add_event_listener_with_callback(
-                "pointermove",
-                onpointermove.as_ref().unchecked_ref(),
-            );
-            let _ = window.add_event_listener_with_callback(
-                "pointerup",
-                onpointerup.as_ref().unchecked_ref(),
-            );
-
-            onpointermove.forget();
-            onpointerup.forget();
-
-            || ()
-        });
-    }
+            }
+            resize_state.borrow_mut().mode = ResizeMode::None;
+        })
+    };
 
     let (sx, sy, ex, ey) = *coordinates;
     let width = ex - sx;
@@ -196,58 +215,56 @@ pub fn resizable(props: &ResizableProps) -> Html {
 
     let container_class = merge_classes(&[classes::CONTAINER, &props.class.to_string()]);
 
+    // Create handle with pointer events
+    let create_handle = |mode: ResizeMode, direction: &str, handle_class: &str, orientation: Option<&str>| {
+        let class = merge_classes(&[classes::HANDLE, handle_class]);
+        let on_start = on_resize_start(mode);
+        let on_move = on_pointer_move.clone();
+        let on_up = on_pointer_up.clone();
+        
+        html! {
+            <div
+                data-slot="resizable-handle"
+                data-direction={direction.to_string()}
+                class={class}
+                onpointerdown={on_start}
+                onpointermove={on_move}
+                onpointerup={on_up}
+                role={orientation.map(|_| "separator")}
+                aria-orientation={orientation.map(|s| s.to_string())}
+                tabindex="0"
+            />
+        }
+    };
+
     html! {
-        <div ref={container_ref} class={container_class} style={style}>
+        <div data-slot="resizable" ref={container_ref} class={container_class} style={style}>
             { for props.children.iter() }
 
             // Resize handles
             if props.north {
-                <div
-                    class={merge_classes(&[classes::HANDLE, classes::HANDLE_N])}
-                    onpointerdown={on_resize_start(ResizeMode::North)}
-                />
+                { create_handle(ResizeMode::North, "north", classes::HANDLE_N, Some("horizontal")) }
             }
             if props.south {
-                <div
-                    class={merge_classes(&[classes::HANDLE, classes::HANDLE_S])}
-                    onpointerdown={on_resize_start(ResizeMode::South)}
-                />
+                { create_handle(ResizeMode::South, "south", classes::HANDLE_S, Some("horizontal")) }
             }
             if props.east {
-                <div
-                    class={merge_classes(&[classes::HANDLE, classes::HANDLE_E])}
-                    onpointerdown={on_resize_start(ResizeMode::East)}
-                />
+                { create_handle(ResizeMode::East, "east", classes::HANDLE_E, Some("vertical")) }
             }
             if props.west {
-                <div
-                    class={merge_classes(&[classes::HANDLE, classes::HANDLE_W])}
-                    onpointerdown={on_resize_start(ResizeMode::West)}
-                />
+                { create_handle(ResizeMode::West, "west", classes::HANDLE_W, Some("vertical")) }
             }
             if props.north_west {
-                <div
-                    class={merge_classes(&[classes::HANDLE, classes::HANDLE_NW])}
-                    onpointerdown={on_resize_start(ResizeMode::NorthWest)}
-                />
+                { create_handle(ResizeMode::NorthWest, "north-west", classes::HANDLE_NW, None) }
             }
             if props.north_east {
-                <div
-                    class={merge_classes(&[classes::HANDLE, classes::HANDLE_NE])}
-                    onpointerdown={on_resize_start(ResizeMode::NorthEast)}
-                />
+                { create_handle(ResizeMode::NorthEast, "north-east", classes::HANDLE_NE, None) }
             }
             if props.south_west {
-                <div
-                    class={merge_classes(&[classes::HANDLE, classes::HANDLE_SW])}
-                    onpointerdown={on_resize_start(ResizeMode::SouthWest)}
-                />
+                { create_handle(ResizeMode::SouthWest, "south-west", classes::HANDLE_SW, None) }
             }
             if props.south_east {
-                <div
-                    class={merge_classes(&[classes::HANDLE, classes::HANDLE_SE])}
-                    onpointerdown={on_resize_start(ResizeMode::SouthEast)}
-                />
+                { create_handle(ResizeMode::SouthEast, "south-east", classes::HANDLE_SE, None) }
             }
         </div>
     }
