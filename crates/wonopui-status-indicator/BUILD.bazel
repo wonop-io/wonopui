@@ -1,0 +1,12 @@
+load("@rules_rust//rust:defs.bzl", "rust_library")
+
+rust_library(
+    name = "wonopui-status-indicator",
+    srcs = glob(["src/**/*.rs"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "//crates/wonopui-core",
+        "//crates/wonopui-status-dot",
+        "@aspect_crates//:yew",
+    ],
+)

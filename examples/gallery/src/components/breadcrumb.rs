@@ -67,26 +67,26 @@ pub fn breadcrumb_documentation() -> Html {
             <ExampleCode
                 preview={html! {
                     <Breadcrumb>
-                        <BreadcrumbLink<Route> to={Route::GettingStarted}>
+                        <BreadcrumbLink<Route> to={Route::Home}>
                             {"Home"}
                         </BreadcrumbLink<Route>>
-                        <BreadcrumbLink<Route> to={Route::ButtonExample}>
+                        <BreadcrumbLink<Route> to={Route::Button}>
                             {"Components"}
                         </BreadcrumbLink<Route>>
-                        <BreadcrumbLink<Route> to={Route::BreadcrumbExample}>
+                        <BreadcrumbLink<Route> to={Route::Breadcrumb}>
                             {"Breadcrumb"}
                         </BreadcrumbLink<Route>>
                     </Breadcrumb>
                 }}
                 code={r#"
 <Breadcrumb>
-    <BreadcrumbLink<Route> to={Route::GettingStarted}>
+    <BreadcrumbLink<Route> to={Route::Home}>
         {"Home"}
     </BreadcrumbLink<Route>>
-    <BreadcrumbLink<Route> to={Route::ButtonExample}>
+    <BreadcrumbLink<Route> to={Route::Button}>
         {"Components"}
     </BreadcrumbLink<Route>>
-    <BreadcrumbLink<Route> to={Route::BreadcrumbExample}>
+    <BreadcrumbLink<Route> to={Route::Breadcrumb}>
         {"Breadcrumb"}
     </BreadcrumbLink<Route>>
 </Breadcrumb>"#.to_string()}

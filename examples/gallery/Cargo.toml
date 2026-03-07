@@ -134,6 +134,15 @@ wonopui = { path = "../../crates/wonopui", features = [
     "topbar",
     "typography",
     "window-provider",
+    "spinner",
+    "status-dot",
+    "status-indicator",
+    "confirm-dialog",
+    "error-boundary",
+    "progress",
+    "markdown-renderer",
+    "mermaid-diagram",
+    "window-controls",
 ] }
 
 # This is needed for fixing compatibility after the reorganization

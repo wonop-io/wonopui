@@ -136,6 +136,9 @@ pub mod prelude {
     #[cfg(feature = "command")]
     pub use wonopui_command::{Command, CommandOption, CommandProps};
 
+    #[cfg(feature = "confirm-dialog")]
+    pub use wonopui_confirm_dialog::{ConfirmDialog, ConfirmDialogProps, ConfirmDialogVariant};
+
     #[cfg(feature = "col")]
     pub use wonopui_col::{Col, ColAlign, ColGap, ColJustify, ColProps, Row};
 
@@ -166,11 +169,20 @@ pub mod prelude {
     #[cfg(feature = "dropdown")]
     pub use wonopui_dropdown::{Dropdown, DropdownItem, DropdownPosition};
 
+    #[cfg(feature = "error-boundary")]
+    pub use wonopui_error_boundary::{ErrorBoundary, ErrorBoundaryProps};
+
     #[cfg(feature = "input")]
     pub use wonopui_input::{Input, InputProps};
 
     #[cfg(feature = "label")]
     pub use wonopui_label::{Label, LabelProps};
+
+    #[cfg(feature = "markdown-renderer")]
+    pub use wonopui_markdown_renderer::{MarkdownRenderer, MarkdownRendererProps};
+
+    #[cfg(feature = "mermaid-diagram")]
+    pub use wonopui_mermaid_diagram::{MermaidDiagram, MermaidDiagramProps};
 
     #[cfg(feature = "notification")]
     pub use wonopui_notification::{use_notify, Notification, NotificationProvider};
@@ -181,8 +193,20 @@ pub mod prelude {
     #[cfg(feature = "popover")]
     pub use wonopui_popover::{Popover, PopoverContent, PopoverPosition, PopoverTrigger};
 
+    #[cfg(feature = "progress")]
+    pub use wonopui_progress::{Progress, ProgressProps, ProgressVariant, ProgressSize};
+
     #[cfg(feature = "select")]
     pub use wonopui_select::{Select, SelectOption, SelectProps};
+
+    #[cfg(feature = "spinner")]
+    pub use wonopui_spinner::{Spinner, SpinnerProps, SpinnerSize};
+
+    #[cfg(feature = "status-dot")]
+    pub use wonopui_status_dot::{StatusDot, StatusDotProps, StatusDotVariant, StatusDotSize};
+
+    #[cfg(feature = "status-indicator")]
+    pub use wonopui_status_indicator::{StatusIndicator, StatusIndicatorProps};
 
     #[cfg(feature = "switch")]
     pub use wonopui_switch::{SwitchButton, SwitchButtonProps};
@@ -231,6 +255,9 @@ pub mod prelude {
 
     #[cfg(feature = "group-button")]
     pub use wonopui_group_button::{GroupButton, GroupButtonDirection, GroupButtonTrigger};
+
+    #[cfg(feature = "window-controls")]
+    pub use wonopui_window_controls::{WindowControls, WindowControlsProps};
 }
 
 // Re-export components at the crate root level
@@ -298,6 +325,9 @@ pub use wonopui_combobox::{self as combobox, Combobox, ComboboxItem, ComboboxPro
 #[cfg(feature = "command")]
 pub use wonopui_command::{self as command, Command, CommandOption, CommandProps};
 
+#[cfg(feature = "confirm-dialog")]
+pub use wonopui_confirm_dialog::{self as confirm_dialog, ConfirmDialog, ConfirmDialogProps, ConfirmDialogVariant};
+
 #[cfg(feature = "container")]
 pub use wonopui_container::{self, Container, ContainerProps, ContainerVariant};
 
@@ -351,6 +381,9 @@ pub use wonopui_drawer::{
 #[cfg(feature = "dropdown")]
 pub use wonopui_dropdown::{self, Dropdown, DropdownItem, DropdownPosition};
 
+#[cfg(feature = "error-boundary")]
+pub use wonopui_error_boundary::{self as error_boundary, ErrorBoundary, ErrorBoundaryProps};
+
 #[cfg(feature = "group-button")]
 pub use wonopui_group_button::{
     self, FlexDirection, GroupButton, GroupButtonDirection, GroupButtonTrigger,
@@ -390,11 +423,17 @@ pub mod markdown_editor_types {
     };
 }
 
+#[cfg(feature = "markdown-renderer")]
+pub use wonopui_markdown_renderer::{self as markdown_renderer, MarkdownRenderer, MarkdownRendererProps};
+
 #[cfg(feature = "media-query")]
 pub use wonopui_media_query::{self, breakpoints, use_media_query};
 
 #[cfg(feature = "mention-input")]
 pub use wonopui_mention_input::{self as mention_input, MentionInput, MentionInputProps};
+
+#[cfg(feature = "mermaid-diagram")]
+pub use wonopui_mermaid_diagram::{self as mermaid_diagram, MermaidDiagram, MermaidDiagramProps};
 
 #[cfg(feature = "multicol-sidebar")]
 pub use wonopui_multicol_sidebar::{
@@ -427,6 +466,9 @@ pub use wonopui_popover::{
     self, Popover, PopoverContent, PopoverPosition, PopoverState, PopoverTrigger,
 };
 
+#[cfg(feature = "progress")]
+pub use wonopui_progress::{self as progress, Progress, ProgressProps, ProgressVariant, ProgressSize};
+
 #[cfg(feature = "resizable")]
 pub use wonopui_resizable::{self as resizable, Resizable, ResizableProps};
 
@@ -444,6 +486,15 @@ pub use wonopui_sidebar::{
     self, Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarHeading, SidebarItem,
     SidebarLink, SidebarMenu, SidebarNav, SidebarPosition as SidebarSide,
 };
+
+#[cfg(feature = "spinner")]
+pub use wonopui_spinner::{self as spinner, Spinner, SpinnerProps, SpinnerSize};
+
+#[cfg(feature = "status-dot")]
+pub use wonopui_status_dot::{self as status_dot, StatusDot, StatusDotProps, StatusDotVariant, StatusDotSize};
+
+#[cfg(feature = "status-indicator")]
+pub use wonopui_status_indicator::{self as status_indicator, StatusIndicator, StatusIndicatorProps};
 
 #[cfg(feature = "switch")]
 pub use wonopui_switch::{self, SwitchButton, SwitchButtonProps};
@@ -481,6 +532,9 @@ pub use wonopui_topbar::{
 pub use wonopui_typography::{
     self, Heading, HeadingLevel, HeadingProps, Paragraph, ParagraphProps, H1, H2, H3, H4, H5, H6, P,
 };
+
+#[cfg(feature = "window-controls")]
+pub use wonopui_window_controls::{self as window_controls, WindowControls, WindowControlsProps};
 
 #[cfg(feature = "window-provider")]
 pub use wonopui_window_provider::{

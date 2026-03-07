@@ -3,6 +3,7 @@ mod app;
 mod app_layout;
 mod components;
 mod features_section;
+mod home;
 mod layout;
 mod notes_section;
 mod route_index;

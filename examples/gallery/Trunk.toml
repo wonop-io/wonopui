@@ -3,3 +3,6 @@ paths = ["../../src","./"]
 
 [tools]
 wasm_bindgen = "0.2.110"
+
+[serve]
+port = 8081

@@ -34,6 +34,7 @@ everything = [
     "component-editor",
     "combobox",
     "command",
+    "confirm-dialog",
     "container",
     "content",
     "context-menu",
@@ -47,6 +48,7 @@ everything = [
     "drag-point",
     "drawer",
     "dropdown",
+    "error-boundary",
     "group-button",
     "iframe",
     "input",
@@ -54,8 +56,10 @@ everything = [
     "label",
     "layout",
     "markdown-editor",
+    "markdown-renderer",
     "media-query",
     "mention-input",
+    "mermaid-diagram",
     "multicol-sidebar",
     "notification",
     "page-content",
@@ -64,10 +68,14 @@ everything = [
     "paint-canvas",
     "placeholder",
     "popover",
+    "progress",
     "resizable",
     "select",
     "selectable",
     "sidebar",
+    "spinner",
+    "status-dot",
+    "status-indicator",
     "switch",
     "table",
     "tabs",
@@ -78,6 +86,7 @@ everything = [
     "toggle",
     "topbar",
     "typography",
+    "window-controls",
     "window-provider",
 ]
 
@@ -100,6 +109,7 @@ component-editor = ["dep:wonopui-component-editor"]
 color-picker = ["dep:wonopui-color-picker"]
 combobox = ["dep:wonopui-combobox"]
 command = ["dep:wonopui-command"]
+confirm-dialog = ["dep:wonopui-confirm-dialog"]
 container = ["dep:wonopui-container"]
 content = ["dep:wonopui-content"]
 context-menu = ["dep:wonopui-context-menu"]
@@ -113,6 +123,7 @@ divider = ["dep:wonopui-divider"]
 drag-point = ["dep:wonopui-drag-point"]
 drawer = ["dep:wonopui-drawer"]
 dropdown = ["dep:wonopui-dropdown"]
+error-boundary = ["dep:wonopui-error-boundary"]
 group-button = ["dep:wonopui-group-button"]
 iframe = ["dep:wonopui-iframe"]
 input = ["dep:wonopui-input"]
@@ -120,8 +131,10 @@ kanban = ["dep:wonopui-kanban"]
 label = ["dep:wonopui-label"]
 layout = ["dep:wonopui-layout"]
 markdown-editor = ["dep:wonopui-markdown-editor"]
+markdown-renderer = ["dep:wonopui-markdown-renderer"]
 media-query = ["dep:wonopui-media-query", "window-provider"]
 mention-input = ["dep:wonopui-mention-input"]
+mermaid-diagram = ["dep:wonopui-mermaid-diagram"]
 multicol-sidebar = ["dep:wonopui-multicol-sidebar", "layout"]
 notification = ["dep:wonopui-notification"]
 page-content = ["dep:wonopui-page-content"]
@@ -130,10 +143,14 @@ pagination = ["dep:wonopui-pagination"]
 paint-canvas = ["dep:wonopui-paint-canvas"]
 placeholder = ["dep:wonopui-placeholder"]
 popover = ["dep:wonopui-popover"]
+progress = ["dep:wonopui-progress"]
 resizable = ["dep:wonopui-resizable"]
 select = ["dep:wonopui-select"]
 selectable = ["dep:wonopui-selectable"]
 sidebar = ["dep:wonopui-sidebar"]
+spinner = ["dep:wonopui-spinner"]
+status-dot = ["dep:wonopui-status-dot"]
+status-indicator = ["dep:wonopui-status-indicator"]
 switch = ["dep:wonopui-switch"]
 table = ["dep:wonopui-table"]
 tabs = ["dep:wonopui-tabs"]
@@ -144,6 +161,7 @@ theme-provider = ["dep:wonopui-theme-provider"]
 toggle = ["dep:wonopui-toggle"]
 topbar = ["dep:wonopui-topbar"]
 typography = ["dep:wonopui-typography"]
+window-controls = ["dep:wonopui-window-controls"]
 window-provider = ["dep:wonopui-window-provider"]
 
 [dependencies]
@@ -170,6 +188,7 @@ wonopui-component-editor = { path = "../wonopui-component-editor", optional = tr
 wonopui-color-picker = { path = "../wonopui-color-picker", optional = true }
 wonopui-combobox = { path = "../wonopui-combobox", optional = true }
 wonopui-command = { path = "../wonopui-command", optional = true }
+wonopui-confirm-dialog = { path = "../wonopui-confirm-dialog", optional = true }
 wonopui-container = { path = "../wonopui-container", optional = true }
 wonopui-content = { path = "../wonopui-content", optional = true }
 wonopui-context-menu = { path = "../wonopui-context-menu", optional = true }
@@ -183,6 +202,7 @@ wonopui-divider = { path = "../wonopui-divider", optional = true }
 wonopui-drag-point = { path = "../wonopui-drag-point", optional = true }
 wonopui-drawer = { path = "../wonopui-drawer", optional = true }
 wonopui-dropdown = { path = "../wonopui-dropdown", optional = true }
+wonopui-error-boundary = { path = "../wonopui-error-boundary", optional = true }
 wonopui-group-button = { path = "../wonopui-group-button", optional = true }
 wonopui-iframe = { path = "../wonopui-iframe", optional = true }
 wonopui-input = { path = "../wonopui-input", optional = true }
@@ -190,8 +210,10 @@ wonopui-kanban = { path = "../wonopui-kanban", optional = true }
 wonopui-label = { path = "../wonopui-label", optional = true }
 wonopui-layout = { path = "../wonopui-layout", optional = true }
 wonopui-markdown-editor = { path = "../wonopui-markdown-editor", optional = true }
+wonopui-markdown-renderer = { path = "../wonopui-markdown-renderer", optional = true }
 wonopui-media-query = { path = "../wonopui-media-query", optional = true }
 wonopui-mention-input = { path = "../wonopui-mention-input", optional = true }
+wonopui-mermaid-diagram = { path = "../wonopui-mermaid-diagram", optional = true }
 wonopui-multicol-sidebar = { path = "../wonopui-multicol-sidebar", optional = true }
 wonopui-notification = { path = "../wonopui-notification", optional = true }
 wonopui-page-content = { path = "../wonopui-page-content", optional = true }
@@ -200,10 +222,14 @@ wonopui-pagination = { path = "../wonopui-pagination", optional = true }
 wonopui-paint-canvas = { path = "../wonopui-paint-canvas", optional = true }
 wonopui-placeholder = { path = "../wonopui-placeholder", optional = true }
 wonopui-popover = { path = "../wonopui-popover", optional = true }
+wonopui-progress = { path = "../wonopui-progress", optional = true }
 wonopui-resizable = { path = "../wonopui-resizable", optional = true }
 wonopui-select = { path = "../wonopui-select", optional = true }
 wonopui-selectable = { path = "../wonopui-selectable", optional = true }
 wonopui-sidebar = { path = "../wonopui-sidebar", optional = true }
+wonopui-spinner = { path = "../wonopui-spinner", optional = true }
+wonopui-status-dot = { path = "../wonopui-status-dot", optional = true }
+wonopui-status-indicator = { path = "../wonopui-status-indicator", optional = true }
 wonopui-switch = { path = "../wonopui-switch", optional = true }
 wonopui-table = { path = "../wonopui-table", optional = true }
 wonopui-tabs = { path = "../wonopui-tabs", optional = true }
@@ -214,4 +240,5 @@ wonopui-theme-provider = { path = "../wonopui-theme-provider", optional = true }
 wonopui-toggle = { path = "../wonopui-toggle", optional = true }
 wonopui-topbar = { path = "../wonopui-topbar", optional = true }
 wonopui-typography = { path = "../wonopui-typography", optional = true }
+wonopui-window-controls = { path = "../wonopui-window-controls", optional = true }
 wonopui-window-provider = { path = "../wonopui-window-provider", optional = true }

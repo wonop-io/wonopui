@@ -3,8 +3,6 @@ use crate::routes::Route;
 use gloo_console as console;
 use wonopui::prelude::*;
 use yew::prelude::*;
-use yew::prelude::*;
-use yew_router::prelude::*;
 use yew_router::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -127,69 +125,79 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
             }}>
             <SidebarHeading>{"Getting started"}</SidebarHeading>
             <SidebarMenu>
-                <SidebarLink<Route> label="Introduction" to={Route::GettingStarted} />
+                <SidebarLink<Route> label="Introduction" to={Route::Home} />
                 // <SidebarLink<Route> label="Installation" to={Route::Installation} />
                 // <SidebarLink<Route> label="Usage" to={Route::Usage} />
             </SidebarMenu>
             <SidebarHeading>{"Components"}</SidebarHeading>
             <SidebarMenu>
-                <SidebarLink<Route> label="Accordion" to={Route::AccordionExample} />
-                <SidebarLink<Route> label="Alert" to={Route::AlertExample} />
-                <SidebarLink<Route> label="Avatar" to={Route::AvatarExample} />
-                <SidebarLink<Route> label="Badge" to={Route::BadgeExample} />
-                <SidebarLink<Route> label="Breadcrumb" to={Route::BreadcrumbExample} />
-                <SidebarLink<Route> label="Button" to={Route::ButtonExample} />
-                <SidebarLink<Route> label="Calendar" to={Route::CalendarExample} />
-                <SidebarLink<Route> label="Card" to={Route::CardExample} />
-                <SidebarLink<Route> label="Carousel" to={Route::CarouselExample} />
-                <SidebarLink<Route> label="Checkbox" to={Route::CheckboxExample} />
-                <SidebarLink<Route> label="Code Editor" to={Route::CodeEditorExample} />
-                <SidebarLink<Route> label="Col" to={Route::ColExample} />
-                <SidebarLink<Route> label="Collapsible" to={Route::CollapsibleExample} />
-                <SidebarLink<Route> label="Color Picker" to={Route::ColorPickerExample} />
-                <SidebarLink<Route> label="Combobox" to={Route::ComboboxExample} />
-                <SidebarLink<Route> label="Command" to={Route::CommandExample} />
-                <SidebarLink<Route> label="Container" to={Route::ContainerExample} />
-                <SidebarLink<Route> label="Content" to={Route::ContentExample} />
-                <SidebarLink<Route> label="Context Menu" to={Route::ContextMenuExample} />
-                <SidebarLink<Route> label="Copy Button" to={Route::CopyButtonExample} />
-                <SidebarLink<Route> label="Data Table" to={Route::DataTableExample} />
-                <SidebarLink<Route> label="Date Picker" to={Route::DatePickerExample} />
-                <SidebarLink<Route> label="Dialog" to={Route::DialogExample} />
-                <SidebarLink<Route> label="Divider" to={Route::DividerExample} />
-                <SidebarLink<Route> label="Drag Point" to={Route::DragPointExample} />
-                <SidebarLink<Route> label="Drawer" to={Route::DrawerExample} />
-                <SidebarLink<Route> label="Dropdown" to={Route::DropdownExample} />
-                <SidebarLink<Route> label="Group Button" to={Route::GroupButtonExample} />
-                <SidebarLink<Route> label="Iframe" to={Route::IframeExample} />
-                <SidebarLink<Route> label="Input" to={Route::InputExample} />
-                <SidebarLink<Route> label="Kanban" to={Route::KanbanExample} />
-                <SidebarLink<Route> label="Label" to={Route::LabelExample} />
-                <SidebarLink<Route> label="Markdown Editor" to={Route::MarkdownEditorExample} />
-                <SidebarLink<Route> label="Media Query" to={Route::MediaQueryExample} />
-                <SidebarLink<Route> label="Multicol Sidebar" to={Route::MulticolSidebarExample} />
-                <SidebarLink<Route> label="Notification" to={Route::NotificationExample} />
-                <SidebarLink<Route> label="Page Header" to={Route::PageHeaderExample} />
-                <SidebarLink<Route> label="Page Content" to={Route::PageContentExample} />
-                <SidebarLink<Route> label="Pagination" to={Route::PaginationExample} />
-                <SidebarLink<Route> label="Paint Canvas" to={Route::PaintCanvasExample} />
-                <SidebarLink<Route> label="Placeholder" to={Route::PlaceholderExample} />
-                <SidebarLink<Route> label="Popover" to={Route::PopoverExample} />
-                <SidebarLink<Route> label="Resizable" to={Route::ResizableExample} />
-                <SidebarLink<Route> label="Select" to={Route::SelectExample} />
-                <SidebarLink<Route> label="Selectable" to={Route::SelectableExample} />
-                <SidebarLink<Route> label="Sidebar" to={Route::SidebarExample} />
-                <SidebarLink<Route> label="Switch" to={Route::SwitchExample} />
-                <SidebarLink<Route> label="Table" to={Route::TableExample} />
-                <SidebarLink<Route> label="Tabs" to={Route::TabsExample} />
-                <SidebarLink<Route> label="Tag Input" to={Route::TagInputExample} />
-                <SidebarLink<Route> label="Mention Input" to={Route::MentionInputExample} />
-                <SidebarLink<Route> label="Tailwind Color Picker" to={Route::TailwindColorPickerExample} />
-                <SidebarLink<Route> label="Textarea" to={Route::TextareaExample} />
-                <SidebarLink<Route> label="Toggle" to={Route::ToggleExample} />
-                <SidebarLink<Route> label="Topbar" to={Route::TopbarExample} />
-                <SidebarLink<Route> label="Typography" to={Route::TypographyExample} />
-                <SidebarLink<Route> label="Window Provider" to={Route::WindowProviderExample} />
+                <SidebarLink<Route> label="Accordion" to={Route::Accordion} />
+                <SidebarLink<Route> label="Alert" to={Route::Alert} />
+                <SidebarLink<Route> label="Avatar" to={Route::Avatar} />
+                <SidebarLink<Route> label="Badge" to={Route::Badge} />
+                <SidebarLink<Route> label="Breadcrumb" to={Route::Breadcrumb} />
+                <SidebarLink<Route> label="Button" to={Route::Button} />
+                <SidebarLink<Route> label="Calendar" to={Route::Calendar} />
+                <SidebarLink<Route> label="Card" to={Route::Card} />
+                <SidebarLink<Route> label="Carousel" to={Route::Carousel} />
+                <SidebarLink<Route> label="Checkbox" to={Route::Checkbox} />
+                <SidebarLink<Route> label="Code Editor" to={Route::CodeEditor} />
+                <SidebarLink<Route> label="Col" to={Route::Col} />
+                <SidebarLink<Route> label="Collapsible" to={Route::Collapsible} />
+                <SidebarLink<Route> label="Color Picker" to={Route::ColorPicker} />
+                <SidebarLink<Route> label="Combobox" to={Route::Combobox} />
+                <SidebarLink<Route> label="Command" to={Route::Command} />
+                <SidebarLink<Route> label="Confirm Dialog" to={Route::ConfirmDialog} />
+                <SidebarLink<Route> label="Container" to={Route::Container} />
+                <SidebarLink<Route> label="Content" to={Route::Content} />
+                <SidebarLink<Route> label="Context Menu" to={Route::ContextMenu} />
+                <SidebarLink<Route> label="Copy Button" to={Route::CopyButton} />
+                <SidebarLink<Route> label="Data Table" to={Route::DataTable} />
+                <SidebarLink<Route> label="Date Picker" to={Route::DatePicker} />
+                <SidebarLink<Route> label="Dialog" to={Route::Dialog} />
+                <SidebarLink<Route> label="Diff View" to={Route::DiffView} />
+                <SidebarLink<Route> label="Divider" to={Route::Divider} />
+                <SidebarLink<Route> label="Drag Point" to={Route::DragPoint} />
+                <SidebarLink<Route> label="Drawer" to={Route::Drawer} />
+                <SidebarLink<Route> label="Dropdown" to={Route::Dropdown} />
+                <SidebarLink<Route> label="Error Boundary" to={Route::ErrorBoundary} />
+                <SidebarLink<Route> label="Group Button" to={Route::GroupButton} />
+                <SidebarLink<Route> label="Iframe" to={Route::Iframe} />
+                <SidebarLink<Route> label="Input" to={Route::Input} />
+                <SidebarLink<Route> label="Kanban" to={Route::Kanban} />
+                <SidebarLink<Route> label="Label" to={Route::Label} />
+                <SidebarLink<Route> label="Markdown Editor" to={Route::MarkdownEditor} />
+                <SidebarLink<Route> label="Markdown Renderer" to={Route::MarkdownRenderer} />
+                <SidebarLink<Route> label="Media Query" to={Route::MediaQuery} />
+                <SidebarLink<Route> label="Multicol Sidebar" to={Route::MulticolSidebar} />
+                <SidebarLink<Route> label="Notification" to={Route::Notification} />
+                <SidebarLink<Route> label="Page Header" to={Route::PageHeader} />
+                <SidebarLink<Route> label="Page Content" to={Route::PageContent} />
+                <SidebarLink<Route> label="Pagination" to={Route::Pagination} />
+                <SidebarLink<Route> label="Paint Canvas" to={Route::PaintCanvas} />
+                <SidebarLink<Route> label="Placeholder" to={Route::Placeholder} />
+                <SidebarLink<Route> label="Popover" to={Route::Popover} />
+                <SidebarLink<Route> label="Progress" to={Route::Progress} />
+                <SidebarLink<Route> label="Resizable" to={Route::Resizable} />
+                <SidebarLink<Route> label="Select" to={Route::Select} />
+                <SidebarLink<Route> label="Selectable" to={Route::Selectable} />
+                <SidebarLink<Route> label="Sidebar" to={Route::Sidebar} />
+                <SidebarLink<Route> label="Spinner" to={Route::Spinner} />
+                <SidebarLink<Route> label="Status Dot" to={Route::StatusDot} />
+                <SidebarLink<Route> label="Status Indicator" to={Route::StatusIndicator} />
+                <SidebarLink<Route> label="Switch" to={Route::Switch} />
+                <SidebarLink<Route> label="Table" to={Route::Table} />
+                <SidebarLink<Route> label="Tabs" to={Route::Tabs} />
+                <SidebarLink<Route> label="Tag Input" to={Route::TagInput} />
+                <SidebarLink<Route> label="Mention Input" to={Route::MentionInput} />
+                <SidebarLink<Route> label="Mermaid Diagram" to={Route::MermaidDiagram} />
+                <SidebarLink<Route> label="Tailwind Color Picker" to={Route::TailwindColorPicker} />
+                <SidebarLink<Route> label="Textarea" to={Route::Textarea} />
+                <SidebarLink<Route> label="Toggle" to={Route::Toggle} />
+                <SidebarLink<Route> label="Topbar" to={Route::Topbar} />
+                <SidebarLink<Route> label="Typography" to={Route::Typography} />
+                <SidebarLink<Route> label="Window Provider" to={Route::WindowProvider} />
+                <SidebarLink<Route> label="Window Controls" to={Route::WindowControls} />
             </SidebarMenu>
         </Sidebar>
     };
