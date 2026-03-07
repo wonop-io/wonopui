@@ -1,0 +1,17 @@
+[package]
+name = "wonopui-mermaid-diagram"
+version = "0.1.0"
+edition = "2021"
+authors = ["Troels F. Rønnow <troels@wonop.com>"]
+description = "Mermaid diagram renderer component for WonopUI"
+license = "MIT"
+repository = "https://github.com/wonop-io/wonopui"
+
+[dependencies]
+wonopui-core = { path = "../wonopui-core" }
+yew = { version = "0.21", features = ["csr"] }
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = ["Element", "HtmlElement", "Document", "Window"] }
+gloo-utils = "0.2"

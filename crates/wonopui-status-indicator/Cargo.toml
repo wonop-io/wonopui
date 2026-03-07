@@ -1,0 +1,13 @@
+[package]
+name = "wonopui-status-indicator"
+version = "0.1.0"
+edition = "2021"
+authors = ["Troels F. Rønnow <troels@wonop.com>"]
+description = "Status indicator component with icon and label for WonopUI"
+license = "MIT"
+repository = "https://github.com/wonop-io/wonopui"
+
+[dependencies]
+wonopui-core = { path = "../wonopui-core" }
+wonopui-status-dot = { path = "../wonopui-status-dot" }
+yew = { version = "0.21", features = ["csr"] }

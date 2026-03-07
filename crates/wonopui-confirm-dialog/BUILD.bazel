@@ -1,0 +1,12 @@
+load("@rules_rust//rust:defs.bzl", "rust_library")
+
+rust_library(
+    name = "wonopui-confirm-dialog",
+    srcs = glob(["src/**/*.rs"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "//crates/wonopui-core",
+        "//crates/wonopui-button",
+        "@aspect_crates//:yew",
+    ],
+)

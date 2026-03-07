@@ -1,229 +1,91 @@
 use crate::app_layout::AppLayout;
 use crate::components::*;
-use crate::routes::{AppRoute, Route};
-use gloo_console as console;
-use std::rc::Rc;
-use web_sys::HtmlInputElement;
-use wonopui::*;
+use crate::home::Home;
+use crate::routes::Route;
 use yew::prelude::*;
 use yew_router::prelude::*;
-use yewdux::prelude::*;
 
-#[function_component(GettingStarted)]
-pub fn getting_started() -> Html {
-    html! {
-        <Container variant={ContainerVariant::Large} class="bg-white dark:bg-zinc-900 min-h-screen">
-            <H1>{ "Getting Started with Wonop UI" }</H1>
-            <Paragraph>{ "Wonop UI is a parameterized UI framework that leverages Tailwind CSS for use with the Yew framework in Rust." }</Paragraph>
-            <H2>{ "Installation" }</H2>
-            <Paragraph>{ "To use Wonop UI in your Yew project, add the following to your Cargo.toml:" }</Paragraph>
-            <pre>
-                { "[dependencies]\nwonopui = { git = \"https://github.com/wonop-io/wonopui.git\", branch=\"main\" }" }
-            </pre>
-            <H2>{ "Initializing Tailwind CSS" }</H2>
-            <Paragraph>{ "Run the following command to initialize Tailwind CSS:" }</Paragraph>
-            <pre>{ "npx tailwindcss init" }</pre>
-            <Paragraph>{ "Add the following to your tailwind.config.js:" }</Paragraph>
-            <pre>
-                { "module.exports = {\n  content: [\n    \"./src/**/*.rs\",\n    \"./target/wonopui.json\",\n    \"./target/tailwindcss.txt\",\n    \"./target/**/wonopui.json\",\n    \"./target/**/tailwindcss.txt\",    \n  ],\n  theme: {\n    extend: {},\n  },\n  plugins: [],\n};" }
-            </pre>
-            <H2>{ "Adding Tailwind CSS to your HTML" }</H2>
-            <Paragraph>{ "Add the following to your index.html:" }</Paragraph>
-            <pre>{ "<link data-trunk rel=\"tailwind-css\" href=\"tailwind.css\" />" }</pre>
-            <Paragraph>{ "With these steps completed, you're ready to start using Wonop UI in your Yew project!" }</Paragraph>
-        </Container>
+fn switch(routes: Route) -> Html {
+    match routes {
+        Route::Home => html! { <Home /> },
+        Route::Accordion => html! { <AccordionDocumentation /> },
+        Route::Alert => html! { <AlertDocumentation /> },
+        Route::Avatar => html! { <AvatarDocumentation /> },
+        Route::Badge => html! { <BadgeDocumentation /> },
+        Route::Breadcrumb => html! { <BreadcrumbDocumentation /> },
+        Route::Button => html! { <ButtonDocumentation /> },
+        Route::Calendar => html! { <CalendarDocumentation /> },
+        Route::Card => html! { <CardDocumentation /> },
+        Route::Carousel => html! { <CarouselDocumentation /> },
+        Route::Checkbox => html! { <CheckboxDocumentation /> },
+        Route::CodeEditor => html! { <CodeEditorDocumentation /> },
+        Route::Col => html! { <ColDocumentation /> },
+        Route::Collapsible => html! { <CollapsibleDocumentation /> },
+        Route::ColorPicker => html! { <ColorPickerDocumentation /> },
+        Route::Combobox => html! { <ComboboxDocumentation /> },
+        Route::Command => html! { <CommandDocumentation /> },
+        Route::ConfirmDialog => html! { <ConfirmDialogDocumentation /> },
+        Route::Container => html! { <ContainerDocumentation /> },
+        Route::Content => html! { <ContentDocumentation /> },
+        Route::ContextMenu => html! { <ContextMenuDocumentation /> },
+        Route::CopyButton => html! { <CopyButtonDocumentation /> },
+        Route::DataTable => html! { <DataTableDocumentation /> },
+        Route::DatePicker => html! { <DatePickerDocumentation /> },
+        Route::Dialog => html! { <DialogDocumentation /> },
+        Route::DiffView => html! { <DiffViewDocumentation /> },
+        Route::Divider => html! { <DividerDocumentation /> },
+        Route::DragPoint => html! { <DragPointDocumentation /> },
+        Route::Drawer => html! { <DrawerDocumentation /> },
+        Route::Dropdown => html! { <DropdownDocumentation /> },
+        Route::ErrorBoundary => html! { <ErrorBoundaryDocumentation /> },
+        Route::GroupButton => html! { <GroupButtonDocumentation /> },
+        Route::Iframe => html! { <IframeDocumentation /> },
+        Route::Input => html! { <InputDocumentation /> },
+        Route::Kanban => html! { <KanbanDocumentation /> },
+        Route::Label => html! { <LabelDocumentation /> },
+        Route::MarkdownEditor => html! { <MarkdownEditorDocumentation /> },
+        Route::MarkdownRenderer => html! { <MarkdownRendererDocumentation /> },
+        Route::MediaQuery => html! { <MediaQueryDocumentation /> },
+        Route::MentionInput => html! { <MentionInputDocumentation /> },
+        Route::MermaidDiagram => html! { <MermaidDiagramDocumentation /> },
+        Route::MulticolSidebar => html! { <MulticolSidebarDocumentation /> },
+        Route::Notification => html! { <NotificationDocumentation /> },
+        Route::PageContent => html! { <PageContentDocumentation /> },
+        Route::PageHeader => html! { <PageHeaderDocumentation /> },
+        Route::Pagination => html! { <PaginationDocumentation /> },
+        Route::PaintCanvas => html! { <PaintCanvasDocumentation /> },
+        Route::Placeholder => html! { <PlaceholderDocumentation /> },
+        Route::Popover => html! { <PopoverDocumentation /> },
+        Route::Progress => html! { <ProgressDocumentation /> },
+        Route::Resizable => html! { <ResizableDocumentation /> },
+        Route::Select => html! { <SelectDocumentation /> },
+        Route::Selectable => html! { <SelectableDocumentation /> },
+        Route::Sidebar => html! { <SidebarDocumentation /> },
+        Route::Spinner => html! { <SpinnerDocumentation /> },
+        Route::StatusDot => html! { <StatusDotDocumentation /> },
+        Route::StatusIndicator => html! { <StatusIndicatorDocumentation /> },
+        Route::Switch => html! { <SwitchDocumentation /> },
+        Route::Table => html! { <TableDocumentation /> },
+        Route::Tabs => html! { <TabsDocumentation /> },
+        Route::TagInput => html! { <TagInputDocumentation /> },
+        Route::TailwindColorPicker => html! { <TailwindColorPickerDocumentation /> },
+        Route::Textarea => html! { <TextareaDocumentation /> },
+        Route::Toggle => html! { <ToggleDocumentation /> },
+        Route::Topbar => html! { <TopbarDocumentation /> },
+        Route::Typography => html! { <TypographyDocumentation /> },
+        Route::WindowControls => html! { <WindowControlsDocumentation /> },
+        Route::WindowProvider => html! { <WindowProviderDocumentation /> },
+        Route::NotFound => html! { <h1>{ "404" }</h1> },
     }
 }
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let render = move |routes| match routes {
-        Route::GettingStarted => {
-            html! { <GettingStarted /> }
-        }
-        Route::AccordionExample => {
-            html! { <AccordionDocumentation /> }
-        }
-        Route::AlertExample => {
-            html! { <AlertDocumentation /> }
-        }
-        Route::AvatarExample => {
-            html! { <AvatarDocumentation /> }
-        }
-        Route::BadgeExample => {
-            html! { <BadgeDocumentation /> }
-        }
-        Route::BreadcrumbExample => {
-            html! { <BreadcrumbDocumentation /> }
-        }
-        Route::ButtonExample => {
-            html! { <ButtonDocumentation /> }
-        }
-        Route::CalendarExample => {
-            html! { <CalendarDocumentation /> }
-        }
-        Route::CardExample => {
-            html! { <CardDocumentation /> }
-        }
-        Route::CarouselExample => {
-            html! { <CarouselDocumentation /> }
-        }
-        Route::CheckboxExample => {
-            html! { <CheckboxDocumentation /> }
-        }
-        Route::CodeEditorExample => {
-            html! { <CodeEditorDocumentation /> }
-        }
-        Route::DiffViewExample => {
-            html! { <DiffViewDocumentation /> }
-        }
-        Route::ColExample => {
-            html! { <ColDocumentation /> }
-        }
-        Route::CollapsibleExample => {
-            html! { <CollapsibleDocumentation /> }
-        }
-        Route::ColorPickerExample => {
-            html! { <ColorPickerDocumentation /> }
-        }
-        Route::ComboboxExample => {
-            html! { <ComboboxDocumentation /> }
-        }
-        Route::CommandExample => {
-            html! { <CommandDocumentation /> }
-        }
-        Route::ContainerExample => {
-            html! { <ContainerDocumentation /> }
-        }
-        Route::ContentExample => {
-            html! { <ContentDocumentation /> }
-        }
-        Route::ContextMenuExample => {
-            html! { <ContextMenuDocumentation /> }
-        }
-        Route::CopyButtonExample => {
-            html! { <CopyButtonDocumentation /> }
-        }
-        Route::DataTableExample => {
-            html! { <DataTableDocumentation /> }
-        }
-        Route::DatePickerExample => {
-            html! { <DatePickerDocumentation /> }
-        }
-        Route::DialogExample => {
-            html! { <DialogDocumentation /> }
-        }
-        Route::DividerExample => {
-            html! { <DividerDocumentation /> }
-        }
-        Route::DragPointExample => {
-            html! { <DragPointDocumentation /> }
-        }
-        Route::DrawerExample => {
-            html! { <DrawerDocumentation /> }
-        }
-        Route::DropdownExample => {
-            html! { <DropdownDocumentation /> }
-        }
-        Route::GroupButtonExample => {
-            html! { <GroupButtonDocumentation /> }
-        }
-        Route::IframeExample => {
-            html! { <IframeDocumentation /> }
-        }
-        Route::InputExample => {
-            html! { <InputDocumentation /> }
-        }
-        Route::LabelExample => {
-            html! { <LabelDocumentation /> }
-        }
-        Route::MediaQueryExample => {
-            html! { <MediaQueryDocumentation /> }
-        }
-        Route::MulticolSidebarExample => {
-            html! { <MulticolSidebarDocumentation /> }
-        }
-        Route::NotificationExample => {
-            html! { <NotificationDocumentation /> }
-        }
-        Route::PageContentExample => {
-            html! { <PageContentDocumentation /> }
-        }
-        Route::PageHeaderExample => {
-            html! { <PageHeaderDocumentation /> }
-        }
-        Route::PaginationExample => {
-            html! { <PaginationDocumentation /> }
-        }
-        Route::PaintCanvasExample => {
-            html! { <PaintCanvasDocumentation /> }
-        }
-        Route::PlaceholderExample => {
-            html! { <PlaceholderDocumentation /> }
-        }
-        Route::PopoverExample => {
-            html! { <PopoverDocumentation /> }
-        }
-        Route::ResizableExample => {
-            html! { <ResizableDocumentation /> }
-        }
-        Route::SelectExample => {
-            html! { <SelectDocumentation /> }
-        }
-        Route::SelectableExample => {
-            html! { <SelectableDocumentation /> }
-        }
-        Route::SidebarExample => {
-            html! { <SidebarDocumentation /> }
-        }
-        Route::SwitchExample => {
-            html! { <SwitchDocumentation /> }
-        }
-        Route::TableExample => {
-            html! { <TableDocumentation /> }
-        }
-        Route::TabsExample => {
-            html! { <TabsDocumentation /> }
-        }
-        Route::TagInputExample => {
-            html! { <TagInputDocumentation /> }
-        }
-        Route::MentionInputExample => {
-            html! { <MentionInputDocumentation /> }
-        }
-        Route::TailwindColorPickerExample => {
-            html! { <TailwindColorPickerDocumentation /> }
-        }
-        Route::TextareaExample => {
-            html! { <TextareaDocumentation /> }
-        }
-        Route::ToggleExample => {
-            html! { <ToggleDocumentation /> }
-        }
-        Route::TopbarExample => {
-            html! { <TopbarDocumentation /> }
-        }
-        Route::TypographyExample => {
-            html! { <TypographyDocumentation /> }
-        }
-        Route::WindowProviderExample => {
-            html! { <WindowProviderDocumentation /> }
-        }
-        Route::KanbanExample => {
-            html! { <KanbanDocumentation /> }
-        }
-        Route::MarkdownEditorExample => {
-            html! { <MarkdownEditorDocumentation /> }
-        }
-    };
-
-    return html! {
-    <ThemeProvider>
+    html! {
         <BrowserRouter>
             <AppLayout>
-                <Switch<Route> render={render} />
+                <Switch<Route> render={switch} />
             </AppLayout>
         </BrowserRouter>
-    </ThemeProvider>
-    };
+    }
 }
