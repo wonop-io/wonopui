@@ -16,7 +16,7 @@ pub fn menu() -> Html {
                 <h2 class="text-xs font-semibold text-zinc-900 dark:text-white">{"UI"}</h2>
                 <ul role="list" class="border-l border-transparent">
                     <li class="relative">
-                        <Link<Route> to={Route::AccordionExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Accordion} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Accordion"}</span>
                         </Link<Route>>
                     </li>
@@ -24,107 +24,145 @@ pub fn menu() -> Html {
             </li>
             <li class="relative mt-6 md:mt-0">
                 <h2 class="text-xs font-semibold text-zinc-900 dark:text-white">{"Components"}</h2>
-                /*
-                <div class="relative mt-3 pl-2">
-                    <div class="absolute inset-x-0 top-0 bg-zinc-800/2.5 will-change-transform dark:bg-white/2.5" style="height: 64px; top: 64px; opacity: 1; border-radius: 8px; transform: none; transform-origin: 50% 50% 0px;"></div>
-                    <div class="absolute inset-y-0 left-2 w-px bg-zinc-900/10 dark:bg-white/5" style="transform: none; transform-origin: 50% 50% 0px;"></div>
-                    <div class="absolute left-2 h-6 w-px bg-emerald-500" style="top: 68px; opacity: 1; transform: none; transform-origin: 50% 50% 0px;"></div>
-                </div>
-                */
                 <ul role="list" class="border-l border-transparent">
                     <li class="relative">
-                        <Link<Route> to={Route::AccordionExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Accordion} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Accordion"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::AlertExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Alert} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Alerts"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::AvatarExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Avatar} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Avatars"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::BadgeExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Badge} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Badge"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::ButtonExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Button} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Button"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::CardExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Card} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Card"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::CarouselExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Carousel} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Carousel"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::BreadcrumbExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Breadcrumb} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Breadcrumb"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::CheckboxExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Checkbox} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Checkbox"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::ComboboxExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Combobox} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Combobox"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::CommandExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Command} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Command"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::PopoverExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::ConfirmDialog} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                            <span class="truncate">{"ConfirmDialog"}</span>
+                        </Link<Route>>
+                    </li>
+                    <li class="relative">
+                        <Link<Route> to={Route::Popover} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Popover"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::DrawerExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Drawer} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Drawer"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::DialogExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Dialog} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Dialog"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::DiffViewExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::DiffView} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"DiffView"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::NotificationExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::ErrorBoundary} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                            <span class="truncate">{"ErrorBoundary"}</span>
+                        </Link<Route>>
+                    </li>
+                    <li class="relative">
+                        <Link<Route> to={Route::MarkdownRenderer} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                            <span class="truncate">{"MarkdownRenderer"}</span>
+                        </Link<Route>>
+                    </li>
+                    <li class="relative">
+                        <Link<Route> to={Route::MermaidDiagram} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                            <span class="truncate">{"MermaidDiagram"}</span>
+                        </Link<Route>>
+                    </li>
+                    <li class="relative">
+                        <Link<Route> to={Route::Notification} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Notification"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::ToggleExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Progress} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                            <span class="truncate">{"Progress"}</span>
+                        </Link<Route>>
+                    </li>
+                    <li class="relative">
+                        <Link<Route> to={Route::Spinner} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                            <span class="truncate">{"Spinner"}</span>
+                        </Link<Route>>
+                    </li>
+                    <li class="relative">
+                        <Link<Route> to={Route::StatusDot} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                            <span class="truncate">{"StatusDot"}</span>
+                        </Link<Route>>
+                    </li>
+                    <li class="relative">
+                        <Link<Route> to={Route::StatusIndicator} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                            <span class="truncate">{"StatusIndicator"}</span>
+                        </Link<Route>>
+                    </li>
+                    <li class="relative">
+                        <Link<Route> to={Route::Toggle} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Toggle"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::SelectExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Select} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Select"}</span>
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::TabsExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::Tabs} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"Tabs"}</span>
+                        </Link<Route>>
+                    </li>
+                    <li class="relative">
+                        <Link<Route> to={Route::WindowControlsExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                            <span class="truncate">{"WindowControls"}</span>
                         </Link<Route>>
                     </li>
                 </ul>
@@ -371,131 +409,6 @@ pub fn test(props: &AppProps) -> Html {
         <Layout header_title={props.header_title.clone()} footer_year={props.footer_year} >
             <h1>{"API Documentation"}</h1>
             <p class="lead">{"Use the Protocol API to access contacts, conversations, group messages, and more and seamlessly integrate your product into the workflows of dozens of devoted Protocol users."}</p>
-            <div class="not-prose mb-16 mt-6 flex gap-3">
-                <a class="inline-flex gap-0.5 justify-center overflow-hidden text-sm font-medium transition rounded-full bg-zinc-900 py-1 px-3 text-white hover:bg-zinc-700 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-1 dark:ring-inset dark:ring-emerald-400/20 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-300 dark:hover:ring-emerald-300" href="/quickstart">
-                    {"Quickstart"}
-                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="mt-0.5 h-5 w-5 -mr-1">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="m11.5 6.5 3 3.5m0 0-3 3.5m3-3.5h-9"></path>
-                    </svg>
-                </a>
-                <a class="inline-flex gap-0.5 justify-center overflow-hidden text-sm font-medium transition rounded-full py-1 px-3 text-zinc-700 ring-1 ring-inset ring-zinc-900/10 hover:bg-zinc-900/2.5 hover:text-zinc-900 dark:text-zinc-400 dark:ring-white/10 dark:hover:bg-white/5 dark:hover:text-white" href="/sdks">
-                    {"Explore SDKs"}
-                </a>
-            </div>
-            <h2 class="scroll-mt-24" id="getting-started">{"Getting started"}</h2>
-            <p class="lead">{"To get started, create a new application in your "}<a href="#">{"developer settings"}</a>{", then read about how to make requests for the resources you need to access using our HTTP APIs or dedicated client SDKs. When your integration is ready to go live, publish it to our "}<a href="#">{"integrations directory"}</a>{" to reach the Protocol community."}</p>
-            <div class="not-prose">
-                <a class="inline-flex gap-0.5 justify-center overflow-hidden text-sm font-medium transition text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-500" href="/sdks">
-                    {"Get your API key"}
-                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="mt-0.5 h-5 w-5 relative top-px -mr-1">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="m11.5 6.5 3 3.5m0 0-3 3.5m3-3.5h-9"></path>
-                    </svg>
-                </a>
-            </div>
-            <div class="my-16 xl:max-w-none">
-                <h2 class="scroll-mt-24" id="guides">
-                    <a class="group text-inherit no-underline hover:text-inherit" href="#guides">
-                        <div class="absolute ml-[calc(-1*var(--width))] mt-1 hidden w-[var(--width)] opacity-0 transition [--width:calc(2.625rem+0.5px+50%-min(50%,calc(theme(maxWidth.lg)+theme(spacing.8))))] group-hover:opacity-100 group-focus:opacity-100 md:block lg:z-50 2xl:[--width:theme(spacing.10)]">
-                            <div class="group/anchor block h-5 w-5 rounded-md bg-zinc-50 ring-1 ring-inset ring-zinc-300 transition hover:ring-zinc-500 dark:bg-zinc-800 dark:ring-zinc-700 dark:hover:bg-zinc-700 dark:hover:ring-zinc-600">
-                                <svg viewBox="0 0 20 20" fill="none" stroke-linecap="round" aria-hidden="true" class="h-5 w-5 stroke-zinc-500 transition dark:stroke-zinc-400 dark:group-hover/anchor:stroke-white">
-                                    <path d="m6.5 11.5-.964-.964a3.535 3.535 0 1 1 5-5l.964.964m2 2 .964.964a3.536 3.536 0 0 1-5 5L8.5 13.5m0-5 3 3"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        {"Guides"}
-                    </a>
-                </h2>
-                <div class="not-prose mt-4 grid grid-cols-1 gap-8 border-t border-zinc-900/5 pt-10 sm:grid-cols-2 xl:grid-cols-4 dark:border-white/5">
-                    <div>
-                        <h3 class="text-sm font-semibold text-zinc-900 dark:text-white">{"Authentication"}</h3>
-                        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{"Learn how to authenticate your API requests."}</p>
-                        <p class="mt-4">
-                            <a class="inline-flex gap-0.5 justify-center overflow-hidden text-sm font-medium transition text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-500" href="/authentication">
-                                {"Read more"}
-                                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="mt-0.5 h-5 w-5 relative top-px -mr-1">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="m11.5 6.5 3 3.5m0 0-3 3.5m3-3.5h-9"></path>
-                                </svg>
-                            </a>
-                        </p>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-zinc-900 dark:text-white">{"Pagination"}</h3>
-                        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{"Understand how to work with paginated responses."}</p>
-                        <p class="mt-4">
-                            <a class="inline-flex gap-0.5 justify-center overflow-hidden text-sm font-medium transition text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-500" href="/pagination">
-                                {"Read more"}
-                                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="mt-0.5 h-5 w-5 relative top-px -mr-1">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="m11.5 6.5 3 3.5m0 0-3 3.5m3-3.5h-9"></path>
-                                </svg>
-                            </a>
-                        </p>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-zinc-900 dark:text-white">{"Errors"}</h3>
-                        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{"Read about the different types of errors returned by the API."}</p>
-                        <p class="mt-4">
-                            <a class="inline-flex gap-0.5 justify-center overflow-hidden text-sm font-medium transition text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-500" href="/errors">
-                                {"Read more"}
-                                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="mt-0.5 h-5 w-5 relative top-px -mr-1">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="m11.5 6.5 3 3.5m0 0-3 3.5m3-3.5h-9"></path>
-                                </svg>
-                            </a>
-                        </p>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-zinc-900 dark:text-white">{"Webhooks"}</h3>
-                        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{"Learn how to programmatically configure webhooks for your app."}</p>
-                        <p class="mt-4">
-                            <a class="inline-flex gap-0.5 justify-center overflow-hidden text-sm font-medium transition text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-500" href="/webhooks">
-                                {"Read more"}
-                                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="mt-0.5 h-5 w-5 relative top-px -mr-1">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="m11.5 6.5 3 3.5m0 0-3 3.5m3-3.5h-9"></path>
-                                </svg>
-                            </a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="my-16 xl:max-w-none">
-                <h2 class="scroll-mt-24" id="resources">
-                    <a class="group text-inherit no-underline hover:text-inherit" href="#resources">{"Resources"}</a>
-                </h2>
-                <div class="not-prose mt-4 grid grid-cols-1 gap-8 border-t border-zinc-900/5 pt-10 sm:grid-cols-2 xl:grid-cols-4 dark:border-white/5">
-                    <div class="group relative flex rounded-md bg-zinc-50 transition-shadow-sm hover:shadow-md hover:shadow-zinc-900/5 dark:bg-white/2.5 dark:hover:shadow-black/5">
-                        <div class="pointer-events-none">
-                            <div class="absolute inset-0 rounded-md transition duration-300 [mask-image:linear-gradient(white,transparent)] group-hover:opacity-50">
-                                <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/[0.02] stroke-black/5 dark:fill-white/1 dark:stroke-white/2.5">
-                                    <defs>
-                                        <pattern id=":r2m:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="16">
-                                            <path d="M.5 56V.5H72" fill="none"></path>
-                                        </pattern>
-                                    </defs>
-                                    <rect width="100%" height="100%" stroke-width="0" fill="url(#:r2m:)"></rect>
-                                    <svg x="50%" y="16" class="overflow-visible">
-                                        <rect stroke-width="0" width="73" height="57" x="0" y="56"></rect>
-                                        <rect stroke-width="0" width="73" height="57" x="72" y="168"></rect>
-                                    </svg>
-                                </svg>
-                            </div>
-                            <div class="absolute inset-0 rounded-md bg-gradient-to-r from-[#D7EDEA] to-[#F4FBDF] opacity-0 transition duration-300 group-hover:opacity-100 dark:from-[#202D2E] dark:to-[#303428]" style="mask-image: radial-gradient(180px at 0px 0px, white, transparent);"></div>
-                            <div class="absolute inset-0 rounded-md opacity-0 mix-blend-overlay transition duration-300 group-hover:opacity-100" style="mask-image: radial-gradient(180px at 0px 0px, white, transparent);">
-                                <svg aria-hidden="true" class="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-black/50 stroke-black/70 dark:fill-white/2.5 dark:stroke-white/10">
-                                    <defs>
-                                        <pattern id=":r2n:" width="72" height="56" patternUnits="userSpaceOnUse" x="50%" y="16">
-                                            <path d="M.5 56V.5H72" fill="none"></path>
-                                        </pattern>
-                                    </defs>
-                                    <rect width="100%" height="100%" stroke-width="0" fill="url(#:r2n:)"></rect>
-                                    <svg x="50%" y="16" class="overflow-visible">
-                                        <rect stroke-width="0" width="73" height="57" x="0" y="56"></rect>
-                                        <rect stroke-width="0" width="73" height="57" x="72" y="168"></rect>
-                                    </svg>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </Layout>
     }
 }

@@ -1,127 +1,143 @@
 use yew_router::prelude::*;
 
-#[derive(Debug, Clone, Routable, PartialEq)]
+#[derive(Clone, Debug, Routable, PartialEq)]
 pub enum Route {
-    #[not_found]
     #[at("/")]
-    GettingStarted,
-
+    Home,
     #[at("/accordion")]
-    AccordionExample,
+    Accordion,
     #[at("/alert")]
-    AlertExample,
+    Alert,
     #[at("/avatar")]
-    AvatarExample,
+    Avatar,
     #[at("/badge")]
-    BadgeExample,
+    Badge,
     #[at("/breadcrumb")]
-    BreadcrumbExample,
+    Breadcrumb,
     #[at("/button")]
-    ButtonExample,
+    Button,
     #[at("/calendar")]
-    CalendarExample,
+    Calendar,
     #[at("/card")]
-    CardExample,
+    Card,
     #[at("/carousel")]
-    CarouselExample,
+    Carousel,
     #[at("/checkbox")]
-    CheckboxExample,
-    #[at("/col")]
-    ColExample,
-    #[at("/collapsible")]
-    CollapsibleExample,
+    Checkbox,
     #[at("/code-editor")]
-    CodeEditorExample,
-    #[at("/diffview")]
-    DiffViewExample,
+    CodeEditor,
+    #[at("/col")]
+    Col,
+    #[at("/collapsible")]
+    Collapsible,
     #[at("/color-picker")]
-    ColorPickerExample,
+    ColorPicker,
     #[at("/combobox")]
-    ComboboxExample,
+    Combobox,
     #[at("/command")]
-    CommandExample,
+    Command,
+    #[at("/confirm-dialog")]
+    ConfirmDialog,
     #[at("/container")]
-    ContainerExample,
+    Container,
     #[at("/content")]
-    ContentExample,
+    Content,
     #[at("/context-menu")]
-    ContextMenuExample,
+    ContextMenu,
     #[at("/copy-button")]
-    CopyButtonExample,
+    CopyButton,
     #[at("/data-table")]
-    DataTableExample,
+    DataTable,
     #[at("/date-picker")]
-    DatePickerExample,
+    DatePicker,
     #[at("/dialog")]
-    DialogExample,
+    Dialog,
+    #[at("/diffview")]
+    DiffView,
     #[at("/divider")]
-    DividerExample,
+    Divider,
     #[at("/drag-point")]
-    DragPointExample,
+    DragPoint,
     #[at("/drawer")]
-    DrawerExample,
+    Drawer,
     #[at("/dropdown")]
-    DropdownExample,
+    Dropdown,
+    #[at("/error-boundary")]
+    ErrorBoundary,
     #[at("/group-button")]
-    GroupButtonExample,
+    GroupButton,
     #[at("/iframe")]
-    IframeExample,
+    Iframe,
     #[at("/input")]
-    InputExample,
+    Input,
     #[at("/kanban")]
-    KanbanExample,
-    #[at("/markdown-editor")]
-    MarkdownEditorExample,
+    Kanban,
     #[at("/label")]
-    LabelExample,
+    Label,
+    #[at("/markdown-editor")]
+    MarkdownEditor,
+    #[at("/markdown-renderer")]
+    MarkdownRenderer,
     #[at("/media-query")]
-    MediaQueryExample,
-    #[at("/multicol-sidebar")]
-    MulticolSidebarExample,
-    #[at("/notification")]
-    NotificationExample,
-    #[at("/page-header")]
-    PageHeaderExample,
-    #[at("/page-content")]
-    PageContentExample,
-    #[at("/pagination")]
-    PaginationExample,
-    #[at("/paint-canvas")]
-    PaintCanvasExample,
-    #[at("/placeholder")]
-    PlaceholderExample,
-    #[at("/popover")]
-    PopoverExample,
-    #[at("/resizable")]
-    ResizableExample,
-    #[at("/select")]
-    SelectExample,
-    #[at("/selectable")]
-    SelectableExample,
-    #[at("/sidebar")]
-    SidebarExample,
-    #[at("/switch")]
-    SwitchExample,
-    #[at("/table")]
-    TableExample,
-    #[at("/tabs")]
-    TabsExample,
-    #[at("/tag-input")]
-    TagInputExample,
+    MediaQuery,
     #[at("/mention-input")]
-    MentionInputExample,
+    MentionInput,
+    #[at("/mermaid-diagram")]
+    MermaidDiagram,
+    #[at("/multicol-sidebar")]
+    MulticolSidebar,
+    #[at("/notification")]
+    Notification,
+    #[at("/page-content")]
+    PageContent,
+    #[at("/page-header")]
+    PageHeader,
+    #[at("/pagination")]
+    Pagination,
+    #[at("/paint-canvas")]
+    PaintCanvas,
+    #[at("/placeholder")]
+    Placeholder,
+    #[at("/popover")]
+    Popover,
+    #[at("/progress")]
+    Progress,
+    #[at("/resizable")]
+    Resizable,
+    #[at("/select")]
+    Select,
+    #[at("/selectable")]
+    Selectable,
+    #[at("/sidebar")]
+    Sidebar,
+    #[at("/spinner")]
+    Spinner,
+    #[at("/status-dot")]
+    StatusDot,
+    #[at("/status-indicator")]
+    StatusIndicator,
+    #[at("/switch")]
+    Switch,
+    #[at("/table")]
+    Table,
+    #[at("/tabs")]
+    Tabs,
+    #[at("/tag-input")]
+    TagInput,
     #[at("/tailwind-color-picker")]
-    TailwindColorPickerExample,
+    TailwindColorPicker,
     #[at("/textarea")]
-    TextareaExample,
+    Textarea,
     #[at("/toggle")]
-    ToggleExample,
+    Toggle,
     #[at("/topbar")]
-    TopbarExample,
+    Topbar,
     #[at("/typography")]
     TypographyExample,
     #[at("/ui-blocks")]
     UIBlocksExample,
+    #[at("/window-controls")]
+    WindowControlsExample,
     #[at("/window-provider")]
     WindowProviderExample,
     
@@ -148,6 +164,10 @@ pub enum Route {
     BlocksDataDisplay,
     #[at("/blocks/lists")]
     BlocksLists,
+    
+    #[not_found]
+    #[at("/404")]
+    NotFound,
 }
 
 #[derive(Clone, Routable, PartialEq)]
