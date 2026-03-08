@@ -1,0 +1,11 @@
+load("@rules_rust//rust:defs.bzl", "rust_library")
+
+rust_library(
+    name = "wonopui-skeleton",
+    srcs = glob(["src/**/*.rs"]),
+    deps = [
+        "//crates/wonopui-core",
+        "@crates//:yew",
+    ],
+    visibility = ["//visibility:public"],
+)

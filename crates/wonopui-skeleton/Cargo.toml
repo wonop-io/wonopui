@@ -1,0 +1,12 @@
+[package]
+name = "wonopui-skeleton"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Skeleton loading placeholder component for WonopUI"
+
+[dependencies]
+wonopui-core = { path = "../wonopui-core" }
+yew = { version = "0.21", features = ["csr"] }

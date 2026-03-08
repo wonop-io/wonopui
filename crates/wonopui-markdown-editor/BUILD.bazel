@@ -14,7 +14,6 @@ rust_library(
         "@crates//:wasm-bindgen",
         "@crates//:web-sys",
         "@crates//:yew",
-        "@crates//:wasm-bindgen",
     ],
 )
 

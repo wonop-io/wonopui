@@ -12,6 +12,7 @@ rust_library(
     deps = [
         "//crates/wonopui-core:wonopui-core",
         "@crates//:gloo-utils",
+        "@crates//:js-sys",
         "@crates//:wasm-bindgen",
         "@crates//:web-sys",
         "@crates//:yew",

@@ -22,6 +22,9 @@ use_repo(rust, "rust_toolchains")
 
 register_toolchains("@rust_toolchains//:all")
 
+# Register custom wasm-bindgen toolchain with system binary (0.2.114)
+register_toolchains("//tools/wasm-bindgen:system_wasm_bindgen_toolchain")
+
 # Crate universe for managing Cargo dependencies
 crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
 crate.from_cargo(
@@ -83,6 +86,7 @@ crate.from_cargo(
         "//crates/wonopui-select:Cargo.toml",
         "//crates/wonopui-selectable:Cargo.toml",
         "//crates/wonopui-sidebar:Cargo.toml",
+        "//crates/wonopui-skeleton:Cargo.toml",
         "//crates/wonopui-switch:Cargo.toml",
         "//crates/wonopui-table:Cargo.toml",
         "//crates/wonopui-tabs:Cargo.toml",
@@ -117,3 +121,4 @@ tailwind(
     executable = True,
     url = "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.1.3/tailwindcss-linux-x64",
 )
+

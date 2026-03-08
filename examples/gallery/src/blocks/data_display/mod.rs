@@ -10,6 +10,7 @@ use wonopui::wonopui_card::{Card, CardHeader, CardTitle, CardContent, CardDescri
 use wonopui::wonopui_badge::{Badge, BadgeVariant};
 use wonopui::Calendar;
 use wonopui::wonopui_button::{Button, ButtonVariant};
+use wonopui::progress::{Progress, ProgressVariant};
 use crate::blocks::BlockPreview;
 
 /// Data Display category page
@@ -294,24 +295,21 @@ fn stats_progress() -> Html {
         <div class="w-full bg-white dark:bg-zinc-950 p-8">
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div class="rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{"Storage Used"}</span>
-                        <span class="text-sm font-medium text-zinc-900 dark:text-white">{"76%"}</span>
-                    </div>
-                    <div class="mt-3 h-2 w-full rounded-full bg-zinc-200 dark:bg-zinc-800">
-                        <div class="h-2 rounded-full bg-zinc-900 dark:bg-white" style="width: 76%"></div>
-                    </div>
+                    <Progress 
+                        value={76.0}
+                        label="Storage Used"
+                        show_value={true}
+                    />
                     <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{"76GB of 100GB used"}</p>
                 </div>
                 
                 <div class="rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">{"Monthly Goal"}</span>
-                        <span class="text-sm font-medium text-zinc-900 dark:text-white">{"89%"}</span>
-                    </div>
-                    <div class="mt-3 h-2 w-full rounded-full bg-zinc-200 dark:bg-zinc-800">
-                        <div class="h-2 rounded-full bg-green-500" style="width: 89%"></div>
-                    </div>
+                    <Progress 
+                        value={89.0}
+                        label="Monthly Goal"
+                        show_value={true}
+                        variant={ProgressVariant::Success}
+                    />
                     <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{"$8,900 of $10,000 target"}</p>
                 </div>
             </div>
@@ -573,17 +571,26 @@ html! {
 }
 "##;
 
-const STATS_PROGRESS_CODE: &str = r##"// Stats with progress bars
+const STATS_PROGRESS_CODE: &str = r##"use wonopui::wonopui_progress::{Progress, ProgressVariant};
+
 html! {
     <div class="rounded-lg border p-6">
-        <div class="flex items-center justify-between">
-            <span class="text-sm font-medium text-zinc-500">{"Storage Used"}</span>
-            <span class="text-sm font-medium">{"76%"}</span>
-        </div>
-        <div class="mt-3 h-2 w-full rounded-full bg-zinc-200">
-            <div class="h-2 rounded-full bg-zinc-900" style="width: 76%"></div>
-        </div>
+        <Progress 
+            value={76.0}
+            label="Storage Used"
+            show_value={true}
+        />
         <p class="mt-2 text-sm text-zinc-500">{"76GB of 100GB used"}</p>
+    </div>
+    
+    <div class="rounded-lg border p-6">
+        <Progress 
+            value={89.0}
+            label="Monthly Goal"
+            show_value={true}
+            variant={ProgressVariant::Success}
+        />
+        <p class="mt-2 text-sm text-zinc-500">{"$8,900 of $10,000 target"}</p>
     </div>
 }
 "##;

@@ -1,110 +1,107 @@
-[workspace]
-resolver = "2"
-exclude = [
-    ".wonopcode",
-    "examples/enhanced_code_editor",
-]
-members = [
-    "crates/wonopui",
-    "crates/wonopui-core",
-    "crates/wonopui-accordion",
-    "crates/wonopui-alert",
-    "crates/wonopui-avatar",
-    "crates/wonopui-badge",
-    "crates/wonopui-breadcrumb",
-    "crates/wonopui-browser-provider",
-    "crates/wonopui-button",
-    "crates/wonopui-calendar",
-    "crates/wonopui-card",
-    "crates/wonopui-carousel",
-    "crates/wonopui-checkbox",
-    "crates/wonopui-code-editor",
-    "crates/wonopui-col",
-    "crates/wonopui-collapsible",
-    "crates/wonopui-component-editor",
-    "crates/wonopui-color-picker",
-    "crates/wonopui-combobox",
-    "crates/wonopui-command",
-    "crates/wonopui-confirm-dialog",
-    "crates/wonopui-container",
-    "crates/wonopui-content",
-    "crates/wonopui-context-menu",
-    "crates/wonopui-copy-button",
-    "crates/wonopui-dark-mode-provider",
-    "crates/wonopui-data-table",
-    "crates/wonopui-date-picker",
-    "crates/wonopui-dialog",
-    "crates/wonopui-diffview",
-    "crates/wonopui-divider",
-    "crates/wonopui-drag-point",
-    "crates/wonopui-drawer",
-    "crates/wonopui-dropdown",
-    "crates/wonopui-error-boundary",
-    "crates/wonopui-group-button",
-    "crates/wonopui-iframe",
-    "crates/wonopui-input",
-    "crates/wonopui-kanban",
-    "crates/wonopui-label",
-    "crates/wonopui-layout",
-    "crates/wonopui-markdown-editor",
-    "crates/wonopui-markdown-renderer",
-    "crates/wonopui-media-query",
-    "crates/wonopui-mention-input",
-    "crates/wonopui-mermaid-diagram",
-    "crates/wonopui-multicol-sidebar",
-    "crates/wonopui-notification",
-    "crates/wonopui-page-content",
-    "crates/wonopui-page-header",
-    "crates/wonopui-pagination",
-    "crates/wonopui-paint-canvas",
-    "crates/wonopui-placeholder",
-    "crates/wonopui-popover",
-    "crates/wonopui-progress",
-    "crates/wonopui-resizable",
-    "crates/wonopui-select",
-    "crates/wonopui-selectable",
-    "crates/wonopui-sidebar",
-    "crates/wonopui-spinner",
-    "crates/wonopui-status-dot",
-    "crates/wonopui-status-indicator",
-    "crates/wonopui-switch",
-    "crates/wonopui-table",
-    "crates/wonopui-tabs",
-    "crates/wonopui-tag-input",
-    "crates/wonopui-tailwind-color-picker",
-    "crates/wonopui-textarea",
-    "crates/wonopui-theme-provider",
-    "crates/wonopui-toggle",
-    "crates/wonopui-topbar",
-    "crates/wonopui-typography",
-    "crates/wonopui-window-controls",
-    "crates/wonopui-window-provider",
-    "crates/wonopui-modal",
-    "crates/wonopui-form-field",
-    "crates/wonopui-empty-state",
-    "crates/wonopui-icon-button",
-    "examples/basic_app",
-    "examples/gallery",
-]
-
-[workspace.package]
-version = "0.1.0"
-edition = "2021"
-authors = ["Troels F. Rønnow <troels@wonop.com>"]
-license = "MIT"
-repository = "https://github.com/wonop-io/wonopui"
-
-[workspace.dependencies]
-yew = { version = "0.21", features = ["csr"] }
-yew-router = "0.18.0"
-web-sys = "0.3.68"
-wasm-bindgen = { version = "0.2.90", features = ["serde-serialize"] }
-wasm-bindgen-futures = "0.4.40"
-gloo = "0.11.0"
-gloo-console = "0.3.0"
-gloo-utils = "0.2.0"
-log = "0.4.20"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-chrono = { version = "0.4.23", features = ["serde", "wasmbind"] }
-chrono-humanize = "0.2.3"
+	[workspace]
+	resolver = "2"
+	members = [
+	    "crates/wonopui",
+	    "crates/wonopui-core",
+	    "crates/wonopui-accordion",
+	    "crates/wonopui-alert",
+	    "crates/wonopui-avatar",
+	    "crates/wonopui-badge",
+	    "crates/wonopui-breadcrumb",
+	    "crates/wonopui-browser-provider",
+	    "crates/wonopui-button",
+	    "crates/wonopui-calendar",
+	    "crates/wonopui-card",
+	    "crates/wonopui-carousel",
+	    "crates/wonopui-checkbox",
+	    "crates/wonopui-code-editor",
+	    "crates/wonopui-col",
+	    "crates/wonopui-collapsible",
+	    "crates/wonopui-color-picker",
+	    "crates/wonopui-combobox",
+	    "crates/wonopui-command",
+	    "crates/wonopui-component-editor",
+	    "crates/wonopui-confirm-dialog",
+	    "crates/wonopui-container",
+	    "crates/wonopui-content",
+	    "crates/wonopui-context-menu",
+	    "crates/wonopui-copy-button",
+	    "crates/wonopui-dark-mode-provider",
+	    "crates/wonopui-data-table",
+	    "crates/wonopui-date-picker",
+	    "crates/wonopui-dialog",
+	    "crates/wonopui-diffview",
+	    "crates/wonopui-divider",
+	    "crates/wonopui-drag-point",
+	    "crates/wonopui-drawer",
+	    "crates/wonopui-dropdown",
+	    "crates/wonopui-error-boundary",
+	    "crates/wonopui-group-button",
+	    "crates/wonopui-iframe",
+	    "crates/wonopui-input",
+	    "crates/wonopui-kanban",
+	    "crates/wonopui-label",
+	    "crates/wonopui-layout",
+	    "crates/wonopui-markdown-editor",
+	    "crates/wonopui-markdown-renderer",
+	    "crates/wonopui-media-query",
+	    "crates/wonopui-mention-input",
+	    "crates/wonopui-mermaid-diagram",
+	    "crates/wonopui-multicol-sidebar",
+	    "crates/wonopui-notification",
+	    "crates/wonopui-page-content",
+	    "crates/wonopui-page-header",
+	    "crates/wonopui-pagination",
+	    "crates/wonopui-paint-canvas",
+	    "crates/wonopui-placeholder",
+	    "crates/wonopui-popover",
+	    "crates/wonopui-progress",
+	    "crates/wonopui-resizable",
+	    "crates/wonopui-select",
+	    "crates/wonopui-selectable",
+	    "crates/wonopui-sidebar",
+	    "crates/wonopui-spinner",
+	    "crates/wonopui-skeleton",
+	    "crates/wonopui-status-dot",
+	    "crates/wonopui-status-indicator",
+	    "crates/wonopui-switch",
+	    "crates/wonopui-table",
+	    "crates/wonopui-tabs",
+	    "crates/wonopui-tag-input",
+	    "crates/wonopui-tailwind-color-picker",
+	    "crates/wonopui-textarea",
+	    "crates/wonopui-theme-provider",
+	    "crates/wonopui-toggle",
+	    "crates/wonopui-topbar",
+	    "crates/wonopui-typography",
+	    "crates/wonopui-window-controls",
+	    "crates/wonopui-window-provider",
+	    "crates/wonopui-modal",
+	    "crates/wonopui-form-field",
+	    "crates/wonopui-empty-state",
+	    "crates/wonopui-icon-button",
+	    "examples/basic_app",
+	    "examples/gallery",
+	]
+	
+	[workspace.package]
+	version = "0.1.0"
+	edition = "2021"
+	authors = ["Troels F. Rønnow <troels@wonop.com>"]
+	license = "MIT"
+	repository = "https://github.com/wonop-io/wonopui"
+	
+	[workspace.dependencies]
+	yew = { version = "0.21", features = ["csr"] }
+	yew-router = "0.18.0"
+	web-sys = "=0.3.82"
+	wasm-bindgen = { version = "=0.2.105", features = ["serde-serialize"] }
+	wasm-bindgen-futures = "=0.4.55"
+	gloo = "0.11.0"
+	gloo-console = "0.3.0"
+	gloo-utils = "0.2.0"
+	log = "0.4.20"
+	serde = { version = "1.0", features = ["derive"] }
+	serde_json = "1.0"
+	chrono = { version = "0.4.23", features = ["serde", "wasmbind"] }
+	chrono-humanize = "0.2.3"
