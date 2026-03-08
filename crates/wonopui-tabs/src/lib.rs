@@ -5,36 +5,37 @@
 use std::rc::Rc;
 use wonopui_core::*;
 
-/// Default CSS classes for tabs styling.
+/// Default CSS classes for tabs styling (shadcn v4 style).
 pub mod classes {
-    /// Tabs container.
-    pub const CONTAINER: &str = "";
+    /// Tabs container - shadcn v4 with orientation support.
+    pub const CONTAINER: &str = "group/tabs flex gap-2";
 
-    /// Tabs list base styles.
-    pub const LIST: &str = "inline-flex h-10 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800 p-1 text-zinc-600 dark:text-zinc-400";
+    /// Tabs list base styles - like GroupButton with muted background.
+    pub const LIST: &str = "group/tabs-list inline-flex w-fit items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800 p-1 gap-1 text-zinc-500 dark:text-zinc-400";
+    
+    /// Tabs list line variant - no background.
+    pub const LIST_LINE: &str = "gap-1 bg-transparent rounded-none p-0";
 
-    /// Tabs list row direction.
-    pub const LIST_ROW: &str = "flex-row";
+    /// Tabs list row direction (horizontal).
+    pub const LIST_ROW: &str = "flex-row h-10";
 
-    /// Tabs list column direction.
-    pub const LIST_COLUMN: &str = "flex-col h-auto";
+    /// Tabs list column direction (vertical).
+    pub const LIST_COLUMN: &str = "flex-col h-fit";
 
-    /// Tab trigger base styles.
-    pub const TRIGGER: &str = "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-white transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-zinc-950 dark:focus-visible:ring-zinc-300";
+    /// Tab trigger base styles - like toggle group item, no border.
+    pub const TRIGGER: &str = "inline-flex items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all duration-200 outline-none focus-visible:ring-zinc-950/50 dark:focus-visible:ring-zinc-300/50 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-100 dark:focus-visible:ring-offset-zinc-800 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
 
-    /// Active tab trigger styles.
-    pub const TRIGGER_ACTIVE: &str =
-        "bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 shadow-sm";
+    /// Active tab trigger styles - solid background, no border, no shadow.
+    pub const TRIGGER_ACTIVE: &str = "bg-white dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 shadow-sm";
 
-    /// Inactive tab trigger styles.
-    pub const TRIGGER_INACTIVE: &str =
-        "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100";
+    /// Inactive tab trigger styles - transparent with hover.
+    pub const TRIGGER_INACTIVE: &str = "bg-transparent text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-50 hover:bg-zinc-50 dark:hover:bg-zinc-700/50";
 
     /// Disabled tab trigger styles.
-    pub const TRIGGER_DISABLED: &str = "opacity-50 cursor-not-allowed";
+    pub const TRIGGER_DISABLED: &str = "opacity-50 cursor-not-allowed pointer-events-none";
 
-    /// Tab content container.
-    pub const CONTENT: &str = "mt-2";
+    /// Tab content container - shadcn v4.
+    pub const CONTENT: &str = "flex-1 outline-none mt-2";
 }
 
 /// Direction for tabs layout.
@@ -108,8 +109,18 @@ pub struct TabsLayoutProps {
 
 #[function_component(TabsLayout)]
 pub fn tabs_layout(props: &TabsLayoutProps) -> Html {
+    let state = use_context::<Rc<TabsState>>().expect("no context found for TabsState");
+    let orientation = match state.direction {
+        TabsDirection::Auto | TabsDirection::Row => "horizontal",
+        TabsDirection::Column => "vertical",
+    };
+    let direction_class = match state.direction {
+        TabsDirection::Auto | TabsDirection::Row => "flex-col",
+        TabsDirection::Column => "flex-row",
+    };
+    
     html! {
-        <div class={classes!(classes::CONTAINER, props.class.clone())}>
+        <div data-slot="tabs" data-orientation={orientation} class={classes!(classes::CONTAINER, direction_class, props.class.clone())}>
             { for props.children.iter() }
         </div>
     }
@@ -154,7 +165,7 @@ pub fn tabs_list(props: &TabsListProps) -> Html {
     };
 
     html! {
-        <div class={classes!(classes::LIST, direction_class, props.class.clone())}>
+        <div data-slot="tabs-list" data-variant="default" role="tablist" class={classes!(classes::LIST, direction_class, props.class.clone())}>
             { for props.children.iter() }
         </div>
     }
@@ -187,6 +198,7 @@ pub fn tabs_trigger(props: &TabsTriggerProps) -> Html {
     };
 
     let is_active = state.active_tab == props.value;
+    let data_state = if is_active { "active" } else { "inactive" };
     let state_class = if is_active {
         classes::TRIGGER_ACTIVE
     } else {
@@ -200,8 +212,11 @@ pub fn tabs_trigger(props: &TabsTriggerProps) -> Html {
 
     html! {
         <button
+            data-slot="tabs-trigger"
+            data-state={data_state}
             type="button"
             role="tab"
+            aria-selected={is_active.to_string()}
             onclick={onclick}
             disabled={props.disabled}
             class={classes!(
@@ -234,7 +249,7 @@ pub fn tabs_content(props: &TabsContentProps) -> Html {
     }
 
     html! {
-        <div class={classes!(classes::CONTENT, props.class.clone())}>
+        <div data-slot="tabs-content" role="tabpanel" class={classes!(classes::CONTENT, props.class.clone())}>
             { for props.children.iter() }
         </div>
     }

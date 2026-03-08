@@ -1,6 +1,7 @@
 mod api_section;
 mod app;
 mod app_layout;
+mod blocks;
 mod components;
 mod features_section;
 mod home;

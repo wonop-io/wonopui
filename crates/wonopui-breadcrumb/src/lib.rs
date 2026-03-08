@@ -6,22 +6,28 @@ use wonopui_core::*;
 use yew_router::prelude::{use_navigator, Link};
 use yew_router::Routable;
 
-/// Default CSS classes for breadcrumb styling.
+/// Default CSS classes for breadcrumb styling (shadcn v4 style).
 pub mod classes {
-    /// Nav container styles.
-    pub const NAV: &str =
-        "flex flex-wrap items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300";
+    /// Nav container styles - shadcn v4 Breadcrumb.
+    pub const NAV: &str = "";
 
-    /// List container styles.
-    pub const LIST: &str =
-        "flex flex-wrap items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300";
+    /// List container styles - shadcn v4 BreadcrumbList.
+    pub const LIST: &str = "flex flex-wrap items-center gap-1.5 break-words text-sm text-zinc-500 dark:text-zinc-400 sm:gap-2.5";
 
-    /// Item styles.
-    pub const ITEM: &str =
-        "inline-flex items-center gap-2 hover:text-indigo-500 transition-colors duration-150";
+    /// Item styles - shadcn v4 BreadcrumbItem.
+    pub const ITEM: &str = "inline-flex items-center gap-1.5";
 
-    /// Separator styles.
-    pub const SEPARATOR: &str = "[&>svg]:size-4 text-zinc-400";
+    /// Link styles - shadcn v4 BreadcrumbLink.
+    pub const LINK: &str = "transition-colors hover:text-zinc-950 dark:hover:text-zinc-50";
+
+    /// Page styles (current item) - shadcn v4 BreadcrumbPage.
+    pub const PAGE: &str = "font-normal text-zinc-950 dark:text-zinc-50";
+
+    /// Separator styles - shadcn v4 BreadcrumbSeparator.
+    pub const SEPARATOR: &str = "[&>svg]:size-3.5 text-zinc-500 dark:text-zinc-400";
+
+    /// Ellipsis styles - shadcn v4 BreadcrumbEllipsis.
+    pub const ELLIPSIS: &str = "flex size-9 items-center justify-center";
 }
 
 /// Properties for the Breadcrumb component.
@@ -87,14 +93,10 @@ pub struct BreadcrumbLinkProps<R: Routable + 'static> {
 /// Breadcrumb item with yew-router Link support.
 #[function_component]
 pub fn BreadcrumbRouteItem<R: Routable + 'static>(props: &BreadcrumbRouteItemProps<R>) -> Html {
-    let combined_class = classes!(
-        "transition-colors",
-        "hover:text-foreground",
-        props.class.clone()
-    );
+    let combined_class = classes!(classes::LINK, props.class.clone());
 
     html! {
-        <li class={classes::ITEM}>
+        <li data-slot="breadcrumb-item" class={classes::ITEM}>
             <Link<R> to={props.to.clone()} classes={combined_class}>
                 { &props.label }
             </Link<R>>
@@ -114,15 +116,11 @@ pub fn BreadcrumbLink<R: Routable + 'static>(props: &BreadcrumbLinkProps<R>) -> 
         })
     };
 
-    let combined_class = classes!(
-        "transition-colors",
-        "hover:text-foreground",
-        props.class.clone()
-    );
+    let combined_class = classes!(classes::LINK, props.class.clone());
 
     html! {
-        <li class={classes::ITEM}>
-            <a href={props.to.to_path()} class={combined_class} onclick={onclick}>
+        <li data-slot="breadcrumb-item" class={classes::ITEM}>
+            <a data-slot="breadcrumb-link" href={props.to.to_path()} class={combined_class} onclick={onclick}>
                 { for props.children.iter() }
             </a>
         </li>
@@ -132,20 +130,16 @@ pub fn BreadcrumbLink<R: Routable + 'static>(props: &BreadcrumbLinkProps<R>) -> 
 /// Simple breadcrumb item (no router dependency).
 #[function_component(BreadcrumbItem)]
 pub fn breadcrumb_item(props: &BreadcrumbItemProps) -> Html {
-    let link_class = classes!(
-        "transition-colors",
-        "hover:text-foreground",
-        props.class.clone()
-    );
-    let span_class = classes!("font-normal", "text-foreground", props.class.clone());
+    let link_class = classes!(classes::LINK, props.class.clone());
+    let span_class = classes!(classes::PAGE, props.class.clone());
 
     html! {
-        <li class={classes::ITEM}>
+        <li data-slot="breadcrumb-item" class={classes::ITEM}>
             {
                 if let Some(href) = &props.href {
-                    html! { <a class={link_class} href={href.clone()}>{ &props.label }</a> }
+                    html! { <a data-slot="breadcrumb-link" class={link_class} href={href.clone()}>{ &props.label }</a> }
                 } else {
-                    html! { <span role="link" aria-disabled="true" aria-current="page" class={span_class}>{ &props.label }</span> }
+                    html! { <span data-slot="breadcrumb-page" role="link" aria-disabled="true" aria-current="page" class={span_class}>{ &props.label }</span> }
                 }
             }
         </li>
@@ -180,15 +174,15 @@ pub fn breadcrumb(props: &BreadcrumbProps) -> Html {
     });
 
     html! {
-        <nav aria-label="breadcrumb" class={classes!(classes::NAV, props.class.clone())}>
-            <ol class={classes::LIST}>
+        <nav data-slot="breadcrumb" aria-label="breadcrumb" class={classes!(classes::NAV, props.class.clone())}>
+            <ol data-slot="breadcrumb-list" class={classes::LIST}>
                 { for props.children.iter().enumerate().map(|(index, child)| {
                     html! {
                         <>
                             { child }
                             { if index < props.children.len() - 1 {
                                 html! {
-                                    <li role="presentation" aria-hidden="true" class={classes::SEPARATOR}>
+                                    <li data-slot="breadcrumb-separator" role="presentation" aria-hidden="true" class={classes::SEPARATOR}>
                                         { separator_icon.clone() }
                                     </li>
                                 }

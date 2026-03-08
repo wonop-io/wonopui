@@ -6,15 +6,18 @@ use std::rc::Rc;
 use wonopui_core::merge_classes;
 use yew::prelude::*;
 
+/// CSS classes for the GroupButton component (shadcn v4 - like Toggle Group)
 pub mod classes {
-    pub const GROUP_BUTTON_CONTAINER: &str =
-        "inline-flex rounded-lg bg-gray-100 dark:bg-zinc-800 p-1";
+    /// Container - muted background with rounded corners
+    pub const GROUP_BUTTON_CONTAINER: &str = "inline-flex items-center rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800";
+    /// Vertical orientation
     pub const GROUP_BUTTON_VERTICAL: &str = "flex-col";
-    pub const GROUP_BUTTON_TRIGGER: &str = "inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium rounded-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
-    pub const GROUP_BUTTON_TRIGGER_ACTIVE: &str =
-        "bg-white dark:bg-zinc-700 text-gray-900 dark:text-zinc-100 shadow-sm";
-    pub const GROUP_BUTTON_TRIGGER_INACTIVE: &str =
-        "text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200";
+    /// Individual trigger button
+    pub const GROUP_BUTTON_TRIGGER: &str = "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 px-3 py-1.5 rounded-md focus-visible:border-zinc-950 dark:focus-visible:border-zinc-300 focus-visible:ring-zinc-950/50 dark:focus-visible:ring-zinc-300/50 focus-visible:ring-[3px] focus-visible:outline-none";
+    /// Active state - elevated with shadow
+    pub const GROUP_BUTTON_TRIGGER_ACTIVE: &str = "bg-white text-zinc-950 shadow-sm dark:bg-zinc-950 dark:text-zinc-50";
+    /// Inactive state - muted text with hover
+    pub const GROUP_BUTTON_TRIGGER_INACTIVE: &str = "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50";
 }
 
 #[derive(Clone, PartialEq, Default)]

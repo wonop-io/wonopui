@@ -7,16 +7,34 @@ use wonopui_core::merge_classes;
 use wonopui_popover::{Popover, PopoverContent, PopoverPosition, PopoverState, PopoverTrigger};
 use yew::prelude::*;
 
+/// Default CSS classes for dropdown styling (shadcn v4 style).
 pub mod classes {
-    pub const DROPDOWN_CONTENT: &str = "py-1 min-w-[160px]";
-    pub const DROPDOWN_ITEM: &str = "flex items-center px-4 py-2 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer";
-    pub const DROPDOWN_ITEM_DISABLED: &str =
-        "opacity-50 cursor-not-allowed hover:bg-transparent dark:hover:bg-transparent";
-    pub const DROPDOWN_ITEM_ICON: &str = "mr-2 w-4 h-4";
-    pub const DROPDOWN_ITEM_WIDGET: &str = "px-4 py-2";
-    pub const DROPDOWN_SEPARATOR: &str = "my-1 border-t border-gray-200 dark:border-zinc-600";
-    pub const DROPDOWN_HEADING: &str =
-        "px-4 py-2 text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider";
+    /// Content container styles - premium with more padding.
+    pub const DROPDOWN_CONTENT: &str = "p-1.5 min-w-[10rem] overflow-hidden";
+    
+    /// Item styles - premium with better spacing and transitions.
+    pub const DROPDOWN_ITEM: &str = "relative flex cursor-default select-none items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-zinc-300 outline-none transition-all duration-150 focus:bg-zinc-100 dark:focus:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-zinc-500 dark:[&_svg:not([class*='text-'])]:text-zinc-400";
+    
+    /// Destructive item variant.
+    pub const DROPDOWN_ITEM_DESTRUCTIVE: &str = "text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/50 focus:text-red-600 dark:focus:text-red-400 [&_svg]:!text-red-600 dark:[&_svg]:!text-red-400";
+    
+    /// Disabled item styles.
+    pub const DROPDOWN_ITEM_DISABLED: &str = "pointer-events-none opacity-50";
+    
+    /// Item icon styles.
+    pub const DROPDOWN_ITEM_ICON: &str = "size-4 shrink-0 flex items-center justify-center";
+    
+    /// Widget container styles.
+    pub const DROPDOWN_ITEM_WIDGET: &str = "px-3 py-2";
+    
+    /// Separator styles.
+    pub const DROPDOWN_SEPARATOR: &str = "my-1.5 h-px bg-zinc-200 dark:bg-zinc-800";
+    
+    /// Heading/label styles - premium uppercase styling.
+    pub const DROPDOWN_HEADING: &str = "px-3 py-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide";
+    
+    /// Shortcut text styles.
+    pub const DROPDOWN_SHORTCUT: &str = "ml-auto text-xs tracking-widest text-zinc-400 dark:text-zinc-500";
 }
 
 // Re-export PopoverPosition for convenience
@@ -67,7 +85,7 @@ pub fn dropdown(props: &DropdownProps) -> Html {
                 { for props.items.iter().map(|item| {
                     match item {
                         DropdownItem::Separator => {
-                            html! { <hr class={classes::DROPDOWN_SEPARATOR} /> }
+                            html! { <hr data-slot="dropdown-menu-separator" class={classes::DROPDOWN_SEPARATOR} /> }
                         },
                         _ => {
                             html! {
@@ -127,7 +145,7 @@ fn dropdown_item_component(props: &DropdownItemComponentProps) -> Html {
             ]);
 
             html! {
-                <div class={item_class} {onclick}>
+                <div data-slot="dropdown-menu-item" class={item_class} {onclick}>
                     { if let Some(icon) = icon {
                         html! { <span class={classes::DROPDOWN_ITEM_ICON}>{ icon.clone() }</span> }
                     } else {
@@ -139,14 +157,14 @@ fn dropdown_item_component(props: &DropdownItemComponentProps) -> Html {
         }
         DropdownItem::Widget(content) => {
             html! {
-                <div class={classes::DROPDOWN_ITEM_WIDGET}>
+                <div data-slot="dropdown-menu-widget" class={classes::DROPDOWN_ITEM_WIDGET}>
                     { content.clone() }
                 </div>
             }
         }
         DropdownItem::Heading { label } => {
             html! {
-                <div class={classes::DROPDOWN_HEADING}>
+                <div data-slot="dropdown-menu-label" class={classes::DROPDOWN_HEADING}>
                     <span>{ label }</span>
                 </div>
             }

@@ -12,124 +12,120 @@ pub fn multicol_sidebar_documentation() -> Html {
             </Paragraph>
 
             <H2>{ "Basic Usage" }</H2>
-            <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
-                <div class="h-[400px] relative overflow-hidden border border-gray-200 dark:border-zinc-700 rounded-md">
-                    <MultiColumnSidebar>
-                        <SidebarColumn>
-                            <div class="h-full flex flex-col">
-                                <div class="p-4 font-semibold text-lg border-b border-gray-200 dark:border-zinc-700">{ "Categories" }</div>
-                                <div class="flex-1 overflow-y-auto p-2">
-                                    <SidebarMenu>
-                                        <SidebarItem>
-                                            <div class="flex items-center space-x-2">
-                                                <span class="i-lucide-home w-5 h-5"></span>
-                                                <span>{ "Dashboard" }</span>
-                                            </div>
-                                        </SidebarItem>
-                                        <SidebarItem>
-                                            <div class="flex items-center space-x-2">
-                                                <span class="i-lucide-users w-5 h-5"></span>
-                                                <span>{ "User Management" }</span>
-                                            </div>
-                                        </SidebarItem>
-                                        <SidebarItem>
-                                            <div class="flex items-center space-x-2">
-                                                <span class="i-lucide-settings w-5 h-5"></span>
-                                                <span>{ "Settings" }</span>
-                                            </div>
-                                        </SidebarItem>
-                                    </SidebarMenu>
+            <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden mb-6">
+                <div class="h-[400px] relative bg-zinc-50 dark:bg-zinc-900">
+                    <MultiColumnSidebar width={400}>
+                        <SidebarColumn 
+                            width={Some(180)}
+                            header={html! {
+                                <div class="px-4 py-3 font-semibold text-sm text-zinc-900 dark:text-zinc-100 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+                                    { "Categories" }
                                 </div>
+                            }}
+                        >
+                            <div class="p-2">
+                                <SidebarMenu>
+                                    <SidebarItem>
+                                        <div class="flex items-center gap-3">
+                                            <svg class="size-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                            <span>{ "Dashboard" }</span>
+                                        </div>
+                                    </SidebarItem>
+                                    <SidebarItem>
+                                        <div class="flex items-center gap-3">
+                                            <svg class="size-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path></svg>
+                                            <span>{ "Users" }</span>
+                                        </div>
+                                    </SidebarItem>
+                                    <SidebarItem>
+                                        <div class="flex items-center gap-3">
+                                            <svg class="size-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                            <span>{ "Settings" }</span>
+                                        </div>
+                                    </SidebarItem>
+                                </SidebarMenu>
                             </div>
                         </SidebarColumn>
-                        <SidebarColumn>
-                            <div class="h-full flex flex-col">
-                                <div class="p-4 font-semibold text-lg border-b border-gray-200 dark:border-zinc-700">{ "User Management" }</div>
-                                <div class="flex-1 overflow-y-auto p-2">
-                                    <SidebarMenu>
-                                        <SidebarItem>
-                                            <div>{ "Users" }</div>
-                                        </SidebarItem>
-                                        <SidebarItem>
-                                            <div>{ "Groups" }</div>
-                                        </SidebarItem>
-                                        <SidebarItem>
-                                            <div>{ "Permissions" }</div>
-                                        </SidebarItem>
-                                        <SidebarItem>
-                                            <div>{ "Roles" }</div>
-                                        </SidebarItem>
-                                    </SidebarMenu>
+                        <SidebarColumn
+                            header={html! {
+                                <div class="px-4 py-3 font-semibold text-sm text-zinc-900 dark:text-zinc-100 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+                                    { "User Management" }
                                 </div>
+                            }}
+                        >
+                            <div class="p-2">
+                                <SidebarMenu>
+                                    <SidebarItem>{ "All Users" }</SidebarItem>
+                                    <SidebarItem>{ "Groups" }</SidebarItem>
+                                    <SidebarItem>{ "Permissions" }</SidebarItem>
+                                    <SidebarItem>{ "Roles" }</SidebarItem>
+                                </SidebarMenu>
                             </div>
                         </SidebarColumn>
                     </MultiColumnSidebar>
-                    <div class="pl-[500px] p-4">
-                        <H3>{ "Main Content Area" }</H3>
-                        <Paragraph>{ "This is where your main content would appear next to the multi-column sidebar." }</Paragraph>
+                    <div class="ml-[400px] p-6">
+                        <div class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{ "Main Content Area" }</div>
+                        <p class="text-zinc-600 dark:text-zinc-400">{ "This is where your main content would appear next to the multi-column sidebar." }</p>
                     </div>
                 </div>
             </div>
 
-            <H2>{ "With Tertiary Column" }</H2>
-            <div class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-md p-4 mb-4">
-                <div class="h-[400px] relative overflow-hidden border border-gray-200 dark:border-zinc-700 rounded-md">
-                    <MultiColumnSidebar>
-                        <SidebarColumn>
-                            <div class="h-full flex flex-col">
-                                <div class="p-4 font-semibold text-lg border-b border-gray-200 dark:border-zinc-700">{ "Categories" }</div>
-                                <div class="flex-1 overflow-y-auto p-2">
-                                    <SidebarMenu>
-                                        <SidebarItem>
-                                            <div>{ "Dashboard" }</div>
-                                        </SidebarItem>
-                                        <SidebarItem>
-                                            <div>{ "User Management" }</div>
-                                        </SidebarItem>
-                                    </SidebarMenu>
+            <H2>{ "Three Column Layout" }</H2>
+            <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden mb-6">
+                <div class="h-[400px] relative bg-zinc-50 dark:bg-zinc-900">
+                    <MultiColumnSidebar width={520}>
+                        <SidebarColumn 
+                            width={Some(140)}
+                            header={html! {
+                                <div class="px-4 py-3 font-semibold text-sm text-zinc-900 dark:text-zinc-100 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+                                    { "Modules" }
                                 </div>
+                            }}
+                        >
+                            <div class="p-2">
+                                <SidebarMenu>
+                                    <SidebarItem>{ "Dashboard" }</SidebarItem>
+                                    <SidebarItem>{ "Users" }</SidebarItem>
+                                    <SidebarItem>{ "Analytics" }</SidebarItem>
+                                </SidebarMenu>
                             </div>
                         </SidebarColumn>
-                        <SidebarColumn>
-                            <div class="h-full flex flex-col">
-                                <div class="p-4 font-semibold text-lg border-b border-gray-200 dark:border-zinc-700">{ "User Management" }</div>
-                                <div class="flex-1 overflow-y-auto p-2">
-                                    <SidebarMenu>
-                                        <SidebarItem>
-                                            <div>{ "Users" }</div>
-                                        </SidebarItem>
-                                        <SidebarItem>
-                                            <div>{ "Groups" }</div>
-                                        </SidebarItem>
-                                    </SidebarMenu>
+                        <SidebarColumn
+                            width={Some(160)}
+                            header={html! {
+                                <div class="px-4 py-3 font-semibold text-sm text-zinc-900 dark:text-zinc-100 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+                                    { "Users" }
                                 </div>
+                            }}
+                        >
+                            <div class="p-2">
+                                <SidebarMenu>
+                                    <SidebarItem>{ "All Users" }</SidebarItem>
+                                    <SidebarItem>{ "Active" }</SidebarItem>
+                                    <SidebarItem>{ "Pending" }</SidebarItem>
+                                </SidebarMenu>
                             </div>
                         </SidebarColumn>
-                        <SidebarColumn>
-                            <div class="h-full flex flex-col">
-                                <div class="p-4 font-semibold text-lg border-b border-gray-200 dark:border-zinc-700">{ "Users" }</div>
-                                <div class="flex-1 overflow-y-auto p-2">
-                                    <SidebarMenu>
-                                        <SidebarItem>
-                                            <div>{ "Create User" }</div>
-                                        </SidebarItem>
-                                        <SidebarItem>
-                                            <div>{ "Edit Users" }</div>
-                                        </SidebarItem>
-                                        <SidebarItem>
-                                            <div>{ "Delete Users" }</div>
-                                        </SidebarItem>
-                                        <SidebarItem>
-                                            <div>{ "User Activity" }</div>
-                                        </SidebarItem>
-                                    </SidebarMenu>
+                        <SidebarColumn
+                            header={html! {
+                                <div class="px-4 py-3 font-semibold text-sm text-zinc-900 dark:text-zinc-100 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+                                    { "Actions" }
                                 </div>
+                            }}
+                        >
+                            <div class="p-2">
+                                <SidebarMenu>
+                                    <SidebarItem>{ "Create User" }</SidebarItem>
+                                    <SidebarItem>{ "Import" }</SidebarItem>
+                                    <SidebarItem>{ "Export" }</SidebarItem>
+                                    <SidebarItem>{ "Settings" }</SidebarItem>
+                                </SidebarMenu>
                             </div>
                         </SidebarColumn>
                     </MultiColumnSidebar>
-                    <div class="pl-[750px] p-4">
-                        <H3>{ "Main Content Area" }</H3>
-                        <Paragraph>{ "This example includes a third level of navigation with tertiary_column." }</Paragraph>
+                    <div class="ml-[520px] p-6">
+                        <div class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{ "Main Content Area" }</div>
+                        <p class="text-zinc-600 dark:text-zinc-400">{ "Three-column navigation for complex hierarchies." }</p>
                     </div>
                 </div>
             </div>

@@ -80,7 +80,7 @@ tailwind_css(
     input = "tailwind_bazel.css",
     out = "styles.css",
     minify = True,
-    srcs = glob(["src/**/*.rs"]) + [
+    srcs = glob(["src/**/*.rs"]) + ["tw-animate.css"] + [
         "//crates/wonopui-accordion:srcs",
         "//crates/wonopui-alert:srcs",
         "//crates/wonopui-avatar:srcs",

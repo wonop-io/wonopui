@@ -161,7 +161,7 @@ pub fn menu() -> Html {
                         </Link<Route>>
                     </li>
                     <li class="relative">
-                        <Link<Route> to={Route::WindowControls} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+                        <Link<Route> to={Route::WindowControlsExample} classes="flex justify-between gap-2 py-1 pr-3 text-sm transition pl-4 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
                             <span class="truncate">{"WindowControls"}</span>
                         </Link<Route>>
                     </li>

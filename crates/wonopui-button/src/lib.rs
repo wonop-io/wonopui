@@ -1,40 +1,47 @@
 //! Button component for WonopUI.
 //!
 //! A versatile button component with multiple variants and sizes.
+//! Styled to match shadcn/ui v4 design system.
 
 use wonopui_core::*;
 
 /// Default CSS classes for button styling.
+/// Based on shadcn/ui v4 button component.
 pub mod classes {
     /// Base button styles applied to all buttons.
-    pub const BASE: &str = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-zinc-950 dark:focus-visible:ring-zinc-300";
+    /// Uses shadcn v4 focus pattern: focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]
+    pub const BASE: &str = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 shrink-0 outline-none focus-visible:border-zinc-950 focus-visible:ring-zinc-950/50 focus-visible:ring-[3px] dark:focus-visible:border-zinc-300 dark:focus-visible:ring-zinc-300/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
 
-    /// Primary button variant.
-    pub const PRIMARY: &str = "bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90";
+    /// Primary/Default button variant (shadcn: default).
+    /// Dark background with light text.
+    pub const PRIMARY: &str = "bg-zinc-900 text-zinc-50 shadow-sm hover:bg-zinc-800 active:bg-zinc-950 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 dark:active:bg-zinc-100";
 
-    /// Secondary button variant.
-    pub const SECONDARY: &str = "border border-zinc-200 dark:border-zinc-700 bg-white hover:bg-zinc-100 hover:text-zinc-900 dark:bg-zinc-950 dark:hover:bg-zinc-800 dark:hover:text-zinc-50";
+    /// Secondary button variant (shadcn: secondary).
+    /// Muted background with dark text.
+    pub const SECONDARY: &str = "bg-zinc-100 text-zinc-900 shadow-sm hover:bg-zinc-200 active:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-700 dark:active:bg-zinc-600";
 
-    /// Danger button variant.
-    pub const DANGER: &str = "bg-red-500 text-white hover:bg-red-600 dark:bg-red-900 dark:text-red-50 dark:hover:bg-red-800";
+    /// Outline button variant (shadcn: outline).
+    /// Border with transparent background.
+    pub const OUTLINE: &str = "border border-zinc-200 bg-white shadow-xs hover:bg-zinc-100 hover:text-zinc-900 active:bg-zinc-200 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 dark:active:bg-zinc-700";
+
+    /// Danger/Destructive button variant (shadcn: destructive).
+    /// Red background for dangerous actions.
+    pub const DANGER: &str = "bg-red-500 text-white shadow-sm hover:bg-red-600 active:bg-red-700 focus-visible:ring-red-500/50 dark:bg-red-600 dark:hover:bg-red-500 dark:active:bg-red-700 dark:focus-visible:ring-red-400/50";
 
     /// Success button variant.
-    pub const SUCCESS: &str = "bg-emerald-500 text-white hover:bg-emerald-600 dark:bg-emerald-900 dark:text-emerald-50 dark:hover:bg-emerald-800";
+    /// Green background for positive actions.
+    pub const SUCCESS: &str = "bg-emerald-500 text-white shadow-sm hover:bg-emerald-600 active:bg-emerald-700 focus-visible:ring-emerald-500/50 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:active:bg-emerald-700 dark:focus-visible:ring-emerald-400/50";
 
     /// Warning button variant.
-    pub const WARNING: &str = "bg-amber-500 text-white hover:bg-amber-600 dark:bg-amber-900 dark:text-amber-50 dark:hover:bg-amber-800";
+    /// Amber background for cautionary actions.
+    pub const WARNING: &str = "bg-amber-500 text-white shadow-sm hover:bg-amber-600 active:bg-amber-700 focus-visible:ring-amber-500/50 dark:bg-amber-600 dark:hover:bg-amber-500 dark:active:bg-amber-700 dark:focus-visible:ring-amber-400/50";
 
-    /// Ghost button variant (transparent background).
-    pub const GHOST: &str =
-        "hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50";
+    /// Ghost button variant (shadcn: ghost).
+    /// Transparent background with hover state.
+    pub const GHOST: &str = "hover:bg-zinc-100 hover:text-zinc-900 active:bg-zinc-200 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 dark:active:bg-zinc-700";
 
-    /// Default button variant.
-    pub const DEFAULT: &str = "border border-zinc-200 dark:border-zinc-700 bg-white hover:bg-zinc-100 hover:text-zinc-900 dark:bg-zinc-950 dark:hover:bg-zinc-800 dark:hover:text-zinc-50";
-
-    /// Outline button variant (transparent with border).
-    pub const OUTLINE: &str = "border border-zinc-200 dark:border-zinc-700 bg-transparent hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50";
-
-    /// Link button variant (text link style).
+    /// Link button variant (shadcn: link).
+    /// Text only with underline on hover.
     pub const LINK: &str = "text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-50";
 
     /// Icon button variant (square icon-only).
@@ -43,23 +50,29 @@ pub mod classes {
     /// Toolbar button variant (flat with smaller padding).
     pub const TOOLBAR: &str = "hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50";
 
-    /// Small button size.
-    pub const SIZE_SMALL: &str = "h-9 rounded-md px-3";
+    /// Default button variant (alias for OUTLINE).
+    pub const DEFAULT: &str = OUTLINE;
+
+    /// Extra small button size (shadcn: xs).
+    pub const SIZE_XS: &str = "h-6 gap-1 rounded-md px-2 text-xs [&_svg:not([class*='size-'])]:size-3";
+
+    /// Small button size (shadcn: sm).
+    pub const SIZE_SMALL: &str = "h-8 gap-1.5 rounded-md px-3 [&_svg:not([class*='size-'])]:size-3.5";
 
     /// Medium button size (default).
-    pub const SIZE_MEDIUM: &str = "h-10 py-2 px-4";
+    pub const SIZE_MEDIUM: &str = "h-9 px-4 py-2";
 
-    /// Large button size.
-    pub const SIZE_LARGE: &str = "h-11 rounded-md px-8";
+    /// Large button size (shadcn: lg).
+    pub const SIZE_LARGE: &str = "h-10 rounded-md px-6";
 
-    /// Icon-only small button size (square).
-    pub const SIZE_ICON_SMALL: &str = "h-7 w-7";
+    /// Icon button size (square, for icon-only buttons).
+    pub const SIZE_ICON: &str = "size-9";
 
-    /// Icon-only medium button size (square).
-    pub const SIZE_ICON_MEDIUM: &str = "h-8 w-8";
+    /// Small icon button size.
+    pub const SIZE_ICON_SM: &str = "size-8 rounded-md";
 
-    /// Icon-only large button size (square).
-    pub const SIZE_ICON_LARGE: &str = "h-10 w-10";
+    /// Large icon button size.
+    pub const SIZE_ICON_LG: &str = "size-10";
 
     /// Toolbar button size.
     pub const SIZE_TOOLBAR: &str = "p-1.5";
@@ -78,19 +91,27 @@ pub mod classes {
 }
 
 /// Button variant determines the visual style.
+/// Matches shadcn/ui v4 button variants.
 #[derive(Clone, Copy, Debug, PartialEq, Default)]
 pub enum ButtonVariant {
+    /// Default outline style with border
     #[default]
     Default,
+    /// Primary filled style (dark bg)
     Primary,
+    /// Secondary muted style
     Secondary,
-    Success,
-    Warning,
-    Danger,
-    Ghost,
-    /// Transparent with border.
+    /// Outline with border (alias for Default)
     Outline,
-    /// Text link style (underline on hover).
+    /// Success green style
+    Success,
+    /// Warning amber style
+    Warning,
+    /// Danger/Destructive red style
+    Danger,
+    /// Ghost transparent style
+    Ghost,
+    /// Link text-only style
     Link,
     /// Square icon-only button.
     Icon,
@@ -99,12 +120,24 @@ pub enum ButtonVariant {
 }
 
 /// Button size determines the dimensions.
+/// Matches shadcn/ui v4 button sizes.
 #[derive(Clone, Copy, Debug, PartialEq, Default)]
 pub enum ButtonSize {
+    /// Extra small: h-6
+    XSmall,
+    /// Small: h-8
     Small,
+    /// Default: h-9
     #[default]
     Medium,
+    /// Large: h-10
     Large,
+    /// Icon square: size-9
+    Icon,
+    /// Small icon: size-8
+    IconSmall,
+    /// Large icon: size-10
+    IconLarge,
 }
 
 /// Properties for the Button component.
@@ -201,30 +234,34 @@ pub fn button(props: &ButtonProps) -> Html {
     let variant_class = match props.variant {
         ButtonVariant::Primary => classes::PRIMARY,
         ButtonVariant::Secondary => classes::SECONDARY,
+        ButtonVariant::Outline => classes::OUTLINE,
         ButtonVariant::Success => classes::SUCCESS,
         ButtonVariant::Warning => classes::WARNING,
         ButtonVariant::Danger => classes::DANGER,
         ButtonVariant::Ghost => classes::GHOST,
-        ButtonVariant::Default => classes::DEFAULT,
-        ButtonVariant::Outline => classes::OUTLINE,
         ButtonVariant::Link => classes::LINK,
+        ButtonVariant::Default => classes::DEFAULT,
         ButtonVariant::Icon => classes::ICON,
         ButtonVariant::Toolbar => classes::TOOLBAR,
     };
 
-    let size_class = if is_icon_variant {
-        match props.size {
-            ButtonSize::Small => classes::SIZE_ICON_SMALL,
-            ButtonSize::Medium => classes::SIZE_ICON_MEDIUM,
-            ButtonSize::Large => classes::SIZE_ICON_LARGE,
-        }
-    } else if is_toolbar_variant {
+    let size_class = if is_toolbar_variant {
         classes::SIZE_TOOLBAR
+    } else if is_icon_variant {
+        match props.size {
+            ButtonSize::Small | ButtonSize::IconSmall => classes::SIZE_ICON_SM,
+            ButtonSize::Large | ButtonSize::IconLarge => classes::SIZE_ICON_LG,
+            _ => classes::SIZE_ICON,
+        }
     } else {
         match props.size {
+            ButtonSize::XSmall => classes::SIZE_XS,
             ButtonSize::Small => classes::SIZE_SMALL,
             ButtonSize::Medium => classes::SIZE_MEDIUM,
             ButtonSize::Large => classes::SIZE_LARGE,
+            ButtonSize::Icon => classes::SIZE_ICON,
+            ButtonSize::IconSmall => classes::SIZE_ICON_SM,
+            ButtonSize::IconLarge => classes::SIZE_ICON_LG,
         }
     };
 
@@ -246,6 +283,9 @@ pub fn button(props: &ButtonProps) -> Html {
 
     html! {
         <button
+            data-slot="button"
+            data-variant={format!("{:?}", props.variant).to_lowercase()}
+            data-size={format!("{:?}", props.size).to_lowercase()}
             class={classes!(
                 classes::BASE,
                 variant_class,
@@ -326,28 +366,33 @@ mod tests {
 
     #[test]
     fn test_classes_constants_contain_expected_classes() {
-        // Base should contain common button styling
+        // Base should contain common button styling (shadcn v4 patterns)
         assert!(classes::BASE.contains("inline-flex"));
         assert!(classes::BASE.contains("rounded"));
+        assert!(classes::BASE.contains("gap-2")); // shadcn v4 adds gap
+        assert!(classes::BASE.contains("transition-all")); // smooth transitions
+        assert!(classes::BASE.contains("focus-visible:ring")); // focus ring
 
         // Variants should have their color styling
         assert!(classes::PRIMARY.contains("bg-zinc"));
         assert!(classes::DANGER.contains("bg-red"));
         assert!(classes::SUCCESS.contains("bg-emerald"));
         assert!(classes::WARNING.contains("bg-amber"));
+        assert!(classes::GHOST.contains("hover:bg-zinc"));
+        assert!(classes::LINK.contains("underline"));
 
         // New variants
         assert!(classes::OUTLINE.contains("border"));
-        assert!(classes::LINK.contains("underline"));
 
-        // Sizes should have height classes
-        assert!(classes::SIZE_SMALL.contains("h-9"));
-        assert!(classes::SIZE_MEDIUM.contains("h-10"));
-        assert!(classes::SIZE_LARGE.contains("h-11"));
+        // Variants should have shadow (premium feel)
+        assert!(classes::PRIMARY.contains("shadow"));
+        assert!(classes::SECONDARY.contains("shadow"));
 
-        // Icon sizes should be square
-        assert!(classes::SIZE_ICON_SMALL.contains("w-7"));
-        assert!(classes::SIZE_ICON_MEDIUM.contains("w-8"));
-        assert!(classes::SIZE_ICON_LARGE.contains("w-10"));
+        // Sizes should have correct height classes (shadcn v4)
+        assert!(classes::SIZE_XS.contains("h-6"));
+        assert!(classes::SIZE_SMALL.contains("h-8"));
+        assert!(classes::SIZE_MEDIUM.contains("h-9"));
+        assert!(classes::SIZE_LARGE.contains("h-10"));
+        assert!(classes::SIZE_ICON.contains("size-9"));
     }
 }

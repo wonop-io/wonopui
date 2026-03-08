@@ -1,13 +1,19 @@
 //! Textarea component for wonopui
 //!
 //! A multi-line text input component.
+//! Styled to match shadcn/ui v4 design system.
 
 use wonopui_core::merge_classes;
 use yew::prelude::*;
 
+/// Default CSS classes for textarea styling.
+/// Based on shadcn/ui v4 textarea component.
 pub mod classes {
-    pub const TEXTAREA_BASE: &str = "w-full px-3 py-2 text-sm bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 resize-y";
-    pub const TEXTAREA_DISABLED: &str = "opacity-50 cursor-not-allowed";
+    /// Base textarea styles - matches shadcn v4 Textarea component.
+    /// Uses shadcn v4 focus pattern: focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]
+    pub const TEXTAREA_BASE: &str = "flex field-sizing-content min-h-16 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent dark:bg-zinc-950/30 px-3 py-2 text-base md:text-sm shadow-xs transition-[color,box-shadow] duration-200 outline-none placeholder:text-zinc-500 dark:placeholder:text-zinc-400 focus-visible:border-zinc-950 dark:focus-visible:border-zinc-300 focus-visible:ring-zinc-950/50 dark:focus-visible:ring-zinc-300/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 text-zinc-900 dark:text-zinc-50";
+    /// Disabled state styles.
+    pub const TEXTAREA_DISABLED: &str = "cursor-not-allowed opacity-50";
 }
 
 #[derive(Properties, PartialEq)]
@@ -54,6 +60,7 @@ pub fn textarea(props: &TextareaProps) -> Html {
 
     html! {
         <textarea
+            data-slot="textarea"
             class={class}
             value={props.value.clone()}
             oninput={props.oninput.clone()}

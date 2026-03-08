@@ -1,23 +1,42 @@
 //! Toggle component for wonopui
 //!
 //! A two-state button that can be either on or off.
+//! Styled to match shadcn/ui v4 design system.
 
 use wonopui_core::merge_classes;
 use yew::prelude::*;
 
+/// Default CSS classes for toggle styling.
+/// Based on shadcn/ui v4 toggle component.
 pub mod classes {
-    pub const TOGGLE_BASE: &str = "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
-    pub const TOGGLE_DEFAULT: &str =
-        "bg-transparent hover:bg-gray-100 dark:hover:bg-zinc-800 h-10 px-3";
-    pub const TOGGLE_OUTLINE: &str = "border border-gray-200 dark:border-zinc-700 bg-transparent hover:bg-gray-100 dark:hover:bg-zinc-800 h-10 px-3";
-    pub const TOGGLE_CHECKED: &str =
-        "bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-zinc-100";
-    pub const TOGGLE_UNCHECKED: &str = "text-gray-500 dark:text-zinc-400";
-    pub const TOGGLE_DISABLED: &str = "opacity-50 cursor-not-allowed";
+    /// Base toggle styles - matches shadcn v4 Toggle component.
+    /// Uses rounded-lg for rounded square appearance with proper padding.
+    pub const TOGGLE_BASE: &str = "inline-flex items-center justify-center gap-2 rounded-lg text-sm font-medium transition-all duration-200 outline-none focus-visible:border-zinc-950 dark:focus-visible:border-zinc-300 focus-visible:ring-zinc-950/50 dark:focus-visible:ring-zinc-300/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 whitespace-nowrap";
 
-    // Size variants
-    pub const TOGGLE_SM: &str = "h-9 px-2.5";
-    pub const TOGGLE_LG: &str = "h-11 px-5";
+    /// Default variant styles (no border).
+    pub const TOGGLE_DEFAULT: &str = "bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100";
+
+    /// Outline variant styles (with border).
+    pub const TOGGLE_OUTLINE: &str = "border border-zinc-200 dark:border-zinc-800 bg-transparent shadow-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-50";
+
+    /// Checked/pressed state styles (shadcn: data-[state=on]).
+    pub const TOGGLE_CHECKED: &str = "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50";
+
+    /// Unchecked state styles.
+    pub const TOGGLE_UNCHECKED: &str = "text-zinc-500 dark:text-zinc-400";
+
+    /// Disabled state styles.
+    pub const TOGGLE_DISABLED: &str = "pointer-events-none opacity-50";
+
+    // Size variants - matching shadcn v4 with generous padding
+    /// Default size with good padding for rounded square look.
+    pub const TOGGLE_SIZE_DEFAULT: &str = "h-10 min-w-10 px-4 py-2.5";
+
+    /// Small size with proper padding.
+    pub const TOGGLE_SM: &str = "h-9 min-w-9 px-3 py-2";
+
+    /// Large size with proper padding.
+    pub const TOGGLE_LG: &str = "h-12 min-w-12 px-5 py-3";
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Default)]
@@ -39,7 +58,7 @@ impl ToggleSize {
     pub fn to_class(&self) -> &'static str {
         match self {
             ToggleSize::Sm => classes::TOGGLE_SM,
-            ToggleSize::Default => classes::TOGGLE_DEFAULT,
+            ToggleSize::Default => classes::TOGGLE_SIZE_DEFAULT,
             ToggleSize::Lg => classes::TOGGLE_LG,
         }
     }
@@ -131,6 +150,8 @@ pub fn toggle(props: &ToggleProps) -> Html {
 
     html! {
         <button
+            data-slot="toggle"
+            data-state={if *pressed { "on" } else { "off" }}
             type="button"
             role="switch"
             aria-pressed={pressed.to_string()}

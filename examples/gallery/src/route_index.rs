@@ -396,19 +396,25 @@ pub fn create_search_index() -> Vec<(Route, String, String, Option<Html>)> {
             None,
         ),
         (
-            Route::Typography,
+            Route::TypographyExample,
             "typography, text, font".to_string(),
             "Typography".to_string(),
             None,
         ),
         (
-            Route::WindowControls,
+            Route::UIBlocksExample,
+            "ui blocks, templates, layouts, application, dashboard, pricing, hero, forms".to_string(),
+            "UI Blocks".to_string(),
+            None,
+        ),
+        (
+            Route::WindowControlsExample,
             "window controls, traffic lights, close, minimize, maximize".to_string(),
             "Window Controls".to_string(),
             None,
         ),
         (
-            Route::WindowProvider,
+            Route::WindowProviderExample,
             "window provider, context, global".to_string(),
             "Window Provider".to_string(),
             None,
