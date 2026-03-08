@@ -1,0 +1,26 @@
+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+rust_library(
+    name = "wonopui-icon-button",
+    srcs = glob(["src/**/*.rs"]),
+    crate_name = "wonopui_icon_button",
+    edition = "2021",
+    deps = [
+        "@crates//:yew",
+    ],
+)
+
+rust_test(
+    name = "wonopui-icon-button_test",
+    crate = ":wonopui-icon-button",
+    size = "small",
+)
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["src/**/*.rs"]),
+)

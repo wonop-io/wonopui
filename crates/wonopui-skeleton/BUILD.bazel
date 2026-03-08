@@ -1,11 +1,11 @@
 load("@rules_rust//rust:defs.bzl", "rust_library")
 
 rust_library(
-    name = "wonopui-error-boundary",
+    name = "wonopui-skeleton",
     srcs = glob(["src/**/*.rs"]),
-    visibility = ["//visibility:public"],
     deps = [
         "//crates/wonopui-core",
         "@crates//:yew",
     ],
+    visibility = ["//visibility:public"],
 )

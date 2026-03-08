@@ -1,0 +1,14 @@
+[package]
+name = "wonopui-modal"
+version = "0.1.0"
+edition = "2021"
+authors = ["Wonop ApS"]
+license = "MIT OR Apache-2.0"
+description = "Modal component for wonopui"
+repository = "https://github.com/wonop-io/wonopui"
+
+[dependencies]
+yew = { version = "0.21", features = ["csr"] }
+web-sys = { version = "0.3", features = ["KeyboardEvent"] }
+gloo = "0.11"
+wasm-bindgen = "0.2"

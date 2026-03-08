@@ -1,22 +1,26 @@
-load("@rules_rust//rust:defs.bzl", "rust_library")
+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test")
 
 package(default_visibility = ["//visibility:public"])
 
 exports_files(["Cargo.toml"])
 
 rust_library(
-    name = "wonopui-confirm-dialog",
+    name = "wonopui-modal",
     srcs = glob(["src/**/*.rs"]),
-    crate_name = "wonopui_confirm_dialog",
+    crate_name = "wonopui_modal",
     edition = "2021",
     deps = [
-        "//crates/wonopui-core",
-        "//crates/wonopui-button",
         "@crates//:yew",
         "@crates//:web-sys",
-        "@crates//:wasm-bindgen",
         "@crates//:gloo",
+        "@crates//:wasm-bindgen",
     ],
+)
+
+rust_test(
+    name = "wonopui-modal_test",
+    crate = ":wonopui-modal",
+    size = "small",
 )
 
 filegroup(

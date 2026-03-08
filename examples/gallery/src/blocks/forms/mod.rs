@@ -295,9 +295,9 @@ fn stacked_form() -> Html {
 #[function_component(InlineForm)]
 fn inline_form() -> Html {
     let options = vec![
-        SelectOpt { value: "all".to_string(), label: "All".to_string() },
-        SelectOpt { value: "electronics".to_string(), label: "Electronics".to_string() },
-        SelectOpt { value: "clothing".to_string(), label: "Clothing".to_string() },
+        SelectOpt::new("all", "All"),
+        SelectOpt::new("electronics", "Electronics"),
+        SelectOpt::new("clothing", "Clothing"),
     ];
     
     html! {
@@ -549,9 +549,9 @@ fn input_with_button() -> Html {
 #[function_component(InputWithSelect)]
 fn input_with_select() -> Html {
     let country_codes = vec![
-        SelectOpt { value: "+1".to_string(), label: "🇺🇸 +1".to_string() },
-        SelectOpt { value: "+44".to_string(), label: "🇬🇧 +44".to_string() },
-        SelectOpt { value: "+49".to_string(), label: "🇩🇪 +49".to_string() },
+        SelectOpt::new("+1", "🇺🇸 +1"),
+        SelectOpt::new("+44", "🇬🇧 +44"),
+        SelectOpt::new("+49", "🇩🇪 +49"),
     ];
     
     html! {
@@ -560,7 +560,7 @@ fn input_with_select() -> Html {
             <div class="flex mt-1.5">
                 <Select<SelectOpt> 
                     options={country_codes}
-                    selected={Some(SelectOpt { value: "+1".to_string(), label: "🇺🇸 +1".to_string() })}
+                    selected={Some(SelectOpt::new("+1", "🇺🇸 +1"))}
                     class="w-28 rounded-r-none"
                 />
                 <Input id="phone-number" kind="tel" placeholder="(555) 000-0000" class="rounded-l-none flex-1" />

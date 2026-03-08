@@ -62,10 +62,16 @@ pub enum Route {
     Drawer,
     #[at("/dropdown")]
     Dropdown,
+    #[at("/empty-state")]
+    EmptyState,
     #[at("/error-boundary")]
     ErrorBoundary,
+    #[at("/form-field")]
+    FormField,
     #[at("/group-button")]
     GroupButton,
+    #[at("/icon-button")]
+    IconButton,
     #[at("/iframe")]
     Iframe,
     #[at("/input")]
@@ -84,6 +90,8 @@ pub enum Route {
     MentionInput,
     #[at("/mermaid-diagram")]
     MermaidDiagram,
+    #[at("/modal")]
+    Modal,
     #[at("/multicol-sidebar")]
     MulticolSidebar,
     #[at("/notification")]

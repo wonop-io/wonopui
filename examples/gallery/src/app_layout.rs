@@ -183,6 +183,7 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
                 <SidebarLink<Route> label="Media Query" to={Route::MediaQuery} />
                 <SidebarLink<Route> label="Mention Input" to={Route::MentionInput} />
                 <SidebarLink<Route> label="Mermaid Diagram" to={Route::MermaidDiagram} />
+                <SidebarLink<Route> label="Modal" to={Route::Modal} />
                 <SidebarLink<Route> label="Multicol Sidebar" to={Route::MulticolSidebar} />
                 <SidebarLink<Route> label="Notification" to={Route::Notification} />
                 <SidebarLink<Route> label="Page Content" to={Route::PageContent} />

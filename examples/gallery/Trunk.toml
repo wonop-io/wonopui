@@ -2,7 +2,7 @@
 paths = ["../../src","./"]
 
 [tools]
-wasm_bindgen = "0.2.110"
+wasm_bindgen = "0.2.114"
 
 [serve]
 port = 8081

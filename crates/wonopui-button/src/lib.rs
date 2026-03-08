@@ -44,6 +44,12 @@ pub mod classes {
     /// Text only with underline on hover.
     pub const LINK: &str = "text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-50";
 
+    /// Icon button variant (square icon-only).
+    pub const ICON: &str = "hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50";
+
+    /// Toolbar button variant (flat with smaller padding).
+    pub const TOOLBAR: &str = "hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50";
+
     /// Default button variant (alias for OUTLINE).
     pub const DEFAULT: &str = OUTLINE;
 
@@ -67,6 +73,21 @@ pub mod classes {
 
     /// Large icon button size.
     pub const SIZE_ICON_LG: &str = "size-10";
+
+    /// Toolbar button size.
+    pub const SIZE_TOOLBAR: &str = "p-1.5";
+
+    /// Active/selected state.
+    pub const ACTIVE: &str = "bg-zinc-100 dark:bg-zinc-800";
+
+    /// Full width button.
+    pub const FULL_WIDTH: &str = "w-full";
+
+    /// Spinner animation.
+    pub const SPINNER: &str = "animate-spin h-4 w-4";
+
+    /// Gap between icon and text.
+    pub const ICON_GAP: &str = "gap-2";
 }
 
 /// Button variant determines the visual style.
@@ -92,6 +113,10 @@ pub enum ButtonVariant {
     Ghost,
     /// Link text-only style
     Link,
+    /// Square icon-only button.
+    Icon,
+    /// Flat toolbar button (smaller padding).
+    Toolbar,
 }
 
 /// Button size determines the dimensions.
@@ -118,9 +143,9 @@ pub enum ButtonSize {
 /// Properties for the Button component.
 #[derive(Properties, PartialEq)]
 pub struct ButtonProps {
-    /// Click handler callback.
+    /// Click handler callback. Optional to allow disabled buttons without handlers.
     #[prop_or_default]
-    pub onclick: Callback<MouseEvent>,
+    pub onclick: Option<Callback<MouseEvent>>,
 
     /// Visual variant of the button.
     #[prop_or_default]
@@ -145,6 +170,34 @@ pub struct ButtonProps {
     /// Button type attribute (e.g., "button", "submit", "reset").
     #[prop_or_default]
     pub kind: Option<String>,
+
+    /// Icon to display before the text.
+    #[prop_or_default]
+    pub icon: Option<Html>,
+
+    /// Icon to display after the text.
+    #[prop_or_default]
+    pub icon_after: Option<Html>,
+
+    /// Show loading spinner and disable the button.
+    #[prop_or_default]
+    pub loading: bool,
+
+    /// Text to display while loading (default: "Loading...").
+    #[prop_or_default]
+    pub loading_text: Option<String>,
+
+    /// Toggle/selected state.
+    #[prop_or_default]
+    pub active: bool,
+
+    /// Make button full width (w-full).
+    #[prop_or_default]
+    pub full_width: bool,
+
+    /// HTML title tooltip.
+    #[prop_or_default]
+    pub title: Option<String>,
 }
 
 /// A versatile button component with multiple variants and sizes.
@@ -174,6 +227,10 @@ pub struct ButtonProps {
 /// ```
 #[function_component(Button)]
 pub fn button(props: &ButtonProps) -> Html {
+    let is_icon_variant = matches!(props.variant, ButtonVariant::Icon);
+    let is_toolbar_variant = matches!(props.variant, ButtonVariant::Toolbar);
+    let is_disabled = props.disabled || props.loading;
+
     let variant_class = match props.variant {
         ButtonVariant::Primary => classes::PRIMARY,
         ButtonVariant::Secondary => classes::SECONDARY,
@@ -184,16 +241,44 @@ pub fn button(props: &ButtonProps) -> Html {
         ButtonVariant::Ghost => classes::GHOST,
         ButtonVariant::Link => classes::LINK,
         ButtonVariant::Default => classes::DEFAULT,
+        ButtonVariant::Icon => classes::ICON,
+        ButtonVariant::Toolbar => classes::TOOLBAR,
     };
 
-    let size_class = match props.size {
-        ButtonSize::XSmall => classes::SIZE_XS,
-        ButtonSize::Small => classes::SIZE_SMALL,
-        ButtonSize::Medium => classes::SIZE_MEDIUM,
-        ButtonSize::Large => classes::SIZE_LARGE,
-        ButtonSize::Icon => classes::SIZE_ICON,
-        ButtonSize::IconSmall => classes::SIZE_ICON_SM,
-        ButtonSize::IconLarge => classes::SIZE_ICON_LG,
+    let size_class = if is_toolbar_variant {
+        classes::SIZE_TOOLBAR
+    } else if is_icon_variant {
+        match props.size {
+            ButtonSize::Small | ButtonSize::IconSmall => classes::SIZE_ICON_SM,
+            ButtonSize::Large | ButtonSize::IconLarge => classes::SIZE_ICON_LG,
+            _ => classes::SIZE_ICON,
+        }
+    } else {
+        match props.size {
+            ButtonSize::XSmall => classes::SIZE_XS,
+            ButtonSize::Small => classes::SIZE_SMALL,
+            ButtonSize::Medium => classes::SIZE_MEDIUM,
+            ButtonSize::Large => classes::SIZE_LARGE,
+            ButtonSize::Icon => classes::SIZE_ICON,
+            ButtonSize::IconSmall => classes::SIZE_ICON_SM,
+            ButtonSize::IconLarge => classes::SIZE_ICON_LG,
+        }
+    };
+
+    let has_icon_or_children = props.icon.is_some() || props.icon_after.is_some() || !props.children.is_empty();
+
+    let onclick = props.onclick.clone().map(|cb| {
+        Callback::from(move |e: MouseEvent| {
+            cb.emit(e);
+        })
+    });
+
+    // Spinner SVG for loading state
+    let spinner = html! {
+        <svg class={classes::SPINNER} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
     };
 
     html! {
@@ -201,12 +286,32 @@ pub fn button(props: &ButtonProps) -> Html {
             data-slot="button"
             data-variant={format!("{:?}", props.variant).to_lowercase()}
             data-size={format!("{:?}", props.size).to_lowercase()}
-            class={classes!(classes::BASE, variant_class, size_class, props.class.clone())}
-            onclick={props.onclick.clone()}
-            disabled={props.disabled}
+            class={classes!(
+                classes::BASE,
+                variant_class,
+                size_class,
+                if props.active { classes::ACTIVE } else { "" },
+                if props.full_width { classes::FULL_WIDTH } else { "" },
+                if has_icon_or_children && !is_icon_variant { classes::ICON_GAP } else { "" },
+                props.class.clone()
+            )}
+            onclick={onclick}
+            disabled={is_disabled}
             type={props.kind.clone().unwrap_or_else(|| "button".to_string())}
+            title={props.title.clone()}
         >
-            { for props.children.iter() }
+            if props.loading {
+                { spinner }
+                { props.loading_text.clone().unwrap_or_else(|| "Loading...".to_string()) }
+            } else {
+                if let Some(icon) = &props.icon {
+                    { icon.clone() }
+                }
+                { for props.children.iter() }
+                if let Some(icon_after) = &props.icon_after {
+                    { icon_after.clone() }
+                }
+            }
         </button>
     }
 }
@@ -252,6 +357,14 @@ mod tests {
     }
 
     #[test]
+    fn test_new_variants_exist() {
+        let _ = ButtonVariant::Outline;
+        let _ = ButtonVariant::Link;
+        let _ = ButtonVariant::Icon;
+        let _ = ButtonVariant::Toolbar;
+    }
+
+    #[test]
     fn test_classes_constants_contain_expected_classes() {
         // Base should contain common button styling (shadcn v4 patterns)
         assert!(classes::BASE.contains("inline-flex"));
@@ -267,6 +380,9 @@ mod tests {
         assert!(classes::WARNING.contains("bg-amber"));
         assert!(classes::GHOST.contains("hover:bg-zinc"));
         assert!(classes::LINK.contains("underline"));
+
+        // New variants
+        assert!(classes::OUTLINE.contains("border"));
 
         // Variants should have shadow (premium feel)
         assert!(classes::PRIMARY.contains("shadow"));

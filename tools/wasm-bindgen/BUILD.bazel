@@ -1,0 +1,24 @@
+# Custom wasm-bindgen toolchain using system-installed wasm-bindgen-cli
+# This allows bazel to use the same wasm-bindgen version as cargo
+
+load("@rules_rust_wasm_bindgen//:defs.bzl", "rust_wasm_bindgen_toolchain")
+
+# Use local binary
+sh_binary(
+    name = "wasm_bindgen_cli",
+    srcs = ["wasm_bindgen_wrapper.sh"],
+    visibility = ["//visibility:public"],
+)
+
+# Custom toolchain using system wasm-bindgen
+rust_wasm_bindgen_toolchain(
+    name = "system_wasm_bindgen_toolchain_impl",
+    wasm_bindgen_cli = ":wasm_bindgen_cli",
+)
+
+toolchain(
+    name = "system_wasm_bindgen_toolchain",
+    toolchain = ":system_wasm_bindgen_toolchain_impl",
+    toolchain_type = "@rules_rust_wasm_bindgen//:toolchain_type",
+)
+
