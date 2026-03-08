@@ -1,0 +1,11 @@
+[package]
+name = "wonopui-empty-state"
+version = "0.1.0"
+edition = "2021"
+authors = ["Wonop ApS"]
+license = "MIT OR Apache-2.0"
+description = "EmptyState component for wonopui"
+repository = "https://github.com/wonop-io/wonopui"
+
+[dependencies]
+yew = { version = "0.21", features = ["csr"] }

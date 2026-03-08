@@ -6,8 +6,8 @@ rust_library(
     visibility = ["//visibility:public"],
     deps = [
         "//crates/wonopui-core",
-        "@aspect_crates//:yew",
-        "@aspect_crates//:pulldown-cmark",
-        "@aspect_crates//:web-sys",
+        "@crates//:yew",
+        "@crates//:pulldown-cmark",
+        "@crates//:web-sys",
     ],
 )

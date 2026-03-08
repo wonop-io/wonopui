@@ -258,6 +258,20 @@ pub mod prelude {
 
     #[cfg(feature = "window-controls")]
     pub use wonopui_window_controls::{WindowControls, WindowControlsProps};
+
+    #[cfg(feature = "empty-state")]
+    pub use wonopui_empty_state::{EmptyState, EmptyStateProps, EmptyStateSize};
+
+    #[cfg(feature = "form-field")]
+    pub use wonopui_form_field::{FormField, FormFieldProps};
+
+    #[cfg(feature = "icon-button")]
+    pub use wonopui_icon_button::{
+        IconButton, IconButtonColor, IconButtonProps, IconButtonSize, IconButtonVariant,
+    };
+
+    #[cfg(feature = "modal")]
+    pub use wonopui_modal::{Modal, ModalProps, ModalSize};
 }
 
 // Re-export components at the crate root level
@@ -540,3 +554,18 @@ pub use wonopui_window_controls::{self as window_controls, WindowControls, Windo
 pub use wonopui_window_provider::{
     self as window_provider, use_window_context, WindowProvider, WindowProviderProps,
 };
+
+#[cfg(feature = "empty-state")]
+pub use wonopui_empty_state::{self as empty_state, EmptyState, EmptyStateProps, EmptyStateSize};
+
+#[cfg(feature = "form-field")]
+pub use wonopui_form_field::{self as form_field, FormField, FormFieldProps};
+
+#[cfg(feature = "icon-button")]
+pub use wonopui_icon_button::{
+    self as icon_button, IconButton, IconButtonColor, IconButtonProps, IconButtonSize,
+    IconButtonVariant,
+};
+
+#[cfg(feature = "modal")]
+pub use wonopui_modal::{self as modal, Modal, ModalProps, ModalSize};

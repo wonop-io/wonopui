@@ -79,6 +79,10 @@ members = [
     "crates/wonopui-typography",
     "crates/wonopui-window-controls",
     "crates/wonopui-window-provider",
+    "crates/wonopui-modal",
+    "crates/wonopui-form-field",
+    "crates/wonopui-empty-state",
+    "crates/wonopui-icon-button",
     "examples/basic_app",
     "examples/gallery",
 ]

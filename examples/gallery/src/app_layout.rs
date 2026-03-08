@@ -160,8 +160,11 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
                 <SidebarLink<Route> label="Drag Point" to={Route::DragPoint} />
                 <SidebarLink<Route> label="Drawer" to={Route::Drawer} />
                 <SidebarLink<Route> label="Dropdown" to={Route::Dropdown} />
+                <SidebarLink<Route> label="Empty State" to={Route::EmptyState} />
                 <SidebarLink<Route> label="Error Boundary" to={Route::ErrorBoundary} />
+                <SidebarLink<Route> label="Form Field" to={Route::FormField} />
                 <SidebarLink<Route> label="Group Button" to={Route::GroupButton} />
+                <SidebarLink<Route> label="Icon Button" to={Route::IconButton} />
                 <SidebarLink<Route> label="Iframe" to={Route::Iframe} />
                 <SidebarLink<Route> label="Input" to={Route::Input} />
                 <SidebarLink<Route> label="Kanban" to={Route::Kanban} />
@@ -191,6 +194,7 @@ pub fn documentation_layout(props: &DocumentationLayoutProps) -> Html {
                 <SidebarLink<Route> label="Tag Input" to={Route::TagInput} />
                 <SidebarLink<Route> label="Mention Input" to={Route::MentionInput} />
                 <SidebarLink<Route> label="Mermaid Diagram" to={Route::MermaidDiagram} />
+                <SidebarLink<Route> label="Modal" to={Route::Modal} />
                 <SidebarLink<Route> label="Tailwind Color Picker" to={Route::TailwindColorPicker} />
                 <SidebarLink<Route> label="Textarea" to={Route::Textarea} />
                 <SidebarLink<Route> label="Toggle" to={Route::Toggle} />

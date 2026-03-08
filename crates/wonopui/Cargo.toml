@@ -88,6 +88,10 @@ everything = [
     "typography",
     "window-controls",
     "window-provider",
+    "modal",
+    "form-field",
+    "empty-state",
+    "icon-button",
 ]
 
 # Individual component features
@@ -163,6 +167,10 @@ topbar = ["dep:wonopui-topbar"]
 typography = ["dep:wonopui-typography"]
 window-controls = ["dep:wonopui-window-controls"]
 window-provider = ["dep:wonopui-window-provider"]
+modal = ["dep:wonopui-modal"]
+form-field = ["dep:wonopui-form-field"]
+empty-state = ["dep:wonopui-empty-state"]
+icon-button = ["dep:wonopui-icon-button"]
 
 [dependencies]
 wonopui-core = { path = "../wonopui-core" }
@@ -242,3 +250,7 @@ wonopui-topbar = { path = "../wonopui-topbar", optional = true }
 wonopui-typography = { path = "../wonopui-typography", optional = true }
 wonopui-window-controls = { path = "../wonopui-window-controls", optional = true }
 wonopui-window-provider = { path = "../wonopui-window-provider", optional = true }
+wonopui-modal = { path = "../wonopui-modal", optional = true }
+wonopui-form-field = { path = "../wonopui-form-field", optional = true }
+wonopui-empty-state = { path = "../wonopui-empty-state", optional = true }
+wonopui-icon-button = { path = "../wonopui-icon-button", optional = true }

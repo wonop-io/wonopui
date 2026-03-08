@@ -7,6 +7,6 @@ rust_library(
     deps = [
         "//crates/wonopui-core",
         "//crates/wonopui-status-dot",
-        "@aspect_crates//:yew",
+        "@crates//:yew",
     ],
 )

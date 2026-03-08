@@ -1,14 +1,27 @@
 load("@rules_rust//rust:defs.bzl", "rust_library")
 
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
 rust_library(
     name = "wonopui-mermaid-diagram",
     srcs = glob(["src/**/*.rs"]),
-    visibility = ["//visibility:public"],
+    crate_name = "wonopui_mermaid_diagram",
+    edition = "2021",
     deps = [
         "//crates/wonopui-core",
-        "@aspect_crates//:yew",
-        "@aspect_crates//:wasm-bindgen",
-        "@aspect_crates//:web-sys",
-        "@aspect_crates//:gloo-utils",
+        "@crates//:yew",
+        "@crates//:web-sys",
+        "@crates//:wasm-bindgen",
+        "@crates//:gloo",
+        "@crates//:gloo-utils",
+        "@crates//:js-sys",
+        "@crates//:log",
     ],
+)
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["src/**/*.rs"]),
 )

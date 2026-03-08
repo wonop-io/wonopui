@@ -9,20 +9,95 @@ use wonopui_core::merge_classes;
 use yew::prelude::*;
 
 pub mod classes {
-    pub const SELECT_CONTAINER: &str = "relative inline-block w-full";
-    pub const SELECT_TRIGGER: &str = "flex items-center justify-between w-full px-3 py-2 text-sm bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed";
-    pub const SELECT_TRIGGER_PLACEHOLDER: &str = "truncate";
+    pub const SELECT_CONTAINER: &str = "relative inline-block";
+    pub const SELECT_CONTAINER_FULL_WIDTH: &str = "w-full";
+    
+    // Default variant
+    pub const SELECT_TRIGGER_DEFAULT: &str = "flex items-center justify-between w-full bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed";
+    
+    // Compact variant
+    pub const SELECT_TRIGGER_COMPACT: &str = "flex items-center justify-between w-full bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600 rounded shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed";
+    
+    // Ghost variant
+    pub const SELECT_TRIGGER_GHOST: &str = "flex items-center justify-between w-full bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed";
+    
+    // Sizes
+    pub const SIZE_XSMALL: &str = "px-2 py-1 text-xs";
+    pub const SIZE_SMALL: &str = "px-2.5 py-1.5 text-sm";
+    pub const SIZE_MEDIUM: &str = "px-3 py-2 text-sm";
+    pub const SIZE_LARGE: &str = "px-4 py-2.5 text-base";
+    
+    pub const SELECT_TRIGGER_PLACEHOLDER: &str = "truncate text-gray-900 dark:text-zinc-100";
+    pub const SELECT_TRIGGER_PLACEHOLDER_EMPTY: &str = "truncate text-gray-400 dark:text-zinc-500";
     pub const SELECT_TRIGGER_ICON: &str = "w-4 h-4 ml-2 shrink-0";
+    pub const SELECT_TRIGGER_ICON_XSMALL: &str = "w-3 h-3 ml-1 shrink-0";
     pub const SELECT_CONTENT_CONTAINER: &str = "absolute z-50 w-full mt-1 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-600 rounded-md shadow-lg";
     pub const SELECT_CONTENT_LIST: &str = "max-h-60 overflow-auto py-1";
     pub const SELECT_ITEM: &str = "px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700 text-gray-900 dark:text-zinc-100";
     pub const SELECT_ITEM_SELECTED: &str = "bg-blue-50 dark:bg-blue-900/20";
+    pub const SELECT_ITEM_DISABLED: &str = "opacity-50 cursor-not-allowed";
+    pub const SELECT_SEPARATOR: &str = "border-t border-gray-200 dark:border-zinc-600 my-1";
+    pub const SELECT_LABEL: &str = "block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5";
+}
+
+/// Select variant determines the visual style.
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
+pub enum SelectVariant {
+    #[default]
+    Default,
+    Compact,
+    Ghost,
+}
+
+/// Select size determines the dimensions.
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
+pub enum SelectSize {
+    XSmall,
+    Small,
+    #[default]
+    Medium,
+    Large,
 }
 
 #[derive(Clone, PartialEq)]
 pub struct SelectOption {
     pub value: String,
     pub label: String,
+    pub disabled: bool,
+}
+
+impl SelectOption {
+    pub fn new(value: impl Into<String>, label: impl Into<String>) -> Self {
+        Self {
+            value: value.into(),
+            label: label.into(),
+            disabled: false,
+        }
+    }
+
+    /// Create an option where label equals value.
+    pub fn simple(value: impl Into<String>) -> Self {
+        let v = value.into();
+        Self {
+            value: v.clone(),
+            label: v,
+            disabled: false,
+        }
+    }
+
+    /// Create a disabled separator line.
+    pub fn separator() -> Self {
+        Self {
+            value: String::new(),
+            label: String::new(),
+            disabled: true,
+        }
+    }
+
+    /// Check if this option is a separator.
+    pub fn is_separator(&self) -> bool {
+        self.value.is_empty() && self.label.is_empty() && self.disabled
+    }
 }
 
 impl fmt::Display for SelectOption {
@@ -64,6 +139,21 @@ pub struct SelectProps<T: Clone + PartialEq + ToString + 'static> {
     pub aria_label: Option<String>,
     #[prop_or_default]
     pub width: Option<String>,
+    /// Visual variant of the select.
+    #[prop_or_default]
+    pub variant: SelectVariant,
+    /// Size of the select.
+    #[prop_or_default]
+    pub size: SelectSize,
+    /// Label text above the select.
+    #[prop_or_default]
+    pub label: Option<String>,
+    /// Make select full width (w-full).
+    #[prop_or_default]
+    pub full_width: bool,
+    /// Maximum width CSS value (e.g., "120px").
+    #[prop_or_default]
+    pub max_width: Option<String>,
 }
 
 #[function_component(Select)]
@@ -119,27 +209,49 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
         .options
         .iter()
         .find(|value| Some(*value) == selected.as_ref())
-        .map(|value| value.to_string())
-        .unwrap_or_else(|| props.placeholder.clone().unwrap_or_default());
+        .map(|value| value.to_string());
 
-    let container_style = match &props.width {
-        Some(width) => format!("width: {};", width),
-        None => String::new(),
-    };
+    let has_selection = selected_label.is_some();
+    let display_label = selected_label.unwrap_or_else(|| props.placeholder.clone().unwrap_or_default());
 
-    let custom_style = match &props.style {
-        Some(style) => format!("{} {}", container_style, style),
-        None => container_style,
-    };
-
-    let style_attr = if !custom_style.is_empty() {
-        Some(custom_style)
+    // Build container style
+    let mut style_parts = Vec::new();
+    if let Some(width) = &props.width {
+        style_parts.push(format!("width: {};", width));
+    }
+    if let Some(max_width) = &props.max_width {
+        style_parts.push(format!("max-width: {};", max_width));
+    }
+    if let Some(custom_style) = &props.style {
+        style_parts.push(custom_style.clone());
+    }
+    let style_attr = if !style_parts.is_empty() {
+        Some(style_parts.join(" "))
     } else {
         None
     };
 
+    let trigger_variant_class = match props.variant {
+        SelectVariant::Default => classes::SELECT_TRIGGER_DEFAULT,
+        SelectVariant::Compact => classes::SELECT_TRIGGER_COMPACT,
+        SelectVariant::Ghost => classes::SELECT_TRIGGER_GHOST,
+    };
+
+    let size_class = match props.size {
+        SelectSize::XSmall => classes::SIZE_XSMALL,
+        SelectSize::Small => classes::SIZE_SMALL,
+        SelectSize::Medium => classes::SIZE_MEDIUM,
+        SelectSize::Large => classes::SIZE_LARGE,
+    };
+
+    let icon_class = match props.size {
+        SelectSize::XSmall => classes::SELECT_TRIGGER_ICON_XSMALL,
+        _ => classes::SELECT_TRIGGER_ICON,
+    };
+
     let container_class = merge_classes(&[
         classes::SELECT_CONTAINER,
+        if props.full_width { classes::SELECT_CONTAINER_FULL_WIDTH } else { "" },
         &props.class.to_string(),
         if props.disabled {
             "opacity-50 cursor-not-allowed"
@@ -147,6 +259,17 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
             ""
         },
     ]);
+
+    let trigger_class = merge_classes(&[
+        trigger_variant_class,
+        size_class,
+    ]);
+
+    let placeholder_class = if has_selection {
+        classes::SELECT_TRIGGER_PLACEHOLDER
+    } else {
+        classes::SELECT_TRIGGER_PLACEHOLDER_EMPTY
+    };
 
     html! {
         <div
@@ -159,9 +282,12 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
             aria-disabled={props.disabled.to_string()}
             aria-label={props.aria_label.clone()}
         >
+            if let Some(label) = &props.label {
+                <label class={classes::SELECT_LABEL}>{ label }</label>
+            }
             <button
                 type="button"
-                class={classes::SELECT_TRIGGER}
+                class={trigger_class}
                 onclick={{
                     let toggle = state.toggle.clone();
                     move |_| toggle.emit(())
@@ -171,8 +297,8 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
                 name={props.name.clone()}
                 aria-expanded={is_open.to_string()}
             >
-                <span class={classes::SELECT_TRIGGER_PLACEHOLDER}>{ selected_label }</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={classes::SELECT_TRIGGER_ICON} aria-hidden="true">
+                <span class={placeholder_class}>{ display_label }</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={icon_class} aria-hidden="true">
                     <path d="m6 9 6 6 6-6"></path>
                 </svg>
             </button>
@@ -180,6 +306,14 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
                 <div class={classes::SELECT_CONTENT_CONTAINER}>
                     <ul class={classes::SELECT_CONTENT_LIST} role="listbox">
                         {for props.options.iter().map(|value| {
+                            let value_str = value.to_string();
+                            // Check if it's a separator (empty string with special handling)
+                            if value_str.is_empty() {
+                                return html! {
+                                    <li class={classes::SELECT_SEPARATOR}></li>
+                                };
+                            }
+
                             let on_click = {
                                 let value = value.clone();
                                 let on_select = state.on_select.clone();
@@ -201,7 +335,7 @@ pub fn select<T: Clone + PartialEq + ToString + 'static>(props: &SelectProps<T>)
                                     role="option"
                                     aria-selected={is_selected.to_string()}
                                 >
-                                    { value.to_string() }
+                                    { value_str }
                                 </li>
                             }
                         })}

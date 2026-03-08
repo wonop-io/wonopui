@@ -1,0 +1,26 @@
+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["Cargo.toml"])
+
+rust_library(
+    name = "wonopui-form-field",
+    srcs = glob(["src/**/*.rs"]),
+    crate_name = "wonopui_form_field",
+    edition = "2021",
+    deps = [
+        "@crates//:yew",
+    ],
+)
+
+rust_test(
+    name = "wonopui-form-field_test",
+    crate = ":wonopui-form-field",
+    size = "small",
+)
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["src/**/*.rs"]),
+)

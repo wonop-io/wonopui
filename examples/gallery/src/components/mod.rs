@@ -73,6 +73,11 @@ mod typography;
 mod window_controls;
 mod window_provider;
 
+mod empty_state;
+mod form_field;
+mod icon_button;
+mod modal;
+
 pub use accordion::AccordionDocumentation;
 pub use alert::AlertDocumentation;
 pub use avatar::AvatarDocumentation;
@@ -140,3 +145,8 @@ pub use topbar::TopbarDocumentation;
 pub use typography::TypographyDocumentation;
 pub use window_controls::WindowControlsDocumentation;
 pub use window_provider::WindowProviderDocumentation;
+
+pub use empty_state::EmptyStateDocumentation;
+pub use form_field::FormFieldDocumentation;
+pub use icon_button::IconButtonDocumentation;
+pub use modal::ModalDocumentation;

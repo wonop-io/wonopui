@@ -13,6 +13,7 @@ rust_library(
         "//crates/wonopui-core:wonopui-core",
         "@crates//:web-sys",
         "@crates//:yew",
+        "@crates//:wasm-bindgen",
     ],
 )
 

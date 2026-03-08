@@ -6,11 +6,23 @@ use wonopui_core::merge_classes;
 use yew::prelude::*;
 
 pub mod classes {
-    pub const PAGINATION_CONTAINER: &str = "flex justify-center mt-8";
-    pub const PAGINATION_LIST: &str = "inline-flex items-center -space-x-px";
-    pub const PAGINATION_ITEM: &str = "px-3 py-2 leading-tight text-gray-500 dark:text-zinc-400 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-700 dark:hover:text-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed";
-    pub const PAGINATION_ITEM_CURRENT: &str = "z-10 px-3 py-2 leading-tight text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-700 dark:hover:text-blue-300";
-    pub const PAGINATION_ELLIPSIS: &str = "px-3 py-2 leading-tight text-gray-500 dark:text-zinc-400 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-600";
+    /// Container for the pagination nav
+    pub const PAGINATION_CONTAINER: &str = "flex justify-center";
+    
+    /// The ul wrapper for pagination items
+    pub const PAGINATION_LIST: &str = "flex flex-row items-center gap-1";
+    
+    /// Base pagination item (button style, ghost variant)
+    pub const PAGINATION_ITEM: &str = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 min-w-9 px-3";
+    
+    /// Current/active page item
+    pub const PAGINATION_ITEM_CURRENT: &str = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 min-w-9 px-3";
+    
+    /// Ellipsis span
+    pub const PAGINATION_ELLIPSIS: &str = "flex h-9 w-9 items-center justify-center text-muted-foreground";
+    
+    /// Navigation buttons (prev/next)
+    pub const PAGINATION_NAV: &str = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 gap-1 px-2.5";
 }
 
 #[derive(Properties, PartialEq)]
@@ -60,12 +72,32 @@ pub fn pagination(props: &PaginationProps) -> Html {
 
     let container_class = merge_classes(&[classes::PAGINATION_CONTAINER, &class.to_string()]);
 
+    // Default prev/next icons using chevrons
+    let default_prev = html! {
+        <>
+            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6"/>
+            </svg>
+            <span>{"Previous"}</span>
+        </>
+    };
+    
+    let default_next = html! {
+        <>
+            <span>{"Next"}</span>
+            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"/>
+            </svg>
+        </>
+    };
+
     html! {
-        <nav class={container_class} aria-label="Pagination">
+        <nav class={container_class} aria-label="pagination">
             <ul class={classes::PAGINATION_LIST}>
                 <li>
                     <button
-                        class={classes::PAGINATION_ITEM}
+                        class={classes::PAGINATION_NAV}
+                        aria-label="Go to previous page"
                         onclick={{
                             let on_page_change = on_page_change.clone();
                             let current_page = *current_page;
@@ -73,7 +105,7 @@ pub fn pagination(props: &PaginationProps) -> Html {
                         }}
                         disabled={*current_page == 1}
                     >
-                        {prev.clone().unwrap_or_else(|| html!("Prev"))}
+                        {prev.clone().unwrap_or(default_prev)}
                     </button>
                 </li>
                 {
@@ -81,7 +113,14 @@ pub fn pagination(props: &PaginationProps) -> Html {
                         if page == 0 {
                             html! {
                                 <li>
-                                    <span class={classes::PAGINATION_ELLIPSIS}>{"..."}</span>
+                                    <span class={classes::PAGINATION_ELLIPSIS} aria-hidden="true">
+                                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="1"/>
+                                            <circle cx="19" cy="12" r="1"/>
+                                            <circle cx="5" cy="12" r="1"/>
+                                        </svg>
+                                        <span class="sr-only">{"More pages"}</span>
+                                    </span>
                                 </li>
                             }
                         } else {
@@ -96,7 +135,7 @@ pub fn pagination(props: &PaginationProps) -> Html {
                                 <li key={page}>
                                     <button
                                         class={page_class}
-                                        aria-current={if is_current { "page" } else { "false" }}
+                                        aria-current={if is_current { Some("page") } else { None }}
                                         onclick={{
                                             let on_page_change = on_page_change.clone();
                                             on_page_change.reform(move |_| page)
@@ -111,7 +150,8 @@ pub fn pagination(props: &PaginationProps) -> Html {
                 }
                 <li>
                     <button
-                        class={classes::PAGINATION_ITEM}
+                        class={classes::PAGINATION_NAV}
+                        aria-label="Go to next page"
                         onclick={{
                             let on_page_change = on_page_change.clone();
                             let current_page = *current_page;
@@ -120,7 +160,7 @@ pub fn pagination(props: &PaginationProps) -> Html {
                         }}
                         disabled={*current_page == *total_pages}
                     >
-                        {next.clone().unwrap_or_else(|| html!("Next"))}
+                        {next.clone().unwrap_or(default_next)}
                     </button>
                 </li>
             </ul>

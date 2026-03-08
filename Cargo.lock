@@ -3605,8 +3605,11 @@ dependencies = [
  "wonopui-drag-point",
  "wonopui-drawer",
  "wonopui-dropdown",
+ "wonopui-empty-state",
  "wonopui-error-boundary",
+ "wonopui-form-field",
  "wonopui-group-button",
+ "wonopui-icon-button",
  "wonopui-iframe",
  "wonopui-input",
  "wonopui-kanban",
@@ -3617,6 +3620,7 @@ dependencies = [
  "wonopui-media-query",
  "wonopui-mention-input",
  "wonopui-mermaid-diagram",
+ "wonopui-modal",
  "wonopui-multicol-sidebar",
  "wonopui-notification",
  "wonopui-page-content",
@@ -3950,6 +3954,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "wonopui-empty-state"
+version = "0.1.0"
+dependencies = [
+ "yew",
+]
+
+[[package]]
 name = "wonopui-error-boundary"
 version = "0.1.0"
 dependencies = [
@@ -3958,10 +3969,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "wonopui-form-field"
+version = "0.1.0"
+dependencies = [
+ "yew",
+]
+
+[[package]]
 name = "wonopui-group-button"
 version = "0.1.0"
 dependencies = [
  "wonopui-core",
+ "yew",
+]
+
+[[package]]
+name = "wonopui-icon-button"
+version = "0.1.0"
+dependencies = [
  "yew",
 ]
 
@@ -4061,6 +4086,16 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "wonopui-core",
+ "yew",
+]
+
+[[package]]
+name = "wonopui-modal"
+version = "0.1.0"
+dependencies = [
+ "gloo 0.11.0",
+ "wasm-bindgen",
+ "web-sys",
  "yew",
 ]
 
